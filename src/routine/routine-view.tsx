@@ -1,5 +1,5 @@
 import { WorkspaceLeaf } from "obsidian";
-import { ReactView } from "../view/react-view";
+import { ReactView } from "../shared/view/react-view";
 
 
 export class RoutineView extends ReactView {

@@ -1,8 +1,8 @@
 import { Plugin } from 'obsidian';
-import { setPlugin } from 'src/utils/plugin-service-locator';
+import { setPlugin } from 'src/shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from 'src/settings/DailyRoutineSettingTab';
 import { RoutineView } from 'src/routine/routine-view';
-import { activateView } from 'src/view/activate-view';
+import { activateView } from 'src/shared/view/activate-view';
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;

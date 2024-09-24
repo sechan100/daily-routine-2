@@ -1,4 +1,4 @@
-import { getMarkdownView } from "src/utils/utils";
+import { getMarkdownView } from "./utils";
 
 const findModeSwitchBtn = () => {
   const query = 'button.clickable-icon.view-action';
