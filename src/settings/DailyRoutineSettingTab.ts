@@ -31,7 +31,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     .addText(text => {
         new FileSuggest(text.inputEl, "file");
         text
-        .setPlaceholder("daily-routine-template.md")
+        .setPlaceholder("ex) routine/template")
         .setValue(this.plugin.settings.routineTemplatePath??"")
         .onChange(async (value) => {
           this.plugin.settings.routineTemplatePath = value;
