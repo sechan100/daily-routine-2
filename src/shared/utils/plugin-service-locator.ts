@@ -6,7 +6,7 @@ let pluginThisRef: DailyRoutinePlugin | null = null;
 
 export const plugin = () => {
   if(pluginThisRef === null) {
-    throw new Error('Plugin not initialized');
+    throw new Error('Plugin Service Locator is not initialized');
   }
   return pluginThisRef;
 }

@@ -15,6 +15,7 @@ const getFile = (path: string): TFile => {
   }
 }
 
+
 /**
  * 경로로부터 vault의 폴더를 읽어온다.
  * 만약 경로에 존재하는 폴더가 없거나 file인 경우 에러
@@ -29,9 +30,19 @@ const getFolder = (path: string) => {
 }
 
 
+/**
+ * 파일을 읽기전용으로 읽어온다.
+ */
+const readFileAsReadonly = async (file: TFile) => {
+  return plugin().app.vault.read(file);
+}
+
+
+
 
 
 export const fileAccessor = {
   getFile,
-  getFolder
+  getFolder,
+  readFileAsReadonly
 }

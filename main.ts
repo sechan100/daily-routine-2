@@ -3,6 +3,7 @@ import { setPlugin } from 'src/shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from 'src/settings/DailyRoutineSettingTab';
 import { RoutineView } from 'src/routine/routine-view';
 import { activateView } from 'src/shared/view/activate-view';
+import { devOnlyTest } from 'src/dev-only-test-btn';
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;
@@ -23,6 +24,10 @@ export default class DailyRoutinePlugin extends Plugin {
 
     this.addRibbonIcon("dice", "Routine View", () => {
       activateView(RoutineView.VIEW_TYPE);
+    });
+
+    this.addRibbonIcon("reset", "test", () => {
+      devOnlyTest();
     });
   }
   
