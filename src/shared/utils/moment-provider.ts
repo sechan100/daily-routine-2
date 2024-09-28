@@ -14,7 +14,7 @@ const gerFormat = (): string => {
 
 export const momentProvider = {
 
-  getDateTime: () => {
+  getNow: () => {
     return moment().format(gerFormat());
   },
 
@@ -28,7 +28,16 @@ export const momentProvider = {
     return moment().format('ddd');
   },
   
-  isToday: () => {
-    return moment().isSame(moment(), 'day');
+  isToday: (dataTime: string) => {
+    return moment(momentProvider.getNow()).isSame(dataTime);
   } 
+}
+export enum DayOfWeek {
+  SUN,
+  MON,
+  TUE,
+  WEN,
+  THU,
+  FRI,
+  SAT
 }

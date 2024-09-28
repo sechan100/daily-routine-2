@@ -50,7 +50,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       fragment.append("The date format of the routine note.");
       fragment.append(sampleEl);
       const updateSample = () => {
-        sampleEl.textContent = `Sample: ${momentProvider.getDateTime()}`;
+        sampleEl.textContent = `Sample: ${momentProvider.getNow()}`;
       };
       updateSample(); // 초기화
       return {

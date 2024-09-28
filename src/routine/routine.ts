@@ -1,7 +1,7 @@
-import { TAbstractFile, TFile } from "obsidian";
+import { TFile } from "obsidian";
 import { fileAccessor } from "src/shared/file/file-accessor"
 import { plugin } from "src/shared/utils/plugin-service-locator";
-import { DayOfWeek } from "./types";
+import { DayOfWeek } from "src/shared/utils/date-time";
 
 
 /**

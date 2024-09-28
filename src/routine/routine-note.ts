@@ -5,7 +5,7 @@ import { momentProvider } from "src/shared/utils/date-time";
 
 
 export const createNewRoutineNote = async () => {
-  const now = momentProvider.getDateTime();
+  const now = momentProvider.getNow();
   console.log(now);
   const routines = await getRoutines();
 }
