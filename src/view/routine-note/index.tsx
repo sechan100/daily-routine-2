@@ -1,4 +1,4 @@
-import { RoutineNote } from "../../model/routine-note";
+import { RoutineNote } from "../../model/note";
 import { RoutineComponent } from "../routine";
 import React, { useCallback } from "react";
 import "./index.css";

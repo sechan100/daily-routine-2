@@ -1,7 +1,7 @@
 import { WorkspaceLeaf } from "obsidian";
 import { ReactView } from "../lib/view/react-view";
 import { RoutineNoteView } from "./routine-note";
-import { createNewRoutineNote, RoutineNote } from "../model/routine-note";
+import { createNewRoutineNote, RoutineNote } from "../model/note";
 import { useEffect, useState } from "react";
 import { Day } from "lib/day";
 

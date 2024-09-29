@@ -1,17 +1,19 @@
 import DailyRoutinePlugin from "main";
-import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
+import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "./suggesters/FileSuggester";
 import { Day } from "lib/day";
 
 
 export interface DailyRoutinePluginSettings {
-  routineFolderPath: string | null;
-  dateFormat: string | null;
+  routineFolderPath: string;
+  dateFormat: string;
+  routineArchiveFolderPath: string;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
-  routineFolderPath: null,
-  dateFormat: 'YYYY-MM-DD'
+  routineFolderPath: "daily-routine/routines",
+  dateFormat: 'YYYY-MM-DD',
+  routineArchiveFolderPath: "daily-routine/archive"
 }
 
 
@@ -34,11 +36,10 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     .addText(text => {
       new FileSuggest(text.inputEl, "folder");
       text
-      .setPlaceholder("ex) /routine/folder")
+      .setPlaceholder("daily-routine/routines")
       .setValue(this.plugin.settings.routineFolderPath??"")
       .onChange(async (value) => {
-        this.plugin.settings.routineFolderPath = normalizePath(value);
-        await this.plugin.saveSettings();
+        this.save({ routineFolderPath: normalizePath(value)});
       })
     })
 
@@ -59,7 +60,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       };
     }
     const { fragment, updateSample } = getDesc();
-
     new Setting(containerEl)
     .setName("Routine Note Date Format")
     .setDesc(fragment)
@@ -69,10 +69,38 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       .setValue(this.plugin.settings.dateFormat??DEFAULT_SETTINGS.dateFormat as string)
       .onChange(async (value) => {
         // 값이 변경되면 설정을 업데이트하고 샘플을 다시 계산
-        this.plugin.settings.dateFormat = value;
-        await this.plugin.saveSettings();
+        this.save({ dateFormat: value});
         updateSample();
       });
     });
+
+
+    // Routine Archive Path
+    new Setting(containerEl)
+    .setName("Routine Archive Path")
+    .setDesc("The path to the routine archive folder.")
+    .addText(text => {
+      new FileSuggest(text.inputEl, "folder");
+      text
+      .setPlaceholder("daily-routine/archive")
+      .setValue(this.plugin.settings.routineArchiveFolderPath??"")
+      .onChange(async (value) => {
+        this.save({ routineArchiveFolderPath: normalizePath(value)});
+      })
+    });
+  }
+
+
+  async save(partial: Partial<DailyRoutinePluginSettings>) {
+    const settings = {...this.plugin.settings, ...partial};
+
+    // 루틴폴더와 루틴아카이브폴더의 경로 일치 검사
+    if(settings.routineArchiveFolderPath === settings.routineFolderPath){
+      new Notice("Routine folder path and routine archive folder path cannot be the same.");
+      return;
+    }
+
+    this.plugin.settings = {...this.plugin.settings, ...partial};
+    await this.plugin.saveSettings();
   }
 }

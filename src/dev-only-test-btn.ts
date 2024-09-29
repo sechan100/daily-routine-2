@@ -1,5 +1,5 @@
 import { routineManager } from "./model/routine";
-import { createNewRoutineNote } from "./model/routine-note";
+import { createNewRoutineNote } from "./model/note";
 
 
 export const devOnlyTest = () => {
