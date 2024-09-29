@@ -1,9 +1,9 @@
 import { Plugin } from 'obsidian';
-import { setPlugin } from 'src/shared/utils/plugin-service-locator';
-import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from 'src/settings/DailyRoutineSettingTab';
-import { DailyRoutineView } from 'src/view/daily-routine-view';
-import { activateView } from 'src/shared/view/activate-view';
-import { devOnlyTest } from 'src/dev-only-test-btn';
+import { setPlugin } from './lib/plugin-service-locator';
+import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
+import { DailyRoutineView } from './view/daily-routine-view';
+import { activateView } from './lib/view/activate-view';
+import { devOnlyTest } from './dev-only-test-btn';
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;

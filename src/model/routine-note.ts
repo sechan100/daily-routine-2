@@ -1,21 +1,25 @@
 import { routineManager, Routine } from "./routine"
-import { momentProvider } from "src/shared/utils/moment-provider";
+import { Day } from "lib/day";
 
 
 export interface RoutineNote {
   title: string;
+  day: Day;
   routines: Routine[];
 }
 
 
 export const createNewRoutineNote = async (): Promise<RoutineNote> => {
-  const now = momentProvider.getNow();
+  const day = Day.fromNow();
   const routines = await routineManager.getAllRoutines();
   
-  const todayRoutines = routines.filter(r => r.properties.dayOfWeeks.contains(momentProvider.getDayOfWeekNum()));
+  const todayRoutines = routines.filter(r => {
+    return r.properties.dayOfWeeks.contains(day.getDayOfWeek());
+  });
 
   return {
-    title: now,
+    title: day.getAsUserCustomFormat(),
+    day: day,
     routines: todayRoutines
   }
 }

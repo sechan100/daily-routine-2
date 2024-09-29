@@ -1,5 +1,5 @@
 import { TFile, TFolder } from "obsidian";
-import { plugin } from "src/shared/utils/plugin-service-locator";
+import { plugin } from "lib/plugin-service-locator";
 
 
 

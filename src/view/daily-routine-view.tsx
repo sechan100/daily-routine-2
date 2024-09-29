@@ -1,8 +1,9 @@
 import { WorkspaceLeaf } from "obsidian";
-import { ReactView } from "../shared/view/react-view";
-import { RoutineNoteView } from "./routine-note-view";
+import { ReactView } from "../lib/view/react-view";
+import { RoutineNoteView } from "./routine-note";
 import { createNewRoutineNote, RoutineNote } from "../model/routine-note";
 import { useEffect, useState } from "react";
+import { Day } from "lib/day";
 
 
 export class DailyRoutineView extends ReactView {
@@ -27,6 +28,7 @@ export class DailyRoutineView extends ReactView {
 const DailyRoutineViewComponent = () => {
   const [routineNote, setRoutineNote] = useState<RoutineNote>({
     routines: [],
+    day: Day.fromNow(),
     title: "Fallback"
   });
 

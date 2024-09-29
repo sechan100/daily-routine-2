@@ -10,7 +10,7 @@ export const devOnlyTest = () => {
 
 
 const test = () => {
-  routineManager.editRoutine('🖊️ 문서 작성하기', {
+  routineManager.edit('🖊️ 문서 작성하기', {
     name: '🖊️ 문서 작성하기ㅋ',
     newProperties: {
       dayOfWeeks: [1, 2, 3, 4, 5, 6, 0]

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "src/",
     "jsx": "react-jsx",
     "inlineSourceMap": true,
     "inlineSources": true,
@@ -8,6 +8,8 @@
     "target": "ES6",
     "allowJs": true,
     "noImplicitAny": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "isolatedModules": true,
@@ -19,7 +21,5 @@
       "ES7"
     ]
   },
-  "include": [
-    "**/*.ts"
-, "src/model/react-view.tsx"  ]
+  "include": ["**/*.ts", "**/*.tsx", "src/index.d.ts"],
 }

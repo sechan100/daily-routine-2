@@ -1,11 +1,15 @@
-import { Routine } from "../model/routine"
+import { Routine } from "../../model/routine"
+import React from "react"
+import "./index.css"
 
 
 
 interface Props {
-  routine: Routine
+  routine: Routine;
+  onCheckChange: (routine: Routine, checked: boolean) => void;
 }
-export const RoutineComponent = ({ routine }: Props) => {
+export const RoutineComponent = ({ routine, onCheckChange }: Props) => {
+  
   const id = `routine-${routine.name}`
 
   return (
@@ -13,7 +17,7 @@ export const RoutineComponent = ({ routine }: Props) => {
       {/* 전체적으로 감싸주는 label */}
       <label htmlFor={id} className="dr-routine__item">
         {/* 체크박스(hidden) */}
-        <input type="checkbox" id={id} className="hidden"/>
+        <input onChange={(e) => onCheckChange(routine, e.target.checked)} type="checkbox" id={id} className="hidden"/>
         {/* 체크박스(display) */}
         <label htmlFor={id} className="dr-routine__cbx">
           <svg viewBox="0 0 14 12">
