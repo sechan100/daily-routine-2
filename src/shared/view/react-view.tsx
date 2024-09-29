@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { App, ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
 
 

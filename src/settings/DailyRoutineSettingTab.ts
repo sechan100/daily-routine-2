@@ -1,7 +1,7 @@
 import DailyRoutinePlugin from "main";
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "./suggesters/FileSuggester";
-import { momentProvider } from "src/shared/utils/date-time";
+import { momentProvider } from "src/shared/utils/moment-provider";
 
 
 export interface DailyRoutinePluginSettings {
@@ -46,7 +46,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     // Routine Note Date Format
     const getDesc = () => {
       const fragment = document.createDocumentFragment();
-      const sampleEl = document.createDiv({cls: 'u-pop'});
+      const sampleEl = containerEl.createDiv({cls: 'u-pop'});
       fragment.append("The date format of the routine note.");
       fragment.append(sampleEl);
       const updateSample = () => {

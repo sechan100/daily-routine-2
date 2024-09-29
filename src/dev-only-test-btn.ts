@@ -1,5 +1,5 @@
-import { getRoutines } from "./routine/routine";
-import { createNewRoutineNote } from "./routine/routine-note";
+import { routineManager } from "./model/routine";
+import { createNewRoutineNote } from "./model/routine-note";
 
 
 export const devOnlyTest = () => {
@@ -10,5 +10,10 @@ export const devOnlyTest = () => {
 
 
 const test = () => {
-  createNewRoutineNote();
+  routineManager.editRoutine('🖊️ 문서 작성하기', {
+    name: '🖊️ 문서 작성하기ㅋ',
+    newProperties: {
+      dayOfWeeks: [1, 2, 3, 4, 5, 6, 0]
+    }
+  });
 }

@@ -1,0 +1,147 @@
+
+
+/* #####################################################################
+ * ####################### GLOBAL STYLES ###############################
+ * ##################################################################### */
+.app-container {
+  --color-accent-1-hsl: calc(var(--accent-h) - 3), calc(var(--accent-s) * 1.02), calc(var(--accent-l) * 1.15);
+  --color-accent-2-hsl: calc(var(--accent-h) - 5), calc(var(--accent-s) * 1.05), calc(var(--accent-l) * 1.29);
+}
+
+
+
+/* #####################################################################
+ * ####################### ROUTINE COMPONENT ###########################
+ * ##################################################################### */
+
+/* 최상위 루틴 */
+.dr-routine {
+  display: block;
+  font-size: 16px; /* 전체적 루틴의 사이즈를 결정 */
+  width: 100%;
+  padding: calc(0.5em) 0;
+  /* border: 1px solid #c8ccd4; */
+  cursor: pointer;
+}
+
+
+
+/* 전체 감싸주는 라벨 */
+.dr-routine label {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  line-height: 1;
+}
+
+/* 레이아웃 */
+.dr-routine *,
+.dr-routine ::after,
+.dr-routine ::before {
+  box-sizing: border-box;
+}
+
+/* 보이지 않는 데이터용 input checkbox */
+.dr-routine input[type="checkbox"] {
+  visibility: hidden;
+  display: none;
+}
+
+/* 실제로 보이는 디자인용 체크박스 */
+.dr-routine .dr-routine__item .dr-routine__cbx {
+  position: relative;
+  top: calc(1/8 * 1em);
+  display: inline-block;
+  width: calc(14/16 * 1em);
+  height: calc(14/16 * 1em);
+  margin-right: calc(0.5em);
+  border: calc(1/16 * 1em) solid #c8ccd4;
+  border-radius: 3px; /* 체크박스 곡률 */
+  cursor: pointer;
+}
+.dr-routine .dr-routine__item .dr-routine__cbx svg {
+  position: relative;
+  width: calc(7/8 * 1em);
+  height: calc(3/4 * 1em);
+  top: calc(-1/16 * 1em);
+  transform: scale(0);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dr-routine .dr-routine__item .dr-routine__cbx svg polyline {
+  stroke-width: 2.2;
+  stroke: hsla(var(--color-accent-1-hsl), 1.0);
+}
+/* 체크 표시 아이콘 */
+.dr-routine .dr-routine__item .dr-routine__cbx:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: calc(-5/8 * 1em) 0 0 calc(-5/8 * 1em);
+  width: calc(5/4 * 1em);
+  height: calc(5/4 * 1em);
+  border-radius: 100%;
+  background: hsla(var(--color-accent-1-hsl), 1.0);
+  transform: scale(0);
+}
+/* 체크 이펙트 */
+.dr-routine .dr-routine__item .dr-routine__cbx:after {
+  content: '';
+  position: absolute;
+  top: calc(5/16 * 1em);
+  left: calc(5/16 * 1em);
+  width: calc(1/8 * 1em);
+  height: calc(1/8 * 1em);
+  border-radius: 2px; 
+  box-shadow: 0 calc(9/8 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * 1em) calc(3/4 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(9/8 * 1em) 0 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * 1em) calc(3/4 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), 0 calc(9/8 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * -1em) calc(3/4 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(9/8 * -1em) 0 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * -1em) calc(3/4 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0);
+  transform: scale(0);
+}
+.dr-routine .dr-routine__item input:checked + .dr-routine__cbx {
+  border-color: transparent;
+}
+.dr-routine .dr-routine__item input:checked + .dr-routine__cbx svg {
+  transform: scale(1);
+  transition: all 0.4s ease;
+  transition-delay: 0.1s;
+}
+.dr-routine .dr-routine__item input:checked + .dr-routine__cbx:before {
+  transform: scale(1);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.dr-routine .dr-routine__item input:checked + .dr-routine__cbx:after {
+  transform: scale(1);
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+/* 루틴 이름 */
+.dr-routine .dr-routine__item .dr-routine__name {
+  position: relative;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.dr-routine .dr-routine__item .dr-routine__name:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #9098a9;
+}
+.dr-routine .dr-routine__item input:checked ~ .dr-routine__name {
+  color: #9098a9;
+}
+.dr-routine .dr-routine__item input:checked ~ .dr-routine__name:after {
+  width: 100%;
+  transition: all 0.4s ease;
+}
+
+/* #####################################################################
+ * ####################### ROUTINE COMPONENT ###########################
+ * ##################################################################### */
