@@ -1,9 +1,10 @@
 import { WorkspaceLeaf } from "obsidian";
 import { ReactView } from "../lib/view/react-view";
-import { RoutineNoteView } from "./routine-note";
-import { createNewRoutineNote, RoutineNote } from "../model/note";
+import { RoutineNoteView } from "../features/routine-note";
+import { RoutineNote, routineNoteArchiver } from "entities/archive";
 import { useEffect, useState } from "react";
 import { Day } from "lib/day";
+import "./style.css";
 
 
 export class DailyRoutineView extends ReactView {
@@ -25,16 +26,19 @@ export class DailyRoutineView extends ReactView {
 }
 
 
+/**
+ * 실제 ROOT PAGE 컴포넌트
+ */
 const DailyRoutineViewComponent = () => {
   const [routineNote, setRoutineNote] = useState<RoutineNote>({
-    routines: [],
-    day: Day.fromNow(),
-    title: "Fallback"
+    tasks: [],
+    day: Day.now()
   });
 
   useEffect(() => {
-    createNewRoutineNote().then(routineNote => {
-      setRoutineNote(routineNote)
+    routineNoteArchiver.getTodayRoutineNote()
+    .then(routineNote => {
+      setRoutineNote(routineNote);
     });
   }, []);
 

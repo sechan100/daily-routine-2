@@ -1,7 +1,7 @@
 import { Plugin } from 'obsidian';
 import { setPlugin } from './lib/plugin-service-locator';
-import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
-import { DailyRoutineView } from './view/daily-routine-view';
+import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './features/settings/DailyRoutineSettingTab';
+import { DailyRoutineView } from './pages';
 import { activateView } from './lib/view/activate-view';
 import { devOnlyTest } from './dev-only-test-btn';
 

@@ -1,8 +1,8 @@
 import { TFile } from "obsidian";
-import { fileAccessor } from "lib/file-accessor"
+import { fileAccessor } from "lib/file/file-accessor";
 import { plugin } from "lib/plugin-service-locator";
 import { Day, DayOfWeek } from "lib/day";
-import { update } from "lodash";
+import { changeProperties, parseProperties } from "lib/file/utils";
 
 
 /**
@@ -84,7 +84,7 @@ export const routineManager = {
     checked: boolean
   }) => {
     const file = fileAccessor.getFile(getRoutinePath(routineName));
-    const content = await fileAccessor.readFileAsWritable(file);
+    const content = await fileAccessor.readFileFromDisk(file);
     if(!content){
       throw new Error('Routine file is empty.');
     }
@@ -173,28 +173,15 @@ const readRoutineFile = async (file: TFile): Promise<Routine> => {
 
 
 /**
- * 루틴 파일의 프로퍼티를 추출한다.
- * @param content RoutineFile 내용
- */
-const matchRoutineProperties = (content: string) => {
-  const propertyString = content.replace("\n", "").match(/---([\s\S]*?)---/)?.[1];
-  if(!propertyString) {
-    throw new Error('Routine file does not have property.');
-  }
-  return propertyString;
-}
-
-/**
  * RoutineProperties 문자열을 파싱한다. 
  * @param content RoutineFile 내용
  */
 const parseRoutineProperties = (content: string): RoutineProperties => {
   // ---과 --- 사이의 내용을 추출
-  const propertyString = matchRoutineProperties(content);
+  const properties = parseProperties(content);
 
   // 요일 정보 추출
-  const dayOfWeeksMatched = propertyString.match(/dayOfWeeks:\s*(.*)/)?.[1]??'';
-  const dayOfWeeks = dayOfWeeksMatched
+  const dayOfWeeks = properties.dayOfWeeks
   .split(',')
   .filter(d => d.trim().length > 0)
   .flatMap(d => {
@@ -235,7 +222,7 @@ const getRoutineFolderPath = () => {
  * @param newProperties 변경할 프로퍼티
  */
 const updateRoutineProperties = async (file: TFile, newProperties: Partial<RoutineProperties>) => {
-  const content = await fileAccessor.readFileAsWritable(file);
+  const content = await fileAccessor.readFileFromDisk(file);
   if(!content){
     throw new Error('Routine file is empty.');
   }
@@ -245,10 +232,11 @@ const updateRoutineProperties = async (file: TFile, newProperties: Partial<Routi
     properties.dayOfWeeks = newProperties.dayOfWeeks;
   }
   
-  const newPropertiesString = `dayOfWeeks: ${properties.dayOfWeeks.map(d => DayOfWeek[d]).join(', ')}\n`;
+  const newProps = {"dayOfWeeks": () => `${properties.dayOfWeeks.map(d => DayOfWeek[d]).join(', ')}\n` };
+  
 
-  fileAccessor.writeFile(file, (data => {
-    const newContent = data.replace(matchRoutineProperties(content), newPropertiesString);
+  fileAccessor.writeFile(file, (content => {
+    const newContent = changeProperties(content, newProps);
     return newContent;
   }));
   

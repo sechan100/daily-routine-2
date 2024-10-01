@@ -1,5 +1,6 @@
 import { TFile, TFolder } from "obsidian";
 import { plugin } from "lib/plugin-service-locator";
+import { FileNotFoundError } from "./errors";
 
 
 
@@ -7,14 +8,14 @@ export const fileAccessor = {
 
   /**
    * 경로로부터 vault의 파일을 읽어온다.
-   * 만약 경로에 존재하는 파일이 없거나 folder인 경우 에러
+   * @throws FileNotFoundError 만약 경로에 존재하는 파일이 없거나 folder인 경우 에러
    */
   getFile: (path: string): TFile => {
     const file = plugin().app.vault.getAbstractFileByPath(path);
     if(file && file instanceof TFile) {
       return file;
     } else {
-      throw new Error(`File not found: ${path}`);
+      throw new FileNotFoundError(path);
     }
   },
 
@@ -42,9 +43,10 @@ export const fileAccessor = {
 
   
   /**
-   * 파일을 쓰기전용으로 읽어온다.
+   * 파일을 디스크에서 직접 읽어온다.
+   * 파일을 수정할 때 사용한다.
    */
-  readFileAsWritable: async (file: TFile) => {
+  readFileFromDisk: async (file: TFile) => {
     return plugin().app.vault.read(file);
   },
 
@@ -62,6 +64,13 @@ export const fileAccessor = {
    */
   writeFile: async (file: TFile, contentSupplier: (data: string) => string) => {
     return plugin().app.vault.process(file, contentSupplier);
+  },
+
+  /**
+   * 파일을 생성한다.
+   */
+  createFile: async (path: string, content: string) => {
+    return plugin().app.vault.create(path, content);
   },
 
 }

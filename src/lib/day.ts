@@ -1,6 +1,6 @@
 import { moment } from "obsidian";
 import { plugin } from "./plugin-service-locator";
-import { DEFAULT_SETTINGS } from "settings/DailyRoutineSettingTab";
+import { DEFAULT_SETTINGS } from "features/settings/DailyRoutineSettingTab";
 
 
 export enum DayOfWeek {
@@ -30,7 +30,7 @@ export class Day {
     }
   }
 
-  static fromNow(): Day{
+  static now(): Day{
     return new Day(moment().format(Day.defaultFormat));
   }
 

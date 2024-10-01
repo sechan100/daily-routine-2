@@ -1,12 +1,25 @@
 
 
 /* #####################################################################
- * ####################### GLOBAL STYLES ###############################
+ * ####################### ROUTINE NOTE ################################
  * ##################################################################### */
-.app-container {
-  --color-accent-1-hsl: calc(var(--accent-h) - 3), calc(var(--accent-s) * 1.02), calc(var(--accent-l) * 1.15);
-  --color-accent-2-hsl: calc(var(--accent-h) - 5), calc(var(--accent-s) * 1.05), calc(var(--accent-l) * 1.29);
+.dr-note__header {
+  display: flex;
+  justify-content: start;
+  align-items: end;
+  margin: 1em;
+  gap: 10px;
 }
+
+.dr-note__header h1 {
+  display: inline-block;
+  margin: 0;
+}
+
+.dr-note__header span {
+  font-size: 1.1em;
+}
+
 
 /* #####################################################################
  * ####################### ROUTINE COMPONENT ###########################

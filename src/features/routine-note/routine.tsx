@@ -1,14 +1,13 @@
-import { Routine } from "../../model/routine"
 import React from "react"
-import "./index.css"
+import { RoutineTask } from "entities/archive";
 
 
 
 interface Props {
-  routine: Routine;
-  onCheckChange: (routine: Routine, checked: boolean) => void;
+  task: RoutineTask;
+  onCheckChange: (routine: RoutineTask, checked: boolean) => void;
 }
-export const RoutineComponent = ({ routine, onCheckChange }: Props) => {
+export const RoutineComponent = ({ task: routine, onCheckChange }: Props) => {
   
   const id = `routine-${routine.name}`
 

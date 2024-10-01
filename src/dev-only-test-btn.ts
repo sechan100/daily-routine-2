@@ -1,5 +1,4 @@
-import { routineManager } from "./model/routine";
-import { createNewRoutineNote } from "./model/note";
+import { routineManager } from "./entities/routine";
 
 
 export const devOnlyTest = () => {

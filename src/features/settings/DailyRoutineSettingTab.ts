@@ -51,7 +51,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       fragment.append("The date format of the routine note.");
       fragment.append(sampleEl);
       const updateSample = () => {
-        sampleEl.textContent = `Sample: ${Day.fromNow().getAsUserCustomFormat()}`;
+        sampleEl.textContent = `Sample: ${Day.now().getAsUserCustomFormat()}`;
       };
       updateSample(); // 초기화
       return {
