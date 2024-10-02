@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { RoutineTask } from "entities/archive";
 
 
@@ -8,6 +8,7 @@ interface Props {
   onCheckChange: (routine: RoutineTask, checked: boolean) => void;
 }
 export const RoutineComponent = ({ task: routine, onCheckChange }: Props) => {
+  const [checked, setChecked] = useState(routine.checked);
   
   const id = `routine-${routine.name}`
 
@@ -16,7 +17,10 @@ export const RoutineComponent = ({ task: routine, onCheckChange }: Props) => {
       {/* 전체적으로 감싸주는 label */}
       <label htmlFor={id} className="dr-routine__item">
         {/* 체크박스(hidden) */}
-        <input onChange={(e) => onCheckChange(routine, e.target.checked)} type="checkbox" id={id} className="hidden"/>
+        <input checked={checked} onChange={(e) => {
+          onCheckChange(routine, e.target.checked)
+          setChecked(e.target.checked)
+        }} type="checkbox" id={id} className="hidden"/>
         {/* 체크박스(display) */}
         <label htmlFor={id} className="dr-routine__cbx">
           <svg viewBox="0 0 14 12">

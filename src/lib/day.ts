@@ -21,17 +21,35 @@ export class Day {
    * 
    * @param day "YYYY-MM-DD" 형식의 문자열
    */
-  constructor(day: string) {
-    const m = moment(day);
+  constructor(_moment: moment.Moment) {
+    const m = moment(_moment);
     if(m.isValid()) {
       this.moment = m;
     } else {
-      throw new Error(`Invalid date format. ${day}`);
+      throw new Error(`Invalid date format. ${_moment.toString()}`);
     }
   }
 
+
   static now(): Day{
-    return new Day(moment().format(Day.defaultFormat));
+    return new Day(moment());
+  }
+
+  format(format: string){
+    return this.moment.format(format);
+  }
+
+  /**
+   * 이번주 배열을 반환
+   */
+  getCurrentWeek(){
+    const week = [];
+    const m = moment(this.moment);
+    for(let i = 0; i < 7; i++) {
+      const day = new Day(m.startOf('week').add(i, 'd'));
+      week.push(day);
+    }
+    return week;
   }
 
   getAsUserCustomFormat(){
@@ -57,7 +75,7 @@ export class Day {
   }
   
   isSameDay(day: Day){
-    return this.moment.isSame(day.moment);
+    return this.moment.isSame(day.moment, 'day');
   }
 
   isSameDayOfWeek(day: Day){

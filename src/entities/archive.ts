@@ -5,6 +5,7 @@ import { Day } from "lib/day";
 import { routineManager, Routine } from "./routine";
 import { FileNotFoundError } from "lib/file/errors";
 import { parseProperties } from "lib/file/utils";
+import moment from "moment";
 
 
 export interface Task {
@@ -24,11 +25,10 @@ export interface RoutineNote {
 export const routineNoteArchiver = {
 
   /**
-   * 오늘에 해당하는 RoutineNote를 archive에서 가져온다. 
+   * day에 해당하는 RoutineNote를 archive에서 가져온다. 
    * 만약 archive에 존재하지 않는다면 생성하고 저장한 뒤에 반환한다.
    */
-  async getTodayRoutineNote(): Promise<RoutineNote> {
-    const day = Day.now();
+  async getRoutineNote(day: Day): Promise<RoutineNote> {
     try {
       const file = archiveDAO.getRoutineNoteFile(day);
       return archiveDAO.parseFile(file);
@@ -101,9 +101,8 @@ const archiveDAO = {
       return { name, checked };
     });
 
-    console.log(tasks)
     return {
-      day: new Day(props.day),
+      day: new Day(moment(props.day)),
       tasks
     };
   },
@@ -161,7 +160,7 @@ const createNewRoutineNote = async (day: Day): Promise<RoutineNote> => {
  * routine으로부터 Task를 파생시킨다.
  * @param routine
  * @param day
- * @returns RoutineTask | null 만약 routine이 day에 수행되어야하는 루틴이 아니라면 null을 반환한다.
+ * @returns RoutineTask | null 만약 routine이 day에 수행어야하는 루틴이 아니라면 null을 반환한다.
  */
 const deriveRoutineTask = (routine: Routine, day: Day): RoutineTask | null => {
   if (!routine.properties.dayOfWeeks.contains(day.getDayOfWeek())) return null;

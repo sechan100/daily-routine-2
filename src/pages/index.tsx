@@ -30,21 +30,10 @@ export class DailyRoutineView extends ReactView {
  * 실제 ROOT PAGE 컴포넌트
  */
 const DailyRoutineViewComponent = () => {
-  const [routineNote, setRoutineNote] = useState<RoutineNote>({
-    tasks: [],
-    day: Day.now()
-  });
-
-  useEffect(() => {
-    routineNoteArchiver.getTodayRoutineNote()
-    .then(routineNote => {
-      setRoutineNote(routineNote);
-    });
-  }, []);
 
   return (
     <div>
-      <RoutineNoteView routineNote={routineNote} />
+      <RoutineNoteView />
     </div>
   );
 }

@@ -26,9 +26,11 @@
 	},
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
+		"clsx": "^2.1.1",
 		"i": "^0.3.7",
 		"npm": "^10.8.3",
 		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react-dom": "^18.3.1",
+		"zustand": "^5.0.0-rc.2"
 	}
 }
