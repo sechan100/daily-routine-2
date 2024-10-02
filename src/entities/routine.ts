@@ -1,4 +1,4 @@
-import { TFile } from "obsidian";
+import { moment, TFile } from "obsidian";
 import { fileAccessor } from "lib/file/file-accessor";
 import { plugin } from "lib/plugin-service-locator";
 import { Day, DayOfWeek } from "lib/day";
@@ -132,15 +132,30 @@ const getAchievements = (content: string): Achievement[] => {
  * 만약 해당 achievement가 없다면 추가하고, 있다면 업데이트한다.
  */
 const updateAchievement = (file: TFile, cmd: Achievement) => {
-  const newAchievements = `- [${cmd.checked?'x':' '}] ${cmd.date}`;
-  const targetRegex = new RegExp(`- \\[(?: |x)\\] ${cmd.date}`);
+  const newAchievementLine = (date: string, checked: boolean) => `- [${checked?'x':' '}] ${date}`;
+  const checkboxLineRegex = (date: string) => new RegExp(`- \\[(?: |x)\\] ${date}`);
 
   fileAccessor.writeFile(file, (content => {
-    // 이미 해당 날짜의 성취로그가 있으면
+    const targetRegex = checkboxLineRegex(cmd.date);
+    // 이미 해당 날짜의 성취로그가 있으면 업데이트한다.
     if(content.match(targetRegex)){
-      return content.replace(targetRegex, newAchievements);
+      return content.replace(targetRegex, newAchievementLine(cmd.date, cmd.checked));
+
+    // 해당 날짜의 성취로그가 없으면 날짜들의 순서를 유지하면서 새로 추가한다.
     } else {
-      return content.replace(/# Achievement/i, `# Achievement\n${newAchievements}`);
+      const achievements = content.substring(content.indexOf('# Achievement')).split('\n');
+      achievements.remove("# Achievement");
+      achievements.remove("");
+      const cmdMoment = moment(cmd.date);
+      for(const a of achievements){
+        const aMoment = moment(a.match(/\d{4}-\d{1,2}-\d{1,2}/)?.[0]);
+        if(aMoment.isBefore(cmdMoment)){
+          return content.replace(a, `${newAchievementLine(cmd.date, cmd.checked)}\n${a}`);
+        }
+      }
+      // 마지막에 추가
+      const lastAchievement = achievements[achievements.length-1];
+      return content.replace(lastAchievement, `${lastAchievement}\n${newAchievementLine(cmd.date, cmd.checked)}`);
     }
   }));
 }

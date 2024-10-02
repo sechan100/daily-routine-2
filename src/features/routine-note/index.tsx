@@ -4,27 +4,25 @@ import "./style.css";
 import { NoteView } from "./note";
 import { DaysMenu } from "./days";
 import { Day } from "lib/day";
-import { useRoutineNote, UseRoutineNoteContext } from "./use-routine-note";
+import { UseRoutineNoteContext } from "./use-routine-note";
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 export const RoutineNoteView = () => {
-  const todayRoutineNoteRef = useRef<RoutineNote>({
-    day: Day.now(),
-    tasks: [],
-  });
+  const [todayNote, setTodayNote] = useState<RoutineNote | null>(null);
 
   useEffect(() => {
     routineNoteArchiver.getRoutineNote(Day.now())
     .then(note => {
-      todayRoutineNoteRef.current = note;
+      setTodayNote(note);
     });
   }, []);
+  if(!todayNote) return (<div>Loading...</div>);
 
   return (
-    <UseRoutineNoteContext initialData={todayRoutineNoteRef.current}>
+    <UseRoutineNoteContext initialData={todayNote}>
       <DaysMenu />
       <NoteView />
     </UseRoutineNoteContext>

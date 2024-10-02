@@ -8,13 +8,12 @@ import { useRoutineNote } from "./use-routine-note";
 
 export const NoteView = () => {
   const routineNote = useRoutineNote(s=>s.routineNote);
-  console.log(routineNote);
 
   // 루틴 체크, 혹은 체크해제시 콜백
   const onCheckChange = useCallback((routine: RoutineTask, checked: boolean) => {
     // 개별루틴 업데이트
     routineManager.updateAchievement({
-      routineName: routine.name, 
+      routineName: routine.name,
       day: routineNote.day,
       checked
     });
@@ -23,7 +22,6 @@ export const NoteView = () => {
     // 루틴노트 업데이트
     routineNoteArchiver.updateTaskCheck(routineNote, routine.name, checked);
   }, [routineNote]);
-
 
   return (
     <div className="dr-note">
