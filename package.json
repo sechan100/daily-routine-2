@@ -27,6 +27,8 @@
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
 		"clsx": "^2.1.1",
+		"eslint-plugin-react": "^7.37.1",
+		"eslint-plugin-react-hooks": "^4.6.2",
 		"i": "^0.3.7",
 		"npm": "^10.8.3",
 		"react": "^18.3.1",

@@ -13,8 +13,9 @@ export interface Task {
   checked: boolean;
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface RoutineTask extends Task {
 
-export type RoutineTask = Task
+}
 
 export interface RoutineNote {
   day: Day;
@@ -97,7 +98,7 @@ const archiveDAO = {
     const tasks: Task[] = content.split('# Tasks')[1].split('\n').flatMap(line => {
       if(line.trim() === '') return [];
       const checked = line.startsWith('- [x]');
-      const name = line.split('] ')[1];
+      const name = line.split('] ')[1].replace('[[', '').replace(']]', '');
       return { name, checked };
     });
 
@@ -129,7 +130,7 @@ day: ${routineNote.day.getAsDefaultFormat()}
 ---
 # Tasks
 ${routineNote.tasks.map(task => {
-  return `- [${task.checked ? 'x' : ' '}] ${task.name}`
+  return `- [${task.checked ? 'x' : ' '}] [[${task.name}]]`
   }).join('\n')
 }
 `
@@ -145,7 +146,7 @@ const createNewRoutineNote = async (day: Day): Promise<RoutineNote> => {
 
   const tasks = routines.flatMap(routine => {
     const taskOrNull = deriveRoutineTask(routine, day);
-    if (taskOrNull) return taskOrNull;
+    if(taskOrNull) return taskOrNull;
     else return [];
   });
 

@@ -32,7 +32,7 @@ export const NoteView = () => {
       {routineNote.tasks.map((task, idx) => {
         return (
           <div key={idx}>
-            <RoutineComponent onCheckChange={onCheckChange} task={task}  />
+            <RoutineComponent onCheckChange={onCheckChange} routine={task}  />
           </div>
         )
       })}

@@ -7,14 +7,26 @@ export enum DayOfWeek {
   SUN,
   MON,
   TUE,
-  WEN,
+  WED,
   THU,
   FRI,
   SAT
 }
+export const DAY_OF_WEEKS = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
+export const dayOfWeekToString = (dayOfWeek: DayOfWeek) => {
+  switch(dayOfWeek) {
+    case DayOfWeek.SUN: return 'SUN';
+    case DayOfWeek.MON: return 'MON';
+    case DayOfWeek.TUE: return 'TUE';
+    case DayOfWeek.WED: return 'WED';
+    case DayOfWeek.THU: return 'THU';
+    case DayOfWeek.FRI: return 'FRI';
+    case DayOfWeek.SAT: return 'SAT';
+  }
+}
 
 export class Day {
-  moment: moment.Moment;
+  #moment: moment.Moment;
   static defaultFormat = 'YYYY-MM-DD';
 
   /**
@@ -24,7 +36,7 @@ export class Day {
   constructor(_moment: moment.Moment) {
     const m = moment(_moment);
     if(m.isValid()) {
-      this.moment = m;
+      this.#moment = m;
     } else {
       throw new Error(`Invalid date format. ${_moment.toString()}`);
     }
@@ -36,7 +48,7 @@ export class Day {
   }
 
   format(format: string){
-    return this.moment.format(format);
+    return this.#moment.format(format);
   }
 
   /**
@@ -44,7 +56,7 @@ export class Day {
    */
   getCurrentWeek(){
     const week = [];
-    const m = moment(this.moment);
+    const m = moment(this.#moment);
     for(let i = 0; i < 7; i++) {
       const day = new Day(m.startOf('week').add(i, 'd'));
       week.push(day);
@@ -53,20 +65,20 @@ export class Day {
   }
 
   getAsUserCustomFormat(){
-    return this.moment.format(gerFormat());
+    return this.#moment.format(gerFormat());
   }
 
   getAsDefaultFormat(){
-    return this.moment.format(Day.defaultFormat);
+    return this.#moment.format(Day.defaultFormat);
   }
 
   getDayOfWeek(): DayOfWeek {  
-    const dayOfWeekNum = Number(moment().format('d'));
+    const dayOfWeekNum = Number(this.#moment.format('d'));
     switch(dayOfWeekNum) {
       case 0: return DayOfWeek.SUN;
       case 1: return DayOfWeek.MON;
       case 2: return DayOfWeek.TUE;
-      case 3: return DayOfWeek.WEN;
+      case 3: return DayOfWeek.WED;
       case 4: return DayOfWeek.THU;
       case 5: return DayOfWeek.FRI;
       case 6: return DayOfWeek.SAT;
@@ -75,7 +87,7 @@ export class Day {
   }
   
   isSameDay(day: Day){
-    return this.moment.isSame(day.moment, 'day');
+    return this.#moment.isSame(day.#moment, 'day');
   }
 
   isSameDayOfWeek(day: Day){

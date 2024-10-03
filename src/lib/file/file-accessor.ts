@@ -73,4 +73,11 @@ export const fileAccessor = {
     return plugin().app.vault.create(path, content);
   },
 
+  /**
+   * 파일을 삭제한다.
+   */
+  deleteFile: async (file: TFile) => {
+    return plugin().app.vault.delete(file);
+  },
+
 }

@@ -17,6 +17,11 @@ interface RoutineProperties {
   dayOfWeeks: DayOfWeek[];
 }
 
+export interface RoutineEditCmd {
+  name?: string,
+  properties?: Partial<RoutineProperties>
+}
+
 
 export const routineManager = {
 
@@ -42,16 +47,13 @@ export const routineManager = {
    * @param routineName 루틴파일명: identifier
    * @param cmd 수정할 내용
    */
-  edit: async (routineName: string, cmd: {
-    name?: string,
-    newProperties?: Partial<RoutineProperties>
-  }) => {
+  edit: async (routineName: string, cmd: RoutineEditCmd) => {
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
 
     // 프로퍼티 변경
-    if(cmd.newProperties){
-      await updateRoutineProperties(file, cmd.newProperties);
+    if(cmd.properties){
+      await updateRoutineProperties(file, cmd.properties);
     }
 
     // routine 이름 변경
@@ -89,7 +91,16 @@ export const routineManager = {
       throw new Error('Routine file is empty.');
     }
     updateAchievement(file, {date: day.getAsDefaultFormat(), checked});
-  }
+  },
+
+  /**
+   * 루틴 삭제하기
+   */
+  delete: async (routineName: string) => {
+    const path = getRoutinePath(routineName);
+    const file = fileAccessor.getFile(path);
+    await fileAccessor.deleteFile(file);
+  },
 
 
 }
@@ -147,6 +158,12 @@ const updateAchievement = (file: TFile, cmd: Achievement) => {
       achievements.remove("# Achievement");
       achievements.remove("");
       const cmdMoment = moment(cmd.date);
+
+      // 최초 성취인 경우
+      if(achievements.length === 0){
+        return content.replace('# Achievement', `# Achievement\n${newAchievementLine(cmd.date, cmd.checked)}`);
+      }
+
       for(const a of achievements){
         const aMoment = moment(a.match(/\d{4}-\d{1,2}-\d{1,2}/)?.[0]);
         if(aMoment.isBefore(cmdMoment)){
@@ -204,7 +221,7 @@ const parseRoutineProperties = (content: string): RoutineProperties => {
     switch(day) {
       case 'MON': return DayOfWeek.MON;
       case 'TUE': return DayOfWeek.TUE;
-      case 'WEN': return DayOfWeek.WEN;
+      case 'WED': return DayOfWeek.WED;
       case 'THU': return DayOfWeek.THU;
       case 'FRI': return DayOfWeek.FRI;
       case 'SAT': return DayOfWeek.SAT;

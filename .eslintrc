@@ -3,7 +3,9 @@
     "parser": "@typescript-eslint/parser",
     "env": { "node": true },
     "plugins": [
-      "@typescript-eslint"
+      "@typescript-eslint",
+      "react",
+      "react-hooks"
     ],
     "extends": [
       "eslint:recommended",
@@ -11,13 +13,15 @@
       "plugin:@typescript-eslint/recommended"
     ], 
     "parserOptions": {
-        "sourceType": "module"
+      "sourceType": "module"
     },
     "rules": {
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["off", {}],
       "@typescript-eslint/ban-ts-comment": "off",
       "no-prototype-builtins": "off",
-      "@typescript-eslint/no-empty-function": "off"
+      "@typescript-eslint/no-empty-function": "off",
+      "react-hooks/rules-of-hooks": "error", // Hooks의 규칙을 강제
+      "react-hooks/exhaustive-deps": "warn"  // 의존성 배열 검사
     } 
   }

@@ -39,11 +39,11 @@ export const serializeProperties = (properties: { [key: string]: () => string; }
  * regex matching
  */
 const matchProperties = (content: string) => {
-  const matched = content.replace("\n", "").match(/---([\s\S]*?)---/);
+  const matched = content.match(/---\n([\s\S]*?)\n---/);
   if(!matched) {
     throw new Error('Routine file does not have property.');
   }
-  return matched[1];
+  return matched[0];
 }
 
 
