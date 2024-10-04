@@ -1,26 +1,4 @@
 
-
-/* #####################################################################
- * ####################### ROUTINE NOTE ################################
- * ##################################################################### */
-.dr-note__header {
-  display: flex;
-  justify-content: start;
-  align-items: end;
-  margin: 1em;
-  gap: 10px;
-}
-
-.dr-note__header h1 {
-  display: inline-block;
-  margin: 0;
-}
-
-.dr-note__header span {
-  font-size: 1.1em;
-}
-
-
 /* #####################################################################
  * ########################## Days Menu ################################
  * ##################################################################### */
@@ -69,6 +47,35 @@
   background-color: hsla(var(--color-accent-1-hsl), 1) !important;
 }
 
+/* #####################################################################
+ * ####################### ROUTINE NOTE ################################
+ * ##################################################################### */
+.dr-note__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1em;
+}
+
+.dr-note__header div {
+  display: flex;
+  justify-content: start;
+  align-items: end;
+  gap: 0.9em;
+}
+
+.dr-note__header div h1 {
+  display: inline-block;
+  margin: 0;
+}
+
+.dr-note__header div span {
+  font-size: 1.1em;
+}
+
+.dr-note__header button.dr-note__add-routine {
+  cursor: pointer;
+}
 
 
 /* #####################################################################

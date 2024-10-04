@@ -3,6 +3,7 @@ import { routineManager } from "entities/routine";
 import { useCallback } from "react";
 import { RoutineComponent } from "./routine";
 import { useRoutineNote } from "./use-routine-note";
+import { AddRoutineModal } from "./add-routine";
 
 
 
@@ -26,8 +27,11 @@ export const NoteView = () => {
   return (
     <div className="dr-note">
       <header className="dr-note__header">
-        <h1>Daily Routine</h1>
-        <span>{routineNote.day.getAsUserCustomFormat()}</span>
+        <div>
+          <h1>Daily Routine</h1>
+          <span>{routineNote.day.getBaseFormat()}</span>
+        </div>
+        <button className="dr-note__add-routine" onClick={() => new AddRoutineModal().open()}>+ Routine</button>
       </header>
       {routineNote.tasks.map((task, idx) => {
         return (

@@ -90,7 +90,7 @@ export const routineManager = {
     if(!content){
       throw new Error('Routine file is empty.');
     }
-    updateAchievement(file, {date: day.getAsDefaultFormat(), checked});
+    updateAchievement(file, {date: day.getBaseFormat(), checked});
   },
 
   /**
@@ -102,6 +102,13 @@ export const routineManager = {
     await fileAccessor.deleteFile(file);
   },
 
+  /**
+   * 루틴 생성하기
+   */
+  create: async (routine: Routine) => {
+    const path = getRoutinePath(routine.name);
+    await fileAccessor.createFile(path, serializeRoutine(routine));
+  },
 
 }
 
@@ -178,6 +185,13 @@ const updateAchievement = (file: TFile, cmd: Achievement) => {
 }
 
 
+const serializeRoutine = (routine: Routine) => {return (
+`---
+  dayOfWeeks: ${routine.properties.dayOfWeeks.map(d => DayOfWeek[d]).join(', ')}
+---
+# Achievement
+`);
+}
 
 /**
  * 루틴 이름으로부터 루틴 파일의 경로를 가져온다.

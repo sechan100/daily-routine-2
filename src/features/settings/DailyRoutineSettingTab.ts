@@ -6,13 +6,11 @@ import { Day } from "lib/day";
 
 export interface DailyRoutinePluginSettings {
   routineFolderPath: string;
-  dateFormat: string;
   routineArchiveFolderPath: string;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
   routineFolderPath: "daily-routine/routines",
-  dateFormat: 'YYYY-MM-DD',
   routineArchiveFolderPath: "daily-routine/archive"
 }
 
@@ -42,38 +40,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
         this.save({ routineFolderPath: normalizePath(value)});
       })
     })
-
-
-    // Routine Note Date Format
-    const getDesc = () => {
-      const fragment = document.createDocumentFragment();
-      const sampleEl = containerEl.createDiv({cls: 'u-pop'});
-      fragment.append("The date format of the routine note.");
-      fragment.append(sampleEl);
-      const updateSample = () => {
-        sampleEl.textContent = `Sample: ${Day.now().getAsUserCustomFormat()}`;
-      };
-      updateSample(); // 초기화
-      return {
-        fragment,
-        updateSample
-      };
-    }
-    const { fragment, updateSample } = getDesc();
-    new Setting(containerEl)
-    .setName("Routine Note Date Format")
-    .setDesc(fragment)
-    .addMomentFormat(m => {
-      m
-      .setPlaceholder("YYYY-MM-DD")
-      .setValue(this.plugin.settings.dateFormat??DEFAULT_SETTINGS.dateFormat as string)
-      .onChange(async (value) => {
-        // 값이 변경되면 설정을 업데이트하고 샘플을 다시 계산
-        this.save({ dateFormat: value});
-        updateSample();
-      });
-    });
-
 
     // Routine Archive Path
     new Setting(containerEl)

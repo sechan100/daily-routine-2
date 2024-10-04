@@ -73,7 +73,7 @@ const archiveDAO = {
    * 특정 day에 해당하는 routineNote file을 가져온다. 
    */
   getRoutineNoteFile: (day: Day): TFile => {
-    const path = getRoutineArchivePath(day.getAsUserCustomFormat());
+    const path = getRoutineArchivePath(day.getBaseFormat());
     return fileAccessor.getFile(path);
   },
 
@@ -82,7 +82,7 @@ const archiveDAO = {
    * routineNote를 file로 저장한다. 
    */
   persistRoutineNote: async (routineNote: RoutineNote): Promise<TFile> => {
-    const path = getRoutineArchivePath(routineNote.day.getAsUserCustomFormat());
+    const path = getRoutineArchivePath(routineNote.day.getBaseFormat());
     const content = serializeRoutineNote(routineNote);
     return fileAccessor.createFile(path, content);
   },
@@ -93,7 +93,7 @@ const archiveDAO = {
    */
   parseFile: async (file: TFile): Promise<RoutineNote> => {
     const content = await fileAccessor.readFileAsReadonly(file);
-    const props = parseProperties(content);
+    // const props = parseProperties(content);
     // "# Tasks" 이후의 내용을 tasks로 변환한다.
     const tasks: Task[] = content.split('# Tasks')[1].split('\n').flatMap(line => {
       if(line.trim() === '') return [];
@@ -103,7 +103,7 @@ const archiveDAO = {
     });
 
     return {
-      day: new Day(moment(props.day)),
+      day: new Day(moment(file.basename)),
       tasks
     };
   },
@@ -126,7 +126,6 @@ const getRoutineArchivePath = (routineNoteTitle: string) => {
 const serializeRoutineNote = (routineNote: RoutineNote): string => {
   const content =
 `---
-day: ${routineNote.day.getAsDefaultFormat()}
 ---
 # Tasks
 ${routineNote.tasks.map(task => {

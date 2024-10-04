@@ -64,11 +64,7 @@ export class Day {
     return week;
   }
 
-  getAsUserCustomFormat(){
-    return this.#moment.format(gerFormat());
-  }
-
-  getAsDefaultFormat(){
+  getBaseFormat(){
     return this.#moment.format(Day.defaultFormat);
   }
 
@@ -98,17 +94,4 @@ export class Day {
     return this.getDayOfWeek() === dayOfWeek;
   }
 
-}
-
-
-/**
- * 사용자가 설정한 날짜 포맷을 가져온다.
- */
-const gerFormat = (): string => {
-  const format = plugin().settings.dateFormat;
-  if(format && format !== '') {
-    return format;
-  } else {
-    return DEFAULT_SETTINGS.dateFormat as string;
-  }
 }
