@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import "./style.css";
 import { NoteView } from "./note";
 import { DaysMenu } from "./days";
-import { Day } from "lib/day";
+import { Day } from "libs/day";
 import { UseRoutineNoteContext } from "./use-routine-note";
 
 

@@ -1,4 +1,4 @@
-import { Day } from "lib/day";
+import { Day } from "libs/day";
 import { useRoutineNote } from "./use-routine-note";
 import moment from "moment";
 import { ButtonComponent } from "obsidian";

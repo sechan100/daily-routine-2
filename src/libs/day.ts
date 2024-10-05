@@ -1,6 +1,6 @@
 import { moment } from "obsidian";
 import { plugin } from "./plugin-service-locator";
-import { DEFAULT_SETTINGS } from "features/settings/DailyRoutineSettingTab";
+import { DEFAULT_SETTINGS } from "settings/DailyRoutineSettingTab";
 
 
 export enum DayOfWeek {

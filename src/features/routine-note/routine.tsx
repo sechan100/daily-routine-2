@@ -2,10 +2,10 @@ import React, { useCallback, useState } from "react"
 import { RoutineTask } from "entities/archive";
 import { Modal, Notice } from "obsidian";
 import clsx from "clsx";
-import { plugin } from "lib/plugin-service-locator";
+import { plugin } from "libs/plugin-service-locator";
 import { createRoot } from "react-dom/client";
 import { Routine, RoutineEditCmd, routineManager } from "entities/routine";
-import { DayOfWeek } from "lib/day";
+import { DayOfWeek } from "libs/day";
 import { DaysOption, RenameOption } from "./routine-option";
 
 

@@ -1,6 +1,6 @@
 import { RoutineNote, routineNoteArchiver } from "entities/archive";
-import { createStoreContext } from "lib/create-store-context";
-import { Day } from "lib/day";
+import { createStoreContext } from "libs/create-store-context";
+import { Day } from "libs/day";
 import { get } from "lodash";
 import { create } from "zustand";
 

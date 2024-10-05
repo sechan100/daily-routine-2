@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Routine, routineManager } from "entities/routine";
-import { DayOfWeek, DAY_OF_WEEKS, dayOfWeekToString } from "lib/day";
+import { DayOfWeek, DAY_OF_WEEKS, dayOfWeekToString } from "libs/day";
 import { TextComponent } from "obsidian";
 import { useCallback, useEffect, useRef, useState } from "react";
 

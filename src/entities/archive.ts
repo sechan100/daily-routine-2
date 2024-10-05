@@ -1,10 +1,10 @@
-import { fileAccessor } from "lib/file/file-accessor";
-import { plugin } from "lib/plugin-service-locator";
+import { fileAccessor } from "libs/file/file-accessor";
+import { plugin } from "libs/plugin-service-locator";
 import { TFile } from "obsidian";
-import { Day } from "lib/day";
+import { Day } from "libs/day";
 import { routineManager, Routine } from "./routine";
-import { FileNotFoundError } from "lib/file/errors";
-import { parseProperties } from "lib/file/utils";
+import { FileNotFoundError } from "libs/file/errors";
+import { parseProperties } from "libs/file/utils";
 import moment from "moment";
 
 

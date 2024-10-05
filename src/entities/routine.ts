@@ -1,8 +1,8 @@
 import { moment, TFile } from "obsidian";
-import { fileAccessor } from "lib/file/file-accessor";
-import { plugin } from "lib/plugin-service-locator";
-import { Day, DayOfWeek } from "lib/day";
-import { changeProperties, parseProperties } from "lib/file/utils";
+import { fileAccessor } from "libs/file/file-accessor";
+import { plugin } from "libs/plugin-service-locator";
+import { Day, DayOfWeek } from "libs/day";
+import { changeProperties, parseProperties } from "libs/file/utils";
 
 
 /**

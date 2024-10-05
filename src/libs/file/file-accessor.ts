@@ -1,5 +1,5 @@
 import { TFile, TFolder } from "obsidian";
-import { plugin } from "lib/plugin-service-locator";
+import { plugin } from "libs/plugin-service-locator";
 import { FileNotFoundError } from "./errors";
 
 
