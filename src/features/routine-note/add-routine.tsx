@@ -1,9 +1,10 @@
+import { Routine, routineManager } from "entities/routine";
+//////////////////////
 import { plugin } from "libs/plugin-service-locator";
 import { Modal, TextComponent } from "obsidian";
 import { createRoot } from "react-dom/client";
-import { DaysOption, RenameOption } from "./routine-option";
-import { Routine, routineManager } from "entities/routine";
-import { Day, DAY_OF_WEEKS, DayOfWeek } from "libs/day";
+import { DaysOption } from "./routine-option";
+import { DAY_OF_WEEKS, DayOfWeek } from "libs/day";
 import React, { useRef, useState, useEffect, useReducer, memo, useCallback } from "react";
 
 

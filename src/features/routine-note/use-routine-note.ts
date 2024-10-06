@@ -1,8 +1,7 @@
-import { RoutineNote, routineNoteArchiver } from "entities/archive";
+import { routineNoteArchiver } from "entities/archive";
+import { RoutineNote } from "entities/routine-note";
 import { createStoreContext } from "libs/create-store-context";
 import { Day } from "libs/day";
-import { get } from "lodash";
-import { create } from "zustand";
 
 
 interface UseRoutineNote {

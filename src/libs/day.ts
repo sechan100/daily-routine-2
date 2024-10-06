@@ -55,6 +55,14 @@ export class Day {
     return this.#moment.date();
   }
 
+  getJsDate(){
+    return this.#moment.toDate();
+  }
+
+  get moment(){
+    return this.#moment;
+  }
+
   /**
    * 이번주 배열을 반환
    */

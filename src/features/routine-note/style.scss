@@ -218,9 +218,7 @@
 /////////////////////////////////////////////
 .dr-routine-option {
   /* 헤더 */
-  .dr-routine-option__header {
-    
-  }
+  // .dr-routine-option__header {}
 
   /* 옵션 본문 */
   section {
@@ -240,8 +238,6 @@
 
 // 이름 변경 section
 .dr-routine-option__name {
-  h6 {
-  }
   // 이름 변경 input
   div {
     display: flex;
@@ -288,9 +284,6 @@
     align-items: center;
     margin: 1em 0;
 
-    p {
-
-    }
     div {
       button {
         padding: 0.5em 1em;

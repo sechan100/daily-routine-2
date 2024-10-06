@@ -1,26 +1,12 @@
+import { routineManager, Routine } from "entities/routine";
+import { RoutineNote, Task, RoutineTask } from "entities/routine-note";
+////////////////////////////////////
 import { fileAccessor } from "libs/file/file-accessor";
 import { plugin } from "libs/plugin-service-locator";
 import { TFile } from "obsidian";
 import { Day } from "libs/day";
-import { routineManager, Routine } from "./routine";
 import { FileNotFoundError } from "libs/file/errors";
-import { parseProperties } from "libs/file/utils";
 import moment from "moment";
-
-
-export interface Task {
-  name: string;
-  checked: boolean;
-}
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface RoutineTask extends Task {
-
-}
-
-export interface RoutineNote {
-  day: Day;
-  tasks: Task[];
-}
 
 
 export const routineNoteArchiver = {
@@ -55,6 +41,20 @@ export const routineNoteArchiver = {
     await archiveDAO.save(routineNote);
   },
 
+
+  async getRoutineNotes(start: Day, end: Day): Promise<RoutineNote[]> {
+    const notes: RoutineNote[] = [];
+    const s = start.moment;
+    const e = end.moment;
+    const routineNoteFiles = fileAccessor.getFolder(plugin().settings.routineArchiveFolderPath).children.filter(file => file instanceof TFile);
+    for(const file of routineNoteFiles){
+      const day = moment(file.basename);
+      if(day.isBetween(s, e, 'day', '[]')){
+        notes.push(await archiveDAO.parseFile(file));
+      }
+    }
+    return notes;
+  },
 
 }
 

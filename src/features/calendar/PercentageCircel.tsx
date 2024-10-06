@@ -4,7 +4,7 @@
 const cleanPercentage = (percentage: number) => {
   const isNegativeOrNaN = !Number.isFinite(+percentage) || percentage < 0; // we can set non-numbers to 0 here
   const isTooHigh = percentage > 100;
-  return isNegativeOrNaN ? 0 : isTooHigh ? 100 : +percentage;
+  return isNegativeOrNaN ? 0 : (isTooHigh ? 100 : +percentage);
 };
 
 
@@ -33,7 +33,7 @@ const Circle = ({ color, percentage }: CircleProps) => {
 
 export const PerCentageCircle = ({ percentage, text }: {percentage: number, text: string}) => {
   const pct = cleanPercentage(percentage);
-  const color = pct > 50 ? "hsla(var(--color-accent-1-hsl), 1)" : "hsla(var(--color-accent-2-hsl), 1)";
+  const color = pct > 70 ? "hsla(var(--color-accent-1-hsl), 1)" : "hsla(var(--color-accent-2-hsl), 1)";
   return (
     <svg data-percentage={percentage} viewBox="0 0 200 200" className="dr-calendar__percentage-circle">
       <g transform="rotate(-90 100 100)" >

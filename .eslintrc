@@ -20,6 +20,7 @@
       "@typescript-eslint/no-unused-vars": ["off", {}],
       "@typescript-eslint/ban-ts-comment": "off",
       "no-prototype-builtins": "off",
+      "@typescript-eslint/no-empty-interface": "off",
       "@typescript-eslint/no-empty-function": "off",
       "react-hooks/rules-of-hooks": "error", // Hooks의 규칙을 강제
       "react-hooks/exhaustive-deps": "warn"  // 의존성 배열 검사

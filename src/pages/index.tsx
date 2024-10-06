@@ -1,11 +1,10 @@
-import { Menu, WorkspaceLeaf } from "obsidian";
-import { ReactView } from "../libs/view/react-view";
-import { RoutineNoteView } from "../features/routine-note";
-import { RoutineNote, routineNoteArchiver } from "entities/archive";
-import { useEffect, useState } from "react";
-import { Day } from "libs/day";
-import "./style.css";
+import { RoutineNoteView } from "features/routine-note";
 import { RoutineCalendar } from "features/calendar";
+////////////////////////////////////
+import { WorkspaceLeaf } from "obsidian";
+import { ReactView } from "../libs/view/react-view";
+import { useState } from "react";
+import "./style.css";
 
 
 export class DailyRoutineView extends ReactView {
@@ -27,11 +26,15 @@ export class DailyRoutineView extends ReactView {
 }
 
 
+
+
+
+type DrPage = "calendar" | "note";
 /**
  * 실제 ROOT PAGE 컴포넌트
  */
 const DailyRoutineViewComponent = () => {
-  const [page, setPage] = useState<"calendar" | "note">("calendar");
+  const [page, setPage] = useState<DrPage>("note");
 
   return (
     <div>

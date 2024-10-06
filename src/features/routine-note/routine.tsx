@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react"
-import { RoutineTask } from "entities/archive";
+import { RoutineTask } from "entities/routine-note";
 import { Modal, Notice } from "obsidian";
 import clsx from "clsx";
 import { plugin } from "libs/plugin-service-locator";

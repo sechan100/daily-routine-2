@@ -4,14 +4,6 @@ $color-disabled-bg: #f0f0f0;
 $color-disabled-text: #ababab;
 $color-disabled-neighbor: #cdcdcd;
 $color-hover-bg: #e6e6e6;
-$color-active-bg: #006edc;
-$color-active-hover-bg: #1087ff;
-$color-today-bg: #ffff76;
-$color-today-hover-bg: #ffffa9;
-$color-range-hover-bg: #e6e6e6;
-$color-hasActive-bg: #76baff;
-$color-hasActive-hover-bg: #a9d4ff;
-$color-neighbor-text: #757575;
 
 // 공통 스타일
 .react-calendar,
@@ -107,6 +99,7 @@ $color-neighbor-text: #757575;
   gap: 0.5em 0;
 
   &__day {
+    position: relative;
     padding: 0 !important;
     box-shadow: none !important;
     cursor: pointer !important;
@@ -116,24 +109,28 @@ $color-neighbor-text: #757575;
     display: none;
   }
 
-  &--neighboringMonth {
-    color: $color-neighbor-text;
+  .dr-calendar__percentage-circle {
+    width: 100%;
+    height: 100%;
+    circle {
+      position: relative;
+      transition: all 0.7s ease-in-out;
+    }
   }
-
-  &--weekend {
-    // 주말 스타일은 여기 추가 가능
+}
+// 이웃한 달의 날짜
+.react-calendar__month-view__days__day--neighboringMonth {
+  .dr-calendar__percentage-circle {
+    circle {
+      stroke: $color-disabled-neighbor;
+      stroke-opacity: 0.1;
+    }
+    text {
+      opacity: 0.2;
+    }
   }
 }
 
-// Percentage Circle
-.dr-calendar__percentage-circle {
-  width: 100%;
-  height: 100%;
-
-  circle {
-    transition: all 0.7s ease-in-out;
-  }
-}
 
 // react-calendar 타일
 .react-calendar__tile {
@@ -146,60 +143,7 @@ $color-neighbor-text: #757575;
   font: inherit;
   font-size: 0.7em;
 
-  &:disabled {
-    background-color: $color-disabled-bg;
-    color: $color-disabled-text;
-
-    &--neighboringMonth,
-    &--neighboringDecade,
-    &--neighboringCentury {
-      color: $color-disabled-neighbor;
-    }
+  &:hover {
+    background-color: $color-hover-bg;
   }
-
-  &:enabled {
-    &:hover,
-    &:focus {
-      background-color: $color-hover-bg;
-    }
-  }
-
-  &--now {
-    background: $color-today-bg;
-
-    &:enabled {
-      &:hover,
-      &:focus {
-        background: $color-today-hover-bg;
-      }
-    }
-  }
-
-  &--hasActive {
-    background: $color-hasActive-bg;
-
-    &:enabled {
-      &:hover,
-      &:focus {
-        background: $color-hasActive-hover-bg;
-      }
-    }
-  }
-
-  &--active {
-    background: $color-active-bg;
-    color: white;
-
-    &:enabled {
-      &:hover,
-      &:focus {
-        background: $color-active-hover-bg;
-      }
-    }
-  }
-}
-
-// Range 선택 시 hover 효과
-.react-calendar--selectRange .react-calendar__tile--hover {
-  background-color: $color-range-hover-bg;
 }
