@@ -21,7 +21,7 @@ export const RoutineCalendar = ({ defaultDay }: RoutineCalendarProps) => {
   useEffect(() => {
     const start = new Day(activeDay.moment.startOf("month"));
     const end = new Day(activeDay.moment.endOf("month"));
-    routineNoteArchiver.getRoutineNotes(start, end)
+    routineNoteArchiver.loadBetween(start, end)
     .then(notes => {
       setRoutineNotes(notes)
       console.log(notes);

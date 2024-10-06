@@ -81,8 +81,8 @@ export const routineManager = {
    * 루틴 성취 업데이트
    */
   updateAchievement: async ({routineName, day, checked}: {
-    routineName: string, 
-    day: Day, 
+    routineName: string,
+    day: Day,
     checked: boolean
   }) => {
     const file = fileAccessor.getFile(getRoutinePath(routineName));

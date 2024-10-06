@@ -1,11 +1,12 @@
-import { routineNoteArchiver } from "entities/archive";
+import { loadOrCreateRoutineNote } from "entities/utils";
 import { RoutineNote } from "entities/routine-note";
-import React, { useEffect, useRef, useState } from "react";
-import "./style.scss";
+/////////////////////
+import { useEffect, useState } from "react";
 import { NoteView } from "./note";
 import { DaysMenu } from "./days";
 import { Day } from "libs/day";
 import { UseRoutineNoteContext } from "./use-routine-note";
+import "./style.scss";
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -16,7 +17,7 @@ export const RoutineNoteView = ({ day }: Props) => {
   const [todayNote, setTodayNote] = useState<RoutineNote | null>(null);
 
   useEffect(() => {
-    routineNoteArchiver.getRoutineNote(day??Day.now())
+    loadOrCreateRoutineNote(day??Day.now())
     .then(note => {
       setTodayNote(note);
     });

@@ -1,6 +1,7 @@
 import { routineNoteArchiver } from "entities/archive";
-import { RoutineTask } from "entities/routine-note";
+import { routineNoteService, RoutineTask } from "entities/routine-note";
 import { routineManager } from "entities/routine";
+////////////////////////
 import { useCallback } from "react";
 import { RoutineComponent } from "./routine";
 import { useRoutineNote } from "./use-routine-note";
@@ -20,9 +21,9 @@ export const NoteView = () => {
       checked
     });
 
-
     // 루틴노트 업데이트
-    routineNoteArchiver.updateTaskCheck(routineNote, routine.name, checked);
+    routineNoteService.checkTask(routineNote, routine.name, checked);
+    routineNoteArchiver.save(routineNote);
   }, [routineNote]);
 
   return (
