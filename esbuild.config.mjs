@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import { sassPlugin } from 'esbuild-sass-plugin';
 import fs from "fs";
 
 const banner = `/*
@@ -61,6 +62,7 @@ const context = await esbuild.context({
   outfile: "main.js",  // JavaScript 번들 파일
   plugins: [
     renamePlugin,  // CSS 파일 이름 변경 플러그인
+    sassPlugin(),  // SASS 파일 로더
   ],
   loader: {
     ".tsx": "tsx",  // TypeScript와 TSX 파일을 처리

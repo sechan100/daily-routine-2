@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import { Routine, RoutineEditCmd, routineManager } from "entities/routine";
 import { DayOfWeek } from "libs/day";
 import { DaysOption, RenameOption } from "./routine-option";
+import { on } from "events";
 
 
 
@@ -26,10 +27,22 @@ export const RoutineComponent = ({ routine, onCheckChange }: Props) => {
     modal.open();
   }
 
+  const onClick = useCallback((e: React.MouseEvent) => {
+    const cns = e.currentTarget.classList;
+    // 먼저 클래스 toggle
+    cns.toggle('dr-routine--checked');
+    const isChecked = cns.contains('dr-routine--checked');
+    onCheckChange(routine, isChecked)
+    setChecked(isChecked)
+  }, [onCheckChange, routine])
+
   return (
-    <label 
-      className={clsx("dr-routine", {"dr-routine--pressed": isPressed})}
-      htmlFor={id}
+    <div
+      className={clsx("dr-routine", {
+        "dr-routine--pressed": isPressed,
+        "dr-routine--checked": checked
+      })}
+      onClick={onClick}
       onContextMenu={contextMenu}
       onTouchStart={() => {pressTimeout.current = setTimeout(() => setIsPressed(true), 150)}}
       onTouchEnd={() => {
@@ -39,23 +52,17 @@ export const RoutineComponent = ({ routine, onCheckChange }: Props) => {
         setIsPressed(false)
       }}
     >
-      {/* 전체적으로 감싸주는 label */}
-      <label htmlFor={id} className="dr-routine__item">
-        {/* 체크박스(hidden) */}
-        <input checked={checked} onChange={(e) => {
-          onCheckChange(routine, e.target.checked)
-          setChecked(e.target.checked)
-        }} type="checkbox" id={id} className="hidden"/>
-        {/* 체크박스(display) */}
-        <label htmlFor={id} className="dr-routine__cbx">
+      <div className="dr-routine__flex">
+        {/* 체크박스 */}
+        <span className="dr-routine__cbx">
           <svg viewBox="0 0 14 12">
             <polyline points="1 7.6 5 11 13 1"></polyline>
           </svg>
-        </label>
+        </span>
         {/* 루틴 이름 */}
-        <label htmlFor={id} className="dr-routine__name">{routine.name}</label>
-      </label>
-    </label>
+        <span className="dr-routine__name">{routine.name}</span>
+      </div>
+    </div>
   )
 }
 
@@ -69,11 +76,8 @@ class RoutineOptionModal extends Modal {
     super(plugin().app);
     this.#routine = routine;
     this.#daysSet = new Set(routine.properties.dayOfWeeks);
-    const el = document.createElement('div');
+    const el = this.contentEl;
     createRoot(el).render(<RoutineOptionModalComponent routine={routine} daysSet={this.#daysSet} modal={this} />);
-    const content = document.createDocumentFragment();
-    content.appendChild(el);
-    super.setContent(content);
   }
 
   // 닫힐 때 저장
@@ -129,9 +133,9 @@ const RoutineOptionModalComponent = React.memo(function RoutineOptionModalCompon
 
   if(!routine) return <div>Loading...</div>
   return (
-    <div className="dr-routine-modal">
+    <div className="dr-routine-option">
       {/* 헤더 */}
-      <div className="dr-routine-modal__header">
+      <div className="dr-routine-option__header">
         <h4>{routine.name}</h4>
       </div>
         
@@ -145,7 +149,7 @@ const RoutineOptionModalComponent = React.memo(function RoutineOptionModalCompon
         {/* 요일 */}
         <DaysOption daysSet={daysSet} />
         {/* 삭제 */}
-        <div className="dr-routine-modal__section dr-routine-modal__delete">
+        <div className="dr-routine-option__section dr-routine-option__delete">
           <h6>Delete The Routine</h6>
           <button onClick={onDeleteBtnClick}>Delete</button>
         </div>

@@ -1,4 +1,4 @@
-import { RoutineNote, RoutineTask, routineNoteArchiver } from "entities/archive";
+import { RoutineTask, routineNoteArchiver } from "entities/archive";
 import { routineManager } from "entities/routine";
 import { useCallback } from "react";
 import { RoutineComponent } from "./routine";

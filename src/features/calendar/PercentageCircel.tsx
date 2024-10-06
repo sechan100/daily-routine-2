@@ -43,7 +43,7 @@ export const PerCentageCircle = ({ percentage, text }: {percentage: number, text
       <text
         x="50%"
         y="50%"
-        text-anchor="middle"
+        textAnchor="middle"
         fontSize="45"
         dominantBaseline="central"
       >

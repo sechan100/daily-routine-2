@@ -5,7 +5,7 @@ import { RoutineNote, routineNoteArchiver } from "entities/archive";
 import { useEffect, useState } from "react";
 import { Day } from "libs/day";
 import "./style.css";
-import { RoutineCalendar } from "features/calendar/RoutineCalendar";
+import { RoutineCalendar } from "features/calendar";
 
 
 export class DailyRoutineView extends ReactView {

@@ -1,6 +1,6 @@
 import { RoutineNote, routineNoteArchiver } from "entities/archive";
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import "./style.css";
+import React, { useEffect, useRef, useState } from "react";
+import "./style.scss";
 import { NoteView } from "./note";
 import { DaysMenu } from "./days";
 import { Day } from "libs/day";

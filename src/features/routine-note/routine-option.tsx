@@ -13,8 +13,8 @@ interface DaysOptionProps {
 export const DaysOption = ({ daysSet }: DaysOptionProps) => {
   // 날짜 하나하나 클릭시
   const onDayClick = useCallback((e: React.MouseEvent) => {
-    e.currentTarget.classList.toggle("dr-routine-modal__day--active");
-    const isActive = e.currentTarget.classList.contains("dr-routine-modal__day--active");
+    e.currentTarget.classList.toggle("dr-routine-option__day--active");
+    const isActive = e.currentTarget.classList.contains("dr-routine-option__day--active");
     const dayOfWeek = Number(e.currentTarget.getAttribute('data-day')) as DayOfWeek;
     if(isActive){
       daysSet.add(dayOfWeek);
@@ -24,9 +24,9 @@ export const DaysOption = ({ daysSet }: DaysOptionProps) => {
   }, [daysSet])
 
   return (
-    <div className="dr-routine-modal__section dr-routine-modal__days">
+    <div className="dr-routine-option__section dr-routine-option__days">
       <h6>Days</h6>
-      <div className="dr-routine-modal__day-list">
+      <div className="dr-routine-option__day-list">
         {DAY_OF_WEEKS.map((dayOfWeek, idx) => {
           const isActive = daysSet.has(dayOfWeek);
           return (
@@ -62,7 +62,7 @@ export const RenameOption = ({ initialName, onSave }: RenameOptionProps) => {
   }, [])
 
   return (
-    <div className="dr-routine-modal__section dr-routine-modal__name">
+    <div className="dr-routine-option__section dr-routine-option__name">
       <h6>Name</h6>
       <div ref={nameEditElRef} />
       <button onClick={() => onSave(name)}>Save</button>

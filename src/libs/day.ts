@@ -51,6 +51,10 @@ export class Day {
     return this.#moment.format(format);
   }
 
+  getDate(){
+    return this.#moment.date();
+  }
+
   /**
    * 이번주 배열을 반환
    */
@@ -86,12 +90,11 @@ export class Day {
     return this.#moment.isSame(day.#moment, 'day');
   }
 
-  isSameDayOfWeek(day: Day){
-    return this.getDayOfWeek() === day.getDayOfWeek();
+  isSameDayOfWeek(day: Day | DayOfWeek){
+    if(day instanceof Day) {
+      return this.getDayOfWeek() === day.getDayOfWeek();
+    } else {
+      return this.getDayOfWeek() === day;
+    }
   }
-
-  isSameDayOfWeeks(dayOfWeek: DayOfWeek){
-    return this.getDayOfWeek() === dayOfWeek;
-  }
-
 }
