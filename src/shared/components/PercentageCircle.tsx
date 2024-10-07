@@ -1,4 +1,4 @@
-
+import "./percentage-circle.scss"
 
 
 const cleanPercentage = (percentage: number) => {
@@ -35,7 +35,7 @@ export const PerCentageCircle = ({ percentage, text }: {percentage: number, text
   const pct = cleanPercentage(percentage);
   const color = pct > 70 ? "hsla(var(--color-accent-1-hsl), 1)" : "hsla(var(--color-accent-2-hsl), 1)";
   return (
-    <svg data-percentage={percentage} viewBox="0 0 200 200" className="dr-calendar__percentage-circle">
+    <svg data-percentage={percentage} viewBox="0 0 200 200" className="dr-percentage-circle">
       <g transform="rotate(-90 100 100)" >
         <Circle color="lightgrey" percentage={100} />
         <Circle color={color} percentage={pct} />

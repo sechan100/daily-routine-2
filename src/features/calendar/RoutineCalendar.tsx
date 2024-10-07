@@ -2,12 +2,12 @@ import { routineNoteArchiver } from "entities/archive";
 import { RoutineNote, routineNoteService } from "entities/routine-note";
 //////////////////////////////
 import { Day } from "shared/day";
-import { PerCentageCircle } from "./PercentageCircel";
+import { PerCentageCircle } from "shared/components/PercentageCircle";
 import Calendar from "react-calendar"
-import "./calendar-style.scss";
 import { moment } from "obsidian";
 import { useCallback, useEffect, useState } from "react";
 import { OnArgs } from "react-calendar/dist/cjs/shared/types";
+import "./calendar-style.scss";
 
 
 export interface RoutineCalendarProps {

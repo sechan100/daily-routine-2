@@ -109,7 +109,7 @@ $color-hover-bg: #e6e6e6;
     display: none;
   }
 
-  .dr-calendar__percentage-circle {
+  .dr-percentage-circle {
     width: 100%;
     height: 100%;
     circle {
@@ -120,10 +120,10 @@ $color-hover-bg: #e6e6e6;
 }
 // 이웃한 달의 날짜
 .react-calendar__month-view__days__day--neighboringMonth {
-  .dr-calendar__percentage-circle {
+  .dr-percentage-circle {
     circle {
-      stroke: $color-disabled-neighbor;
-      stroke-opacity: 0.1;
+      stroke: $color-disabled-neighbor !important;
+      stroke-opacity: 0.1 !important;
     }
     text {
       opacity: 0.2;
