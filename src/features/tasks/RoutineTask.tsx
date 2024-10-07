@@ -6,7 +6,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 import clsx from "clsx";
 import "./routine-task.scss";
 import { set } from "lodash";
-import { useSyncedState } from "shared/hooks/use-synced-state";
 
 
 interface RoutineTaskProps {
@@ -15,7 +14,10 @@ interface RoutineTaskProps {
   onContextMenu: (e: React.MouseEvent) => void;
 }
 export const RoutineTask = ({ routineNote, task, onContextMenu }: RoutineTaskProps) => {
-  const [checked, setChecked] = useSyncedState(task.checked);
+  const [checked, setChecked] = useState(task.checked);
+  useEffect(() => {
+    setChecked(task.checked)
+  }, [task.checked])
   const [isPressed, setIsPressed] = useState(false);
   const pressTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -30,16 +32,16 @@ export const RoutineTask = ({ routineNote, task, onContextMenu }: RoutineTaskPro
     routineManager.updateAchievement({
       routineName: task.name,
       day: routineNote.day,
-      checked
+      checked: isChecked
     });
 
     // 루틴노트 업데이트
-    routineNoteService.checkTask(routineNote, task.name, checked);
+    routineNoteService.checkTask(routineNote, task.name, isChecked);
     routineNoteArchiver.save(routineNote);
 
     // 상태 업데이트
     setChecked(isChecked)
-  }, [task.name, routineNote, checked, setChecked])
+  }, [task.name, routineNote])
 
   return (
     <div

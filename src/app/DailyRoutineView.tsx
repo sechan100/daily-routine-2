@@ -1,7 +1,7 @@
 import { RoutineNote } from "pages/routine-note/RoutineNote";
 import { RoutineCalendar } from "pages/calendar";
 ////////////////////////////////////
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Day } from "shared/day";
 import { usePageRoute } from "./use-page-route";
 import "./style.css";
