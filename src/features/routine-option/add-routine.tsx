@@ -1,14 +1,20 @@
 import { Routine, routineManager } from "entities/routine";
 //////////////////////
-import { plugin } from "libs/plugin-service-locator";
+import { plugin } from "shared/plugin-service-locator";
 import { Modal, TextComponent } from "obsidian";
 import { createRoot } from "react-dom/client";
-import { DaysOption } from "./routine-option";
-import { DAY_OF_WEEKS, DayOfWeek } from "libs/day";
+import { DaysOption } from "./DaysOption";
+import { DAY_OF_WEEKS, DayOfWeek } from "shared/day";
 import React, { useRef, useState, useEffect, useReducer, memo, useCallback } from "react";
 
 
-export class AddRoutineModal extends Modal {
+
+export const openAddRoutineModal = () => {
+  new AddRoutineModal().open();
+}
+
+// Obsidian Modal
+class AddRoutineModal extends Modal {
   constructor() {
     super(plugin().app);
     const el = document.createElement('div');
@@ -17,15 +23,9 @@ export class AddRoutineModal extends Modal {
     content.appendChild(el);
     super.setContent(content);
   }
-
 }
 
-const initialRoutine = {
-  name: "new daily routine",
-  properties: {
-    dayOfWeeks: DAY_OF_WEEKS
-  }
-}
+
 type RoutineReducerAction = 
   | {type: "NAME", payload: string}
   | {type: "ADD_DAYS", payload: DayOfWeek}
@@ -50,63 +50,57 @@ const routineReducer: Reducer = (state, action) => {
       return state;
   }
 };
-class DaysOfWeeksDispatchSet extends Set {
-  dispatch: React.Dispatch<RoutineReducerAction>;
-  constructor(dispatch: React.Dispatch<RoutineReducerAction>) {
-    super(DAY_OF_WEEKS);
-    this.dispatch = dispatch;
-  }
-  override add = (value: DayOfWeek): this => {
-    super.add(value);
-    this.dispatch({type: "ADD_DAYS", payload: value});
-    return this;
-  }
 
-  override delete = (value: DayOfWeek): boolean => {
-    const result = super.delete(value);
-    this.dispatch({type: "DELETE_DAYS", payload: value});
-    return result;
+const defaultRoutine = {
+  name: "new daily routine",
+  properties: {
+    dayOfWeeks: DAY_OF_WEEKS
   }
 }
-
 const AddRoutineModalComponent = memo(function AddRoutineModalComponent({ modal }: { modal: AddRoutineModal }) {
-  const [routine, dispatch] = useReducer<Reducer>(routineReducer, initialRoutine);
+  const [routine, dispatch] = useReducer<Reducer>(routineReducer, defaultRoutine);
 
-  const createNewRoutine = useCallback(() => {
-    routineManager.create(routine);
-    modal.close();
-  }, [modal, routine]);
-
-  return (
-    <div>
-      <h4>Add New Routine</h4>
-      <NameOption initialName="new daily routine" onChange={name => dispatch({type: "NAME", payload: name})} />
-      <DaysOption daysSet={new DaysOfWeeksDispatchSet(dispatch)} />
-      <button onClick={() => createNewRoutine()}>Save</button>
-    </div>
-  )
-})
-
-export const NameOption = React.memo(function NameOption({ initialName, onChange }: {initialName: string, onChange: (name: string) => void}){
   // 이름 수정
   const nameEditElRef = useRef<HTMLDivElement>(null);
-  const [name, setName] = useState(initialName);
   useEffect(() => {
     if(!nameEditElRef.current) return;
     const textComp = new TextComponent(nameEditElRef.current)
-    .setValue(name)
+    .setValue(routine.name)
     .onChange((value) => {
-      setName(value);
-      onChange(value);
+      dispatch({type: "NAME", payload: value});
     });
     textComp.inputEl.focus();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // 루틴 생성
+  const createNewRoutine = useCallback(() => {
+    routineManager.create(routine);
+    modal.close();
+  }, [modal, routine]);
+
+  // 요일 수정
+  const onDaysChange = useCallback((action: "add" | "remove", day: DayOfWeek) => {
+    if(action === "add"){
+      dispatch({type: "ADD_DAYS", payload: day});
+    } else {
+      dispatch({type: "DELETE_DAYS", payload: day});
+    }
+  }, [])
+
+
   return (
-    <div className="dr-routine-modal__section dr-routine-modal__name">
-      <h6>Name</h6>
-      <div ref={nameEditElRef} />
+    <div>
+      <h4>Add New Routine</h4>
+      {/* Name */}
+      <div className="dr-routine-option__section dr-routine-option-name">
+        <h6>Name</h6>
+        <div ref={nameEditElRef} />
+      </div>
+      {/* Days */}
+      <DaysOption className="routine" getDays={() => routine.properties.dayOfWeeks} onDaysChange={onDaysChange}  />
+      {/* Save */}
+      <button onClick={() => createNewRoutine()}>Save</button>
     </div>
   )
 })

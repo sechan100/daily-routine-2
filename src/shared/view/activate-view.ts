@@ -1,5 +1,5 @@
 import { WorkspaceLeaf } from "obsidian";
-import { plugin } from "libs/plugin-service-locator";
+import { plugin } from "shared/plugin-service-locator";
 
 /**
   * viewType에 해당하는 뷰를 활성화한다.

@@ -1,8 +1,8 @@
 import { Plugin } from 'obsidian';
-import { setPlugin } from './libs/plugin-service-locator';
+import { setPlugin } from './shared/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
-import { DailyRoutineView } from './pages';
-import { activateView } from './libs/view/activate-view';
+import { DailyRoutineObsidianView } from './app';
+import { activateView } from './shared/view/activate-view';
 import { devOnlyTest } from './dev-only-test-btn';
 
 export default class DailyRoutinePlugin extends Plugin {
@@ -18,12 +18,12 @@ export default class DailyRoutinePlugin extends Plugin {
     this.addSettingTab(new DailyRoutineSettingTab(this.app, this));
 
     this.registerView(
-      DailyRoutineView.VIEW_TYPE,
-      (leaf) => new DailyRoutineView(leaf)
+      DailyRoutineObsidianView.VIEW_TYPE,
+      (leaf) => new DailyRoutineObsidianView(leaf)
     );
 
     this.addRibbonIcon("dice", "Routine View", () => {
-      activateView(DailyRoutineView.VIEW_TYPE);
+      activateView(DailyRoutineObsidianView.VIEW_TYPE);
     });
 
     this.addRibbonIcon("reset", "test", () => {

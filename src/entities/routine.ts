@@ -1,8 +1,8 @@
 import { moment, TFile } from "obsidian";
-import { fileAccessor } from "libs/file/file-accessor";
-import { plugin } from "libs/plugin-service-locator";
-import { Day, DayOfWeek } from "libs/day";
-import { changeProperties, parseProperties } from "libs/file/utils";
+import { fileAccessor } from "shared/file/file-accessor";
+import { plugin } from "shared/plugin-service-locator";
+import { Day, DayOfWeek } from "shared/day";
+import { changeProperties, parseProperties } from "shared/file/utils";
 
 
 /**
@@ -13,22 +13,38 @@ export interface Routine {
   properties: RoutineProperties; // 루틴 파일의 프로퍼티
 }
 
-interface RoutineProperties {
+export interface RoutineProperties {
   dayOfWeeks: DayOfWeek[];
 }
 
-export interface RoutineEditCmd {
-  name?: string,
-  properties?: Partial<RoutineProperties>
-}
 
-
-export const routineManager = {
-
+interface RoutineManager {
   /**
    * 모든 루틴들 가져오기
    */
-  getAllRoutines: async (): Promise<Routine[]> => {
+  getAllRoutines: () => Promise<Routine[]>;
+
+  // 루틴 properties 변경
+  edit: (routineName: string, properties: Partial<RoutineProperties>) => Promise<void>;
+
+  // remane
+  rename: (routineName: string, newName: string) => Promise<void>;
+
+  // 루틴 가져오기
+  get: (routineName: string) => Promise<Routine>;
+
+  // 루틴 성취 업데이트
+  updateAchievement: (cmd: {routineName: string, day: Day, checked: boolean}) => Promise<void>;
+
+  // 루틴 삭제하기
+  delete: (routineName: string) => Promise<void>;
+
+  // 루틴 생성하기
+  create: (routine: Routine) => Promise<void>;
+}
+export const routineManager: RoutineManager = {
+
+  async getAllRoutines(){
     const path = getRoutineFolderPath();
 
     const parsedRoutines = [];
@@ -42,36 +58,25 @@ export const routineManager = {
     return await Promise.all(parsedRoutines);
   },
 
-  /**
-   * 루틴파일 수정
-   * @param routineName 루틴파일명: identifier
-   * @param cmd 수정할 내용
-   */
-  edit: async (routineName: string, cmd: RoutineEditCmd) => {
+  async edit(routineName, properties){
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
+    await updateRoutineProperties(file, properties);
+  },
 
-    // 프로퍼티 변경
-    if(cmd.properties){
-      await updateRoutineProperties(file, cmd.properties);
-    }
-
-    // routine 이름 변경
-    // 이름 변경을 가장 마지막에 해야 위의 변경사항들을 위해서 파일을 추적할 때, 바뀐 이름때문에 추적이 불가능해지는 경우가 발생하지 않는다.
-    if(cmd.name && cmd.name !== routineName){
+  async rename(routineName, newName){
+    const path = getRoutinePath(routineName);
+    const file = fileAccessor.getFile(path);
+    if(newName !== routineName){
       try {
-        await fileAccessor.renameFileWithLinks(file, getRoutinePath(cmd.name));
+        await fileAccessor.renameFileWithLinks(file, getRoutinePath(newName));
       } catch (e) {
         console.error(e);
       }
     }
   },
 
-  /**
-   * 루틴 가져오기
-   * @param routineName 루틴파일명: identifier
-   */
-  get: async (routineName: string): Promise<Routine> => {
+  async get(routineName){
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
     return await readRoutineFile(file);
@@ -80,11 +85,7 @@ export const routineManager = {
   /**
    * 루틴 성취 업데이트
    */
-  updateAchievement: async ({routineName, day, checked}: {
-    routineName: string,
-    day: Day,
-    checked: boolean
-  }) => {
+  async updateAchievement({routineName, day, checked}){
     const file = fileAccessor.getFile(getRoutinePath(routineName));
     const content = await fileAccessor.readFileFromDisk(file);
     if(!content){
@@ -96,7 +97,7 @@ export const routineManager = {
   /**
    * 루틴 삭제하기
    */
-  delete: async (routineName: string) => {
+  async delete(routineName: string){
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
     await fileAccessor.deleteFile(file);
@@ -105,7 +106,7 @@ export const routineManager = {
   /**
    * 루틴 생성하기
    */
-  create: async (routine: Routine) => {
+  async create(routine: Routine){
     const path = getRoutinePath(routine.name);
     await fileAccessor.createFile(path, serializeRoutine(routine));
   },

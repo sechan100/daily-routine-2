@@ -1,0 +1,125 @@
+// 루틴 컴포넌트 레이아웃 설정
+.dr-routine-task *,
+.dr-routine-task ::after,
+.dr-routine-task ::before {
+  box-sizing: border-box;
+}
+
+// 개별 루틴 
+.dr-routine-task {
+  display: block;
+  font-size: 16px; /* 전체적 루틴의 사이즈를 결정 */
+  width: fit-content;
+  padding: calc(0.5em) 0;
+  cursor: pointer;
+  min-width: 50%;
+  &.dr-routine-task--pressed { // context menu를 표시하려고 누르고 있는 상태에
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dr-routine-task__flex {
+    display: flex;
+    align-items: center;
+    vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    line-height: 1;
+
+    .dr-routine-task__cbx {
+      position: relative;
+      top: calc(1/32 * 1em);
+      display: inline-block;
+      width: calc(14/16 * 1em);
+      height: calc(14/16 * 1em);
+      margin-right: calc(0.5em);
+      border: calc(1/16 * 1em) solid #c8ccd4;
+      border-radius: 3px; /* 체크박스 곡률 */
+      cursor: pointer;
+      svg {
+        position: relative;
+        width: calc(7/8 * 1em);
+        height: calc(3/4 * 1em);
+        top: calc(-1/16 * 1em);
+        transform: scale(0);
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        polyline {
+          stroke-width: 3;
+          stroke: hsla(var(--color-accent-1-hsl), 1);
+        }
+      }
+      // 체크표시 아이콘
+      &:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: calc(-5/8 * 1em) 0 0 calc(-5/8 * 1em);
+        width: calc(5/4 * 1em);
+        height: calc(5/4 * 1em);
+        border-radius: 100%;
+        background: hsla(var(--color-accent-1-hsl), 1.0);
+        transform: scale(0);
+      }
+      /* 체크 이펙트 */
+      &:after {
+        content: '';
+        position: absolute;
+        top: calc(5/16 * 1em);
+        left: calc(5/16 * 1em);
+        width: calc(1/8 * 1em);
+        height: calc(1/8 * 1em);
+        border-radius: 2px; 
+        box-shadow: 0 calc(9/8 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * 1em) calc(3/4 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(9/8 * 1em) 0 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * 1em) calc(3/4 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), 0 calc(9/8 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * -1em) calc(3/4 * 1em) 0 hsla(var(--color-accent-1-hsl), 1.0), calc(9/8 * -1em) 0 0 hsla(var(--color-accent-1-hsl), 1.0), calc(3/4 * -1em) calc(3/4 * -1em) 0 hsla(var(--color-accent-1-hsl), 1.0);
+        transform: scale(0);
+      }
+    }
+    // 루틴 이름
+    .dr-routine-task__name {
+      position: relative;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      // 체크선(check되면 width를 100%로 바꿔서 애니메이션과 함께 나타나도록)
+      &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #9098a9;
+      }
+    }
+  }
+}
+// 체크된 상태
+.dr-routine-task.dr-routine-task--checked {
+  .dr-routine-task__cbx {
+    border-color: transparent;
+    svg {
+      transform: scale(1);
+      transition: all 0.4s ease;
+      transition-delay: 0.1s;
+    }
+    &:before {
+      transform: scale(1);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    &:after {
+      transform: scale(1);
+      opacity: 0;
+      transition: all 0.6s ease;
+    }
+  }
+  .dr-routine-task__name {
+    color: #9098a9;
+    &:after {
+      width: 100%;
+      transition: all 0.4s ease;
+    }
+  }
+}

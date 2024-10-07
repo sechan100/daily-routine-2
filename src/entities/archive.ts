@@ -1,12 +1,12 @@
 import { routineManager, Routine } from "entities/routine";
 import { RoutineNote, routineNoteService, Task } from "entities/routine-note";
 ////////////////////////////////////
-import { fileAccessor } from "libs/file/file-accessor";
-import { plugin } from "libs/plugin-service-locator";
+import { fileAccessor } from "shared/file/file-accessor";
+import { plugin } from "shared/plugin-service-locator";
 import { TFile } from "obsidian";
-import { Day } from "libs/day";
+import { Day } from "shared/day";
 import moment from "moment";
-import { FileNotFoundError } from "libs/file/errors";
+import { FileNotFoundError } from "shared/file/errors";
 
 
 

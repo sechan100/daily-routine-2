@@ -1,4 +1,4 @@
-import { Day } from "libs/day";
+import { Day } from "shared/day";
 import { routineNoteArchiver } from "./archive";
 import { RoutineNote, routineNoteService } from "./routine-note";
 

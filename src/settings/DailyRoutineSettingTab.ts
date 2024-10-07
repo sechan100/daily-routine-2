@@ -1,7 +1,7 @@
 import DailyRoutinePlugin from "main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "./suggesters/FileSuggester";
-import { Day } from "libs/day";
+import { Day } from "shared/day";
 
 
 export interface DailyRoutinePluginSettings {

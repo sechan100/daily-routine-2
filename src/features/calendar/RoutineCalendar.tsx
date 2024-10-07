@@ -1,7 +1,7 @@
 import { routineNoteArchiver } from "entities/archive";
 import { RoutineNote, routineNoteService } from "entities/routine-note";
 //////////////////////////////
-import { Day } from "libs/day";
+import { Day } from "shared/day";
 import { PerCentageCircle } from "./PercentageCircel";
 import Calendar from "react-calendar"
 import "./calendar-style.scss";
@@ -10,13 +10,18 @@ import { useCallback, useEffect, useState } from "react";
 import { OnArgs } from "react-calendar/dist/cjs/shared/types";
 
 
-interface RoutineCalendarProps {
+export interface RoutineCalendarProps {
   defaultDay?: Day; // 초기값 날짜
+  onDayTileClick?: (day: Day) => void; // 날짜타일 클릭시 콜백
 }
-export const RoutineCalendar = ({ defaultDay }: RoutineCalendarProps) => {
+export const RoutineCalendar = ({ defaultDay, onDayTileClick }: RoutineCalendarProps) => {
+  // 현재 기준이 되는 날짜(main state)
   const [activeDay, setActiveDay] = useState<Day>(defaultDay??Day.now());
-  const [routineNotes, setRoutineNotes] = useState<RoutineNote[] | null>(null);
 
+
+  /////////////////////////////////////
+  // 해당 달의 모든 루틴 노트들을 가져와서 상태로 저장
+  const [routineNotes, setRoutineNotes] = useState<RoutineNote[] | null>(null);
   // 해당 월의 루틴 노트들을 가져온다.
   useEffect(() => {
     const start = new Day(activeDay.moment.startOf("month"));
@@ -24,14 +29,29 @@ export const RoutineCalendar = ({ defaultDay }: RoutineCalendarProps) => {
     routineNoteArchiver.loadBetween(start, end)
     .then(notes => {
       setRoutineNotes(notes)
-      console.log(notes);
     });
   }, [activeDay]);
 
+
+  /////////////////////////////////
+  // 월이 바뀔 때
   const onActiveStartDateChange = ({ action, activeStartDate, value, view }: OnArgs) => {
     if(activeStartDate) setActiveDay(new Day(moment(activeStartDate)));
   }
 
+
+  ////////////////////////////////
+  // 날짜타일 클릭시 콜백
+  const onClickDay = useCallback((v: Date, e: React.MouseEvent<HTMLButtonElement>) => {
+    const day = new Day(moment(v));
+    if(onDayTileClick){
+      onDayTileClick(day);
+    }
+  }, [onDayTileClick]);
+
+
+  //////////////////////////////////
+  // 달력의 날짜 타일 하나하나를 렌더링하는 방식을 정의
   const tileContent = ({ date, view }: { date: Date, view: string }) => {
     if (view !== "month" || !routineNotes) return null;
     const day = new Day(moment(date));
@@ -47,10 +67,9 @@ export const RoutineCalendar = ({ defaultDay }: RoutineCalendarProps) => {
     )
   }
 
-  const onClickDay = useCallback((v: Date, e: React.MouseEvent<HTMLButtonElement>) => {
-    const day = new Day(moment(v));
-  }, []);
-
+  
+  //////////////////////////
+  // 렌더링
   if(!routineNotes) return <div>Loading...</div>;
   return (
     <div>

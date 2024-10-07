@@ -1,4 +1,4 @@
-import { Day } from "libs/day";
+import { Day } from "shared/day";
 import { Routine, routineManager } from "./routine";
 import moment from "obsidian";
 
