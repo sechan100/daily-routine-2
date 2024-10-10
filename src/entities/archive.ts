@@ -17,7 +17,7 @@ interface RoutineNoteArchiver {
   // 루틴 노트를 저장한다.
   save: (routineNote: RoutineNote) => Promise<void>;
 
-  // start와 end 사이의 모든 루틴 노트를 가져온다.
+  // start와 end를 포함한 사이의 모든 루틴 노트를 가져온다.
   loadBetween: (start: Day, end: Day) => Promise<RoutineNote[]>;  
 }
 

@@ -1,0 +1,58 @@
+// RoutineNote 상단 Days Menu 
+.dr-days {
+  display: flex;
+  width: 100%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  padding-top: 5px;
+
+  .dr-days__items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: nowrap;
+
+    .dr-days__item {
+      display: inline-block;
+      position: relative;
+      height: auto;
+      background: none;
+      padding: 0 0.5em;
+      cursor: pointer;
+      border-radius: 7px;
+      .dr-days__day-of-week {
+        text-align: center;
+        font-size: 0.8em;
+      }
+      .dr-percentage-circle {
+      }
+      
+      &:hover {
+        background-color: #e6e6e6;
+      }
+      
+      // 현재 선택
+      &.dr-days__current {
+        box-shadow: inset 0 0 0.6em 0.2em rgba(0, 0, 0, 0.1) !important;
+        // background-color: #d8d8d8;
+      }
+
+      // 오늘
+      &.dr-days__today {
+        // background-color: hsla(var(--color-accent-1-hsl), 1) !important;
+      }
+      
+    }
+  }
+
+  .dr-days__chevron {
+    width: 10em;
+    height: 10em;
+    &--prev {
+    }
+
+    &--next {
+    }
+  }
+}

@@ -51,6 +51,30 @@ export class Day {
     return this.#moment.format(format);
   }
 
+  add(amount: number, unit: moment.unitOfTime.DurationConstructor){
+    this.#moment.add(amount, unit);
+    return this;
+  }
+
+  addOnClone(amount: number, unit: moment.unitOfTime.DurationConstructor){
+    return new Day(this.#moment.clone().add(amount, unit));
+  }
+
+  subtract(amount: number, unit: moment.unitOfTime.DurationConstructor){
+    this.#moment.subtract(amount, unit);
+    return this
+  }
+
+  subtractOnClone(amount: number, unit: moment.unitOfTime.DurationConstructor){
+    return new Day(this.#moment.clone().subtract(amount, unit));
+  }
+
+  clone(cb?: (cloneMoment: moment.Moment) => void){
+    const cloneMoment = this.#moment.clone();
+    if(cb) cb(cloneMoment);
+    return new Day(cloneMoment);
+  }
+
   getDate(){
     return this.#moment.date();
   }
@@ -96,6 +120,10 @@ export class Day {
   
   isSameDay(day: Day){
     return this.#moment.isSame(day.#moment, 'day');
+  }
+
+  isSameWeek(day: Day){
+    return this.#moment.isSame(day.#moment, 'week');
   }
 
   isSameDayOfWeek(day: Day | DayOfWeek){

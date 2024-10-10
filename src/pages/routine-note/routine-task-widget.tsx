@@ -10,8 +10,9 @@ import { useCallback } from "react";
 interface RoutineTaskWidgetProps {
   routineNote: RoutineNote;
   task: RoutineTaskEntity;
+  onTaskClick?: (task: RoutineTaskEntity) => void;
 }
-export const RoutineTaskWidget = ({ routineNote, task }: RoutineTaskWidgetProps) => {
+export const RoutineTaskWidget = ({ routineNote, task, onTaskClick }: RoutineTaskWidgetProps) => {
 
 
   const onContextMenu = useCallback(async (e: React.MouseEvent) => {
@@ -25,6 +26,7 @@ export const RoutineTaskWidget = ({ routineNote, task }: RoutineTaskWidgetProps)
       routineNote={routineNote}
       task={task} 
       onContextMenu={onContextMenu}
+      onTaskClick={onTaskClick}
     />
   )
 }

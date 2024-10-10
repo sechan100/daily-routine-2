@@ -12,8 +12,9 @@ interface RoutineTaskProps {
   routineNote: RoutineNote;
   task: RoutineTaskEntity;
   onContextMenu: (e: React.MouseEvent) => void;
+  onTaskClick?: (task: RoutineTaskEntity) => void;
 }
-export const RoutineTask = ({ routineNote, task, onContextMenu }: RoutineTaskProps) => {
+export const RoutineTask = ({ routineNote, task, onContextMenu, onTaskClick }: RoutineTaskProps) => {
   const [checked, setChecked] = useState(task.checked);
   useEffect(() => {
     setChecked(task.checked)
@@ -41,7 +42,9 @@ export const RoutineTask = ({ routineNote, task, onContextMenu }: RoutineTaskPro
 
     // 상태 업데이트
     setChecked(isChecked)
-  }, [task.name, routineNote])
+
+    if(onTaskClick) onTaskClick(task);
+  }, [task, routineNote, onTaskClick])
 
   return (
     <div
