@@ -31,7 +31,7 @@ interface StoreContextProviderProps<D, S> {
   children: React.ReactNode;
 }
 export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
-  context: React.FC<StoreContextProviderProps<D, S>>,
+  Context: React.FC<StoreContextProviderProps<D, S>>,
   useStoreHook: <R>(selector: (state: S) => R) => R;
 } => {
   const StoreContext = createContext<StoreApi<S> | null>(null);
@@ -70,5 +70,5 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
     return useStore(store, selector);
   }
   
-  return { context: Provider, useStoreHook };
+  return { Context: Provider, useStoreHook };
 }

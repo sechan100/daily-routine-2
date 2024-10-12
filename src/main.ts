@@ -3,7 +3,6 @@ import { setPlugin } from './shared/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from './shared/view/activate-view';
-import { devOnlyTest } from './dev-only-test-btn';
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;
@@ -26,8 +25,9 @@ export default class DailyRoutinePlugin extends Plugin {
       activateView(DailyRoutineObsidianView.VIEW_TYPE);
     });
 
-    this.addRibbonIcon("reset", "test", () => {
-      devOnlyTest();
+    this.addRibbonIcon("ribbon", "Mobile Toggle", () => {
+      // @ts-ignore
+      this.app.emulateMobile(!this.app.isMobile);
     });
   }
   

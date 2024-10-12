@@ -40,6 +40,14 @@ interface RoutineNoteService {
 
   // 루틴 노트의 특정 task를 체크, 혹은 체크해제한다.
   checkTask: (routineNote: RoutineNote, taskName: string, checked: boolean) => void;
+
+  // task의 순서를 변경한다.
+  replaceTask: (cmd: {
+    routineNote: RoutineNote,
+    taskName: string, 
+    targetTaskName: string, 
+    cmd: 'before' | 'after'
+  }) => void;
 }
 
 export const routineNoteService: RoutineNoteService = {
@@ -98,7 +106,26 @@ ${routineNote.tasks.map(task => `- [${task.checked ? 'x' : ' '}] [[${task.name}]
     } else {
       throw new Error(`Task ${taskName} not found.`);
     }
-  }
+  },
+
+  replaceTask({ routineNote, taskName, targetTaskName, cmd }){
+    const task = routineNote.tasks.find(task => task.name === taskName);
+    if(!task) throw new Error(`Task ${taskName} not found.`);
+
+    const targetTask = routineNote.tasks.find(task => task.name === targetTaskName);
+    if(!targetTask) throw new Error(`Target task ${targetTaskName} not found.`);
+
+    const taskIdx = routineNote.tasks.indexOf(task);
+    const targetTaskIdx = routineNote.tasks.indexOf(targetTask);
+
+    if(cmd === 'before'){
+      routineNote.tasks.splice(taskIdx, 1);
+      routineNote.tasks.splice(targetTaskIdx, 0, task);
+    } else if(cmd === 'after'){
+      routineNote.tasks.splice(taskIdx, 1);
+      routineNote.tasks.splice(targetTaskIdx + 1, 0, task);
+    }
+  },
   
   
 }

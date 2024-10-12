@@ -122,8 +122,6 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
     }, 0);
   });
 
-  console.log(circleTransitionRef.current);
-
   /**
    * 최초, 그리고 currentWeekStartDay가 변경될 때마다의 weeks 변경.
    * 현재 날짜가 weeks 안에 어딘가 존재한다면, 아마 이미 swiper가 해당 날짜를 잘 표현하고 있을 것이므로 추가적인 동작을 수행하지 않음.
@@ -216,7 +214,7 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
                     return (
                       <div
                         key={idx} 
-                        className={clsx("dr-days__item", 
+                        className={clsx("dr-days__item",
                         {
                           "dr-days__today": day.isSameDay(Day.now()),
                           "dr-days__current": day.isSameDay(currentDay)

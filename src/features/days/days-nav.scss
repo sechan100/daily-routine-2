@@ -25,8 +25,8 @@
         text-align: center;
         font-size: 0.8em;
       }
-      .dr-percentage-circle {
-      }
+      // .dr-percentage-circle {
+      // }
       
       &:hover {
         background-color: #e6e6e6;
@@ -39,20 +39,10 @@
       }
 
       // 오늘
-      &.dr-days__today {
-        // background-color: hsla(var(--color-accent-1-hsl), 1) !important;
-      }
+      // &.dr-days__today {
+      //   background-color: hsla(var(--color-accent-1-hsl), 1) !important;
+      // }
       
-    }
-  }
-
-  .dr-days__chevron {
-    width: 10em;
-    height: 10em;
-    &--prev {
-    }
-
-    &--next {
     }
   }
 }

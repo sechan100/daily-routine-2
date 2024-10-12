@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { loadOrCreateRoutineNote } from "entities/utils";
 import { RoutineNote as RoutineNoteEntity, routineNoteService } from "entities/routine-note";
-import { openAddRoutineModal } from "features/routine-option";
+import { openAddRoutineModal } from "features/routine";
 import { DaysNav } from "features/days/DaysNav";
+import { RoutineTask } from "features/routine";
 /////////////////////
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Day } from "shared/day";
-import { RoutineTaskWidget } from "./routine-task-widget";
-import "./style.scss";
+import "./routine-note.scss";
 import { useDaysNav } from "features/days";
+import { TaskContext } from "features/task";
 
 
 interface RoutineNoteProps {
@@ -79,9 +80,11 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
           </div>
           <button className="dr-note__add-routine" onClick={onAddRoutineBtnClick}>+ Routine</button>
         </header>
-        {note.tasks.map((task, idx) => {
-          return <RoutineTaskWidget key={idx} routineNote={note} task={task} onTaskClick={onRoutineTaskClick} />
-        })}
+        <TaskContext routineNote={note}>
+          {note.tasks.map((task, idx) => {
+            return <RoutineTask key={idx} routineNote={note} routineTask={task} onTaskClick={onRoutineTaskClick} />
+          })}
+        </TaskContext>
       </div>
     </div>
   );  
