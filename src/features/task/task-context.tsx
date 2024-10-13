@@ -1,6 +1,7 @@
-import { RoutineNote, Task } from "entities/routine-note";
-import { createStoreContext } from "shared/create-store-context";
-import React from "react";
+import { RoutineNote } from "entities/routine-note";
+import { Task } from "entities/routine-note";
+///////////////////////////////////////////////////////
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import {
@@ -9,17 +10,11 @@ import {
   MouseTransition,
   Preview
 } from "react-dnd-multi-backend";
-import { delay } from "lodash";
+import { createUseStateSyncedStore, UseStateRv } from "shared/zustand/create-use-state-synced-store";
 
 
 
-interface UseTaskStore {
-  routineNote: RoutineNote;
-
-}
-const {Context, useStoreHook} = createStoreContext<RoutineNote, UseTaskStore>((note, set, get) => ({
-  routineNote: note,
-}))
+const {StoreProvider, useStoreHook} = createUseStateSyncedStore<RoutineNote>();
 
 
 const HTML5toTouch = {
@@ -44,12 +39,12 @@ const HTML5toTouch = {
 
 
 interface TaskContextProps {
-  routineNote: RoutineNote;
+  useRoutineNoteState: UseStateRv<RoutineNote>;
   children: React.ReactNode;
 }
-export const TaskContext = ({ routineNote, children }: TaskContextProps) => {
+export const TaskContext = ({ useRoutineNoteState, children }: TaskContextProps) => {
   return (
-    <Context initialData={routineNote}>
+    <StoreProvider useState={useRoutineNoteState}>
       <DndProvider options={HTML5toTouch}>
         {children}
         <Preview>{
@@ -60,8 +55,8 @@ export const TaskContext = ({ routineNote, children }: TaskContextProps) => {
           }}
         </Preview>
       </DndProvider>
-    </Context>
+    </StoreProvider>
   )
 }
 
-export const useTaskStore = useStoreHook;
+export const useRoutineNoteState = useStoreHook;

@@ -1,2 +1,2 @@
-export { Task } from "./Task";
-export { TaskContext } from "./context";
+export { TaskContext } from "./task-context";
+export { RoutineTask } from "../../widgets/tasks/RoutineTask";

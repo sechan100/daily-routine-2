@@ -26,12 +26,12 @@ const createStoreWithInit: <D, S>(initializer: Initializer<D, S>) => (data: D) =
 
 
 interface StoreContextProviderProps<D, S> {
-  initialData: D;
+  data: D;
   onDataChanged?: (state: S, data: D) => void;
   children: React.ReactNode;
 }
 export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
-  Context: React.FC<StoreContextProviderProps<D, S>>,
+  StoreProvider: React.FC<StoreContextProviderProps<D, S>>,
   useStoreHook: <R>(selector: (state: S) => R) => R;
 } => {
   const StoreContext = createContext<StoreApi<S> | null>(null);
@@ -44,22 +44,22 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
    * 만약 onDataChanged가 주어지지 않으면, initialData가 변경될 때마다 해당 context에서 관리되는 store 인스턴스 자체가 초기화된다.
    * 이 경우 하위 모든 컴포넌트들이 리렌더링되므로 주의.
    */
-  const Provider = React.memo(function Provider({ initialData, onDataChanged, children }: StoreContextProviderProps<D, S>) {
-    const storeRef = useRef(store(initialData));
+  const Provider = React.memo(function Provider({ data, onDataChanged, children }: StoreContextProviderProps<D, S>) {
+    const storeRef = useRef(store(data));
+
     useEffect(() => {
       if(onDataChanged){
-        onDataChanged(storeRef.current.getState(), initialData);
+        onDataChanged(storeRef.current.getState(), data);
+      } else {
+        storeRef.current = store(data);
       }
-    }, [initialData, onDataChanged]);
-    return <StoreContext.Provider value={storeRef.current}>{children}</StoreContext.Provider>;
-  }, (prev, next) => {
-    // onDataChanged가 정의되었다면 컴포넌트를 절대 리렌더링되지 않는다.
-    if(prev.onDataChanged){
-      return true;
-    // onDataChanged가 정의되지 않았다면, initialData가 변경될 때마다 리렌더링된다.
-    } else {
-      return prev.initialData !== next.initialData;
-    }
+    }, [data, onDataChanged]);
+
+    return (
+      <StoreContext.Provider value={storeRef.current}>
+        {children}
+      </StoreContext.Provider>
+    )
   });
 
 
@@ -70,5 +70,5 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
     return useStore(store, selector);
   }
   
-  return { Context: Provider, useStoreHook };
+  return { StoreProvider: Provider, useStoreHook };
 }

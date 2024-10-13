@@ -4,7 +4,9 @@ import moment from "obsidian";
 
 
 
+export type TaskType = "routine" | "todo";
 export interface Task {
+  type: TaskType;
   name: string;
   checked: boolean;
 }
@@ -15,6 +17,11 @@ export interface RoutineNote {
   tasks: Task[];
 }
 
+
+
+interface TaskMetaData {
+  type: TaskType;
+}
 
 interface TaskCompletion {
   total: number;
@@ -65,7 +72,13 @@ export const routineNoteService: RoutineNoteService = {
 `---
 ---
 # Tasks
-${routineNote.tasks.map(task => `- [${task.checked ? 'x' : ' '}] [[${task.name}]]`).join('\n')}
+${routineNote.tasks.map(task => {
+  const checked = task.checked ? 'x' : ' ';
+  const data = {
+    type: "routine"
+  }
+  return `- [${checked}] [[${task.name}]]<!-- ${JSON.stringify(data)} -->`;
+}).join('\n')}
 `;
     return content;
   },
@@ -76,8 +89,13 @@ ${routineNote.tasks.map(task => `- [${task.checked ? 'x' : ' '}] [[${task.name}]
     const tasks: Task[] = content.split('# Tasks')[1].split('\n').flatMap(line => {
       if(line.trim() === '') return [];
       const checked = line.startsWith('- [x]');
-      const name = line.split('] ')[1].replace('[[', '').replace(']]', '');
-      return { name, checked };
+      const name = line.split('] ')[1].split('<!--')[0].replace('[[', '').replace(']]', '');
+      const data = JSON.parse(line.split('<!-- ')[1].replace(' -->', '')) as TaskMetaData;
+      return {
+        type: data.type,
+        name, 
+        checked 
+      };
     });
 
     return {
@@ -152,6 +170,7 @@ const deriveRoutineTask = (routine: Routine, day: Day): RoutineTask | null => {
   if (!routine.properties.dayOfWeeks.contains(day.getDayOfWeek())) return null;
 
   return {
+    type: "routine",
     name: routine.name,
     checked: false
   };

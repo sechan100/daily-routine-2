@@ -3,7 +3,7 @@ import clsx from "clsx";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./days-nav.scss";
 import { PerCentageCircle } from "shared/components/PercentageCircle";
-import { Navigation, Mousewheel } from 'swiper/modules';
+import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { routineNoteArchiver } from "entities/archive";
@@ -183,20 +183,15 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
   }, []);
 
 
-
   return (
     <>
       <Swiper
         ref={swiperRef}
-        modules={[Mousewheel, Navigation]}
-        // navigation
-        mousewheel={{
-          enabled: true,
-          forceToAxis: true,
-          sensitivity: 50,
-          thresholdTime: 500,
-        }}
-        onToEdge={async(swiper) =>{
+        passiveListeners={false}
+        touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
+        preventInteractionOnTransition={true} // transition 중에는 interaction을 막는다.
+        modules={[Navigation]}
+        onToEdge={async(swiper: SwiperClass) =>{
           // 3개 이하는 초기값 설정이 아직 안되어있는 상태임
           if(weeks.length < 3) return;
           await onSlideToEdge(swiper.isBeginning ? "start" : "end")

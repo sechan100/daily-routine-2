@@ -3,7 +3,7 @@ import { RoutineNote, routineNoteService, Task } from "entities/routine-note";
 ////////////////////////////////////
 import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
-import { TFile } from "obsidian";
+import { TAbstractFile, TFile } from "obsidian";
 import { Day } from "shared/day";
 import moment from "moment";
 import { FileNotFoundError } from "shared/file/errors";
@@ -51,8 +51,9 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     const notes: RoutineNote[] = [];
     const s = start.moment;
     const e = end.moment;
-    const routineNoteFiles = fileAccessor.getFolder(plugin().settings.routineArchiveFolderPath).children.filter(file => file instanceof TFile);
+    const routineNoteFiles: TAbstractFile[] = fileAccessor.getFolder(plugin().settings.routineArchiveFolderPath).children.filter(file => file instanceof TFile);
     for(const file of routineNoteFiles){
+      if(!(file instanceof TFile)) continue;
       const day = moment(file.basename);
       if(day.isBetween(s, e, 'day', '[]')){
         notes.push(await parseFile(file));

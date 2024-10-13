@@ -3,13 +3,13 @@ import { loadOrCreateRoutineNote } from "entities/utils";
 import { RoutineNote as RoutineNoteEntity, routineNoteService } from "entities/routine-note";
 import { openAddRoutineModal } from "features/routine";
 import { DaysNav } from "features/days/DaysNav";
-import { RoutineTask } from "features/routine";
+import { useDaysNav } from "features/days";
 /////////////////////
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Day } from "shared/day";
 import "./routine-note.scss";
-import { useDaysNav } from "features/days";
-import { TaskContext } from "features/task";
+import { TaskList } from "widgets/tasks";
+
 
 
 interface RoutineNoteProps {
@@ -21,31 +21,37 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
   // 노트 상태
   const [ note, setNote ] = useState<RoutineNoteEntity | null>(null);
   
-  // day변수. day는 리렌더링을 트리거하지 않음. 리렌더링은 day의 파생상태인 note를 통해서 발생.
-  const dayRef = useRef<Day>(propsDay);
+  // note의 파생상태인 day.
+  const day = useMemo<Day>(() => {
+    if(!note) return Day.now();
+    return note.day;
+  }, [note]);
 
-  // daysNav에 현재 보고있는 note의 완료율을 동적으로 전달하기 위한 상태
-  const updatePercentage = useDaysNav(state => state.updatePercentage);
-
-  useEffect(() => { // props와 동기화
-    setDayRef(propsDay);
-  }, [propsDay]);
-
-  // setDayRef
-  const setDayRef = useCallback((_day: Day) => {
-    dayRef.current = _day;
+  // setNoteBasedOnDay로 day를 기준으로 note 상태를 변경할 수 있다.
+  const setNoteBasedOnDay = useCallback((_day: Day) => {
     // Day가 변경되면 해당하는 RoutineNote를 가져와서 설정
     loadOrCreateRoutineNote(_day)
     .then(note => {
       setNote(note);
     });
-  }, [dayRef]);
+  }, [day]);
+
+  // props로 넘겨진 day를 기준으로 note를 동기화
+  useEffect(() => {
+    setNoteBasedOnDay(propsDay);
+  }, [propsDay]);
+
+
+  /////////////////////////////////////////////////////////////////////////
+  // daysNav에 현재 보고있는 note의 완료율을 동적으로 전달하기 위한 상태
+  const updatePercentage = useDaysNav(state => state.updatePercentage);
+
 
   //////////////////////////////////////////
   // DaysNav에서 day 버튼 클릭시 콜백(day 변경)
   const onDayClick = useCallback((day: Day) => {
-    setDayRef(day);
-  }, [setDayRef]);
+    setNoteBasedOnDay(day);
+  }, [setNoteBasedOnDay]);
 
   ////////////////////////////////////////
   // routine 추가 버튼 콜백
@@ -61,18 +67,16 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
     if(!note) return;
     const newPercentage = routineNoteService.getTaskCompletion(note).percentageRounded;
     updatePercentage({
-      day: dayRef.current, 
+      day: day, 
       percentage: newPercentage
     });
   }, [note]);
-  
 
 
-  
   if(!note) return (<div>Loading...</div>);
   return (
     <div>
-      <DaysNav currentDay={dayRef.current} onDayClick={onDayClick} />
+      <DaysNav currentDay={day} onDayClick={onDayClick} />
       <div className="dr-note">
         <header className="dr-note__header">
           <div>
@@ -80,11 +84,10 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
           </div>
           <button className="dr-note__add-routine" onClick={onAddRoutineBtnClick}>+ Routine</button>
         </header>
-        <TaskContext routineNote={note}>
-          {note.tasks.map((task, idx) => {
-            return <RoutineTask key={idx} routineNote={note} routineTask={task} onTaskClick={onRoutineTaskClick} />
-          })}
-        </TaskContext>
+        <TaskList 
+          useRoutineNoteState={{state: note, setState: setNote}}
+          onTaskClick={onRoutineTaskClick}
+        />
       </div>
     </div>
   );  

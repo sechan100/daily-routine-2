@@ -34,6 +34,7 @@
 		"eslint-plugin-react": "^7.37.1",
 		"eslint-plugin-react-hooks": "^4.6.2",
 		"i": "^0.3.7",
+		"lodash": "^4.17.21",
 		"npm": "^10.8.3",
 		"react": "^18.3.1",
 		"react-calendar": "^5.0.0",

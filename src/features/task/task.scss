@@ -5,35 +5,27 @@
   box-sizing: border-box;
 }
 
-// 개별 루틴 
+// 루틴 기본 레이아웃 
 .dr-task {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: block;
   font-size: 16px; /* 전체적 루틴의 사이즈를 결정 */
   width: 100%;
-  height: 1.6em;
-  margin: calc(0.6em) 0;
-  &.dr-task--pressed { // context menu를 표시하려고 누르고 있는 상태에
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  .dr-task__main {
-    width: 90%;
+  height: 2.3em;
+  padding: 0 0.5em;
+  margin: 0 0;
+  cursor: pointer;
+  
+  .dr-task__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: 100%;
-    cursor: pointer;
-    position: relative;
-    padding: 0;
-    margin: 0;
-    
-    .dr-task__flex {
-      display: flex;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 100%;
-      line-height: 1;
-      align-items: center;
 
+    .dr-task__main {
+      display: flex;
+      align-items: center;
+      line-height: 1;
+  
       .dr-task__cbx {
         position: relative;
         top: calc(1/32 * 1em);
@@ -101,17 +93,24 @@
         }
       }
     }
-  }
-  .dr-task__option {
-    width: 1.2em;
-    cursor: pointer;
+
+    .dr-task__option {
+      width: 1.2em;
+      cursor: pointer;
+      position: relative;
+      svg {
+        position: absolute;
+        transform: translateY(-50%);
+        width: 1.2em;
+      }
+    }
   }
 
 }
 
 // 체크된 상태
 .dr-task.dr-task--checked {
-  .dr-task__flex {
+  .dr-task__container .dr-task__main {
     .dr-task__cbx {
       border-color: transparent;
       svg {
@@ -140,7 +139,17 @@
   }
 }
 
-
+// dnd
 .dr-task--ready, .dr-task--dragging {
-  font-size: 20px;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background-color: rgba(203, 203, 203, 0.5);
+  }
 }

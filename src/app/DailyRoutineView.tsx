@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Day } from "shared/day";
 import { usePageRoute } from "./use-page-route";
 import "./style.css";
-import { DrQueryClient } from "./query-client";
 
 
 // FIXME: setPage로 렌더링 1번, cmd를 적용해서 다시 렌더링까지 총 2번의 렌더링이 발생한다. 추후 여건되면 최적화 가능

@@ -1,18 +1,20 @@
+import { routineNoteService, RoutineTask as RoutineTaskEntity } from "entities/routine-note";
 import { routineNoteArchiver } from "entities/archive";
 import { routineManager } from "entities/routine";
-import { Task } from "features/task";
-import { RoutineNote, routineNoteService, RoutineTask as RoutineTaskEntity } from "entities/routine-note";
+import { openRoutineOptionModal } from "features/routine/routine-option";
+import { useRoutineNoteState } from "features/task/task-context";
+import { Task } from "features/task/Task";
 ////////////////////////////
-import { useCallback } from "react"
-import { openRoutineOptionModal } from "./routine-option";
+import React, { useCallback } from "react"
 
 
 interface RoutineTaskProps {
-  routineNote: RoutineNote;
   routineTask: RoutineTaskEntity;
   onTaskClick?: (task: RoutineTaskEntity) => void;
 }
-export const RoutineTask = ({ routineNote, routineTask, onTaskClick }: RoutineTaskProps) => {
+export const RoutineTask = React.memo(({ routineTask, onTaskClick }: RoutineTaskProps) => {
+
+  const [ routineNote, ] = useRoutineNoteState();
 
   // 루틴 클릭시
   const onClick = useCallback((task: RoutineTaskEntity) => {
@@ -44,4 +46,4 @@ export const RoutineTask = ({ routineNote, routineTask, onTaskClick }: RoutineTa
       onTaskClick={onClick}
     />
   )
-}
+});
