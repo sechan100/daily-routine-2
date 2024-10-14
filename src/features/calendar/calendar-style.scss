@@ -28,6 +28,7 @@ $color-hover-bg: #e6e6e6;
     margin: 0;
     border: 0;
     outline: none;
+    background-color: transparent !important;
 
     &:enabled:hover {
       cursor: pointer;

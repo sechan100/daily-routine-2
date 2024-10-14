@@ -54,6 +54,7 @@ const routineReducer: Reducer = (state, action) => {
 const defaultRoutine = {
   name: "new daily routine",
   properties: {
+    order: 0,
     dayOfWeeks: DAY_OF_WEEKS
   }
 }

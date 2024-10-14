@@ -1,13 +1,14 @@
 import { RoutineNote, Task as TaskEntity } from "entities/routine-note";
 ////////////////////////////
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import clsx from "clsx";
 import "./task.scss";
 import { useDrag, useDrop, XYCoord } from "react-dnd";
 import { useRoutineNoteState } from "./task-context";
-import _ from "lodash";
-import { Day } from "shared/day";
-import { moment } from "obsidian";
+import _, { DebouncedFunc } from "lodash";
+import { routineNoteArchiver } from "entities/archive";
+import { routineManager } from "entities/routine";
+
 
 
 /**
@@ -72,7 +73,7 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
   const [dragState, setDragState] = useState<DragState>({type: "idle"});
   const [ routineNote, setRoutineNote ] = useRoutineNoteState();
 
-  const [{isDragging}, drag] = useDrag({
+  const [{isDragging}, drag, preview] = useDrag({
     type: "task",
     item(){
       setDragState({type: "dragging"});
@@ -84,6 +85,7 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
         console.log(dropResult);
       }
     },
+    previewOptions: {captureDraggingState: true},
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
@@ -134,12 +136,12 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
       setRoutineNote(newRoutineNote);
     },
     drop: (item: {task: T}) => {
-      return {task: item.task};
+      routineNoteArchiver.save(routineNote);
+      routineManager.reorder(routineNote.tasks.filter(t => t.type === "routine").map(r => r.name));
     }
   }, [task, routineNote, replaceTask, getHixArea, setRoutineNote])
 
 
-  const touchTimeoutRef = useRef<NodeJS.Timeout | null>();
   /**
    * taskRef에 dragSource, dropSource를 할당. touchstart, touchend 이벤트를 통해 일정시간 클릭시 드래그 가능 상태로 전환
    */
@@ -152,17 +154,16 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
     drop(el);
   }, [drag, drop])
 
-  // touchstart, touchend 이벤트를 통해 dragState 변경
-  const touchStart = useCallback(() => {
-    touchTimeoutRef.current = setTimeout(() => {
+  const touchDebounce = useRef<DebouncedFunc<() => void>>(
+    _.debounce(() => {
       setDragState({type: "ready"});
-    }, 500);
-  }, [])
+    }, 500)
+  );
+  // touchstart, touchend 이벤트를 통해 dragState 변경
+  const touchStart = useCallback(() => touchDebounce.current(), [])
+  
   const touchEnd = useCallback(() => {
-    if(touchTimeoutRef.current){
-      clearTimeout(touchTimeoutRef.current);
-      touchTimeoutRef.current = null;
-    }
+    touchDebounce.current.cancel();
     setDragState({type: "idle"});
   }, [])
 
@@ -180,6 +181,8 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
       onClick={onClick}
       onTouchStart={touchStart}
       onTouchEnd={touchEnd}
+      onTouchCancel={touchEnd}
+      onTouchMove={touchEnd}
     >
       <div className="dr-task__container">
         {/* MAIN */}

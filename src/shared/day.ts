@@ -1,29 +1,16 @@
 import { moment } from "obsidian";
-import { plugin } from "./plugin-service-locator";
-import { DEFAULT_SETTINGS } from "settings/DailyRoutineSettingTab";
 
 
 export enum DayOfWeek {
-  SUN,
-  MON,
-  TUE,
-  WED,
-  THU,
-  FRI,
-  SAT
+  SUN = "SUN",
+  MON = "MON",
+  TUE = "TUE",
+  WED = "WED",
+  THU = "THU",
+  FRI = "FRI",
+  SAT = "SAT"
 }
 export const DAY_OF_WEEKS = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-export const dayOfWeekToString = (dayOfWeek: DayOfWeek) => {
-  switch(dayOfWeek) {
-    case DayOfWeek.SUN: return 'SUN';
-    case DayOfWeek.MON: return 'MON';
-    case DayOfWeek.TUE: return 'TUE';
-    case DayOfWeek.WED: return 'WED';
-    case DayOfWeek.THU: return 'THU';
-    case DayOfWeek.FRI: return 'FRI';
-    case DayOfWeek.SAT: return 'SAT';
-  }
-}
 
 export class Day {
   #moment: moment.Moment;

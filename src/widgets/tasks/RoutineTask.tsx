@@ -18,12 +18,6 @@ export const RoutineTask = React.memo(({ routineTask, onTaskClick }: RoutineTask
 
   // 루틴 클릭시
   const onClick = useCallback((task: RoutineTaskEntity) => {
-    // 개별루틴 업데이트
-    routineManager.updateAchievement({
-      routineName: routineTask.name,
-      day: routineNote.day,
-      checked: task.checked
-    });
 
     // 루틴노트 업데이트
     routineNoteService.checkTask(routineNote, routineTask.name, task.checked);

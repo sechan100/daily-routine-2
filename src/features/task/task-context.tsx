@@ -22,7 +22,7 @@ const HTML5toTouch = {
     {
       id: "html5",
       backend: HTML5Backend,
-      transition: MouseTransition
+      transition: MouseTransition,
     },
     {
       id: "touch",
@@ -31,7 +31,7 @@ const HTML5toTouch = {
         enableMouseEvents: false,
         delayTouchStart: 500
       },
-      preview: true,
+      preview: false,
       transition: TouchTransition
     }
   ],
@@ -47,13 +47,13 @@ export const TaskContext = ({ useRoutineNoteState, children }: TaskContextProps)
     <StoreProvider useState={useRoutineNoteState}>
       <DndProvider options={HTML5toTouch}>
         {children}
-        <Preview>{
+        {/* <Preview>{
           ({item, itemType, monitor, ref, style}) => {
             // @ts-ignore
             const task = item?.task as Task;
             return <div className="item-list__item" style={style}>{task.name}</div>
           }}
-        </Preview>
+        </Preview> */}
       </DndProvider>
     </StoreProvider>
   )

@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 5px;
+    gap: 0.3em;
     flex-wrap: nowrap;
 
     .dr-days__item {
@@ -18,7 +18,7 @@
       position: relative;
       height: auto;
       background: none;
-      padding: 0 0.5em;
+      padding: 0 0em;
       cursor: pointer;
       border-radius: 7px;
       .dr-days__day-of-week {

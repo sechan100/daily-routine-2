@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useCallback } from "react";
-import { DAY_OF_WEEKS, DayOfWeek, dayOfWeekToString } from "shared/day";
+import { DAY_OF_WEEKS, DayOfWeek } from "shared/day";
 
 
 
@@ -16,7 +16,7 @@ export const DaysOption = ({ className, getDays, onDaysChange }: DaysOptionProps
   const onDayClick = useCallback((e: React.MouseEvent) => {
     e.currentTarget.classList.toggle("dr-routine-option-days__day--active");
     const isActive = e.currentTarget.classList.contains("dr-routine-option-days__day--active");
-    const dayOfWeek = Number(e.currentTarget.getAttribute('data-day-of-week')) as DayOfWeek;
+    const dayOfWeek = DayOfWeek[e.currentTarget.getAttribute('data-day-of-week') as keyof typeof DayOfWeek];
     if(isActive){
       onDaysChange("add", dayOfWeek);
     } else {
@@ -35,7 +35,7 @@ export const DaysOption = ({ className, getDays, onDaysChange }: DaysOptionProps
               "dr-routine-option-days__day",
               {"dr-routine-option-days__day--active": isActive})}
             >
-              {dayOfWeekToString(dayOfWeek)}
+              {dayOfWeek}
             </button>
           )
         })}

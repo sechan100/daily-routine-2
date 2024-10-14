@@ -42,7 +42,7 @@ class RoutineOptionModal extends Modal {
   // 닫힐 때 저장
   override onClose(): void {
     const { routine, properties} = this.#store.getState();
-    routineManager.edit(routine.name, properties);
+    routineManager.editProperties(routine.name, properties);
   }
 }
 
@@ -109,9 +109,15 @@ const RoutineOptionModalComponent = React.memo(function RoutineOptionModalCompon
   const onDaysChange = useCallback((action: "add" | "remove", day: DayOfWeek) => {
     const days = properties.dayOfWeeks;
     if(action === "add"){
-      updateProperties({ dayOfWeeks: [...days, day] });
+      updateProperties({
+        ...properties,
+        dayOfWeeks: [...days, day] 
+      });
     } else {
-      updateProperties({ dayOfWeeks: days.filter(d => d !== day) });
+      updateProperties({ 
+        ...properties,
+        dayOfWeeks: days.filter(d => d !== day) 
+      });
     }
   }, [properties, updateProperties])
 
