@@ -1,6 +1,6 @@
 import { routineNoteService, RoutineTask as RoutineTaskEntity } from "entities/routine-note";
 import { routineNoteArchiver } from "entities/archive";
-import { routineManager } from "entities/routine";
+import { routineManager } from "entities/routine/routine";
 import { openRoutineOptionModal } from "features/routine/routine-option";
 import { useRoutineNoteState } from "features/task/task-context";
 import { Task } from "features/task/Task";

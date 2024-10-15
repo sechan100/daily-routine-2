@@ -80,4 +80,15 @@ export const fileAccessor = {
     return plugin().app.vault.delete(file);
   },
 
+  /**
+   * 파일의 frontmatter를 수정한다.
+   * frontmatter 객체는 json object로 전달된다.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  writeFrontMatter: async (file: TFile, frontMatterModifier: (frontmatter: any) => any) => {
+    return plugin().app.fileManager.processFrontMatter(file, (fm) => {
+      const newFm = frontMatterModifier(fm);
+      Object.assign(fm, newFm);
+    });
+  }
 }

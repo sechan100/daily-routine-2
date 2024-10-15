@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useCallback } from "react";
-import { DAY_OF_WEEKS, DayOfWeek } from "shared/day";
+import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
 
 
 
@@ -28,7 +28,7 @@ export const DaysOption = ({ className, getDays, onDaysChange }: DaysOptionProps
     <div className={clsx(className, "dr-routine-option-days")}>
       <h6>Days</h6>
       <div className="dr-routine-option-days__list">
-        {DAY_OF_WEEKS.map((dayOfWeek, idx) => {
+        {DAYS_OF_WEEK.map((dayOfWeek, idx) => {
           const isActive = getDays().includes(dayOfWeek);
           return (
             <button key={idx} data-day-of-week={dayOfWeek} onClick={onDayClick} className={clsx(

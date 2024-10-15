@@ -1,4 +1,4 @@
-import { Routine, routineManager, RoutineProperties } from "entities/routine";
+import { Routine, routineManager, RoutineProperties } from "entities/routine/routine";
 import { DayOfWeek } from "shared/day";
 import { Modal, Notice, TextComponent } from "obsidian";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -107,16 +107,16 @@ const RoutineOptionModalComponent = React.memo(function RoutineOptionModalCompon
   ///////////////////////////////
   // 요일 변경
   const onDaysChange = useCallback((action: "add" | "remove", day: DayOfWeek) => {
-    const days = properties.dayOfWeeks;
+    const days = properties.daysOfWeek;
     if(action === "add"){
       updateProperties({
         ...properties,
-        dayOfWeeks: [...days, day] 
+        daysOfWeek: [...days, day] 
       });
     } else {
       updateProperties({ 
         ...properties,
-        dayOfWeeks: days.filter(d => d !== day) 
+        daysOfWeek: days.filter(d => d !== day) 
       });
     }
   }, [properties, updateProperties])
@@ -141,7 +141,7 @@ const RoutineOptionModalComponent = React.memo(function RoutineOptionModalCompon
           <button onClick={onSaveRoutineName}>Save</button>
         </div>
         {/* 요일 */}
-        <DaysOption getDays={() => properties.dayOfWeeks} onDaysChange={onDaysChange}/>
+        <DaysOption getDays={() => properties.daysOfWeek} onDaysChange={onDaysChange}/>
         {/* 삭제 */}
         <div className="dr-routine-option__section dr-routine-option-delete">
           <h6>Delete The Routine</h6>

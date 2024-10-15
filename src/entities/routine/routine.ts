@@ -1,8 +1,8 @@
-import { moment, TFile } from "obsidian";
+import { getFrontMatterInfo, parseFrontMatterEntry, parseYaml, stringifyYaml, TFile } from "obsidian";
 import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
-import { Day, DayOfWeek } from "shared/day";
-import matter from "gray-matter";
+import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
+import { isRoutineProperty, RoutineFrontMatter } from "./front-matter";
 
 
 /**
@@ -15,7 +15,7 @@ export interface Routine {
 
 export interface RoutineProperties {
   order: number; // routine들 순서(음이 아닌 정수 0, 1, 2, ...)
-  dayOfWeeks: DayOfWeek[];
+  daysOfWeek: DayOfWeek[];
 }
 
 
@@ -52,7 +52,7 @@ export const routineManager: RoutineManager = {
     const parsedRoutines = [];
     for(const file of fileAccessor.getFolder(path).children){
       if(file instanceof TFile) {
-        parsedRoutines.push(deserializeRoutine(file));
+        parsedRoutines.push(parseRoutine(file));
       } else {
         throw new Error('Routine folder contains non-file object.');
       }
@@ -65,10 +65,12 @@ export const routineManager: RoutineManager = {
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
 
-    await fileAccessor.writeFile(file, (fileContent => {
-      const { properties, content } = deserializeRoutineFileContent(fileContent);
-      const newProps = {...properties, ...newPropertiesPatial};
-      return `${serializeRoutineProperties(newProps)}\n${content}`;
+    await fileAccessor.writeFrontMatter(file, (fm => {
+      if(!isRoutineProperty(fm)) throw new Error('Invalid Routine frontmatter.');
+      return {
+        ...fm,
+        ...newPropertiesPatial
+      }
     }));
   },
 
@@ -87,7 +89,7 @@ export const routineManager: RoutineManager = {
   async get(routineName){
     const path = getRoutinePath(routineName);
     const file = fileAccessor.getFile(path);
-    return await deserializeRoutine(file);
+    return await parseRoutine(file);
   },
 
   async delete(routineName: string){
@@ -130,54 +132,30 @@ export const routineManager: RoutineManager = {
 }
 
 
+
+
 ///////////////////////////////////////////////////////////////
 // 직렬화 및 역직렬화 /////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
-const serializeRoutineProperties = (properties: RoutineProperties) => {
-  const props = {
-    order: properties.order,
-    dayOfWeeks: properties.dayOfWeeks.map(d => DayOfWeek[d])
-  }
-  return matter.stringify('', props);
-}
+
 const serializeRoutine = (routine: Routine) => {
-  const properties = serializeRoutineProperties(routine.properties);
+  const properties = new RoutineFrontMatter(routine.properties);
   const content = "";
 
-  return `${properties}\n${content}`;
+  return `${properties.stringify()}\n${content}`;
 }
 
 
-const deserializeRoutineFileContent = (fileContent: string): {properties: RoutineProperties, content: string } => {
-  const { data, content } = matter(fileContent);
-
-  // daysOfWeeks
-  let dayOfWeeks = data.dayOfWeeks;
-  if(dayOfWeeks){
-    dayOfWeeks.map((d: keyof typeof DayOfWeek) => dayOfWeeks[d]);
-  } else {
-    dayOfWeeks = [];
-  }
-
-  return {
-    content,
-    properties: {
-      order: data.order,
-      dayOfWeeks
-    }
-  }
-}
-const deserializeRoutine = async (file: TFile): Promise<Routine> => {
+const parseRoutine = async (file: TFile): Promise<Routine> => {
   const fileContent = await fileAccessor.readFileAsReadonly(file);
   if(!fileContent) {
     throw new Error('Routine file is empty.');
   }
-  
-  const { properties, content } = deserializeRoutineFileContent(fileContent);
+  const fm = RoutineFrontMatter.fromContent(fileContent);
 
   return {
     name: file.name.replace('.md', ''),
-    properties
+    properties: fm.properties
   }
 }
 

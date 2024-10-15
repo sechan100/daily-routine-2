@@ -7,7 +7,7 @@ import { useDrag, useDrop, XYCoord } from "react-dnd";
 import { useRoutineNoteState } from "./task-context";
 import _, { DebouncedFunc } from "lodash";
 import { routineNoteArchiver } from "entities/archive";
-import { routineManager } from "entities/routine";
+import { routineManager } from "entities/routine/routine";
 
 
 
@@ -23,8 +23,14 @@ type DragState = {
 
 interface TaskProps<T extends TaskEntity> {
   className?: string;
+
   task: T;
+
+  /**
+   * Option 버튼 or context menu
+   */
   onOptionClick?: (task: T) => void;
+
   onTaskClick?: (task: T) => void;
 }
 export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onTaskClick }: TaskProps<T>) => {
@@ -80,10 +86,6 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
       return {task};
     },
     end: (item, monitor) => {
-      const dropResult = monitor.getDropResult();
-      if(dropResult){
-        console.log(dropResult);
-      }
     },
     previewOptions: {captureDraggingState: true},
     collect: (monitor) => ({
@@ -179,6 +181,7 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
         "dr-task--dragging": isDragging
       })}
       onClick={onClick}
+      onContextMenu={optionClick}
       onTouchStart={touchStart}
       onTouchEnd={touchEnd}
       onTouchCancel={touchEnd}

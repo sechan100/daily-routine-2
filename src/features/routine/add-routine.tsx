@@ -1,10 +1,10 @@
-import { Routine, routineManager } from "entities/routine";
+import { Routine, routineManager } from "entities/routine/routine";
 //////////////////////
 import { plugin } from "shared/plugin-service-locator";
 import { Modal, TextComponent } from "obsidian";
 import { createRoot } from "react-dom/client";
 import { DaysOption } from "./DaysOption";
-import { DAY_OF_WEEKS, DayOfWeek } from "shared/day";
+import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
 import React, { useRef, useState, useEffect, useReducer, memo, useCallback } from "react";
 
 
@@ -39,12 +39,12 @@ const routineReducer: Reducer = (state, action) => {
     case "ADD_DAYS":
       return {
         ...state,
-        properties: { ...state.properties, dayOfWeeks: [...state.properties.dayOfWeeks, action.payload] }
+        properties: { ...state.properties, daysOfWeek: [...state.properties.daysOfWeek, action.payload] }
       };
     case "DELETE_DAYS":
       return {
         ...state,
-        properties: { ...state.properties, dayOfWeeks: state.properties.dayOfWeeks.filter(day => day !== action.payload) }
+        properties: { ...state.properties, daysOfWeek: state.properties.daysOfWeek.filter(day => day !== action.payload) }
       };
     default:
       return state;
@@ -55,7 +55,7 @@ const defaultRoutine = {
   name: "new daily routine",
   properties: {
     order: 0,
-    dayOfWeeks: DAY_OF_WEEKS
+    daysOfWeek: DAYS_OF_WEEK
   }
 }
 const AddRoutineModalComponent = memo(function AddRoutineModalComponent({ modal }: { modal: AddRoutineModal }) {
@@ -99,7 +99,7 @@ const AddRoutineModalComponent = memo(function AddRoutineModalComponent({ modal 
         <div ref={nameEditElRef} />
       </div>
       {/* Days */}
-      <DaysOption className="routine" getDays={() => routine.properties.dayOfWeeks} onDaysChange={onDaysChange}  />
+      <DaysOption className="routine" getDays={() => routine.properties.daysOfWeek} onDaysChange={onDaysChange}  />
       {/* Save */}
       <button onClick={() => createNewRoutine()}>Save</button>
     </div>

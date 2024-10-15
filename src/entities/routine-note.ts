@@ -1,5 +1,5 @@
 import { Day } from "shared/day";
-import { Routine, routineManager } from "./routine";
+import { Routine, routineManager } from "./routine/routine";
 import moment from "obsidian";
 
 
@@ -167,7 +167,7 @@ ${routineNote.tasks.map(task => {
  * @returns RoutineTask | null 만약 routine이 day에 수행어야하는 루틴이 아니라면 null을 반환한다.
  */
 const deriveRoutineTask = (routine: Routine, day: Day): RoutineTask | null => {
-  if (!routine.properties.dayOfWeeks.contains(day.getDayOfWeek())) return null;
+  if (!routine.properties.daysOfWeek.contains(day.getDayOfWeek())) return null;
 
   return {
     type: "routine",

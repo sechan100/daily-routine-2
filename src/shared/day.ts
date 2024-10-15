@@ -10,7 +10,7 @@ export enum DayOfWeek {
   FRI = "FRI",
   SAT = "SAT"
 }
-export const DAY_OF_WEEKS = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
+export const DAYS_OF_WEEK = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
 
 export class Day {
   #moment: moment.Moment;
