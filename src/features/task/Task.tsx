@@ -8,6 +8,8 @@ import { useRoutineNoteState } from "./task-context";
 import _, { DebouncedFunc } from "lodash";
 import { routineNoteArchiver } from "entities/archive";
 import { routineManager } from "entities/routine/routine";
+import { DRAG_PRESS_DELAY } from "./constants";
+import { useDragLayer } from 'react-dnd'
 
 
 
@@ -33,7 +35,7 @@ interface TaskProps<T extends TaskEntity> {
 
   onTaskClick?: (task: T) => void;
 }
-export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onTaskClick }: TaskProps<T>) => {
+export const Task = <T extends TaskEntity>({ className, task, onOptionClick: onOptionClick_props, onTaskClick }: TaskProps<T>) => {
   // 루틴 체크와 클릭 ///////////////////////////////////////////////////////////////////////
   const [checked, setChecked] = useState(task.checked);
 
@@ -62,12 +64,12 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
 
   ///////////////////////////////////////////////////////////////////////////
   // option 클릭시 콜백함수
-  const optionClick = useCallback((e: React.MouseEvent) => {
+  const onOptionClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if(onOptionClick){
-      onOptionClick(task);
+    if(onOptionClick_props){
+      onOptionClick_props(task);
     }
-  }, [task, onOptionClick])
+  }, [task, onOptionClick_props])
 
 
   // taskRef ///////////////////////////////////////////////////////////////
@@ -79,7 +81,7 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
   const [dragState, setDragState] = useState<DragState>({type: "idle"});
   const [ routineNote, setRoutineNote ] = useRoutineNoteState();
 
-  const [{isDragging}, drag, preview] = useDrag({
+  const [{isDragging}, drag] = useDrag({
     type: "task",
     item(){
       setDragState({type: "dragging"});
@@ -103,8 +105,8 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
     const dropTargetAvailableHeightPerHixboxes = dropTargetHeight * hitBoundary;
 
     // RETURN
-    if(y < dropElOffset.top + dropTargetAvailableHeightPerHixboxes) return "top";
-    if(y > dropElOffset.bottom - dropTargetAvailableHeightPerHixboxes) return "bottom";
+    if(y < dropElOffset.top + dropTargetAvailableHeightPerHixboxes) return "bottom";
+    if(y > dropElOffset.bottom - dropTargetAvailableHeightPerHixboxes) return "top";
     return null;
   }, [])
 
@@ -159,15 +161,29 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
   const touchDebounce = useRef<DebouncedFunc<() => void>>(
     _.debounce(() => {
       setDragState({type: "ready"});
-    }, 500)
+    }, DRAG_PRESS_DELAY)
   );
   // touchstart, touchend 이벤트를 통해 dragState 변경
-  const touchStart = useCallback(() => touchDebounce.current(), [])
+  const touchStart = useCallback(() => {
+    touchDebounce.current()
+  }, [])
   
   const touchEnd = useCallback(() => {
     touchDebounce.current.cancel();
+
+    /**
+     * NOTE: 모바일에서 touchstart 발생 이후에 500ms 이후 dragState가 ready로 변경된다. 
+     * 이 때, 드래그를 시작하면 상태가 dragging으로, 드래그를 하지 않고 바로 touchend가 발생하면 해당 함수가 호출된다. 이 때 상태는 ready이다.
+     * 이를 이용하여 해당 함수가 호출된 시점에 dragState가 ready일 경우, option 메뉴를 띄운다.
+     * 
+     * 해당 로직은 모바일에서 contextMenu modal이 두번 호출되는 버그를 해결하기 위한 핵이다. 
+     * 비슷한 버그: https://forum.obsidian.md/t/hold-tap-on-the-note-or-folder-opens-bottom-menu-twice/58572
+     */
+    if(dragState.type === "ready" && onOptionClick_props){
+      onOptionClick_props(task);
+    }
     setDragState({type: "idle"});
-  }, [])
+  }, [dragState.type, onOptionClick_props, task])
 
 
   return (
@@ -181,11 +197,9 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
         "dr-task--dragging": isDragging
       })}
       onClick={onClick}
-      onContextMenu={optionClick}
       onTouchStart={touchStart}
       onTouchEnd={touchEnd}
       onTouchCancel={touchEnd}
-      onTouchMove={touchEnd}
     >
       <div className="dr-task__container">
         {/* MAIN */}
@@ -200,8 +214,69 @@ export const Task = <T extends TaskEntity>({ className, task, onOptionClick, onT
         {/* 옵션 */}
         <div
           className="dr-task__option" 
-          onClick={optionClick}
+          onClick={onOptionClick}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24"
+            strokeWidth={1.5} 
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+
+interface TaskPreviewProps {
+  task: TaskEntity;
+  style: React.CSSProperties;
+}
+export const TaskPreview = ({ task, style }: TaskPreviewProps) => {
+  const { currentOffset } = useDragLayer((monitor) => ({
+    currentOffset: monitor.getSourceClientOffset(),
+  }));
+
+  const getItemStyles = (style: React.CSSProperties) => {
+    if (!currentOffset) {
+      return { display: 'none' };
+    }
+    
+    const { x, y } = currentOffset;
+    const transform = `translate(${x - 45}px, ${y - 39}px)`;
+
+    return {
+      ...style,
+      backgroundColor: "var(--background-primary)",
+      boxShadow: "0 0 0.5em 0.5em rgba(0, 0, 0, 0.1)",
+      transform,
+      WebkitTransform: transform,
+    };
+  };
+
+
+  return (
+    <div 
+      className={clsx("dr-task", "dr-task-preview", { "dr-task--checked": task.checked })} 
+      style={getItemStyles(style)}
+    >
+      <div className="dr-task__container">
+        {/* MAIN */}
+        <div className="dr-task__main">
+          <span className="dr-task__cbx">
+              <svg viewBox="0 0 14 12">
+                <polyline points="1 7.6 5 11 13 1"></polyline>
+              </svg>
+            </span>
+          <span className="dr-task__name">{task.name}</span>
+        </div>
+        {/* 옵션 */}
+        <div className="dr-task__option">
           <svg
             xmlns="http://www.w3.org/2000/svg" 
             fill="none" 
