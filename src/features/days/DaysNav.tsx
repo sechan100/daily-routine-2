@@ -189,7 +189,7 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
         ref={swiperRef}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
-        preventInteractionOnTransition={true} // transition 중에는 interaction을 막는다.
+        preventInteractionOnTransition={false} // transition 중에는 interaction을 막는다.
         modules={[Navigation]}
         onToEdge={async(swiper: SwiperClass) =>{
           // 3개 이하는 초기값 설정이 아직 안되어있는 상태임
