@@ -3,6 +3,8 @@ import { setPlugin } from './shared/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from './shared/view/activate-view';
+import { openRoutineOptionModal } from 'features/routine';
+import { routineManager } from 'entities/routine';
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;
@@ -29,6 +31,10 @@ export default class DailyRoutinePlugin extends Plugin {
       // @ts-ignore
       this.app.emulateMobile(!this.app.isMobile);
     });
+
+    setTimeout(async() => {
+      openRoutineOptionModal(await routineManager.get("🖊️ 공식문서 작성"));
+    }, 100);
   }
   
   onunload() {

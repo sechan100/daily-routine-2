@@ -1,0 +1,104 @@
+// 색상 변수
+$color-border: #a0a096;
+$color-disabled-bg: #f0f0f0;
+$color-disabled-text: #ababab;
+$color-disabled-neighbor: #cdcdcd;
+$color-hover-bg: #e6e6e6;
+
+// 공통 스타일
+.react-calendar,
+.react-calendar *,
+.react-calendar *:before,
+.react-calendar *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
+// 마지막날짜 선택 버튼 타일
+.dr-days-of-month-option-calendar {
+  &__last-day-tile {
+    cursor: pointer;
+    &--active {
+      background-color: var(--color-accent-1) !important;
+    }
+  }
+}
+
+
+
+
+// react-calendar 기본 스타일
+.dr-days-of-month-option-calendar .react-calendar {
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  // border: 1px solid $color-border;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+
+  .react-calendar__tile {
+    margin: 0;
+    border: 0;
+    outline: none;
+    background-color: transparent !important;
+    &:enabled:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+// 요일
+.react-calendar__month-view__weekdays {
+  display: none !important;
+}
+
+.dr-days-of-month-option-calendar .react-calendar__month-view__weekNumbers .react-calendar__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+// 날짜 타일 스타일
+.dr-days-of-month-option-calendar .react-calendar__month-view__days {
+  gap: 0.5em 0;
+
+  &__day {
+    position: relative;
+    padding: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+  }
+
+  abbr {
+    display: none;
+  }
+}
+// 2, 3, 4일 타일
+.dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(32), 
+.dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(33), 
+.dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(34),
+.dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(35) {
+  display: none;
+}
+
+
+// react-calendar 다른 모든 타일
+.dr-days-of-month-option-calendar .react-calendar__tile {
+  max-width: 100%;
+  height: 4em;
+  padding: 1em;
+  background: none;
+  text-align: center;
+  line-height: 1em;
+  font: inherit;
+  font-size: 0.7em;
+
+  &:hover {
+    background-color: $color-hover-bg;
+  }
+}

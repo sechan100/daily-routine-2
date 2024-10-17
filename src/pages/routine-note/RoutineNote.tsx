@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { loadOrCreateRoutineNote } from "entities/utils";
 import { RoutineNote as RoutineNoteEntity, routineNoteService } from "entities/routine-note";
-import { openAddRoutineModal } from "features/routine";
-import { DaysNav } from "features/days/DaysNav";
+// import { openAddRoutineModal } from "features/routine";
+import { DaysNav } from "features/days";
 import { useDaysNav } from "features/days";
+import { TaskList } from "widgets/tasks";
 /////////////////////
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Day } from "shared/day";
 import "./routine-note.scss";
-import { TaskList } from "widgets/tasks";
 
 
 
@@ -56,7 +56,7 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
   ////////////////////////////////////////
   // routine 추가 버튼 콜백
   const onAddRoutineBtnClick = useCallback(() => {
-    openAddRoutineModal();
+    // openAddRoutineModal();
   }, []);
 
 

@@ -33,7 +33,6 @@ export class Day {
   static now(): Day{
     return new Day(moment());
   }
-
   format(format: string){
     return this.#moment.format(format);
   }

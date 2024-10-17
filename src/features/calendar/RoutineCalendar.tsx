@@ -2,7 +2,7 @@ import { routineNoteArchiver } from "entities/archive";
 import { RoutineNote, routineNoteService } from "entities/routine-note";
 //////////////////////////////
 import { Day } from "shared/day";
-import { PerCentageCircle } from "shared/components/PercentageCircle";
+import { PercentageCircle } from "shared/components/PercentageCircle";
 import Calendar from "react-calendar"
 import { moment } from "obsidian";
 import { useCallback, useEffect, useState } from "react";
@@ -72,7 +72,7 @@ export const RoutineCalendar = ({ defaultDay, onDayTileClick }: RoutineCalendarP
   // 렌더링
   if(!routineNotes) return <div>Loading...</div>;
   return (
-    <div>
+    <div className="dr-routine-note-calendar">
       <Calendar 
         tileContent={tileContent}
         defaultValue={activeDay.getJsDate()}
@@ -99,6 +99,6 @@ const DayTile = ({percentage, day }: DayTileProps) => {
     return () => clearTimeout(cancel);
   }, [percentage]);
   return (
-    <PerCentageCircle percentage={percent} text={day.getDate().toString()} />
+    <PercentageCircle percentage={percent} text={day.getDate().toString()} />
   )
 }

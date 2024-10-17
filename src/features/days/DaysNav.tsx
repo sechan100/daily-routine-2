@@ -2,7 +2,7 @@ import { Day } from "shared/day";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./days-nav.scss";
-import { PerCentageCircle } from "shared/components/PercentageCircle";
+import { PercentageCircle } from "shared/components/PercentageCircle";
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
@@ -217,7 +217,7 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
                         onClick={(e) => onDayClick(day, e)}
                       >
                         <div className="dr-days__day-of-week">{day.format("ddd")}</div>
-                        <PerCentageCircle
+                        <PercentageCircle
                           percentage={percentage}
                           transition={circleTransitionRef.current}
                           text={day.format("M/D")} 

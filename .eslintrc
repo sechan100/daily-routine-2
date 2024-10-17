@@ -5,7 +5,8 @@
     "plugins": [
       "@typescript-eslint",
       "react",
-      "react-hooks"
+      "react-hooks",
+      "fsd-import"
     ],
     "extends": [
       "eslint:recommended",
@@ -23,6 +24,9 @@
       "@typescript-eslint/no-empty-interface": "off",
       "@typescript-eslint/no-empty-function": "off",
       "react-hooks/rules-of-hooks": "error", // Hooks의 규칙을 강제
-      "react-hooks/exhaustive-deps": "warn"  // 의존성 배열 검사
+      "react-hooks/exhaustive-deps": "warn",  // 의존성 배열 검사
+      "fsd-import/fsd-relative-path": "error",
+      "fsd-import/public-api-imports": "error",
+      "fsd-import/layer-imports": "error"
     } 
   }

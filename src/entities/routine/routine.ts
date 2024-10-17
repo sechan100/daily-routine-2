@@ -1,22 +1,9 @@
-import { getFrontMatterInfo, parseFrontMatterEntry, parseYaml, stringifyYaml, TFile } from "obsidian";
+import { TFile } from "obsidian";
 import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
-import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
-import { isRoutineProperty, RoutineFrontMatter } from "./front-matter";
-
-
-/**
- * 루틴 파일에 대한 정보 객체
- */
-export interface Routine {
-  name: string; // 루틴 파일 제목 겸 루틴 내용
-  properties: RoutineProperties; // 루틴 파일의 프로퍼티
-}
-
-export interface RoutineProperties {
-  order: number; // routine들 순서(음이 아닌 정수 0, 1, 2, ...)
-  daysOfWeek: DayOfWeek[];
-}
+import { RoutineFrontMatter } from "./front-matter";
+import { validateRoutineProperties } from "./types";
+import { Routine, RoutineProperties } from "./types";
 
 
 interface RoutineManager {
@@ -66,7 +53,7 @@ export const routineManager: RoutineManager = {
     const file = fileAccessor.getFile(path);
 
     await fileAccessor.writeFrontMatter(file, (fm => {
-      if(!isRoutineProperty(fm)) throw new Error('Invalid Routine frontmatter.');
+      if(!validateRoutineProperties(fm)) throw new Error('Invalid Routine frontmatter.');
       return {
         ...fm,
         ...newPropertiesPatial

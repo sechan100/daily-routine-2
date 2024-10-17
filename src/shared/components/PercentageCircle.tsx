@@ -35,12 +35,12 @@ const Circle = ({ color, percentage, transition=true }: CircleProps) => {
   );
 };
 
-interface PerCentageCircleProps {
+interface PercentageCircleProps {
   percentage: number;
   text: string;
   transition?: boolean;
 }
-export const PerCentageCircle = ({ percentage, text, transition=true }: PerCentageCircleProps) => {
+export const PercentageCircle = ({ percentage, text, transition=true }: PercentageCircleProps) => {
   const pct = cleanPercentage(percentage);
   const color = pct > 70 ? "hsla(var(--color-accent-1-hsl), 1)" : "hsla(var(--color-accent-2-hsl), 1)";
   return (

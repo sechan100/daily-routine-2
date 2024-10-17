@@ -16,7 +16,7 @@ $color-hover-bg: #e6e6e6;
 }
 
 // react-calendar 기본 스타일
-.react-calendar {
+.dr-routine-note-calendar .react-calendar {
   width: 100%;
   max-width: 100%;
   background: white;
@@ -51,7 +51,7 @@ $color-hover-bg: #e6e6e6;
 }
 
 // 네비게이션
-.react-calendar__navigation {
+.dr-routine-note-calendar .react-calendar__navigation {
   display: flex;
   height: 44px;
   margin-bottom: 1em;
@@ -74,7 +74,7 @@ $color-hover-bg: #e6e6e6;
 }
 
 // 월, 요일 및 날짜
-.react-calendar__month-view__weekdays {
+.dr-routine-note-calendar .react-calendar__month-view__weekdays {
   text-align: center;
   text-transform: uppercase;
   font: inherit;
@@ -86,7 +86,7 @@ $color-hover-bg: #e6e6e6;
   }
 }
 
-.react-calendar__month-view__weekNumbers .react-calendar__tile {
+.dr-routine-note-calendar .react-calendar__month-view__weekNumbers .react-calendar__tile {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,7 +96,7 @@ $color-hover-bg: #e6e6e6;
 }
 
 // 날짜 타일 스타일
-.react-calendar__month-view__days {
+.dr-routine-note-calendar .react-calendar__month-view__days {
   gap: 0.5em 0;
 
   &__day {
@@ -120,7 +120,7 @@ $color-hover-bg: #e6e6e6;
   }
 }
 // 이웃한 달의 날짜
-.react-calendar__month-view__days__day--neighboringMonth {
+.dr-routine-note-calendar .react-calendar__month-view__days__day--neighboringMonth {
   .dr-percentage-circle {
     circle {
       stroke: $color-disabled-neighbor !important;
@@ -134,7 +134,7 @@ $color-hover-bg: #e6e6e6;
 
 
 // react-calendar 타일
-.react-calendar__tile {
+.dr-routine-note-calendar .react-calendar__tile {
   max-width: 100%;
   height: 6em;
   padding: 1em;

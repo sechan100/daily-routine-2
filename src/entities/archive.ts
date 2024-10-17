@@ -1,4 +1,5 @@
-import { routineManager, Routine } from "entities/routine/routine";
+import { routineManager } from "entities/routine/routine";
+import { Routine } from "./routine/types";
 import { RoutineNote, routineNoteService, Task } from "entities/routine-note";
 ////////////////////////////////////
 import { fileAccessor } from "shared/file/file-accessor";
