@@ -1,6 +1,5 @@
 import { moment } from "obsidian";
 
-
 export enum DayOfWeek {
   SUN = "SUN",
   MON = "MON",
@@ -33,6 +32,11 @@ export class Day {
   static now(): Day{
     return new Day(moment());
   }
+
+  static max(): Day{
+    return new Day(moment('9999-12-31T23:59:59.999Z'));
+  }
+
   format(format: string){
     return this.#moment.format(format);
   }

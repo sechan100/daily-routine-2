@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 
 
-type PageType = "calendar" | "note";
+type PageType = "calendar" | "note" | "achivement";
 
 type SetPageCmd = {
   page: "calendar";
@@ -13,6 +13,11 @@ type SetPageCmd = {
   }
 } | {
   page: "note";
+  data?: {
+    day: Day // 루틴노트의 기준이 될 날짜를 선택
+  }
+} | {
+  page: "achivement";
   data?: {
     day: Day // 루틴노트의 기준이 될 날짜를 선택
   }

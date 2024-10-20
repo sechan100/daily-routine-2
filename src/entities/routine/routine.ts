@@ -54,10 +54,12 @@ export const routineManager: RoutineManager = {
 
     await fileAccessor.writeFrontMatter(file, (fm => {
       if(!validateRoutineProperties(fm)) throw new Error('Invalid Routine frontmatter.');
-      return {
+
+      const newProps = {
         ...fm,
         ...newPropertiesPatial
       }
+      return newProps;
     }));
   },
 
@@ -111,10 +113,7 @@ export const routineManager: RoutineManager = {
         newOrder = routine.properties.order + 1;
       }
     }
-
-
   },
-
 
 }
 

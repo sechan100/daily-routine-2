@@ -5,15 +5,6 @@ $color-disabled-text: #ababab;
 $color-disabled-neighbor: #cdcdcd;
 $color-hover-bg: #e6e6e6;
 
-// 공통 스타일
-.react-calendar,
-.react-calendar *,
-.react-calendar *:before,
-.react-calendar *:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
 
 
 // 마지막날짜 선택 버튼 타일
@@ -78,7 +69,7 @@ $color-hover-bg: #e6e6e6;
     display: none;
   }
 }
-// 2, 3, 4일 타일
+// 1, 2, 3, 4일 타일
 .dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(32), 
 .dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(33), 
 .dr-days-of-month-option-calendar .react-calendar__month-view__days button:nth-child(34),

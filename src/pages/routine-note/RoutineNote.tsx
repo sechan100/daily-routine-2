@@ -1,14 +1,18 @@
+/** @jsxImportSource @emotion/react */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { loadOrCreateRoutineNote } from "entities/utils";
 import { RoutineNote as RoutineNoteEntity, routineNoteService } from "entities/routine-note";
-// import { openAddRoutineModal } from "features/routine";
+import { openStartNewRoutineModal } from "features/routine";
 import { DaysNav } from "features/days";
 import { useDaysNav } from "features/days";
 import { TaskList } from "widgets/tasks";
-/////////////////////
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Day } from "shared/day";
-import "./routine-note.scss";
+import { Button } from "shared/components/Button";
+import { dr } from "shared/daily-routine-bem";
+import { MenuComponent } from "shared/components/Menu";
+import { Menu } from "obsidian";
+import { FeatureNoteUpdateProvider } from "features/feature-note";
 
 
 
@@ -73,22 +77,59 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
   }, [note]);
 
 
+  const onNoteMenuShow = useCallback((m: Menu) => {
+    // Start New Routine
+    m.addItem(item => {
+      item.setIcon("alarm-clock-plus");
+      item.setTitle("Start New Routine");
+      item.onClick(() => {
+        openStartNewRoutineModal();
+      });
+    });
+
+    m.addSeparator();
+
+    // Add Todo
+    m.addItem(item => {
+      item.setIcon("square-check-big");
+      item.setTitle("Add Todo");
+      item.onClick(() => {
+        // openAddTodoModal();
+      });
+    });
+  }, [note]);
+
+
+  const bem = useMemo(() => dr("routine-note"), []);
+
   if(!note) return (<div>Loading...</div>);
   return (
-    <div>
+    <FeatureNoteUpdateProvider className={bem()}>
       <DaysNav currentDay={day} onDayClick={onDayClick} />
-      <div className="dr-note">
-        <header className="dr-note__header">
-          <div>
-            <h1>{note.day.getBaseFormat()}</h1>
-          </div>
-          <button className="dr-note__add-routine" onClick={onAddRoutineBtnClick}>+ Routine</button>
+      <main>
+        <header 
+          css={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0.3em 0.5em",
+          }} 
+          className={bem("header")}
+        >
+          <h4
+            css={{
+              display: "inline-block",
+            }}
+          >
+            {note.day.getBaseFormat() + " / " + note.day.getDayOfWeek()}
+          </h4>
+          <MenuComponent onMenuShow={onNoteMenuShow} />
         </header>
         <TaskList 
           useRoutineNoteState={{state: note, setState: setNote}}
           onTaskClick={onRoutineTaskClick}
         />
-      </div>
-    </div>
+      </main>
+    </FeatureNoteUpdateProvider>
   );  
 }

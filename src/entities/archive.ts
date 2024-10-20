@@ -1,7 +1,4 @@
-import { routineManager } from "entities/routine/routine";
-import { Routine } from "./routine/types";
-import { RoutineNote, routineNoteService, Task } from "entities/routine-note";
-////////////////////////////////////
+import { RoutineNote, routineNoteService } from "entities/routine-note";
 import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";
@@ -13,13 +10,16 @@ import { FileNotFoundError } from "shared/file/errors";
 
 interface RoutineNoteArchiver {
   // day에 해당하는 RoutineNote를 archive에서 가져온다. 
-  load: (day: Day) => Promise<RoutineNote | null>;
+  load(day: Day): Promise<RoutineNote | null>;
 
   // 루틴 노트를 저장한다.
-  save: (routineNote: RoutineNote) => Promise<void>;
+  save(routineNote: RoutineNote): Promise<void>;
 
   // start와 end를 포함한 사이의 모든 루틴 노트를 가져온다.
-  loadBetween: (start: Day, end: Day) => Promise<RoutineNote[]>;  
+  loadBetween(start: Day, end: Day): Promise<RoutineNote[]>;
+
+  // delete
+  delete(day: Day): Promise<void>;
 }
 
 export const routineNoteArchiver: RoutineNoteArchiver = {
@@ -38,6 +38,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
 
     // 기존 파일이 있으면 덮어쓰기
     if(file){
+      // console.log("파일 존재함", routineNote.day);
       await fileAccessor.writeFile(file, () => routineNoteService.serialize(routineNote));
     // 기존 파일이 없으면 새로 생성
     } else {
@@ -62,7 +63,12 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     }
     return notes;
   },
+  
 
+  async delete(day: Day){
+    const file = getRoutineNoteFile(day);
+    if(file) await fileAccessor.deleteFile(file);
+  }
 }
 
 

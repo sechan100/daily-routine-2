@@ -31,7 +31,6 @@ export interface RoutineProperties {
  */
 
 export function validateRoutineProperties(fm: any): fm is RoutineProperties {
-  console.log(fm);
   // order
   const hasOrder = 'order' in fm && typeof fm.order === 'number';
   if(!hasOrder) return false;

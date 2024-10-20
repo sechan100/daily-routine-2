@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { Day } from "shared/day";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -9,6 +10,10 @@ import 'swiper/swiper-bundle.css';
 import { routineNoteArchiver } from "entities/archive";
 import { routineNoteService } from "entities/routine-note";
 import { useDaysNav } from "./use-days-nav";
+import { dr } from "shared/daily-routine-bem";
+import { css } from "@emotion/react";
+
+
 
 // week를 로드하는 함수. option은 앞뒤로 추가할 week의 수. prev: -1, next: 2라면 총 4개의 week를 로드한다.
 const loadWeek = async (day: Day, {prev, next}: {prev: number, next: number} = {prev: 0, next: 0}) => {
@@ -127,6 +132,8 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
    * 현재 날짜가 weeks 안에 어딘가 존재한다면, 아마 이미 swiper가 해당 날짜를 잘 표현하고 있을 것이므로 추가적인 동작을 수행하지 않음.
    */
   useEffect(() => {
+    let ignore = false;
+    if(ignore) return;
     // weeks에 currentWeekStartDay가 포함되어있지 않다면, 해당 week를 로드한다.
     if(!weeks.some(week => week.some(({day}) => day.isSameDay(currentWeekStartDay)))){
       loadWeek(currentWeekStartDay, {prev: 1, next: 1}) // 해당 week와 앞뒤로 하나씩의 week를 로드한다.
@@ -137,6 +144,10 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
           if(swiperRef.current) swiperRef.current.swiper.slideTo(1, 0);
         });
       })
+    }
+
+    return () => {
+      ignore = true;
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,14 +194,48 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
   }, []);
 
 
+  const bem = useMemo(() => dr("days-nav"), []);
+
   return (
-    <>
+    <div 
+      css={css`
+        &.hidden-navigation {
+          & .swiper-button-next, & .swiper-button-prev {
+            display: none;
+          }
+        }
+        // nav buttons
+        & .swiper-button-next, & .swiper-button-prev {
+          color: var(--color-accent-1);
+
+          // 화살표 사이즈
+          &::after {
+            font-size: 2em;
+          }
+        }
+      `}
+      ref={ref => {
+        if(!ref) return;
+        const observer = new ResizeObserver(entries => {
+          for (const entry of entries) {
+            if (entry.contentRect.width < 540) {
+              ref.classList.add("hidden-navigation");
+            } else {
+              ref.classList.remove("hidden-navigation");
+            }
+          }
+        });
+        observer.observe(ref);
+      }}
+    >
       <Swiper
+        className={bem()}
         ref={swiperRef}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
         preventInteractionOnTransition={false} // transition 중에는 interaction을 막는다.
         modules={[Navigation]}
+        navigation
         onToEdge={async(swiper: SwiperClass) =>{
           // 3개 이하는 초기값 설정이 아직 안되어있는 상태임
           if(weeks.length < 3) return;
@@ -202,35 +247,77 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
       >
         {weeks.map((week, idx) => {
           return (
-            <SwiperSlide key={idx}>
-              <div className="dr-days">
-                <div className="dr-days__items">
-                  {week.map(({day, percentage}, idx) => {
-                    return (
+            <SwiperSlide 
+              key={idx}
+              className={clsx(bem("slide"), bem("week"))}
+            >
+              <div
+                css={css`
+                  display: flex;
+                  min-width: 290px;
+                  max-width: 450px;
+                  padding-top: 1em;
+                  margin: 0 auto;
+                  justify-content: space-between;
+                  align-items: center;
+                  gap: 0.3em;
+                  flex-wrap: nowrap;
+                  
+                  // 겹쳤을 때, bg가 투명해서 겹쳐보이는 것을 방지
+                  .workspace-tabs .workspace-leaf & {
+                    background-color: var(--background-secondary);
+                  }
+                  .workspace-split.mod-root .view-content & {
+                    background-color: var(--background-primary);
+                  }
+                `}
+              >
+                {week.map(({day, percentage}, idx) => {
+                  return (
+                    <div
+                      key={idx} 
+                      className={bem("day", {
+                        "today": day.isSameDay(Day.now()),
+                        "current": day.isSameDay(currentDay)
+                      })}
+                      css={css`
+                        display: inline-block;
+                        position: relative;
+                        height: auto;
+                        background: none;
+                        padding: 0 0em;
+                        cursor: pointer;
+                        border-radius: 7px;
+                        &:hover {
+                          background-color: #e6e6e6;
+                        }
+                        ${day.isSameDay(currentDay) && css`
+                          box-shadow: inset 0 0 0.5em 0.1em rgba(0, 0, 0, 0.1) !important;
+                        `}
+                      `}
+                      onClick={(e) => onDayClick(day, e)}
+                    >
                       <div
-                        key={idx} 
-                        className={clsx("dr-days__item",
-                        {
-                          "dr-days__today": day.isSameDay(Day.now()),
-                          "dr-days__current": day.isSameDay(currentDay)
-                        })}
-                        onClick={(e) => onDayClick(day, e)}
+                        css={css`
+                          text-align: center;
+                          font-size: 0.9em;
+                        `}
                       >
-                        <div className="dr-days__day-of-week">{day.format("ddd")}</div>
-                        <PercentageCircle
-                          percentage={percentage}
-                          transition={circleTransitionRef.current}
-                          text={day.format("M/D")} 
-                        />
+                        {day.format("M/D").toUpperCase()}
                       </div>
-                    )
-                  })}
-                </div>
+                      <PercentageCircle
+                        percentage={percentage}
+                        transition={circleTransitionRef.current}
+                        text={day.format("ddd").toUpperCase()} 
+                      />
+                    </div>
+                  )
+                })}
               </div>
             </SwiperSlide>
           )
         })}
       </Swiper>
-    </>
+    </div>
   )
 }

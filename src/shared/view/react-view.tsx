@@ -37,9 +37,11 @@ export abstract class ReactView extends ItemView {
 	async onOpen() {
 		this.root = createRoot(this.containerEl.children[1]);
 		this.root.render(
-			<StrictMode>
-        {this.render()}
-			</StrictMode>,
+      <>
+        <StrictMode>
+          {this.render()}
+        </StrictMode>
+      </>
 		);
 	}
 

@@ -1,3 +1,2 @@
-import "./style.scss"
 export { openRoutineOptionModal } from "./routine-option";
-// export { openAddRoutineModal } from "./add-routine";
+export { openStartNewRoutineModal } from "./start-new-routine";

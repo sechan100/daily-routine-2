@@ -1,11 +1,12 @@
-import { routineNoteService, RoutineTask as RoutineTaskEntity } from "entities/routine-note";
+import { routineNoteService, RoutineTask as RoutineTaskEntity, Task as TaskEntity } from "entities/routine-note";
 import { routineNoteArchiver } from "entities/archive";
-import { routineManager } from "entities/routine/routine";
-import { openRoutineOptionModal } from "features/routine/routine-option";
-import { useRoutineNoteState } from "features/task/task-context";
-import { Task } from "features/task/Task";
+import { routineManager } from "entities/routine";
+import { openRoutineOptionModal } from "features/routine";
+import { useRoutineNoteState } from "features/task";
+import { Task } from "features/task";
 ////////////////////////////
 import React, { useCallback } from "react"
+import { drEvent } from "shared/event";
 
 
 interface RoutineTaskProps {
@@ -29,11 +30,17 @@ export const RoutineTask = React.memo(({ routineTask, onTaskClick }: RoutineTask
   // option 클릭시
   const onOptionClick = useCallback(async () => {
     const routine = await routineManager.get(routineTask.name);
-    openRoutineOptionModal(routine);
+    openRoutineOptionModal({routine});
   }, [routineTask])
+
+  const onTaskReorder = useCallback(async (tasks: TaskEntity[]) => {
+    await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
+    drEvent.emit("reorderRoutine", { tasks });
+  }, [])
 
   return (
     <Task
+      onTaskReorder={onTaskReorder}
       className="dr-routine-task"
       task={routineTask}
       onOptionClick={onOptionClick}

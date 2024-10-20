@@ -42,11 +42,11 @@ interface PercentageCircleProps {
 }
 export const PercentageCircle = ({ percentage, text, transition=true }: PercentageCircleProps) => {
   const pct = cleanPercentage(percentage);
-  const color = pct > 70 ? "hsla(var(--color-accent-1-hsl), 1)" : "hsla(var(--color-accent-2-hsl), 1)";
+  const color = pct > 70 ? "var(--color-accent-1)" : "var(--color-accent-2)";
   return (
     <svg width={"100%"} height={"100%"} data-percentage={percentage} viewBox="0 0 200 200" className="dr-percentage-circle">
       <g transform="rotate(-90 100 100)" >
-        <Circle transition={false} color="lightgrey" percentage={100} />
+        <Circle transition={false} color="#ececec" percentage={100} />
         <Circle transition={transition} color={color} percentage={pct} />
       </g>
       <text

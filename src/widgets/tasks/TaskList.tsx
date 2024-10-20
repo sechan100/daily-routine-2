@@ -1,7 +1,8 @@
 import { RoutineNote, Task, } from "entities/routine-note";
-import { RoutineTask, TaskContext } from "features/task";
+import { TaskContext } from "features/task";
 import React from "react";
 import { UseStateRv } from "shared/zustand/create-use-state-synced-store";
+import { RoutineTask } from "./RoutineTask";
 
 
 
