@@ -41,6 +41,10 @@ export class Day {
     return this.#moment.format(format);
   }
 
+  isToday(){
+    return this.#moment.isSame(moment(), 'day');
+  }
+
   add(amount: number, unit: moment.unitOfTime.DurationConstructor){
     this.#moment.add(amount, unit);
     return this;

@@ -8,7 +8,7 @@ import styled from "@emotion/styled";
 
 
 interface ButtonProps {
-  variant?: "primary" | "destructive";
+  variant?: "primary" | "destructive" | "accent";
   width?: string;
   height?: string;
   fontSize?: string;
@@ -23,6 +23,10 @@ export const Button = styled.button<ButtonProps>`
     switch(p.variant){
       case "primary": return "color: black";
       case "destructive": return "color: var(--text-error) !important";
+      case "accent": return (
+        `color: var(--text-on-accent) !important;
+        background-color: var(--interactive-accent) !important;
+        `);
     }
   }}
 `;

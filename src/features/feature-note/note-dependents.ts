@@ -1,4 +1,4 @@
-import { RoutineNote } from "entities/routine-note";
+import { RoutineNote } from "entities/note";
 
 
 

@@ -1,3 +1,4 @@
+import React from "react";
 
 const cleanPercentage = (percentage: number) => {
   const isNegativeOrNaN = !Number.isFinite(+percentage) || percentage < 0; // we can set non-numbers to 0 here
@@ -40,7 +41,7 @@ interface PercentageCircleProps {
   text: string;
   transition?: boolean;
 }
-export const PercentageCircle = ({ percentage, text, transition=true }: PercentageCircleProps) => {
+export const PercentageCircle = React.memo(({ percentage, text, transition=true }: PercentageCircleProps) => {
   const pct = cleanPercentage(percentage);
   const color = pct > 70 ? "var(--color-accent-1)" : "var(--color-accent-2)";
   return (
@@ -60,4 +61,4 @@ export const PercentageCircle = ({ percentage, text, transition=true }: Percenta
       </text>
     </svg>
   );
-};
+});

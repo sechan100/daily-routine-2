@@ -1,4 +1,4 @@
-import { RoutineNote, routineNoteService } from "entities/routine-note";
+import { RoutineNote, routineNoteService } from "./routine-note-service";
 import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";
@@ -11,9 +11,6 @@ import { FileNotFoundError } from "shared/file/errors";
 interface RoutineNoteArchiver {
   // day에 해당하는 RoutineNote를 archive에서 가져온다. 
   load(day: Day): Promise<RoutineNote | null>;
-
-  // 루틴 노트를 저장한다.
-  save(routineNote: RoutineNote): Promise<void>;
 
   // start와 end를 포함한 사이의 모든 루틴 노트를 가져온다.
   loadBetween(start: Day, end: Day): Promise<RoutineNote[]>;
@@ -32,22 +29,6 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
       return Promise.resolve(null);
     }
   },
-
-  async save(routineNote: RoutineNote){
-    const file = getRoutineNoteFile(routineNote.day);
-
-    // 기존 파일이 있으면 덮어쓰기
-    if(file){
-      // console.log("파일 존재함", routineNote.day);
-      await fileAccessor.writeFile(file, () => routineNoteService.serialize(routineNote));
-    // 기존 파일이 없으면 새로 생성
-    } else {
-      const path = getRoutineArchivePath(routineNote.day.getBaseFormat());
-      const content = routineNoteService.serialize(routineNote);
-      await fileAccessor.createFile(path, content);
-    }
-  },
-
 
   async loadBetween(start: Day, end: Day): Promise<RoutineNote[]> {
     const notes: RoutineNote[] = [];
@@ -71,6 +52,25 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
   }
 }
 
+
+/**
+ * NOTE: 사용자와 상호작용하면서 노트를 저장하는 경우, use-routine-note 훅에서 제공하는 setNoteAndSave를 사용해야 한다.
+ * 해당 함수는 실제로 노트가 있든 없든 무조건 생성후 저장하는 함수로, 무분별하게 호출될 경우 다수의 feature note가 생성되어 성능저하가 일어날 수 있다.
+ * 다만 필요한 경우 fsd 룰을 위반하고 사용 가능하다.
+ */
+export const persisteOrUpdateRoutineNote = async (routineNote: RoutineNote) => {
+  const file = getRoutineNoteFile(routineNote.day);
+
+  // 기존 파일이 있으면 덮어쓰기
+  if(file){
+    await fileAccessor.writeFile(file, () => routineNoteService.serialize(routineNote));
+  // 기존 파일이 없으면 새로 생성
+  } else {
+    const path = getRoutineArchivePath(routineNote.day.getBaseFormat());
+    const content = routineNoteService.serialize(routineNote);
+    await fileAccessor.createFile(path, content);
+  }
+}
 
 
 

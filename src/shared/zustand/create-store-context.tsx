@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * useContext와 zustand store를 결합하여 사용할 수 있도록 해주는 유틸함수. 
  * zustand store를 특정 컨텍스트하에서, 특정 값을 가지고 초기화할 수 있도록 한다. 
  */
 import { StoreApi, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import React from 'react';
+import { on } from 'events';
 
 
 
@@ -25,36 +27,37 @@ const createStoreWithInit: <D, S>(initializer: Initializer<D, S>) => (data: D) =
 }
 
 
+type ExtractState<S> = S extends {
+  getState: () => infer T;
+} ? T : never;
+type ReadonlyStoreApi<T> = Pick<StoreApi<T>, 'getState' | 'getInitialState' | 'subscribe'>;
+export type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
+  (): ExtractState<S>;
+  <U>(selector: (state: ExtractState<S>) => U): U;
+} & S;
+
+
 interface StoreContextProviderProps<D, S> {
   data: D;
-  onDataChanged?: (state: S, data: D) => void;
   children: React.ReactNode;
+  onDataChange: (store: StoreApi<S>, data: D) => void;
 }
 export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
   StoreProvider: React.FC<StoreContextProviderProps<D, S>>,
-  useStoreHook: <R>(selector: (state: S) => R) => R;
+  useStoreHook: UseBoundStore<StoreApi<S>>
 } => {
   const StoreContext = createContext<StoreApi<S> | null>(null);
-  const store = createStoreWithInit<D, S>(initializer);
+  const createNewStore = createStoreWithInit<D, S>(initializer);
 
-  /**
-   * Provider 컴포넌트의 initialData는 최초 store 초기화만을 담당한다.
-   * 그 이후 변경된 데이터에 대한 처리는 onDataChanged 콜백을 이용하도록한다.
-   * 
-   * 만약 onDataChanged가 주어지지 않으면, initialData가 변경될 때마다 해당 context에서 관리되는 store 인스턴스 자체가 초기화된다.
-   * 이 경우 하위 모든 컴포넌트들이 리렌더링되므로 주의.
-   */
-  const Provider = React.memo(function Provider({ data, onDataChanged, children }: StoreContextProviderProps<D, S>) {
-    const storeRef = useRef(store(data));
+
+  const Provider = React.memo(function Provider({ data, children, onDataChange }: StoreContextProviderProps<D, S>) {
+    const storeRef = useRef<StoreApi<S>>(createNewStore(data));
 
     useEffect(() => {
-      if(onDataChanged){
-        onDataChanged(storeRef.current.getState(), data);
-      } else {
-        storeRef.current = store(data);
-      }
-    }, [data, onDataChanged]);
-
+      onDataChange(storeRef.current, data);
+    }, [data, onDataChange]);
+    
+    
     return (
       <StoreContext.Provider value={storeRef.current}>
         {children}
@@ -63,12 +66,12 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
   });
 
 
-  const useStoreHook: <R>(selector:(state: S) => R) => R 
-  = (selector) => {
+  const useStoreHook = (selector: any) => {
     const store = useContext(StoreContext);
     if (!store) throw new Error("해당 context에서는 store가 정의되지 않습니다. 올바른 컨텍스트에서 접근가능");
+    Object.assign(useStoreHook, store);
     return useStore(store, selector);
   }
-  
-  return { StoreProvider: Provider, useStoreHook };
+
+  return { StoreProvider: Provider, useStoreHook: (useStoreHook as UseBoundStore<StoreApi<S>>) };
 }

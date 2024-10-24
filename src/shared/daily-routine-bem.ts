@@ -1,7 +1,7 @@
 import BEMHelper, { WordSet } from "react-bem-helper"
 
 
-type DailyRoutineBEM = (element?: string, modifiers?: WordSet, extra?: WordSet) => string;
+export type DailyRoutineBEM = (element?: string, modifiers?: WordSet, extra?: WordSet) => string;
 
 export const dr = (name: string): DailyRoutineBEM => {
   const bemHelper = new BEMHelper({

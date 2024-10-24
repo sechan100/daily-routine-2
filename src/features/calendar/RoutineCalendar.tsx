@@ -1,6 +1,4 @@
-import { routineNoteArchiver } from "entities/archive";
-import { RoutineNote, routineNoteService } from "entities/routine-note";
-//////////////////////////////
+import { routineNoteArchiver, RoutineNote, routineNoteService } from 'entities/note';
 import { Day } from "shared/day";
 import { PercentageCircle } from "shared/components/PercentageCircle";
 import Calendar from "react-calendar"
@@ -91,13 +89,15 @@ interface DayTileProps {
   day: Day;
 }
 const DayTile = ({percentage, day }: DayTileProps) => {
-  const [percent, setPercent] = useState(0.1);
+  const [percent, setPercent] = useState(0);
+
   useEffect(() => {
     const cancel = setTimeout(() => {
       setPercent(percentage);
     }, 0);
     return () => clearTimeout(cancel);
   }, [percentage]);
+
   return (
     <PercentageCircle percentage={percent} text={day.getDate().toString()} />
   )

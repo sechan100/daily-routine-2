@@ -1,49 +1,35 @@
-import { routineNoteService, RoutineTask as RoutineTaskEntity, Task as TaskEntity } from "entities/routine-note";
-import { routineNoteArchiver } from "entities/archive";
+import { RoutineTask as RoutineTaskEntity, Task } from "entities/note";
 import { routineManager } from "entities/routine";
 import { openRoutineOptionModal } from "features/routine";
-import { useRoutineNoteState } from "features/task";
-import { Task } from "features/task";
-////////////////////////////
+import { AbstractTask } from "./AbstractTask";
 import React, { useCallback } from "react"
 import { drEvent } from "shared/event";
 
 
 interface RoutineTaskProps {
-  routineTask: RoutineTaskEntity;
-  onTaskClick?: (task: RoutineTaskEntity) => void;
+  task: RoutineTaskEntity;
 }
-export const RoutineTask = React.memo(({ routineTask, onTaskClick }: RoutineTaskProps) => {
+export const RoutineTask = React.memo(({ task }: RoutineTaskProps) => {
 
-  const [ routineNote, ] = useRoutineNoteState();
-
-  // 루틴 클릭시
   const onClick = useCallback((task: RoutineTaskEntity) => {
+    // 필요시..ss
+  }, [])
 
-    // 루틴노트 업데이트
-    routineNoteService.checkTask(routineNote, routineTask.name, task.checked);
-    routineNoteArchiver.save(routineNote);
-
-    if(onTaskClick) onTaskClick(task);
-  }, [routineTask.name, routineNote, onTaskClick])
-
-  // option 클릭시
   const onOptionClick = useCallback(async () => {
-    const routine = await routineManager.get(routineTask.name);
+    const routine = await routineManager.get(task.name);
     openRoutineOptionModal({routine});
-  }, [routineTask])
+  }, [task])
 
-  const onTaskReorder = useCallback(async (tasks: TaskEntity[]) => {
+  const onTaskReorder = useCallback(async (tasks: Task[]) => {
     await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
-    drEvent.emit("reorderRoutine", { tasks });
   }, [])
 
   return (
-    <Task
+    <AbstractTask
       onTaskReorder={onTaskReorder}
       className="dr-routine-task"
-      task={routineTask}
-      onOptionClick={onOptionClick}
+      task={task}
+      onOptionMenu={onOptionClick}
       onTaskClick={onClick}
     />
   )

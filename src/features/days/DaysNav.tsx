@@ -7,9 +7,7 @@ import { PercentageCircle } from "shared/components/PercentageCircle";
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
-import { routineNoteArchiver } from "entities/archive";
-import { routineNoteService } from "entities/routine-note";
-import { useDaysNav } from "./use-days-nav";
+import { routineNoteArchiver, routineNoteService, useRoutineNote } from 'entities/note';
 import { dr } from "shared/daily-routine-bem";
 import { css } from "@emotion/react";
 
@@ -87,45 +85,46 @@ const loadWeek = async (day: Day, {prev, next}: {prev: number, next: number} = {
 
 interface DaysNavProps {
   currentDay: Day;
-  onDayClick: (day: Day, event?: React.MouseEvent) => void;
+  /**
+   * 현재 보고있는 day의 percentage는, note page에서 사용자가 task를 클릭할 때마다 동적으로 변경될 수 있다.
+   */
+  currentDayPercentage: number;
+  onDayClick?: (day: Day, event?: React.MouseEvent) => void;
 }
-export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
-  // 일주일 단위들의 배열
+export const DaysNav = ({ currentDay, currentDayPercentage, onDayClick }: DaysNavProps) => {
   const [ weeks, setWeeks ] = useState<{day:Day, percentage:number}[][]>([]);
-
-  // 현재 보고있는 week의 시작일. props로 전달된 currentDay를 기준으로 한다.
   const currentWeekStartDay = useMemo(() => currentDay.clone(m => m.startOf("week")), [currentDay]);
-
-  // swiper instance
   const swiperRef = useRef<SwiperRef>(null);
-
   // circle 채워지는 애니메이션 on/off
-  const circleTransitionRef = useRef<boolean>(false);
+  const circleTransitionRef = useRef<boolean>(true);
+  const setClientNote = useRoutineNote(s => s.setNote);
+
 
   /**
+   * currentDayPercentage가 변경되면 이를 weeks에 반영한다.
+   * 
    * currentDay의 percentage는 routine note view에 의해서 동적으로 변할 수 있다. 
    * 해당 훅을 통해서 부모 컴포넌트가 변경된 frash한 percentage를 전달할 수 있도록 한다.
    * 
    * 해당 값이 -1인 경우는 부모에서 따로 지정해준 값이 없는 경우이다.
    */
-  useDaysNav.subscribe(({ percentageUpdateCmd }) => {
-    if(!percentageUpdateCmd) return;
-    const { day: cmdDay, percentage: cmdPercentage } = percentageUpdateCmd;
-    circleTransitionRef.current = true;
+  useEffect(() => {
+    const needPercentageUpdate = weeks.find(week => week.some(
+      ({day, percentage}) => day.isSameDay(currentDay) && percentage !== currentDayPercentage
+    ));
+    if(!needPercentageUpdate) return;
+
     setWeeks(weeks => {
       return weeks.map(week => {
         return week.map(({day, percentage}) => {
           return {
             day,
-            percentage: day.isSameDay(cmdDay) ? cmdPercentage : percentage
+            percentage: day.isSameDay(currentDay) ? currentDayPercentage : percentage
           }
         })
       })
     })
-    setTimeout(() => {
-      circleTransitionRef.current = false;
-    }, 0);
-  });
+  }, [currentDay, currentDayPercentage, weeks]);
 
   /**
    * 최초, 그리고 currentWeekStartDay가 변경될 때마다의 weeks 변경.
@@ -184,15 +183,22 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
   // transition이 끝난 후에 ref에 담긴 update 함수를 실행하고, 만약 현재 인덱스보다 앞에 추가된 경우, swiper를 한칸 뒤로 이동시킨다.
   const onTransitionEnd = useCallback(async(swiper: SwiperClass) => {
     if(!updateWeeksRef.current) return;
-    // 상태 업데이트 함수 호출
+    circleTransitionRef.current = false;
     updateWeeksRef.current();
     updateWeeksRef.current = null; // 초기화
     // 현재 인덱스가 0이라면, 추가 후에는 0번이 새로운 week가 되므로 swiper를 한칸 뒤로 이동
-    if(swiper.isBeginning){
-      setTimeout(() => swiper.slideTo(1, 0));
-    }
+    setTimeout(() => {
+      if(swiper.isBeginning){
+        swiper.slideTo(1, 0);
+      }
+      circleTransitionRef.current = true;
+    });
   }, []);
 
+  const _onDayClick = useCallback((day: Day, event?: React.MouseEvent) => {
+    setClientNote(day)
+    if(onDayClick) onDayClick(day, event);
+  }, [onDayClick, setClientNote]);
 
   const bem = useMemo(() => dr("days-nav"), []);
 
@@ -256,7 +262,6 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
                   display: flex;
                   min-width: 290px;
                   max-width: 450px;
-                  padding-top: 1em;
                   margin: 0 auto;
                   justify-content: space-between;
                   align-items: center;
@@ -288,14 +293,11 @@ export const DaysNav = ({ currentDay, onDayClick }: DaysNavProps) => {
                         padding: 0 0em;
                         cursor: pointer;
                         border-radius: 7px;
-                        &:hover {
-                          background-color: #e6e6e6;
-                        }
                         ${day.isSameDay(currentDay) && css`
                           box-shadow: inset 0 0 0.5em 0.1em rgba(0, 0, 0, 0.1) !important;
                         `}
                       `}
-                      onClick={(e) => onDayClick(day, e)}
+                      onClick={(e) => _onDayClick(day, e)}
                     >
                       <div
                         css={css`

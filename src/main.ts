@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Plugin } from 'obsidian';
 import { setPlugin } from './shared/plugin-service-locator';
-import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './settings/DailyRoutineSettingTab';
+import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from './app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from './shared/view/activate-view';
-import React from 'react';
+
 
 export default class DailyRoutinePlugin extends Plugin {
 	settings: DailyRoutinePluginSettings;

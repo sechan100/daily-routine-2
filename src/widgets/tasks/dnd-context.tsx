@@ -1,6 +1,5 @@
-import { Task } from "entities/routine-note";
-///////////////////////////////////////////////////////
-import React, { CSSProperties, useCallback, useMemo } from "react";
+import { Task } from "entities/note";
+import React, { CSSProperties, useMemo } from "react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import {
@@ -12,8 +11,8 @@ import {
 } from "react-dnd-multi-backend";
 import { Preview } from "react-dnd-preview";
 import { DRAG_PRESS_DELAY } from "./constants";
-import { TaskPreview } from "./Task";
-
+import { TaskPreview } from "./AbstractTask";
+import { useDrag } from "react-dnd";
 
 
 
@@ -57,24 +56,24 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
           backend: TouchBackend,
           options: {
             enableMouseEvents: false,
-            delayTouchStart: DRAG_PRESS_DELAY,
+            // delayTouchStart: DRAG_PRESS_DELAY,
             ignoreContextMenu: false
           },
           transition: TouchTransition
-        }
+        },
       ],
     }
   }, [MouseTransition, TouchTransition])
 
-
   return (
-      <DndProvider options={HTML5toTouch}>
-        {children}
-        {backend === 'touch' && <Preview>{ ({ item, style }) => {
-          // @ts-ignore
-          const task = item?.task as Task;
-          return <PreviewContext task={task} style={style} />
-        }}</Preview>}
-      </DndProvider>
+    <DndProvider options={HTML5toTouch}>
+      {children}
+      {backend === 'touch' && 
+      <Preview>{ ({ item, style }) => {
+        // @ts-ignore
+        const task = item?.task as Task;
+        return <PreviewContext task={task} style={style} />
+      }}</Preview>}
+    </DndProvider>
   )
 }

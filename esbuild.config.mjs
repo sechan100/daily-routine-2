@@ -13,8 +13,9 @@ if you want to view the source, please visit the github repository of this plugi
 */
 `;
 
-const prod = process.argv[2] === "production";
+const development = process.argv[2] === "development";
 const local = process.argv[2] === "local";
+const prod = process.argv[2] === "production";
 
 // CSS를 하나로 합치기 위한 rename 플러그인
 const renamePlugin = {
@@ -58,6 +59,9 @@ const context = await esbuild.context({
     "@lezer/lr",
     ...builtins,
   ],
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(development || local || prod)
+  },
   format: "cjs",  // CommonJS 포맷
   target: "es2018",
   logLevel: "info",
@@ -68,6 +72,7 @@ const context = await esbuild.context({
     renamePlugin,  // CSS 파일 이름 변경 플러그인
     sassPlugin(),  // SASS 파일 로더
   ],
+  minify: prod,
   loader: {
     ".tsx": "tsx",  // TypeScript와 TSX 파일을 처리
     ".ts": "ts",

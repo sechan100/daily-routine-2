@@ -1,8 +1,5 @@
+import { routineManager, Routine } from "entities/routine";
 import { Day } from "shared/day";
-import { routineManager } from "./routine/routine";
-import { Routine } from "./routine/types";
-import moment from "obsidian";
-
 
 
 export type TaskType = "routine" | "todo";
@@ -12,6 +9,7 @@ export interface Task {
   checked: boolean;
 }
 export interface RoutineTask extends Task {}
+export interface TodoTask extends Task {}
 
 export interface RoutineNote {
   day: Day;
@@ -46,16 +44,14 @@ interface RoutineNoteService {
   // 새로운 루틴 노트를 생성한다. 
   create: (day: Day) => Promise<RoutineNote>;
 
-  // 루틴 노트의 특정 task를 체크, 혹은 체크해제한다.
-  checkTask: (routineNote: RoutineNote, taskName: string, checked: boolean) => void;
+  // todo task를 추가한다.
+  addTodoTask: (routineNote: RoutineNote, todoTask: TodoTask) => RoutineNote;
 
-  // task의 순서를 변경한다.
-  replaceTask: (cmd: {
-    routineNote: RoutineNote,
-    taskName: string, 
-    targetTaskName: string, 
-    cmd: 'before' | 'after'
-  }) => void;
+  // todo task를 제거한다.
+  deleteTodoTask: (routineNote: RoutineNote, todoTask: TodoTask) => RoutineNote;
+
+  // todo task를 수정한다.
+  editTodoTask: (routineNote: RoutineNote, todoTaskName: string, todoTask: TodoTask) => RoutineNote;
 }
 
 export const routineNoteService: RoutineNoteService = {
@@ -76,7 +72,7 @@ export const routineNoteService: RoutineNoteService = {
 ${routineNote.tasks.map(task => {
   const checked = task.checked ? 'x' : ' ';
   const data = {
-    type: "routine"
+    type: task.type
   }
   return `- [${checked}] [[${task.name}]]<!-- ${JSON.stringify(data)} -->`;
 }).join('\n')}
@@ -117,35 +113,45 @@ ${routineNote.tasks.map(task => {
       tasks: tasks
     };
   },
-
-  checkTask(routineNote, taskName, checked){
-    const task = routineNote.tasks.find(task => task.name === taskName);
-    if(task){
-      task.checked = checked;
-    } else {
-      throw new Error(`Task ${taskName} not found.`);
-    }
-  },
-
-  replaceTask({ routineNote, taskName, targetTaskName, cmd }){
-    const task = routineNote.tasks.find(task => task.name === taskName);
-    if(!task) throw new Error(`Task ${taskName} not found.`);
-
-    const targetTask = routineNote.tasks.find(task => task.name === targetTaskName);
-    if(!targetTask) throw new Error(`Target task ${targetTaskName} not found.`);
-
-    const taskIdx = routineNote.tasks.indexOf(task);
-    const targetTaskIdx = routineNote.tasks.indexOf(targetTask);
-
-    if(cmd === 'before'){
-      routineNote.tasks.splice(taskIdx, 1);
-      routineNote.tasks.splice(targetTaskIdx, 0, task);
-    } else if(cmd === 'after'){
-      routineNote.tasks.splice(taskIdx, 1);
-      routineNote.tasks.splice(targetTaskIdx + 1, 0, task);
-    }
-  },
   
+  addTodoTask(routineNote, todoTask){
+    // 중복검사
+    if(routineNote.tasks.find(task => task.name === todoTask.name)) throw new Error("Duplicated task name");
+    return {
+      ...routineNote,
+      tasks: [
+        todoTask,
+        ...routineNote.tasks,
+      ]
+    }
+  },
+
+  deleteTodoTask(routineNote, todoTask){
+    return {
+      ...routineNote,
+      tasks: routineNote.tasks.filter(task => task.name !== todoTask.name)
+    }
+  },
+
+  editTodoTask(routineNote, todoTaskName, todoTask){
+    const originalName = todoTaskName;
+    const newName = todoTask.name;
+    // 중복검사
+    if(routineNote.tasks.find(task => task.name === newName)) throw new Error("Duplicated task name");
+    return {
+      ...routineNote,
+      tasks: routineNote.tasks.map(task => {
+        if(task.name === originalName){
+          return {
+            ...task,
+            ...todoTask,
+          }
+        } else {
+          return task;
+        }
+      })
+    }
+  }
   
 }
 

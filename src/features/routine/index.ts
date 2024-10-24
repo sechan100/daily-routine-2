@@ -1,2 +1,2 @@
-export { openRoutineOptionModal } from "./routine-option";
+export { openRoutineOptionModal } from "./option";
 export { openStartNewRoutineModal } from "./start-new-routine";

@@ -1,47 +1,34 @@
 /** @jsxImportSource @emotion/react */
 import { routineManager } from "entities/routine";
 import { Routine } from "entities/routine";
-import { plugin } from "shared/plugin-service-locator";
-import { Modal, Notice, TextComponent } from "obsidian";
-import { createRoot } from "react-dom/client";
+import { Notice } from "obsidian";
 import { DaysOption } from "./DaysOption";
-import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
-import { useRef, useEffect, useReducer, memo, useCallback, useState, useMemo } from "react";
-import { Button } from "shared/components/Button";
-import { modalComponent, useModal } from "shared/components/modal";
+import { DAYS_OF_WEEK } from "shared/day";
+import { memo, useCallback, useState, useMemo } from "react";
+import { modalComponent, useModal } from "shared/components/modal/modal-component";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Container } from "shared/components/Container";
 import { textCss } from "shared/components/font";
 import { Section } from "shared/components/Section";
 import { TextEditComponent } from "shared/components/TextEditComponent";
 import { ActiveButton } from "shared/components/ToggleButton";
 import { dr } from "shared/daily-routine-bem";
 import { drEvent } from "shared/event";
+import { Modal } from "shared/components/modal/styled";
 
 
 
-const Name = styled.div`
-  ${textCss.medium}
-`;
-const Description = styled.div`
-  ${textCss.description}
-`;
-
-
-
-const defaultRoutine: Routine = {
-  name: "new daily routine",
-  properties: {
-    order: 0,
-    activeCriteria: "week",
-    daysOfWeek: DAYS_OF_WEEK,
-    daysOfMonth: [],
-  }
-}
 
 export const openStartNewRoutineModal = modalComponent(memo(() => {
-  const [ routine, setRoutine ] = useState<Routine>(defaultRoutine);
+  const [ routine, setRoutine ] = useState<Routine>({
+    name: "new daily routine",
+    properties: {
+      order: 0,
+      activeCriteria: "week",
+      daysOfWeek: DAYS_OF_WEEK,
+      daysOfMonth: [],
+    }
+  });
   const modal = useModal();
 
   const setName = useCallback((name: string) => {
@@ -82,26 +69,19 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
 
   const bem = useMemo(() => dr("start-new-routine"), []);
   return (
-    <>
-      {/* name */}
-      <Section 
-        className={bem("name")}
-        css={css`
-          .is-phone & {
-            border-top: none;
-          }
-        `}
-      >
-        <Name>Name</Name>
+    <Modal header="Start New Routine" className={bem()} >
+      <Modal.Section className={bem("name")}>
+        <Modal.Name>Name</Modal.Name>
         <TextEditComponent
           value={routine.name}
           onBlur={setName} 
         />
-      </Section>
+      </Modal.Section>
+      <Modal.Separator />
 
       {/* activeCriteria */}
-      <Section className={bem("criteria")} >
-        <Name>Active Criteria</Name>
+      <Modal.Section className={bem("criteria")} >
+        <Modal.Name>Active Criteria</Modal.Name>
         <nav className={bem("criteria-nav")}>
           <ActiveButton
             css={{marginRight: "0.5em"}}
@@ -115,7 +95,7 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
           >Month
           </ActiveButton>
         </nav>
-      </Section>
+      </Modal.Section>
       <DaysOption
         criteria={routine.properties.activeCriteria}
         css={{
@@ -125,9 +105,10 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
         properties={routine.properties} 
         setProperties={setProperties}
       />
+      <Modal.Separator />
 
       {/* save */}
-      <Section>
+      <Modal.Section>
         <ActiveButton
           width="100%"
           active={routine.name.trim() !== ""}
@@ -135,10 +116,9 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
         >
           Save
         </ActiveButton>
-      </Section>
-    </>
+      </Modal.Section>
+    </Modal>
   )
 }), {
   sidebarLayout: true,
-  title: "Start New Routine",
 });

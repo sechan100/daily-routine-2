@@ -69,6 +69,8 @@ const WeekOption = ({ daysOfWeek, setDaysOfweek, className }: WeekOptionProps) =
 
   // 날짜 하나하나 클릭시 선택/해제 콜백
   const onDayClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const activeCn = bem("day", { active: true}).split(" ")[1];
     // 클래스 토글
     e.currentTarget.classList.toggle(activeCn);

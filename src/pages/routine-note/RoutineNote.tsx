@@ -1,89 +1,87 @@
 /** @jsxImportSource @emotion/react */
-/* eslint-disable react-hooks/exhaustive-deps */
-import { loadOrCreateRoutineNote } from "entities/utils";
-import { RoutineNote as RoutineNoteEntity, routineNoteService } from "entities/routine-note";
+// eslint-disable-next-line fsd-import/public-api-imports
+import { persisteOrUpdateRoutineNote } from 'entities/note/archive';
+import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from 'entities/note';
 import { openStartNewRoutineModal } from "features/routine";
 import { DaysNav } from "features/days";
-import { useDaysNav } from "features/days";
-import { TaskList } from "widgets/tasks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Day } from "shared/day";
-import { Button } from "shared/components/Button";
 import { dr } from "shared/daily-routine-bem";
 import { MenuComponent } from "shared/components/Menu";
 import { Menu } from "obsidian";
 import { FeatureNoteUpdateProvider } from "features/feature-note";
-
+import { RoutineTask, TaskDndContext, TodoTask } from 'widgets/tasks';
+import { openAddTodoModal as openAddTodoModalFeatures } from 'features/todo';
+import { Icon } from 'shared/components/Icon';
+import { Button } from 'shared/components/Button';
 
 
 interface RoutineNoteProps {
   day: Day;
 }
+export const RoutineNote = ({ day }: RoutineNoteProps) => {
+  const [ noteData, setNoteData ] = useState<{
+    note: RoutineNoteEntity;
+    isTransient: boolean;
+  } | null>(null);
 
-// 상태 연쇄: dayRef -> note(리렌더링)
-export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
-  // 노트 상태
-  const [ note, setNote ] = useState<RoutineNoteEntity | null>(null);
-  
-  // note의 파생상태인 day.
-  const day = useMemo<Day>(() => {
-    if(!note) return Day.now();
-    return note.day;
-  }, [note]);
-
-  // setNoteBasedOnDay로 day를 기준으로 note 상태를 변경할 수 있다.
-  const setNoteBasedOnDay = useCallback((_day: Day) => {
-    // Day가 변경되면 해당하는 RoutineNote를 가져와서 설정
-    loadOrCreateRoutineNote(_day)
-    .then(note => {
-      setNote(note);
-    });
+  useEffect(() => {
+    // note가 존재하면 가지고오고, 없으면 생성하고 저장은 하지 않고 반환한다. 다만, 생성한 노트가 오늘 노트라면 저장까지 해준다.
+    (async () => {
+      let routineNote = await routineNoteArchiver.load(day);
+      let isTransient = false;
+      if(!routineNote){
+        routineNote = await routineNoteService.create(day);
+        if(day.isToday()){
+          await persisteOrUpdateRoutineNote(routineNote);
+          isTransient = false;
+        } else {
+          isTransient = true;
+        }
+      }
+      
+      setNoteData({
+        note: routineNote,
+        isTransient
+      });
+    })(); 
   }, [day]);
 
-  // props로 넘겨진 day를 기준으로 note를 동기화
-  useEffect(() => {
-    setNoteBasedOnDay(propsDay);
-  }, [propsDay]);
+  
+  
+  if(!noteData) return (<div>Loading...</div>);
+  return (
+    <UseRoutineNoteProvider 
+      data={noteData} 
+      onDataChange={(s, d) => s.setState({
+        note: d.note,
+        isTransient: d.isTransient
+      })}
+    >
+      <RoutineNotePage />
+    </UseRoutineNoteProvider>
+  );
+}
 
 
-  /////////////////////////////////////////////////////////////////////////
-  // daysNav에 현재 보고있는 note의 완료율을 동적으로 전달하기 위한 상태
-  const updatePercentage = useDaysNav(state => state.updatePercentage);
+const RoutineNotePage = () => {
+  const { note, setNoteAndSave } = useRoutineNote();
+  const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
 
-
-  //////////////////////////////////////////
-  // DaysNav에서 day 버튼 클릭시 콜백(day 변경)
-  const onDayClick = useCallback((day: Day) => {
-    setNoteBasedOnDay(day);
-  }, [setNoteBasedOnDay]);
-
-  ////////////////////////////////////////
-  // routine 추가 버튼 콜백
-  const onAddRoutineBtnClick = useCallback(() => {
-    // openAddRoutineModal();
-  }, []);
-
-
-  /**
-   * task가 클릭되면 현재 note의 완료율이 변한다. 이를 DaysNav에 반영하기 위한 콜백
-   */
-  const onRoutineTaskClick = useCallback(() => {
-    if(!note) return;
-    const newPercentage = routineNoteService.getTaskCompletion(note).percentageRounded;
-    updatePercentage({
-      day: day, 
-      percentage: newPercentage
-    });
-  }, [note]);
-
-
+  const openAddTodoModal = useCallback(() => openAddTodoModalFeatures({
+    note: note,
+    onTodoAdded: (newNote) => {
+      setNoteAndSave(newNote);
+    }
+  }), [note, setNoteAndSave]);
+  
   const onNoteMenuShow = useCallback((m: Menu) => {
     // Start New Routine
     m.addItem(item => {
       item.setIcon("alarm-clock-plus");
       item.setTitle("Start New Routine");
       item.onClick(() => {
-        openStartNewRoutineModal();
+        openStartNewRoutineModal({});
       });
     });
 
@@ -94,18 +92,20 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
       item.setIcon("square-check-big");
       item.setTitle("Add Todo");
       item.onClick(() => {
-        // openAddTodoModal();
+        openAddTodoModal();
       });
     });
-  }, [note]);
-
+  }, [openAddTodoModal]);
 
   const bem = useMemo(() => dr("routine-note"), []);
-
-  if(!note) return (<div>Loading...</div>);
   return (
-    <FeatureNoteUpdateProvider className={bem()}>
-      <DaysNav currentDay={day} onDayClick={onDayClick} />
+    <FeatureNoteUpdateProvider
+      className={bem()}
+      css={{
+        height: "100%",
+      }}
+    >
+      <DaysNav currentDay={note.day} currentDayPercentage={percentage} />
       <main>
         <header 
           css={{
@@ -116,19 +116,40 @@ export const RoutineNote = ({ day: propsDay }: RoutineNoteProps) => {
           }} 
           className={bem("header")}
         >
-          <h4
-            css={{
-              display: "inline-block",
-            }}
-          >
+          <h4 css={{display: "inline-block"}}>
             {note.day.getBaseFormat() + " / " + note.day.getDayOfWeek()}
           </h4>
-          <MenuComponent onMenuShow={onNoteMenuShow} />
+          <div css={{ display: "flex", gap: "1.5em", alignContent: "center"}}>
+            <Button 
+              onClick={() => openAddTodoModal()}
+              css={{
+                display: "flex",
+                gap: "0.5em",
+                height: "fit-content",
+                backgroundColor: "var(--color-primary) !important",
+                border: "1px solid var(--color-base-40)",
+                padding: "0.4em 0.5em",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "var(--font-ui-smaller)",
+                fontWeight: "var(--font-normal)",
+              }}
+            >
+              <Icon accent icon='square-check-big' />
+              <span>Add Todo</span>
+            </Button>
+            <MenuComponent onMenuShow={onNoteMenuShow} />
+          </div>
         </header>
-        <TaskList 
-          useRoutineNoteState={{state: note, setState: setNote}}
-          onTaskClick={onRoutineTaskClick}
-        />
+        <TaskDndContext>{ 
+          note.tasks.map(task => {
+            switch(task.type){
+              case "routine": return <RoutineTask key={task.name} task={task} />
+              case "todo": return <TodoTask key={task.name} task={task} />
+              default: task as never;
+            }
+          })}
+        </TaskDndContext>
       </main>
     </FeatureNoteUpdateProvider>
   );  

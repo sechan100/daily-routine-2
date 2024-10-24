@@ -93,7 +93,16 @@ export const routineManager: RoutineManager = {
   },
 
   async reorder(routineNames){
-    const routines = await Promise.all(routineNames.map(routineName => routineManager.get(routineName)));
+    const routines: Routine[] = [];
+    for(const routineName of routineNames){
+      // 과거의 note를 편집할 때, 해당 루틴이 지금은 삭제된 루틴인 경우 이름을 찾을 수 없게됨.
+      try {
+        const routine = await routineManager.get(routineName)
+        routines.push(routine);
+      } catch(ignore) {
+        //
+      }
+    }
 
     let newOrder = 0;
     for(const [i, routine] of routines.entries()){
