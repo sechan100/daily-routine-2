@@ -89,9 +89,10 @@ interface DaysNavProps {
    * 현재 보고있는 day의 percentage는, note page에서 사용자가 task를 클릭할 때마다 동적으로 변경될 수 있다.
    */
   currentDayPercentage: number;
+  resizeObserver?: (entry: ResizeObserverEntry) => void;
   onDayClick?: (day: Day, event?: React.MouseEvent) => void;
 }
-export const DaysNav = ({ currentDay, currentDayPercentage, onDayClick }: DaysNavProps) => {
+export const DaysNav = ({ currentDay, resizeObserver, currentDayPercentage, onDayClick }: DaysNavProps) => {
   const [ weeks, setWeeks ] = useState<{day:Day, percentage:number}[][]>([]);
   const currentWeekStartDay = useMemo(() => currentDay.clone(m => m.startOf("week")), [currentDay]);
   const swiperRef = useRef<SwiperRef>(null);
@@ -220,6 +221,7 @@ export const DaysNav = ({ currentDay, currentDayPercentage, onDayClick }: DaysNa
           }
         }
       `}
+      className={bem()} 
       ref={ref => {
         if(!ref) return;
         const observer = new ResizeObserver(entries => {
@@ -229,13 +231,13 @@ export const DaysNav = ({ currentDay, currentDayPercentage, onDayClick }: DaysNa
             } else {
               ref.classList.remove("hidden-navigation");
             }
+            resizeObserver?.(entry);
           }
         });
         observer.observe(ref);
       }}
     >
       <Swiper
-        className={bem()}
         ref={swiperRef}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.

@@ -1,7 +1,15 @@
 import { StrictMode } from "react";
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
+import { createContext, useContext } from "react";
 
+
+const LeafContext = createContext<WorkspaceLeaf | null>(null);
+export const useLeaf: () => WorkspaceLeaf = () => {
+  const leaf = useContext(LeafContext);
+  if(!leaf) throw new Error("LeafContext not found");
+  return leaf;
+}
 
 
 /**
@@ -37,11 +45,11 @@ export abstract class ReactView extends ItemView {
 	async onOpen() {
 		this.root = createRoot(this.containerEl.children[1]);
 		this.root.render(
-      <>
-        <StrictMode>
+      <StrictMode>
+        <LeafContext.Provider value={this.leaf}>
           {this.render()}
-        </StrictMode>
-      </>
+        </LeafContext.Provider>
+      </StrictMode>
 		);
 	}
 

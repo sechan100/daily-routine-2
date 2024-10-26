@@ -2,7 +2,7 @@
 /** @jsxImportSource @emotion/react */
 import { useRoutineNote, RoutineNote, Task } from "entities/note";
 import { moment } from "obsidian";
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, RefObject } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
 import { drEvent } from "shared/event";
 import { Icon } from "shared/components/Icon";
@@ -17,33 +17,42 @@ import React from "react";
  */
 export type DragState = "idle" | "dragging" | "ready";
 
+export interface DragItem {
+  task: Task;
+  previewSource: HTMLElement;
+  width: number; // px
+  dragHandleWidth: number; // px
+}
+
 interface TaskDndHandleProps {
   task: Task;
-  dragState: DragState;
-  onDragStateChange: (state: DragState) => void;
+  taskRef: RefObject<HTMLElement | null>; // 드롭 타겟
+
+  onDragStateChange?: (state: DragState) => void;
+  className?: string;
 }
-export const TaskDndHandle = React.memo(({ task, dragState, onDragStateChange }: TaskDndHandleProps) => {
+export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragStateChange }: TaskDndHandleProps) => {
   const handleRef = useRef<HTMLDivElement>(null);
   const setNote = useRoutineNote(s=>s.setNote);
   const setNoteAndSave = useRoutineNote(s=>s.setNoteAndSave);
 
-  const [{isDragging}, drag] = useDrag({
+  const [, drag, preview] = useDrag({
     type: "task",
     item(){
-      console.log("drag start");
-      onDragStateChange("dragging");
-      return { task };
+      setTimeout(() => onDragStateChange?.("dragging"));
+      const item: DragItem = { 
+        task,
+        previewSource: taskRef.current as HTMLElement,
+        width: taskRef.current?.clientWidth??0,
+        dragHandleWidth: handleRef.current?.clientWidth??0,
+      };
+      return item;
     },
     end: (item, monitor) => {
-      console.log("drag end");
-      onDragStateChange("idle");
+      onDragStateChange?.("idle");
     },
-    previewOptions: {captureDraggingState: true},
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging()
-    })
+    previewOptions: {captureDraggingState: false}
   }, [task])
-
 
   const getHixArea = useCallback(({ y }: XYCoord): "top" | "bottom" | null => {
     if(!handleRef.current) return null;
@@ -79,7 +88,7 @@ export const TaskDndHandle = React.memo(({ task, dragState, onDragStateChange }:
 
   const [ , drop ] = useDrop({
     accept: "task",
-    hover(item, monitor) {
+    hover(item: DragItem, monitor) {
       if(item.task.name === task.name) return;
       const xy = monitor.getClientOffset()??{x: -1, y: -1};
       const hit = getHixArea(xy);
@@ -88,7 +97,7 @@ export const TaskDndHandle = React.memo(({ task, dragState, onDragStateChange }:
       const newRoutineNote = replaceTask(item.task, hit);
       setNote(newRoutineNote);
     },
-    drop: async (item: {task: Task}) => {
+    drop: async (item) => {
       const note = useRoutineNote.getState().note;
       /**
        * NOTE: 현재 이후의 노트인 경우에는 feature-note-updater에서 일괄적으로 처리함.
@@ -97,7 +106,7 @@ export const TaskDndHandle = React.memo(({ task, dragState, onDragStateChange }:
       if(note.day.moment.isBefore(moment())){
         setNoteAndSave(note);
       }
-      drEvent.emit("reorderTasks", { 
+      drEvent.emit("reorderTasks", {
         reordered: task,
         note,
       });
@@ -105,21 +114,38 @@ export const TaskDndHandle = React.memo(({ task, dragState, onDragStateChange }:
   }, [task, getHixArea, replaceTask, setNote, setNoteAndSave])
 
   useEffect(() => {
-    if(!handleRef.current) return;
-    const el = handleRef.current;
-    drag(el);
-    drop(el);
-  }, [handleRef, drop, drag])
+    if(!handleRef.current || !taskRef.current) return;
+    drag(handleRef.current);
+    // 거의 안보이게..
+    const div = document.createElement("div");
+    div.setCssStyles({
+      backgroundColor: "red",
+      width: "0.01px",
+      height: "0.01px",
+    })
+    document.body.appendChild(div);
+    preview(div);
+    drop(taskRef.current);
+  }, [handleRef, drop, drag, taskRef, preview, task])
   
   return (
     <div 
       ref={handleRef}
-      onTouchStart={e => console.log("touch start")}
-      onTouchCancel={e => console.log("touch cancel")}
-      onTouchMove={e => console.log("touch move")}
-      onTouchEnd={e => console.log("touch end")}
+      className={className}
+      css={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexGrow: "1",
+        width: "3em",
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("context menu");
+      }}
     >
       <Icon icon="menu" />
     </div>
   )
-}); 
+});

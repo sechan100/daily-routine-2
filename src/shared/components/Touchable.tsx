@@ -3,7 +3,7 @@ import { Interpolation, SerializedStyles, Theme } from "@emotion/react";
 import styled from "@emotion/styled";
 import _ from "lodash";
 import { DebouncedFunc } from "lodash";
-import { useRef, useCallback, useMemo, forwardRef } from "react";
+import { useRef, useCallback, useMemo, forwardRef, memo } from "react";
 
 
 
@@ -22,7 +22,7 @@ interface TouchableProps {
   onLongPressEnd?: (e: React.TouchEvent) => void;
   onClick?: (e: React.MouseEvent | React.TouchEvent) => void;
 }
-export const Touchable = forwardRef<HTMLDivElement, TouchableProps>((props: TouchableProps, ref) => {
+export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props: TouchableProps, ref) => {
 
   const clickPreventRef = useRef<boolean>(false);
   const performanceRef = useRef<number>(0);
@@ -79,4 +79,4 @@ export const Touchable = forwardRef<HTMLDivElement, TouchableProps>((props: Touc
       {props.children}
     </div>
   )
-})
+}))

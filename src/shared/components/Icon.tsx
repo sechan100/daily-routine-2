@@ -1,7 +1,7 @@
 
 /** @jsxImportSource @emotion/react */
 import { getIcon } from "obsidian"
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 
 
@@ -10,7 +10,7 @@ interface IconProps {
   accent?: boolean;
   className?: string;
 }
-export const Icon = (props: IconProps) => {
+export const Icon = React.memo((props: IconProps) => {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -33,4 +33,4 @@ export const Icon = (props: IconProps) => {
       }}
     />
   )
-}
+})

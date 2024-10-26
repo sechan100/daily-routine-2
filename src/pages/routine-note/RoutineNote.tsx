@@ -4,7 +4,7 @@ import { persisteOrUpdateRoutineNote } from 'entities/note/archive';
 import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from 'entities/note';
 import { openStartNewRoutineModal } from "features/routine";
 import { DaysNav } from "features/days";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Day } from "shared/day";
 import { dr } from "shared/daily-routine-bem";
 import { MenuComponent } from "shared/components/Menu";
@@ -24,6 +24,7 @@ export const RoutineNote = ({ day }: RoutineNoteProps) => {
     note: RoutineNoteEntity;
     isTransient: boolean;
   } | null>(null);
+
 
   useEffect(() => {
     // note가 존재하면 가지고오고, 없으면 생성하고 저장은 하지 않고 반환한다. 다만, 생성한 노트가 오늘 노트라면 저장까지 해준다.
@@ -68,6 +69,8 @@ const RoutineNotePage = () => {
   const { note, setNoteAndSave } = useRoutineNote();
   const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
 
+  const mainRef = useRef<HTMLDivElement>(null);
+
   const openAddTodoModal = useCallback(() => openAddTodoModalFeatures({
     note: note,
     onTodoAdded: (newNote) => {
@@ -97,22 +100,35 @@ const RoutineNotePage = () => {
     });
   }, [openAddTodoModal]);
 
-  const bem = useMemo(() => dr("routine-note"), []);
+  const bem = useMemo(() => dr("note"), []);
   return (
-    <FeatureNoteUpdateProvider
-      className={bem()}
+    <FeatureNoteUpdateProvider 
       css={{
         height: "100%",
-      }}
+      }} 
+      className={bem()}
     >
-      <DaysNav currentDay={note.day} currentDayPercentage={percentage} />
-      <main>
-        <header 
+      <DaysNav 
+        currentDay={note.day} 
+        currentDayPercentage={percentage} 
+        resizeObserver={entry => {
+          const navHeight = entry.contentRect.height;
+          if(mainRef.current){
+            mainRef.current.style.height = `calc(100% - ${navHeight}px)`;
+          }
+        }}
+      />
+      <div className={bem("main")} ref={mainRef} css={{
+        "--header-height": "4.5em",
+        "--header-padding-y": "0.3em",
+      }}>
+        <header
           css={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "0.3em 0.5em",
+            padding: "var(--header-padding-y) 0.5em",
+            height: "var(--header-height)",
           }} 
           className={bem("header")}
         >
@@ -141,16 +157,23 @@ const RoutineNotePage = () => {
             <MenuComponent onMenuShow={onNoteMenuShow} />
           </div>
         </header>
-        <TaskDndContext>{ 
-          note.tasks.map(task => {
-            switch(task.type){
-              case "routine": return <RoutineTask key={task.name} task={task} />
-              case "todo": return <TodoTask key={task.name} task={task} />
-              default: task as never;
-            }
-          })}
-        </TaskDndContext>
-      </main>
+        <div 
+          className={bem("tasks")}
+          css={{
+            height: "calc(100% - var(--header-height) - var(--header-padding-y) * 2)",
+          }}
+        >
+          <TaskDndContext>
+            {note.tasks.map(task => {
+              switch(task.type){
+                case "routine": return <RoutineTask key={task.name} task={task} />
+                case "todo": return <TodoTask key={task.name} task={task} />
+                default: task as never;
+              }
+            })}
+          </TaskDndContext>
+        </div>
+      </div>
     </FeatureNoteUpdateProvider>
   );  
 }
