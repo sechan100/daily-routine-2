@@ -1,14 +1,20 @@
 import { StrictMode } from "react";
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, View, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
 import { createContext, useContext } from "react";
 
 
 const LeafContext = createContext<WorkspaceLeaf | null>(null);
-export const useLeaf: () => WorkspaceLeaf = () => {
+export const useLeaf = <T extends View>(): {
+  leaf: WorkspaceLeaf,
+  view: T
+} => {
   const leaf = useContext(LeafContext);
   if(!leaf) throw new Error("LeafContext not found");
-  return leaf;
+  return {
+    leaf, 
+    view: leaf.view as T
+  }
 }
 
 

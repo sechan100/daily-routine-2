@@ -6,16 +6,16 @@ import _ from "lodash";
 import { DRAG_PRESS_DELAY } from "../constants";
 import { Touchable } from 'shared/components/Touchable';
 import { dr } from 'shared/daily-routine-bem';
-import { DragState, TaskDndHandle } from './TaskDndHandle';
-import { useDragLayer } from 'react-dnd';
 import { Icon } from 'shared/components/Icon';
 import { TaskName } from './TaskName';
 import { Checkbox } from './Checkbox';
 import { css } from '@emotion/react';
+import { useTaskDnd } from '../hooks/use-task-dnd';
+import { Notice } from 'obsidian';
 
 
 // [[ Styles
-const taskReadyAndDraggingStyle = css({
+const taskPressedAndDraggingStyle = css({
   position: "relative",
   "&::after": {
     content: "''",
@@ -30,10 +30,7 @@ const taskReadyAndDraggingStyle = css({
 })
 
 const taskHeight = "2.5em";
-
 // ]]
-
-
 
 
 
@@ -65,29 +62,38 @@ interface TaskProps<T extends TaskEntity> {
 }
 export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task, onTaskReorder, onOptionMenu, onTaskClick }: TaskProps<T>) => {
   const taskRef = useRef<HTMLDivElement>(null);
-  const [dragState, setDragState] = useState<DragState>("idle");
+  const handleRef = useRef<HTMLDivElement>(null);
+  const [isPressed, setIsPressed] = useState<boolean>(false);
   const checkTask = useRoutineNote(s=>s.checkTask);
+  const { isDragging } = useTaskDnd({ task, taskRef, handleRef });
 
 
   const onLongPressStart = useCallback((e: React.TouchEvent) => {
-    setDragState("ready");
-  }, [setDragState])
+  }, [])
 
-  const onLongPressEnd = useCallback((e: React.TouchEvent) => {
-    if(dragState === "ready" && onOptionMenu){
+  const onAfterLongPressDelay = useCallback((e: React.TouchEvent) => {
+    if(onOptionMenu){
       onOptionMenu(task);
     }
-    console.log("long press end");
-    setDragState("idle");
-  }, [dragState, onOptionMenu, setDragState, task])
+  }, [onOptionMenu, task])
 
+  const onLongPressEnd = useCallback((e: React.TouchEvent) => {
+
+  }, [])
+  
+  // HACK: 빠르게 인접한 task를 클릭하면 클릭히 씹히거나 두번 클릭되는 문제가 있어서, 0.5초만 막아두면 적당하더라..
+  const disableTouch = useRef<boolean>(false);
   const onClick = useCallback((e: React.TouchEvent | React.MouseEvent) => {
-    e.preventDefault();
+    if(disableTouch.current) return;
+    disableTouch.current = true;
     checkTask(task, !task.checked);
     if(onTaskClick) onTaskClick({
       ...task,
       checked: !task.checked
     });
+    setTimeout(() => {
+      disableTouch.current = false;
+    }, 500);
   }, [checkTask, onTaskClick, task])
 
 
@@ -97,20 +103,26 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
       ref={taskRef}
       className={bem("", {
         "checked": task.checked,
-        "ready": dragState === "ready",
-        "dragging": dragState === "dragging",
+        "pressed": isPressed,
+        "dragging": isDragging,
       }, className)}
       css={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        "&.dr-task--ready, &.dr-task--dragging": taskReadyAndDraggingStyle
+        "& *": {
+          touchAction: "manipulation",
+          userSelect: "none",
+        },
+        "&.dr-task--pressed, &.dr-task--dragging": taskPressedAndDraggingStyle
       }}
     >
       <Touchable
-        longPressDelay={DRAG_PRESS_DELAY}
         onClick={onClick}
+        longPressDelay={DRAG_PRESS_DELAY}
+        onChangePressedState={setIsPressed}
         onLongPressStart={onLongPressStart}
+        onAfterLongPressDelay={onAfterLongPressDelay}
         onLongPressEnd={onLongPressEnd}
         css={{
           display: "flex",
@@ -121,20 +133,29 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
           padding: "0 0 0 0.5em",
           margin: "0 0",
           cursor: "pointer",
-          lineHeight: 1,
+          lineHeight: 1
         }}
       >
         <Checkbox bem={bem} />
         <TaskName bem={bem} name={task.name} />
       </Touchable>
-      <TaskDndHandle
-        task={task}
-        taskRef={taskRef}
-        onDragStateChange={setDragState}
+      <div 
+        ref={handleRef}
         css={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexGrow: "1",
+          width: "3em",
           alignSelf: "stretch"
         }}
-      />
+        onContextMenu={e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <Icon icon="menu" />
+      </div>
     </div>
   )
 })

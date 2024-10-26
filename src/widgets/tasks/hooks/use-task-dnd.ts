@@ -2,20 +2,13 @@
 /** @jsxImportSource @emotion/react */
 import { useRoutineNote, RoutineNote, Task } from "entities/note";
 import { moment } from "obsidian";
-import { useRef, useCallback, useEffect, RefObject } from "react";
+import { useRef, useCallback, useEffect, RefObject, useState } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
 import { drEvent } from "shared/event";
 import { Icon } from "shared/components/Icon";
 import React from "react";
 
 
-
-/**
- * idel: 아무것도 안하고 있는 상태
- * dragging: 드래그 중
- * ready: 드래그가 준비된 상태(일정시간 클릭해서 드래그 가능 상태가 된 경우)
- */
-export type DragState = "idle" | "dragging" | "ready";
 
 export interface DragItem {
   task: Task;
@@ -24,23 +17,22 @@ export interface DragItem {
   dragHandleWidth: number; // px
 }
 
-interface TaskDndHandleProps {
+interface UseTaskDndOption {
   task: Task;
   taskRef: RefObject<HTMLElement | null>; // 드롭 타겟
-
-  onDragStateChange?: (state: DragState) => void;
-  className?: string;
+  handleRef: RefObject<HTMLElement | null>; // 드래그 핸들
 }
-export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragStateChange }: TaskDndHandleProps) => {
-  const handleRef = useRef<HTMLDivElement>(null);
+interface UseTaskDndResult {
+  isDragging: boolean;
+}
+export const useTaskDnd = ({ task, taskRef, handleRef }: UseTaskDndOption): UseTaskDndResult => {
   const setNote = useRoutineNote(s=>s.setNote);
   const setNoteAndSave = useRoutineNote(s=>s.setNoteAndSave);
 
-  const [, drag, preview] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     type: "task",
     item(){
-      setTimeout(() => onDragStateChange?.("dragging"));
-      const item: DragItem = { 
+      const item: DragItem = {
         task,
         previewSource: taskRef.current as HTMLElement,
         width: taskRef.current?.clientWidth??0,
@@ -49,9 +41,11 @@ export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragState
       return item;
     },
     end: (item, monitor) => {
-      onDragStateChange?.("idle");
     },
-    previewOptions: {captureDraggingState: false}
+    previewOptions: {captureDraggingState: false},
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    })
   }, [task])
 
   const getHixArea = useCallback(({ y }: XYCoord): "top" | "bottom" | null => {
@@ -66,7 +60,7 @@ export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragState
     if(y < dropElOffset.top + dropTargetAvailableHeightPerHixboxes) return "bottom";
     if(y > dropElOffset.bottom - dropTargetAvailableHeightPerHixboxes) return "top";
     return null;
-  }, [])
+  }, [handleRef])
 
   const replaceTask = useCallback((target: Task, hit: "top" | "bottom"): RoutineNote => {
     const note = useRoutineNote.getState().note;
@@ -116,7 +110,15 @@ export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragState
   useEffect(() => {
     if(!handleRef.current || !taskRef.current) return;
     drag(handleRef.current);
-    // 거의 안보이게..
+    drop(taskRef.current);
+
+
+    /**
+     * HACK: 유지보수를 위해서 preview 로직을 backend 종류(html5, touch)에 관계없이 동일하게 처리하기 위해서, html5 backend에서 제공하는 기본 preview를 없애고 있었다.
+     * 이 때, preview의 크기를 아예 없애거나 보이지 않도록 조치를 취하면, 이상한 지구본 모양의 아이콘이 어디선가 나타나는 기현상이 계속해서 발생함.
+     * 그래서 그냥 html5인 경우에 preview를 최대한 안보이게 찌끄맣게 만들어서 할당해둠.
+     * 실제 모든 preveiw에 관한 처리는 TaskPreview 컴포넌트에서 처리함.
+     */
     const div = document.createElement("div");
     div.setCssStyles({
       backgroundColor: "red",
@@ -125,27 +127,9 @@ export const TaskDndHandle = React.memo(({ task, taskRef, className, onDragState
     })
     document.body.appendChild(div);
     preview(div);
-    drop(taskRef.current);
   }, [handleRef, drop, drag, taskRef, preview, task])
   
-  return (
-    <div 
-      ref={handleRef}
-      className={className}
-      css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexGrow: "1",
-        width: "3em",
-      }}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("context menu");
-      }}
-    >
-      <Icon icon="menu" />
-    </div>
-  )
-});
+  return { 
+    isDragging 
+  };
+}

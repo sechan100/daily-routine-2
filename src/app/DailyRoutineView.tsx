@@ -12,6 +12,11 @@ import { DailyRoutineObsidianView } from './obsidian-view';
 import { useLeaf } from 'shared/view/react-view';
 
 
+
+const pageNavbarHeight = 50;
+
+
+
 // FIXME: setPage로 렌더링 1번, cmd를 적용해서 다시 렌더링까지 총 2번의 렌더링이 발생한다. 추후 여건되면 최적화 가능
 export const DailyRoutineView = () => {
   const { page, routedDay, routePage } = usePageRoute();
@@ -20,24 +25,24 @@ export const DailyRoutineView = () => {
     routePage("note", day.clone());
   }, [routePage]);
 
-  const leaf = useLeaf();
+  const { view } = useLeaf<DailyRoutineObsidianView>();
 
   const viewContentRealHeight = useMemo(() => {
-    const viewContainer = leaf.view.containerEl;
+    const viewContainer = view.contentEl;
 
     const height = viewContainer.innerHeight;
     const computedStyle = getComputedStyle(viewContainer);
     const paddingBottom = parseInt(computedStyle.paddingBottom);
     return height + paddingBottom;
-  }, [leaf.view.containerEl]);
+  }, [view.contentEl]);
 
   
   return (
     <div 
       className='dr-page' 
-      css={{
-        "--dr-nav-height": "2.5em",
-        height: `calc(${viewContentRealHeight}px - var(--dr-nav-height))`,
+      style={{
+        scrollbarWidth: "none",
+        height: (viewContentRealHeight - pageNavbarHeight - 1), // 1은 offset
       }}
     >
       {page === "note" && <RoutineNote day={routedDay} />}
@@ -49,7 +54,7 @@ export const DailyRoutineView = () => {
           alignItems: "stretch",
           position: "fixed",
           width: "100%",
-          height: "var(--dr-nav-height)",
+          height: pageNavbarHeight,
           left: "0",
           bottom: "0",
         }}
