@@ -3,6 +3,7 @@
 import { useRoutineNote, RoutineNote, Task } from "entities/note";
 import { useRef, useCallback, useEffect, RefObject, useState } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
+import { useLeaf } from "shared/view/react-view";
 
 
 
@@ -24,6 +25,7 @@ interface UseTaskDndResult {
 }
 export const useTaskDnd = ({ task, taskRef, handleRef, onTaskDrop }: UseTaskDndOption): UseTaskDndResult => {
   const setNote = useRoutineNote(s=>s.setNote);
+  const { view } = useLeaf();
   const dragStartNoteSnapshot = useRef<RoutineNote | null>(null);
 
   const [{ isDragging }, drag, preview] = useDrag({
@@ -108,15 +110,21 @@ export const useTaskDnd = ({ task, taskRef, handleRef, onTaskDrop }: UseTaskDndO
      * 그래서 그냥 html5인 경우에 preview를 최대한 안보이게 찌끄맣게 만들어서 할당해둠.
      * 실제 모든 preveiw에 관한 처리는 TaskPreview 컴포넌트에서 처리함.
      */
-    const div = document.createElement("div");
-    div.setCssStyles({
-      backgroundColor: "red",
-      width: "0.01px",
-      height: "0.01px",
-    })
-    document.body.appendChild(div);
-    preview(div);
-  }, [handleRef, drop, drag, taskRef, preview, task])
+    let pseudoPreview = document.querySelector("#dr-pseudo-preview");
+    if(!pseudoPreview) {
+      const div = document.createElement("div");
+      div.setCssStyles({
+        backgroundColor: "red",
+        width: "0.01px",
+        height: "0.01px",
+      })
+      div.id = "dr-psuedo-preview";
+      view.containerEl.appendChild(div);
+      pseudoPreview = div;
+    }
+    preview(pseudoPreview);
+
+  }, [handleRef, drop, drag, taskRef, preview, task, view.containerEl])
   
   return { 
     isDragging 
