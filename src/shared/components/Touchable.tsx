@@ -31,7 +31,7 @@ interface TouchableProps {
   onLongPressStart?: (e: React.TouchEvent) => void;
 
   // long press가 인식된 후, 지연시간이 지난 후 호출
-  onAfterLongPressDelay?: (e: React.TouchEvent) => void;
+  onAfterLongPressDelay?: () => void;
 
   // long press가 인식된 후, 손가락을 뗐을 때 호출
   onLongPressEnd?: (e: React.TouchEvent) => void;
@@ -46,10 +46,11 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   const startDelay = useMemo(() => props.longPressStartDelay??100, [props.longPressStartDelay]);
   const longPressDelay = useMemo(() => props.longPressDelay??500, [props.longPressDelay]);
   const isMovedRef = useRef<boolean>(false);
+  const isTouchRef = useRef<boolean>(false);
 
   const longPressDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
     _.debounce((e: React.TouchEvent) => {
-      props.onAfterLongPressDelay?.(e);
+      props.onAfterLongPressDelay?.();
     }, longPressDelay)
   );
   const longPressStartDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
@@ -60,11 +61,13 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   );
 
   const longPressStartCall = useCallback((e: React.TouchEvent) => {
+    isTouchRef.current = true;
     longPressDebounce.current(e);
     longPressStartDebounce.current(e);
   }, []);
-
+  
   const longPressCancel = useCallback(() => {
+    isTouchRef.current = false;
     longPressDebounce.current.cancel();
     longPressStartDebounce.current.cancel();
     props.onChangePressedState?.(false);
@@ -116,6 +119,9 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
       onContextMenu={e => {
         e.preventDefault();
         e.stopPropagation();
+        if(!isTouchRef.current){
+          props.onAfterLongPressDelay?.();
+        }
       }}
     >
       {props.children}

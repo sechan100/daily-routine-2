@@ -1,10 +1,8 @@
 // eslint-disable-next-line fsd-import/layer-imports
 import { DailyRoutineEventTypes } from 'shared/event';
-// eslint-disable-next-line fsd-import/public-api-imports
-import { persisteOrUpdateRoutineNote } from "entities/note/archive";
 import { useCallback, useEffect } from "react"
 import { drEvent } from "shared/event";
-import { RoutineNote, routineNoteArchiver, routineNoteService, useRoutineNote } from "entities/note";
+import { RoutineNote, routineNoteArchiver, routineNoteService, Task, useRoutineNote } from "entities/note";
 import { TodoTaskNoteDep } from "./TodoTaskNoteDep";
 import { Day } from "shared/day";
 import { NoteDepentdent } from "./note-dependents";
@@ -31,7 +29,7 @@ interface FeatureNoteUpdateProviderProps {
 export const FeatureNoteUpdateProvider = (props: FeatureNoteUpdateProviderProps) => {
   
   const updateFeatureNotes = useCallback(async () => {
-    const notes = await routineNoteArchiver.loadBetween(Day.now(), Day.max());
+    const notes = await routineNoteArchiver.loadBetween(Day.now().add(1, "day"), Day.max());
     
     const newNotesWithDep = await Promise.all(notes.map(async note => {
       const dependents = extractNoteDependents(note);
@@ -44,26 +42,24 @@ export const FeatureNoteUpdateProvider = (props: FeatureNoteUpdateProviderProps)
       const depsRestoredNote = dependents.reduce((note, dep) => {
         return dep.restoreData(note);
       }, newNote);
-      persisteOrUpdateRoutineNote(depsRestoredNote);
+      routineNoteArchiver.persist(depsRestoredNote);
     }
   }, [])
 
 
+
+  // FIXME: 이벤트가 많아지고 각 이벤트가 가지는 고유의 로직이 달라질 경우, 이벤트를 등록과 cleanup 함수를 반환하는 로직에서 실수가 나오기에 충분한 여지가 생김
   useEffect(() => {
-    const events: DailyRoutineEventTypes[] = [
-      "createRoutine",
-      "deleteRoutine",
-      "reorderTasks",
-      "updateRoutineProperties",
-    ];
-    for(const event of events){
-      drEvent.on(event, updateFeatureNotes);
-    }
+    drEvent.on("createRoutine", updateFeatureNotes);
+    drEvent.on("deleteRoutine", updateFeatureNotes);
+    drEvent.on("updateRoutineProperties", updateFeatureNotes);
+    drEvent.on("reorderRoutine", updateFeatureNotes);
   
     return () => {
-      for(const event of events){
-        drEvent.off(event, updateFeatureNotes);
-      }
+      drEvent.off("createRoutine", updateFeatureNotes);
+      drEvent.off("deleteRoutine", updateFeatureNotes);
+      drEvent.off("updateRoutineProperties", updateFeatureNotes);
+      drEvent.off("reorderRoutine", updateFeatureNotes);
     }
   }, [updateFeatureNotes])
 

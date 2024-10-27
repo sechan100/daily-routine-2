@@ -13,7 +13,7 @@ import {
 import { Preview } from "react-dnd-preview";
 import { DRAG_PRESS_DELAY } from "./constants";
 import { TaskPreview } from "./ui/TaskPreview";
-import { useDndScroll } from "./hooks/use-dnd-scroll";
+import { useDndScroll } from "./use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
 import { DragItem } from "./hooks/use-task-dnd";
 

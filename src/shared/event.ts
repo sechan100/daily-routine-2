@@ -21,15 +21,9 @@ export type DailyRoutineEvent = {
     name: string;
   };
 
-  reorderTasks: {
-    reordered: Task;
-    note: RoutineNote;
+  reorderRoutine: {
+    tasks: Task[];
   };
-
-  // 특정 루틴이 종속되지 않고, 노트에만 의존하는 정보가 변경된 경우
-  updateNoteDependents: {
-    days: Day[];
-  }
 };
 
 export type DailyRoutineEventTypes = keyof DailyRoutineEvent;

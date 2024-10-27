@@ -56,7 +56,7 @@ export const TaskPreview = ({ item, style, backend }: TaskPreviewProps) => {
   }, [backend, currentOffset, item, leaf.view.containerEl, style]);
 
   useEffect(() => {
-    if(!previewContainerRef.current) return;
+    if(!previewContainerRef.current || !item.previewSource) return;
     const container = previewContainerRef.current;
     const preview = item.previewSource.cloneNode(true) as HTMLElement;
     preview.removeClass("dr-task--dragging");

@@ -6,11 +6,9 @@ import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
 import { modalComponent, useModal } from 'shared/components/modal/modal-component';
 import { dr } from 'shared/daily-routine-bem';
-import { drEvent } from 'shared/event';
 import { openConfirmModal } from 'shared/components/modal/confirm-modal';
 import { Modal } from 'shared/components/modal/styled';
 import { RoutineNote, routineNoteService, TodoTask } from 'entities/note';
-import { Day } from 'shared/day';
 
 
 
@@ -26,12 +24,6 @@ export const openTodoOptionModal = modalComponent(React.memo((props: TodoOptionM
   const originalNameRef = useRef(props.todo.name);  
   const modal = useModal();
 
-  const emit = useCallback((...day: Day[]) => {
-    drEvent.emit("updateNoteDependents", {
-      days: [props.note.day, ...day],
-    });
-  }, [props.note]);
-
   // modal이 닫힐 때 저장
   useEffect(() => {
     modal.onClose = () => {
@@ -39,9 +31,8 @@ export const openTodoOptionModal = modalComponent(React.memo((props: TodoOptionM
       if(todo.name.trim() !== ""){
         routineNoteService.editTodoTask(props.note, originalName, todo);
       }
-      emit();
     }
-  }, [emit, modal, props, todo]);
+  }, [modal, props, todo]);
 
   
   const onNameEditDone = useCallback((newName: string) => {
@@ -58,9 +49,8 @@ export const openTodoOptionModal = modalComponent(React.memo((props: TodoOptionM
 
   const onDeleteBtnClick = useCallback((e: React.MouseEvent) => {
     const onConfirm = () => {
-      const deletedNote = routineNoteService.deleteTodoTask(props.note, props.todo);
+      const deletedNote = routineNoteService.deleteTodoTask(props.note, originalNameRef.current);
       props.onDeleted(deletedNote);
-      emit();
       // 삭제되었기 때문에 modal이 닫을 때 저장하는 로직을 초기화하고 닫음.
       modal.onClose = () => {};
       modal.close();
@@ -74,7 +64,7 @@ export const openTodoOptionModal = modalComponent(React.memo((props: TodoOptionM
       description: `Are you sure you want to delete '${todo.name}'?`,
       confirmBtnVariant: "destructive"
     })
-  }, [bem, emit, modal, props, todo.name])
+  }, [bem, modal, props, todo.name])
 
 
 

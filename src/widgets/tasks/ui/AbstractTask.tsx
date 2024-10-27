@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Task as TaskEntity } from 'entities/note';
+import { RoutineNote, routineNoteArchiver, routineNoteService, Task as TaskEntity } from 'entities/note';
 import React, { useCallback, useMemo, useRef, useState } from "react"
 import { useRoutineNote } from "entities/note";
 import _ from "lodash";
@@ -11,7 +11,7 @@ import { TaskName } from './TaskName';
 import { Checkbox } from './Checkbox';
 import { css } from '@emotion/react';
 import { useTaskDnd } from '../hooks/use-task-dnd';
-import { Notice } from 'obsidian';
+import { moment } from 'obsidian';
 
 
 // [[ Styles
@@ -64,14 +64,24 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const taskRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const [isPressed, setIsPressed] = useState<boolean>(false);
-  const checkTask = useRoutineNote(s=>s.checkTask);
-  const { isDragging } = useTaskDnd({ task, taskRef, handleRef });
+  const { setNote, note } = useRoutineNote();
+
+  const onTaskDrop = useCallback<(newNote: RoutineNote, droped: T) => void>((note, droped) => {
+    // NOTE: 오늘 이후의 노트인경우 feature-note-updater가 처리함
+    if(note.day.moment.isSameOrBefore(moment(), "day")){
+      routineNoteArchiver.update(note, false);
+    }
+    onTaskReorder?.(note.tasks);
+  }, [onTaskReorder])
+
+
+  const { isDragging } = useTaskDnd({ task, taskRef, handleRef, onTaskDrop });
 
 
   const onLongPressStart = useCallback((e: React.TouchEvent) => {
   }, [])
 
-  const onAfterLongPressDelay = useCallback((e: React.TouchEvent) => {
+  const onAfterLongPressDelay = useCallback(() => {
     if(onOptionMenu){
       onOptionMenu(task);
     }
@@ -86,7 +96,11 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const onClick = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if(disableTouch.current) return;
     disableTouch.current = true;
-    checkTask(task, !task.checked);
+
+    const newNote = routineNoteService.checkTask(note, task, !task.checked);
+    setNote(newNote);
+    routineNoteArchiver.updateOrPersistOnUserConfirmation(newNote);
+
     if(onTaskClick) onTaskClick({
       ...task,
       checked: !task.checked
@@ -94,7 +108,7 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
     setTimeout(() => {
       disableTouch.current = false;
     }, 500);
-  }, [checkTask, onTaskClick, task])
+  }, [note, onTaskClick, setNote, task])
 
 
   const bem = useMemo(() => dr("task"), []);

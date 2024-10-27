@@ -1,6 +1,4 @@
 /** @jsxImportSource @emotion/react */
-// eslint-disable-next-line fsd-import/public-api-imports
-import { persisteOrUpdateRoutineNote } from 'entities/note/archive';
 import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from 'entities/note';
 import { openStartNewRoutineModal } from "features/routine";
 import { DaysNav } from "features/days";
@@ -11,7 +9,7 @@ import { MenuComponent } from "shared/components/Menu";
 import { Menu } from "obsidian";
 import { FeatureNoteUpdateProvider } from "features/feature-note";
 import { RoutineTask, TaskDndContext, TodoTask } from 'widgets/tasks';
-import { openAddTodoModal as openAddTodoModalFeatures } from 'features/todo';
+import { openAddTodoModal as openAddTodoModalFeature } from 'features/todo';
 import { Icon } from 'shared/components/Icon';
 import { Button } from 'shared/components/Button';
 
@@ -20,43 +18,31 @@ interface RoutineNoteProps {
   day: Day;
 }
 export const RoutineNote = ({ day }: RoutineNoteProps) => {
-  const [ noteData, setNoteData ] = useState<{
-    note: RoutineNoteEntity;
-    isTransient: boolean;
-  } | null>(null);
+  const [ note, setNote ] = useState<RoutineNoteEntity | null>(null);
 
 
   useEffect(() => {
     // note가 존재하면 가지고오고, 없으면 생성하고 저장은 하지 않고 반환한다. 다만, 생성한 노트가 오늘 노트라면 저장까지 해준다.
     (async () => {
       let routineNote = await routineNoteArchiver.load(day);
-      let isTransient = false;
       if(!routineNote){
         routineNote = await routineNoteService.create(day);
         if(day.isToday()){
-          await persisteOrUpdateRoutineNote(routineNote);
-          isTransient = false;
-        } else {
-          isTransient = true;
+          await routineNoteArchiver.persist(routineNote, false);
         }
       }
-      
-      setNoteData({
-        note: routineNote,
-        isTransient
-      });
+      setNote(routineNote);
     })(); 
   }, [day]);
 
   
   
-  if(!noteData) return (<div>Loading...</div>);
+  if(!note) return (<div>Loading...</div>);
   return (
     <UseRoutineNoteProvider 
-      data={noteData} 
-      onDataChange={(s, d) => s.setState({
-        note: d.note,
-        isTransient: d.isTransient
+      data={note} 
+      onDataChange={(s, note) => s.setState({
+        note: note
       })}
     >
       <RoutineNotePage />
@@ -66,17 +52,18 @@ export const RoutineNote = ({ day }: RoutineNoteProps) => {
 
 
 const RoutineNotePage = () => {
-  const { note, setNoteAndSave } = useRoutineNote();
+  const { note, setNote } = useRoutineNote();
   const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
 
   const mainRef = useRef<HTMLDivElement>(null);
 
-  const openAddTodoModal = useCallback(() => openAddTodoModalFeatures({
+  const openAddTodoModal = useCallback(() => openAddTodoModalFeature({
     note: note,
     onTodoAdded: (newNote) => {
-      setNoteAndSave(newNote);
+      setNote(newNote);
+      routineNoteArchiver.update(newNote);
     }
-  }), [note, setNoteAndSave]);
+  }), [note, setNote]);
   
   const onNoteMenuShow = useCallback((m: Menu) => {
     // Start New Routine

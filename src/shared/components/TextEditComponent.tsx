@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { TextComponent } from "obsidian";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { dr } from "shared/daily-routine-bem";
 import { Button } from "./Button";
 import clsx from "clsx";
@@ -21,13 +21,15 @@ interface TextEditComponentProps {
   width?: string;
   className?: string;
 }
-export const TextEditComponent = (props: TextEditComponentProps) => {
+export const TextEditComponent = memo((props: TextEditComponentProps) => {
   const obsidianTextComponentRef = useRef<HTMLDivElement>(null);
+  const textComponentCreated = useRef(false);
   const [text, setText] = useState(props.value);
 
   // Obsidian Component
   useEffect(() => {
     if(!obsidianTextComponentRef.current) return;
+    if(textComponentCreated.current) return;
     const textComp = new TextComponent(obsidianTextComponentRef.current)
     .setValue(text)
     .onChange((value) => setText(value));
@@ -35,6 +37,8 @@ export const TextEditComponent = (props: TextEditComponentProps) => {
     textComp.inputEl.onblur = () => {
       if(props.onBlur) props.onBlur(textComp.getValue());
     }
+    
+    textComponentCreated.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,4 +53,4 @@ export const TextEditComponent = (props: TextEditComponentProps) => {
       ref={obsidianTextComponentRef}
     />
   )
-}
+})

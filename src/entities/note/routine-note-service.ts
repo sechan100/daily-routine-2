@@ -44,11 +44,14 @@ interface RoutineNoteService {
   // 새로운 루틴 노트를 생성한다. 
   create: (day: Day) => Promise<RoutineNote>;
 
+  // 특정 task를 check한다.
+  checkTask: (routineNote: RoutineNote, task: Task, checked: boolean) => RoutineNote;
+
   // todo task를 추가한다.
   addTodoTask: (routineNote: RoutineNote, todoTask: TodoTask) => RoutineNote;
 
   // todo task를 제거한다.
-  deleteTodoTask: (routineNote: RoutineNote, todoTask: TodoTask) => RoutineNote;
+  deleteTodoTask: (routineNote: RoutineNote, todoTaskName: string) => RoutineNote;
 
   // todo task를 수정한다.
   editTodoTask: (routineNote: RoutineNote, todoTaskName: string, todoTask: TodoTask) => RoutineNote;
@@ -113,6 +116,22 @@ ${routineNote.tasks.map(task => {
       tasks: tasks
     };
   },
+
+  checkTask(routineNote, task, checked){
+    return {
+      ...routineNote,
+      tasks: routineNote.tasks.map(t => {
+        if(t.name === task.name){
+          return {
+            ...t,
+            checked
+          }
+        } else {
+          return t;
+        }
+      })
+    }
+  },
   
   addTodoTask(routineNote, todoTask){
     // 중복검사
@@ -126,19 +145,21 @@ ${routineNote.tasks.map(task => {
     }
   },
 
-  deleteTodoTask(routineNote, todoTask){
+  deleteTodoTask(routineNote, todoTaskName){
     return {
       ...routineNote,
-      tasks: routineNote.tasks.filter(task => task.name !== todoTask.name)
+      tasks: routineNote.tasks.filter(task => task.name !== todoTaskName)
     }
   },
 
   editTodoTask(routineNote, todoTaskName, todoTask){
+    let newNote = routineNote;
+
+    // Name Change
     const originalName = todoTaskName;
     const newName = todoTask.name;
-    // 중복검사
     if(routineNote.tasks.find(task => task.name === newName)) throw new Error("Duplicated task name");
-    return {
+    newNote = {
       ...routineNote,
       tasks: routineNote.tasks.map(task => {
         if(task.name === originalName){
@@ -151,6 +172,8 @@ ${routineNote.tasks.map(task => {
         }
       })
     }
+
+    return newNote;
   }
   
 }

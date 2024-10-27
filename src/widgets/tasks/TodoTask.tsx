@@ -8,34 +8,23 @@ interface TodoTaskProps {
   task: TodoTaskEntity;
 }
 export const TodoTask = React.memo(({ task }: TodoTaskProps) => {
-  const { note, setNoteAndSave} = useRoutineNote();
-
-  const onClick = useCallback((task: TodoTaskEntity) => {
-    // 필요시..
-  }, [])
-
+  const { note, setNote } = useRoutineNote();
+  
   const onOptionMenu = useCallback(async () => {
     openTodoOptionModal({
       note, 
       todo: task, 
-      onDeleted: (note) => setNoteAndSave(note)
+      onDeleted: (note) => {
+        setNote(note);
+      }
     });
-  }, [note, setNoteAndSave, task])
-
-  const onTaskReorder = useCallback(async (tasks: Task[]) => {
-    setNoteAndSave({
-      ...note,
-      tasks
-    })
-  }, [note, setNoteAndSave])
+  }, [note, setNote, task])
 
   return (
     <AbstractTask 
-      onTaskReorder={onTaskReorder}
       className="dr-todo-task"
       task={task}
       onOptionMenu={onOptionMenu}
-      onTaskClick={onClick}
     />
   )
 });

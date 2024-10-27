@@ -1,12 +1,8 @@
 
 /** @jsxImportSource @emotion/react */
 import { useRoutineNote, RoutineNote, Task } from "entities/note";
-import { moment } from "obsidian";
 import { useRef, useCallback, useEffect, RefObject, useState } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
-import { drEvent } from "shared/event";
-import { Icon } from "shared/components/Icon";
-import React from "react";
 
 
 
@@ -21,17 +17,19 @@ interface UseTaskDndOption {
   task: Task;
   taskRef: RefObject<HTMLElement | null>; // 드롭 타겟
   handleRef: RefObject<HTMLElement | null>; // 드래그 핸들
+  onTaskDrop?: (newNote: RoutineNote, droped: Task) => void;
 }
 interface UseTaskDndResult {
   isDragging: boolean;
 }
-export const useTaskDnd = ({ task, taskRef, handleRef }: UseTaskDndOption): UseTaskDndResult => {
+export const useTaskDnd = ({ task, taskRef, handleRef, onTaskDrop }: UseTaskDndOption): UseTaskDndResult => {
   const setNote = useRoutineNote(s=>s.setNote);
-  const setNoteAndSave = useRoutineNote(s=>s.setNoteAndSave);
+  const dragStartNoteSnapshot = useRef<RoutineNote | null>(null);
 
   const [{ isDragging }, drag, preview] = useDrag({
     type: "task",
     item(){
+      dragStartNoteSnapshot.current = useRoutineNote.getState().note;
       const item: DragItem = {
         task,
         previewSource: taskRef.current as HTMLElement,
@@ -93,19 +91,10 @@ export const useTaskDnd = ({ task, taskRef, handleRef }: UseTaskDndOption): UseT
     },
     drop: async (item) => {
       const note = useRoutineNote.getState().note;
-      /**
-       * NOTE: 현재 이후의 노트인 경우에는 feature-note-updater에서 일괄적으로 처리함.
-       * 다만, 과거의 노트인 경우는 now 이후의 노트에만 변경사항이 적용되기 때문에, 과거의 노트는 따로 저장 해줘야함.
-       */
-      if(note.day.moment.isBefore(moment())){
-        setNoteAndSave(note);
-      }
-      drEvent.emit("reorderTasks", {
-        reordered: task,
-        note,
-      });
+      if(dragStartNoteSnapshot.current === note) return;
+      onTaskDrop?.(note, item.task);
     }
-  }, [task, getHixArea, replaceTask, setNote, setNoteAndSave])
+  }, [task, getHixArea, replaceTask, setNote])
 
   useEffect(() => {
     if(!handleRef.current || !taskRef.current) return;
