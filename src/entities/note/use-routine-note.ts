@@ -1,5 +1,9 @@
+/**
+ * routine note는 전역적으로 사용하는 상태이기 때문에, 전역 상태로 정의하여 공유할 수 있도록 한다.
+ */
+
 import { createStoreContext } from "shared/zustand/create-store-context";
-import { RoutineNote, routineNoteService, Task } from "./routine-note-service";
+import { RoutineNote, routineNoteService } from "./routine-note-service";
 import { Day } from "shared/day";
 import { routineNoteArchiver } from "./routine-note-archive";
 

@@ -31,12 +31,17 @@ interface RoutineNoteArchiver {
   update(routineNote: RoutineNote, strict?: boolean): Promise<void>;
 
   /**
+   * 이미 routine note가 존재한다면 update, 존재하지 않는다면 persist한다.
+   */
+  save(routineNote: RoutineNote): Promise<void>;
+
+  /**
    * 기왕이면 update, persist를 사용하도록 하지만, 
    * 만약 routine note가 아직 존재하지 않아서 persist하고 update해야하는 경우라면 해당 함수를 사용할 수 있다. 
    * @param routineNote
    * @returns 이미 노트가 존재했거나 새로 생성하여 업데이트에 성공한 경우 true, 변경사항을 취소한 경우 false를 반환한다.
    */
-  updateOrPersistOnUserConfirmation(routineNote: RoutineNote): Promise<boolean>;
+  saveOnUserConfirm(routineNote: RoutineNote): Promise<boolean>;
 
   // delete
   delete(day: Day): Promise<void>;
@@ -88,7 +93,16 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     }
   },
 
-  async updateOrPersistOnUserConfirmation(routineNote) {
+  async save(routineNote) {
+    const file = getRoutineNoteFile(routineNote.day);
+    if(file){
+      await routineNoteArchiver.update(routineNote);
+    } else {
+      await routineNoteArchiver.persist(routineNote);
+    }
+  },
+
+  async saveOnUserConfirm(routineNote) {
     const file = getRoutineNoteFile(routineNote.day);
   
     // 기존 파일이 있으면 업데이트

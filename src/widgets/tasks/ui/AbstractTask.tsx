@@ -99,7 +99,7 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
 
     const newNote = routineNoteService.checkTask(note, task, !task.checked);
     routineNoteArchiver
-      .updateOrPersistOnUserConfirmation(newNote)
+      .saveOnUserConfirm(newNote)
       .then(isUpdated => {
         if(isUpdated) setNote(newNote);
       });
