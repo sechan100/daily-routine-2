@@ -23,8 +23,8 @@ export const RoutineTask = React.memo(({ task }: RoutineTaskProps) => {
   const onTaskReorder = useCallback(async (tasks: Task[]) => {
     await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
 
-    registerRoutineNotesSynchronize(note => setNote(note), note.day);
-  }, [note.day, setNote])
+    registerRoutineNotesSynchronize();
+  }, [])
 
   
   return (

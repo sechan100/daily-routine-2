@@ -67,9 +67,7 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const { setNote, note } = useRoutineNote();
 
   const onTaskDrop = useCallback<(newNote: RoutineNote, droped: T) => void>((note, droped) => {
-    if(note.day.moment.isBefore(moment(), "day")){
-      routineNoteArchiver.update(note, false);
-    }
+    routineNoteArchiver.update(note, false);
     onTaskReorder?.(note.tasks);
   }, [onTaskReorder])
 

@@ -21,10 +21,12 @@ export interface RoutineNoteSynchronizer {
    * @param day cb로 받을 날짜
    */
   (cb: SpecificDayNoteCb, day: Day): void;
+
+  (): void;
 }
 
 export const registerRoutineNotesSynchronize: RoutineNoteSynchronizer
-= (cb, day?) => {
+= (cb?, day?) => {
   Promise.resolve().then(async () => {
     const notes = await routineNoteArchiver.loadBetween(Day.now(), Day.max());
     const syncedNotes: RoutineNote[] = [];

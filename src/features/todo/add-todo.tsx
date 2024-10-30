@@ -26,7 +26,7 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
     if(todo.name.trim() === "") return;
     const newNote = routineNoteService.addTodoTask(note, todo);
     setNote(newNote);
-    routineNoteArchiver.update(newNote);
+    routineNoteArchiver.save(newNote);
     modal.close();
   }, [todo, note, setNote, modal]);
 

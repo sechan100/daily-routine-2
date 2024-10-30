@@ -31,10 +31,10 @@ export const TaskPreview = ({ item, style, backend }: TaskPreviewProps) => {
     
     const { x: x_viewport, y: y_viewport } = currentOffset;
     // @ts-ignore
-    const appEl = plugin().app.dom.appContainerEl;
+    // const appEl = plugin().app.dom.appContainerEl;
     const leafEl = leaf.view.containerEl;
-    const x_leaf = x_viewport - (appEl.clientWidth - leafEl.clientWidth);
-    const y_leaf = y_viewport - (appEl.offsetHeight - leafEl.clientHeight);
+    const x_leaf = x_viewport - (window.innerWidth - leafEl.clientWidth);
+    const y_leaf = y_viewport - (window.innerHeight - leafEl.clientHeight);
 
     const taksWidth = item.width;
     const getTransform = (backend: "html5" | "touch") => {
