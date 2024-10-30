@@ -1,15 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote } from 'pages/routine-note';
 import { RoutineCalendar } from "pages/calendar";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { css } from "@emotion/react";
+import { useCallback, useMemo } from "react";
 import { Day } from "shared/day";
 import { usePageRoute } from "./use-page-route";
 import "./style.css";
-import { ActiveButton } from 'shared/components/ToggleButton';
-import { plugin } from 'shared/plugin-service-locator';
 import { DailyRoutineObsidianView } from './obsidian-view';
 import { useLeaf } from 'shared/view/react-view';
+import { Button } from 'shared/components/Button';
 
 
 
@@ -75,7 +73,7 @@ interface ViewNavItemProps {
 }
 const ViewNavItem = ({ active, onClick, children }: ViewNavItemProps) => {
   return (
-    <ActiveButton
+    <Button
       css={{
         display: "block",
         alignSelf: "stretch",
@@ -84,10 +82,10 @@ const ViewNavItem = ({ active, onClick, children }: ViewNavItemProps) => {
         borderRadius: "0.2em 0.2em 0 0",
         fontWeight: "var(--font-weight)"
       }}
-      active={active} 
+      accent={active} 
       onClick={onClick}
     >
       {children}
-    </ActiveButton>
+    </Button>
   );
 }

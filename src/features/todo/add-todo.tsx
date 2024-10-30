@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createModal, ModalApi } from "shared/components/modal/create-modal";
 import { Modal } from "shared/components/modal/styled";
 import { TextEditComponent } from "shared/components/TextEditComponent";
-import { ActiveButton } from "shared/components/ToggleButton";
+import { Button } from "shared/components/Button";
 import { dr } from "shared/daily-routine-bem";
 
 
@@ -45,15 +45,14 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
       <Modal.Separator />
 
       <Modal.Section>
-        <ActiveButton
-          active={todo.name.trim() !== ""} 
-          css={{
-            width: "100%"
-          }}
+        <Button
+          width="100%"
+          disabled={todo.name.trim() === ""}
+          accent
           onClick={onSave}
         >
           Save
-        </ActiveButton>
+        </Button>
       </Modal.Section>
     </Modal>
   );

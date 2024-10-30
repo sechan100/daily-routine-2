@@ -5,7 +5,7 @@ import clsx from "clsx";
 import Calendar from "react-calendar";
 import { DAYS_OF_WEEK, DayOfWeek } from "shared/day";
 import { dr } from "shared/daily-routine-bem";
-import { ActiveButton } from "shared/components/ToggleButton";
+import { Button } from "shared/components/Button";
 import ReactDOM from "react-dom";
 import { css } from "@emotion/react";
 import "./days-of-month-calendar-style.scss";
@@ -110,7 +110,7 @@ const WeekOption = ({ daysOfWeek, setDaysOfweek, className }: WeekOptionProps) =
         {DAYS_OF_WEEK.map((dayOfWeek, idx) => {
           const isActive = daysOfWeek.includes(dayOfWeek);
           return (
-            <ActiveButton
+            <Button
               key={idx}
               css={css`
                 .is-phone & {
@@ -127,10 +127,10 @@ const WeekOption = ({ daysOfWeek, setDaysOfweek, className }: WeekOptionProps) =
               className={bem("day", {
                 active: isActive
               })}
-              active={isActive}
+              accent={isActive}
             >
               {dayOfWeek}
-            </ActiveButton>
+            </Button>
           )
         })}
       </div>
@@ -171,12 +171,12 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
   
   if(!element) return null;
   return ReactDOM.createPortal(
-    <ActiveButton
+    <Button
       className={clsx(props.className, {
         activeCn: props.active
       })}
       onClick={onClick}
-      active={props.active}
+      accent={props.active}
       css={css`
         display: block;
         justify-self: start;
@@ -188,7 +188,7 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
       `}
     >
       Last Day of Month
-    </ActiveButton>,
+    </Button>,
     element
   )
 }
@@ -227,8 +227,7 @@ const MonthOption = ({ daysOfMonth, setDaysOfMonth, className }: MonthOptionProp
   // 달력의 날짜 타일 하나하나를 렌더링하는 방식을 정의
   const tileContent = ({ date, view }: { date: Date, view: string }) => {
     return (
-      <ActiveButton 
-        as="div"
+      <Button 
         className={bem("tile")} 
         css={{
           width: "4em",
@@ -239,10 +238,10 @@ const MonthOption = ({ daysOfMonth, setDaysOfMonth, className }: MonthOptionProp
           justifyContent: "center",
           alignItems: "center",
         }}
-        active={daysOfMonth.includes(date.getDate())}
+        accent={daysOfMonth.includes(date.getDate())}
       >
         {date.getDate().toString()} 
-      </ActiveButton>
+      </Button>
     )
   }
 

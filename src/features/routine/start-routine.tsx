@@ -7,11 +7,11 @@ import { DAYS_OF_WEEK } from "shared/day";
 import { memo, useCallback, useState, useMemo } from "react";
 import { createModal } from "shared/components/modal/create-modal";
 import { TextEditComponent } from "shared/components/TextEditComponent";
-import { ActiveButton } from "shared/components/ToggleButton";
 import { dr } from "shared/daily-routine-bem";
 import { drEvent } from "shared/event";
 import { Modal } from "shared/components/modal/styled";
 import { ModalApi } from "shared/components/modal/create-modal";
+import { Button } from "shared/components/Button";
 
 
 
@@ -80,17 +80,17 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
       <Modal.Section className={bem("criteria")} >
         <Modal.Name>Active Criteria</Modal.Name>
         <nav className={bem("criteria-nav")}>
-          <ActiveButton
+          <Button
             css={{marginRight: "0.5em"}}
-            active={routine.properties.activeCriteria === "week"} 
+            accent={routine.properties.activeCriteria === "week"} 
             onClick={() => changeActiveCriteria("week")}
           >Week
-          </ActiveButton>
-          <ActiveButton
-            active={routine.properties.activeCriteria === "month"}
+          </Button>
+          <Button
+            accent={routine.properties.activeCriteria === "month"}
             onClick={() => changeActiveCriteria("month")}
           >Month
-          </ActiveButton>
+          </Button>
         </nav>
       </Modal.Section>
       <DaysOption
@@ -106,13 +106,14 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
 
       {/* save */}
       <Modal.Section>
-        <ActiveButton
+        <Button
           width="100%"
-          active={routine.name.trim() !== ""}
+          disabled={routine.name.trim() === ""}
+          accent
           onClick={() => onRoutineSave(routine.name.trim() !== "")}
         >
           Save
-        </ActiveButton>
+        </Button>
       </Modal.Section>
     </Modal>
   )

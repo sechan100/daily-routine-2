@@ -8,7 +8,6 @@ import { DaysOption } from "./DaysOption";
 import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
 import { dr } from 'shared/daily-routine-bem';
-import { ActiveButton } from 'shared/components/ToggleButton';
 import { drEvent } from 'shared/event';
 import { openConfirmModal } from 'shared/components/modal/confirm-modal';
 import { Modal } from 'shared/components/modal/styled';
@@ -45,15 +44,7 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
       });
     })
   }, [modal, routine.name, routine.properties]);
-
   
-  const onNameEditDone = useCallback((newName: string) => {
-    setRoutine({
-      ...routine,
-      name: newName
-    })
-  }, [routine]);
-
 
   // setProperties
   const setProperties = useCallback((newProperties: RoutineProperties) => {
@@ -103,7 +94,7 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
         <Modal.Name>Name</Modal.Name>
         <TextEditComponent
           value={routine.name}
-          onBlur={onNameEditDone} 
+          onChange={name => setRoutine({...routine, name})} 
         />
       </Modal.Section>
       <Modal.Separator />
@@ -112,17 +103,17 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
       <Modal.Section className={bem("criteria")} >
         <Modal.Name>Active Criteria</Modal.Name>
         <nav className={bem("criteria-nav")}>
-          <ActiveButton
+          <Button
             css={{marginRight: "0.5em"}}
-            active={routine.properties.activeCriteria === "week"} 
+            accent={routine.properties.activeCriteria === "week"} 
             onClick={() => changeActiveCriteria("week")}
           >Week
-          </ActiveButton>
-          <ActiveButton
-            active={routine.properties.activeCriteria === "month"}
+          </Button>
+          <Button
+            accent={routine.properties.activeCriteria === "month"}
             onClick={() => changeActiveCriteria("month")}
           >Month
-          </ActiveButton>
+          </Button>
         </nav>
       </Modal.Section>
       <DaysOption
