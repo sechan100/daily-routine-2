@@ -77,7 +77,7 @@ ${routineNote.tasks.map(task => {
   const data = {
     type: task.type
   }
-  return `- [${checked}] [[${task.name}]]<!-- ${JSON.stringify(data)} -->`;
+  return `- [${checked}] [[${task.name}]]%%${JSON.stringify(data)}%%`;
 }).join('\n')}
 `;
     return content;
@@ -89,8 +89,8 @@ ${routineNote.tasks.map(task => {
     const tasks: Task[] = content.split('# Tasks')[1].split('\n').flatMap(line => {
       if(line.trim() === '') return [];
       const checked = line.startsWith('- [x]');
-      const name = line.split('] ')[1].split('<!--')[0].replace('[[', '').replace(']]', '');
-      const data = JSON.parse(line.split('<!-- ')[1].replace(' -->', '')) as TaskMetaData;
+      const name = line.split('] ')[1].split('%%')[0].replace('[[', '').replace(']]', '');
+      const data = JSON.parse(line.split('%%')[1].replace('%%', '')) as TaskMetaData;
       return {
         type: data.type,
         name, 
