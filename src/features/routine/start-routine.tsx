@@ -4,19 +4,22 @@ import { Routine } from "entities/routine";
 import { Notice } from "obsidian";
 import { DaysOption } from "./DaysOption";
 import { DAYS_OF_WEEK } from "shared/day";
-import { memo, useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { createModal } from "shared/components/modal/create-modal";
 import { TextEditComponent } from "shared/components/TextEditComponent";
 import { dr } from "shared/daily-routine-bem";
-import { drEvent } from "shared/event";
 import { Modal } from "shared/components/modal/styled";
 import { ModalApi } from "shared/components/modal/create-modal";
 import { Button } from "shared/components/Button";
+import { registerRoutineNotesSynchronize } from "entities/note-synchronize";
+import { useRoutineNote } from "entities/note";
+import { set } from "lodash";
 
 
 
 
 export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) => {
+  const { note, setNote } = useRoutineNote();
   const [ routine, setRoutine ] = useState<Routine>({
     name: "",
     properties: {
@@ -27,40 +30,31 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
     }
   });
 
-  const setName = useCallback((name: string) => {
+
+  const setProperties = useCallback((propertiesPartial: Partial<Routine["properties"]>) => {
     setRoutine({
       ...routine,
-      name
+      properties: {
+        ...routine.properties,
+        ...propertiesPartial
+      }
     });
   }, [routine]);
 
-  const setProperties = useCallback((properties: Routine["properties"]) => {
-    setRoutine({
-      ...routine,
-      properties
-    });
-  }, [routine]);
 
-  const changeActiveCriteria = useCallback((activeCriteria: Routine["properties"]["activeCriteria"]) => {
-    setProperties({
-      ...routine.properties,
-      activeCriteria
-    });
-  }, [routine.properties, setProperties]);
-
-
-  const onRoutineSave = useCallback(async (isRoutineSaveActive: boolean) => {
-    if(!isRoutineSaveActive) new Notice("Complete the form to save the routine");
-
+  // 루틴 생성 콜백
+  const onSaveBtnClick = useCallback(async () => {
     try {
       await routineManager.create(routine);
-      drEvent.emit("createRoutine", {name: routine.name})
-      modal.close();
       new Notice(`Routine '${routine.name}' started! 🎉`);
+
+      registerRoutineNotesSynchronize(note => setNote(note), note.day);
+
+      modal.close();
     } catch(e) {
       new Notice(e.message);
     }
-  }, [modal, routine]);
+  }, [modal, note, routine, setNote]);
 
 
   const bem = useMemo(() => dr("start-new-routine"), []);
@@ -70,7 +64,7 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
         <Modal.Name>Name</Modal.Name>
         <TextEditComponent
           value={routine.name}
-          onChange={setName}
+          onChange={name => setRoutine({...routine, name})}
           placeholder="New Daily Routine"
         />
       </Modal.Section>
@@ -83,12 +77,12 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
           <Button
             css={{marginRight: "0.5em"}}
             accent={routine.properties.activeCriteria === "week"} 
-            onClick={() => changeActiveCriteria("week")}
+            onClick={() => setProperties({activeCriteria: "week"})}
           >Week
           </Button>
           <Button
             accent={routine.properties.activeCriteria === "month"}
-            onClick={() => changeActiveCriteria("month")}
+            onClick={() => setProperties({activeCriteria: "month"})}
           >Month
           </Button>
         </nav>
@@ -110,7 +104,7 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
           width="100%"
           disabled={routine.name.trim() === ""}
           accent
-          onClick={() => onRoutineSave(routine.name.trim() !== "")}
+          onClick={onSaveBtnClick}
         >
           Save
         </Button>

@@ -1,1 +1,0 @@
-export { FeatureNoteUpdateProvider } from "./Provider";

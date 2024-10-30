@@ -7,7 +7,6 @@ import { Day } from "shared/day";
 import { dr } from "shared/daily-routine-bem";
 import { MenuComponent } from "shared/components/Menu";
 import { Menu } from "obsidian";
-import { FeatureNoteUpdateProvider } from "features/feature-note";
 import { RoutineTask, TaskDndContext, TodoTask } from 'widgets/tasks';
 import { useAddTodoModal } from 'features/todo';
 import { Icon } from 'shared/components/Icon';
@@ -84,7 +83,7 @@ const RoutineNotePage = () => {
 
   const bem = useMemo(() => dr("note"), []);
   return (
-    <FeatureNoteUpdateProvider 
+    <div 
       css={{
         height: "100%",
       }} 
@@ -158,6 +157,6 @@ const RoutineNotePage = () => {
       </div>
       <AddTodoModal />
       <StartRoutineModal />
-    </FeatureNoteUpdateProvider>
+    </div>
   );  
 }

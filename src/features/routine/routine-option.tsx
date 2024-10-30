@@ -8,10 +8,11 @@ import { DaysOption } from "./DaysOption";
 import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
 import { dr } from 'shared/daily-routine-bem';
-import { drEvent } from 'shared/event';
 import { openConfirmModal } from 'shared/components/modal/confirm-modal';
 import { Modal } from 'shared/components/modal/styled';
 import { createModal, ModalApi } from 'shared/components/modal/create-modal';
+import { useRoutineNote } from 'entities/note';
+import { registerRoutineNotesSynchronize } from 'entities/note-synchronize';
 
 
 
@@ -21,61 +22,43 @@ interface RoutineOptionModalProps {
   modal: ModalApi;
 }
 export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal}: RoutineOptionModalProps) => {
-  // routine state
+  const bem = useMemo(() => dr("routine-option"), []);
   const [ routine, setRoutine ] = useState<Routine>(propsRoutine);
+  const originalName = useMemo(() => propsRoutine.name, [propsRoutine]);
+  const { note, setNote } = useRoutineNote();
 
-  // original routine name: 변경 사항을 저장하기 위해서 기존 identifier가 필요함
-  const originalNameRef = useRef(propsRoutine.name);  
 
-  // modal이 닫힐 때 저장
-  useEffect(() => {
-    modal.onClose(() => {
-      const originalName = originalNameRef.current;
-      // 이름 변경
-      if(originalName !== routine.name && routine.name.trim() !== ""){
-        routineManager.rename(originalName, routine.name);
-      }
-      // properties 변경
-      routineManager.editProperties(originalName, routine.properties);
+  // modal.onClose
+  useEffect(() => { modal.onClose(async () => {
+    if(originalName !== routine.name && routine.name.trim() !== ""){
+      await routineManager.rename(originalName, routine.name);
+    }
+    await routineManager.editProperties(originalName, routine.properties);
 
-      drEvent.emit("updateRoutineProperties", {
-        name: routine.name,
-        properties: routine.properties
-      });
-    })
-  }, [modal, routine.name, routine.properties]);
+    registerRoutineNotesSynchronize(note => setNote(note), note.day);
+    
+  })}, [modal, note, originalName, routine, setNote]);
   
 
-  // setProperties
-  const setProperties = useCallback((newProperties: RoutineProperties) => {
+  const setProperties = useCallback((propertiesPartial: Partial<Routine["properties"]>) => {
     setRoutine({
       ...routine,
-      properties: newProperties
+      properties: {
+        ...routine.properties,
+        ...propertiesPartial
+      }
     });
   }, [routine]);
 
 
-  // activeCriteria 변경 콜백
-  const changeActiveCriteria = useCallback((criteria: "week" | "month") => {
-    setProperties({
-      ...routine.properties,
-      activeCriteria: criteria
-    });
-  }, [routine.properties, setProperties]);
-
-
-  // bem
-  const bem = useMemo(() => dr("routine-option"), []);
-
-  /**
-   * 삭제 버튼 클릭시 confirm modal을 띄우고, 확인시 루틴을 삭제한다.
-   */
   const onDeleteBtnClick = useCallback((e: React.MouseEvent) => {
-    const onConfirm = () => {
+    const onConfirm = async () => {
       routineManager.delete(routine.name);
-      drEvent.emit("deleteRoutine", {name: routine.name});
-      modal.closeWithoutOnClose();
       new Notice(`Routine ${routine.name} deleted.`);
+
+      registerRoutineNotesSynchronize(note => setNote(note), note.day);
+      
+      modal.closeWithoutOnClose();
     }
 
     openConfirmModal({
@@ -85,7 +68,7 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
       description: `Are you sure you want to delete '${routine.name}'?`,
       confirmBtnVariant: "destructive"
     })
-  }, [bem, modal, routine])
+  }, [bem, modal, note, routine.name, setNote])
 
   return (
     <Modal header='Routine Option' modal={modal}>
@@ -106,12 +89,12 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
           <Button
             css={{marginRight: "0.5em"}}
             accent={routine.properties.activeCriteria === "week"} 
-            onClick={() => changeActiveCriteria("week")}
+            onClick={() => setProperties({activeCriteria: "week"})}
           >Week
           </Button>
           <Button
             accent={routine.properties.activeCriteria === "month"}
-            onClick={() => changeActiveCriteria("month")}
+            onClick={() => setProperties({activeCriteria: "month"})}
           >Month
           </Button>
         </nav>

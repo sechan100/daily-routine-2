@@ -24,7 +24,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
 
   const { note, setNote } = useRoutineNote();
   const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
-  const originalName = useMemo(() => todo.name, [todo]);
+  const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
 
   useEffect(() => {

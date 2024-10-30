@@ -4,12 +4,12 @@
  */
 
 import { RoutineNote } from "entities/note";
-import { NoteDepentdent } from "./note-dependents";
+import { NoteDependent } from "./NoteDependent";
 
 
 
 
-export class TaskCheckedStateNoteDep extends NoteDepentdent {
+export class TaskCheckedStateNoteDep extends NoteDependent {
   #checkedTasks: string[] = [];
 
   constructor(private note: RoutineNote) {

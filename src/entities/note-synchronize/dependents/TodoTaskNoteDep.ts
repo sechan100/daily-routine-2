@@ -1,5 +1,5 @@
 import { RoutineNote, Task, TodoTask } from "entities/note";
-import { NoteDepentdent } from "./note-dependents";
+import { NoteDependent } from "./NoteDependent";
 
 
 
@@ -12,7 +12,7 @@ interface SandwitchedTask {
 }
 
 
-export class TodoTaskNoteDep extends NoteDepentdent {
+export class TodoTaskNoteDep extends NoteDependent {
   #sandwitches: SandwitchedTask[] = [];
 
   constructor(private note: RoutineNote) {
