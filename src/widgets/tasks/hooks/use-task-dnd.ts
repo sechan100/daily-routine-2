@@ -118,7 +118,7 @@ export const useTaskDnd = ({ task, taskRef, handleRef, onTaskDrop }: UseTaskDndO
         width: "0.01px",
         height: "0.01px",
       })
-      div.id = "dr-psuedo-preview";
+      div.id = "dr-pseudo-preview";
       view.containerEl.appendChild(div);
       pseudoPreview = div;
     }

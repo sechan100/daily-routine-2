@@ -67,8 +67,7 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const { setNote, note } = useRoutineNote();
 
   const onTaskDrop = useCallback<(newNote: RoutineNote, droped: T) => void>((note, droped) => {
-    // NOTE: 오늘 이후의 노트인경우 feature-note-updater가 처리함
-    if(note.day.moment.isSameOrBefore(moment(), "day")){
+    if(note.day.moment.isBefore(moment(), "day")){
       routineNoteArchiver.update(note, false);
     }
     onTaskReorder?.(note.tasks);
