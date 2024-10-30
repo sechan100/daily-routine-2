@@ -2,36 +2,35 @@
 import { routineManager } from 'entities/routine';
 import { Routine, RoutineProperties } from 'entities/routine';
 import { Notice } from "obsidian";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
 import { DaysOption } from "./DaysOption";
 import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
-import { modalComponent, useModal } from 'shared/components/modal/modal-component';
 import { dr } from 'shared/daily-routine-bem';
 import { ActiveButton } from 'shared/components/ToggleButton';
 import { drEvent } from 'shared/event';
 import { openConfirmModal } from 'shared/components/modal/confirm-modal';
 import { Modal } from 'shared/components/modal/styled';
+import { createModal, ModalApi } from 'shared/components/modal/create-modal';
 
 
 
 
 interface RoutineOptionModalProps {
   routine: Routine;
+  modal: ModalApi;
 }
-export const openRoutineOptionModal = modalComponent(React.memo((props: RoutineOptionModalProps) => {
+export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal}: RoutineOptionModalProps) => {
   // routine state
-  const [ routine, setRoutine ] = useState<Routine>(props.routine);
+  const [ routine, setRoutine ] = useState<Routine>(propsRoutine);
 
   // original routine name: 변경 사항을 저장하기 위해서 기존 identifier가 필요함
-  const originalNameRef = useRef(props.routine.name);  
+  const originalNameRef = useRef(propsRoutine.name);  
 
-  // modal
-  const modal = useModal();
   // modal이 닫힐 때 저장
   useEffect(() => {
-    modal.onClose = () => {
+    modal.onClose(() => {
       const originalName = originalNameRef.current;
       // 이름 변경
       if(originalName !== routine.name && routine.name.trim() !== ""){
@@ -44,7 +43,7 @@ export const openRoutineOptionModal = modalComponent(React.memo((props: RoutineO
         name: routine.name,
         properties: routine.properties
       });
-    }
+    })
   }, [modal, routine.name, routine.properties]);
 
   
@@ -84,9 +83,7 @@ export const openRoutineOptionModal = modalComponent(React.memo((props: RoutineO
     const onConfirm = () => {
       routineManager.delete(routine.name);
       drEvent.emit("deleteRoutine", {name: routine.name});
-      // 삭제되었기 때문에 modal이 닫을 때 저장하는 로직을 초기화하고 닫음.
-      modal.onClose = () => {};
-      modal.close();
+      modal.closeWithoutOnClose();
       new Notice(`Routine ${routine.name} deleted.`);
     }
 
@@ -99,11 +96,8 @@ export const openRoutineOptionModal = modalComponent(React.memo((props: RoutineO
     })
   }, [bem, modal, routine])
 
-
-  // 컴포넌트
-  if(!routine) return <div>Loading...</div>
   return (
-    <Modal header='Routine Option'>
+    <Modal header='Routine Option' modal={modal}>
       {/* name */}
       <Modal.Section className={bem("name")}>
         <Modal.Name>Name</Modal.Name>
@@ -149,6 +143,6 @@ export const openRoutineOptionModal = modalComponent(React.memo((props: RoutineO
       </Modal.Section>
     </Modal>
   )
-}), {
+}, {
   sidebarLayout: true,
 });

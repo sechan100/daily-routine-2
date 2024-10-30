@@ -1,12 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "../Button";
-import { modalComponent, useModal } from "./modal-component";
+import { Modal } from "obsidian";
+import { plugin } from "shared/plugin-service-locator";
+import { createRoot } from "react-dom/client";
 
 
 
 
-interface ConfirmModalProps {
+interface ConfirmModalOptions {
   description: string;
   onConfirm: () => void;
   confirmText: string;
@@ -14,21 +16,16 @@ interface ConfirmModalProps {
   onCancel?: () => void;
   className?: string;
 }
-const openModal = modalComponent(({ onCancel: cancel, onConfirm: confirm, confirmText, confirmBtnVariant, description, className }: ConfirmModalProps) => {
-  const modal = useModal();
-  useEffect(() => {
-    modal.modalEl.setCssStyles({
-      width: "calc(var(--dialog-width))"
-    })
-    modal.onClose = () => {
-      cancel?.();
 
-    }
-  }, [cancel, modal, modal.modalEl]);
+type WithModal<P> = P & { modal: Modal; }
+
+
+const ConfirmModalContentComponent = (props: WithModal<ConfirmModalOptions>) => {
+  const modal = props.modal;
 
   return (
     <div 
-      className={className}
+      className={props.className}
       css={{
         display: "flex",
         fontSize: "0.9em",
@@ -37,26 +34,61 @@ const openModal = modalComponent(({ onCancel: cancel, onConfirm: confirm, confir
         margin: "1em 0",
       }}
     >
-      <p>{description}</p>
+      <p>{props.description}</p>
       <div css={`
         & button {
           margin-left: 1em;
         }
       `}>
         <Button onClick={() => {
-          cancel?.();
           modal.close()
         }}>Cancel</Button>
-        <Button variant={confirmBtnVariant} onClick={() => {
-          confirm();
-          modal.close();
-        }}>{confirmText}</Button>
+        <Button 
+          variant={props.confirmBtnVariant} 
+          onClick={() => {
+            props.onConfirm();
+            modal.onClose = () => {};
+            modal.close();
+          }}
+        >
+          {props.confirmText}
+        </Button>
       </div>
     </div>
   )
-}, {
-  sidebarLayout: false,
-});
+}
+
+const createConfirmModal = (Component: React.FC<WithModal<ConfirmModalOptions>>, options: ConfirmModalOptions) => {
+  const modal = new Modal(plugin().app);
+
+  // React render
+  const fragment = document.createDocumentFragment();
+  const el = document.createElement('div');
+  el.addClass("dr-modal-root");
+  createRoot(el).render(
+    <Component {...options} modal={modal} />
+  )
+  fragment.appendChild(el);
+  modal.setContent(fragment);
+
+  // .modal-content style
+  modal.contentEl.setCssStyles({
+    display: "block",
+  })
+
+  modal.modalEl.setCssStyles({
+    width: "calc(var(--dialog-width))"
+  })
+
+  modal.onClose = () => {
+    options.onCancel?.();
+  }
+
+  return modal;
+}
 
 
-export const openConfirmModal = (option: ConfirmModalProps) => openModal(option);
+export const openConfirmModal = (options: ConfirmModalOptions) => {
+  const modal = createConfirmModal(ConfirmModalContentComponent, options);
+  modal.open();
+}

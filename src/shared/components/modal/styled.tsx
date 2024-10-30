@@ -3,20 +3,19 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { textCss } from '../font';
-import { useModal } from './modal-component';
 import { useEffect } from 'react';
+import { ModalApi } from './create-modal';
 
 
 interface ModalProps {
   header: string;
   className?: string;
   children?: React.ReactNode;
+  modal: ModalApi;
 }
-const M = ({ header, className, children }: ModalProps) => {
-  const modal = useModal();
+const M = ({ header, className, children, modal }: ModalProps) => {
 
   useEffect(() => {
     modal.setTitle(header);

@@ -33,8 +33,10 @@ interface RoutineNoteArchiver {
   /**
    * 기왕이면 update, persist를 사용하도록 하지만, 
    * 만약 routine note가 아직 존재하지 않아서 persist하고 update해야하는 경우라면 해당 함수를 사용할 수 있다. 
+   * @param routineNote
+   * @returns 이미 노트가 존재했거나 새로 생성하여 업데이트에 성공한 경우 true, 변경사항을 취소한 경우 false를 반환한다.
    */
-  updateOrPersistOnUserConfirmation(routineNote: RoutineNote): Promise<void>;
+  updateOrPersistOnUserConfirmation(routineNote: RoutineNote): Promise<boolean>;
 
   // delete
   delete(day: Day): Promise<void>;
@@ -88,20 +90,32 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
 
   async updateOrPersistOnUserConfirmation(routineNote) {
     const file = getRoutineNoteFile(routineNote.day);
-    if(file){
+  
+    // 기존 파일이 있으면 업데이트
+    if (file) {
       await routineNoteArchiver.update(routineNote);
+      return true;
     } else {
-      openConfirmModal({
-        description: `Create note for ${routineNote.day.getBaseFormat()}?`,
-        confirmText: "Create",
-        onConfirm: async () => {
-          await routineNoteArchiver.persist(routineNote);
-        },
-        confirmBtnVariant: "accent",
-        className: "dr-create-feature-note-confirm-modal"
-      })
+      // 사용자 확인 대기
+      const userConfirmed = await new Promise<boolean>((resolve) => {
+        openConfirmModal({
+          description: `Create note for ${routineNote.day.getBaseFormat()}?`,
+          confirmText: "Create",
+          confirmBtnVariant: "accent",
+          className: "dr-create-feature-note-confirm-modal",
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false),
+        });
+      });
+  
+      // 사용자의 응답에 따라 처리
+      if(userConfirmed) {
+        await routineNoteArchiver.persist(routineNote);
+      }
+      return userConfirmed;
     }
   },
+  
   
   async delete(day: Day){
     const file = getRoutineNoteFile(day);

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from 'entities/note';
-import { openStartNewRoutineModal } from "features/routine";
+import { useStartRoutineModal } from "features/routine";
 import { DaysNav } from "features/days";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Day } from "shared/day";
@@ -9,7 +9,7 @@ import { MenuComponent } from "shared/components/Menu";
 import { Menu } from "obsidian";
 import { FeatureNoteUpdateProvider } from "features/feature-note";
 import { RoutineTask, TaskDndContext, TodoTask } from 'widgets/tasks';
-import { openAddTodoModal as openAddTodoModalFeature } from 'features/todo';
+import { useAddTodoModal } from 'features/todo';
 import { Icon } from 'shared/components/Icon';
 import { Button } from 'shared/components/Button';
 
@@ -57,13 +57,8 @@ const RoutineNotePage = () => {
 
   const mainRef = useRef<HTMLDivElement>(null);
 
-  const openAddTodoModal = useCallback(() => openAddTodoModalFeature({
-    note: note,
-    onTodoAdded: (newNote) => {
-      setNote(newNote);
-      routineNoteArchiver.update(newNote);
-    }
-  }), [note, setNote]);
+  const AddTodoModal = useAddTodoModal();
+  const StartRoutineModal = useStartRoutineModal();
   
   const onNoteMenuShow = useCallback((m: Menu) => {
     // Start New Routine
@@ -71,7 +66,7 @@ const RoutineNotePage = () => {
       item.setIcon("alarm-clock-plus");
       item.setTitle("Start New Routine");
       item.onClick(() => {
-        openStartNewRoutineModal({});
+        StartRoutineModal.open({});
       });
     });
 
@@ -82,10 +77,10 @@ const RoutineNotePage = () => {
       item.setIcon("square-check-big");
       item.setTitle("Add Todo");
       item.onClick(() => {
-        openAddTodoModal();
+        AddTodoModal.open({});
       });
     });
-  }, [openAddTodoModal]);
+  }, [AddTodoModal, StartRoutineModal]);
 
   const bem = useMemo(() => dr("note"), []);
   return (
@@ -124,7 +119,7 @@ const RoutineNotePage = () => {
           </h4>
           <div css={{ display: "flex", gap: "1.5em", alignContent: "center"}}>
             <Button 
-              onClick={() => openAddTodoModal()}
+              onClick={() => AddTodoModal.open({})}
               css={{
                 display: "flex",
                 gap: "0.5em",
@@ -161,6 +156,8 @@ const RoutineNotePage = () => {
           </TaskDndContext>
         </div>
       </div>
+      <AddTodoModal />
+      <StartRoutineModal />
     </FeatureNoteUpdateProvider>
   );  
 }

@@ -5,21 +5,18 @@ import { Notice } from "obsidian";
 import { DaysOption } from "./DaysOption";
 import { DAYS_OF_WEEK } from "shared/day";
 import { memo, useCallback, useState, useMemo } from "react";
-import { modalComponent, useModal } from "shared/components/modal/modal-component";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import { textCss } from "shared/components/font";
-import { Section } from "shared/components/Section";
+import { createModal } from "shared/components/modal/create-modal";
 import { TextEditComponent } from "shared/components/TextEditComponent";
 import { ActiveButton } from "shared/components/ToggleButton";
 import { dr } from "shared/daily-routine-bem";
 import { drEvent } from "shared/event";
 import { Modal } from "shared/components/modal/styled";
+import { ModalApi } from "shared/components/modal/create-modal";
 
 
 
 
-export const openStartNewRoutineModal = modalComponent(memo(() => {
+export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) => {
   const [ routine, setRoutine ] = useState<Routine>({
     name: "new daily routine",
     properties: {
@@ -29,7 +26,6 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
       daysOfMonth: [],
     }
   });
-  const modal = useModal();
 
   const setName = useCallback((name: string) => {
     setRoutine({
@@ -69,7 +65,7 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
 
   const bem = useMemo(() => dr("start-new-routine"), []);
   return (
-    <Modal header="Start New Routine" className={bem()} >
+    <Modal header="Start New Routine" className={bem()} modal={modal}>
       <Modal.Section className={bem("name")}>
         <Modal.Name>Name</Modal.Name>
         <TextEditComponent
@@ -119,6 +115,6 @@ export const openStartNewRoutineModal = modalComponent(memo(() => {
       </Modal.Section>
     </Modal>
   )
-}), {
+}, {
   sidebarLayout: true,
 });

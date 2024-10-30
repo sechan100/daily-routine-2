@@ -24,7 +24,7 @@ export default class DailyRoutinePlugin extends Plugin {
     );
 
     this.addRibbonIcon("dice", "Routine View", () => {
-      activateView(DailyRoutineObsidianView.VIEW_TYPE);
+      activateView(DailyRoutineObsidianView.VIEW_TYPE, confirm("Open on the left?") ? 1 : 0);
     });
 
     this.addRibbonIcon("ribbon", "Mobile Toggle", () => {

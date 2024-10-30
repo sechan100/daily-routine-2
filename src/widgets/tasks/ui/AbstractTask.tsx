@@ -98,8 +98,11 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
     disableTouch.current = true;
 
     const newNote = routineNoteService.checkTask(note, task, !task.checked);
-    setNote(newNote);
-    routineNoteArchiver.updateOrPersistOnUserConfirmation(newNote);
+    routineNoteArchiver
+      .updateOrPersistOnUserConfirmation(newNote)
+      .then(isUpdated => {
+        if(isUpdated) setNote(newNote);
+      });
 
     if(onTaskClick) onTaskClick({
       ...task,

@@ -66,12 +66,12 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
   });
 
 
-  const useStoreHook = (selector: any) => {
+  const useStoreHook = ((selector?: any) => {
     const store = useContext(StoreContext);
     if (!store) throw new Error("해당 context에서는 store가 정의되지 않습니다. 올바른 컨텍스트에서 접근가능");
     Object.assign(useStoreHook, store);
     return useStore(store, selector);
-  }
+  }) as UseBoundStore<StoreApi<S>>;
 
-  return { StoreProvider: Provider, useStoreHook: (useStoreHook as UseBoundStore<StoreApi<S>>) };
+  return { StoreProvider: Provider, useStoreHook: useStoreHook };
 }

@@ -1,2 +1,2 @@
-export { openAddTodoModal } from "./open-add-todo-modal";
-export { openTodoOptionModal } from "./option";
+export { useAddTodoModal } from "./add-todo";
+export { useTodoOptionModal } from "./todo-option";
