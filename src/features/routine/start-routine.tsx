@@ -18,7 +18,7 @@ import { ModalApi } from "shared/components/modal/create-modal";
 
 export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) => {
   const [ routine, setRoutine ] = useState<Routine>({
-    name: "new daily routine",
+    name: "",
     properties: {
       order: 0,
       activeCriteria: "week",
@@ -70,7 +70,8 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
         <Modal.Name>Name</Modal.Name>
         <TextEditComponent
           value={routine.name}
-          onBlur={setName} 
+          onChange={setName}
+          placeholder="New Daily Routine"
         />
       </Modal.Section>
       <Modal.Separator />

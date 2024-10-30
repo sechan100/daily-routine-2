@@ -37,14 +37,6 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
   }, [modal, note, originalName, setNote, todo]);
 
 
-  const onNameEditDone = useCallback((newName: string) => {
-    setTodo({
-      ...todo,
-      name: newName
-    })
-  }, [todo]);
-
-
   const onRescheduleBtnClick = useCallback(async (destDay: Day) => {
     const todoDeletedNote = await rescheduleTodo(note, originalName, destDay);
     setNote(todoDeletedNote);
@@ -79,7 +71,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
         <Modal.Name>Name</Modal.Name>
         <TextEditComponent
           value={todo.name}
-          onBlur={onNameEditDone} 
+          onChange={name => setTodo({ ...todo, name,})}
         />
       </Modal.Section>
       <Modal.Separator />

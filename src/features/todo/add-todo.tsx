@@ -36,13 +36,17 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
     <Modal className={bem()} header="Add New Todo" modal={modal}>
       <Modal.Section>
         <Modal.Name>Name</Modal.Name>
-        <TextEditComponent value={todo.name} onBlur={(name) => setTodo({...todo, name})} />
+        <TextEditComponent 
+          value={todo.name} 
+          placeholder="New Today Todo"
+          onChange={(name) => setTodo({...todo, name})} 
+        />
       </Modal.Section>
       <Modal.Separator />
 
       <Modal.Section>
         <ActiveButton
-          active={true} 
+          active={todo.name.trim() !== ""} 
           css={{
             width: "100%"
           }}

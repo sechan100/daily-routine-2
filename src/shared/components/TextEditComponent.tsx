@@ -17,22 +17,25 @@ import clsx from "clsx";
 
 interface TextEditComponentProps {
   value: string;
+  onChange: (value: string) => void;
   onBlur?: (value: string) => void;
   width?: string;
   className?: string;
+  placeholder?: string;
 }
 export const TextEditComponent = memo((props: TextEditComponentProps) => {
   const obsidianTextComponentRef = useRef<HTMLDivElement>(null);
   const textComponentCreated = useRef(false);
-  const [text, setText] = useState(props.value);
 
   // Obsidian Component
   useEffect(() => {
     if(!obsidianTextComponentRef.current) return;
     if(textComponentCreated.current) return;
     const textComp = new TextComponent(obsidianTextComponentRef.current)
-    .setValue(text)
-    .onChange((value) => setText(value));
+    .setValue(props.value)
+    .onChange(props.onChange)
+    .setPlaceholder(props.placeholder??"")
+
     textComp.inputEl.focus();
     textComp.inputEl.onblur = () => {
       if(props.onBlur) props.onBlur(textComp.getValue());
