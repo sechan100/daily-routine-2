@@ -10,27 +10,30 @@ import { Icon } from "./Icon";
 
 interface MenuComponentProps {
   onMenuShow: (menu: Menu) => void;
+  icon?: string;
+  iconAccent?: boolean;
 }
-export const MenuComponent = (props: MenuComponentProps) => {
+export const MenuComponent = ({
+  onMenuShow,
+  icon = "menu",
+  iconAccent = false
+}: MenuComponentProps) => {
 
   const openMenu = useCallback((e: React.MouseEvent) => {
     const m = new Menu();
-    props.onMenuShow(m);
+    onMenuShow(m);
     m.showAtMouseEvent(e.nativeEvent);
-  }, [props]);
+  }, [onMenuShow]);
 
 
   return (
     <div 
       onClick={openMenu}
       css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         cursor: "pointer",
       }}
     >
-      <Icon icon="menu" />
+      <Icon icon={icon} accent={iconAccent} />
     </div>
   )
 }

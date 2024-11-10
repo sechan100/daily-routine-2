@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 const cleanPercentage = (percentage: number) => {
@@ -40,12 +41,14 @@ interface PercentageCircleProps {
   percentage: number;
   text: string;
   transition?: boolean;
+  width?: string;
+  className?: string;
 }
-export const PercentageCircle = React.memo(({ percentage, text, transition=true }: PercentageCircleProps) => {
+export const PercentageCircle = React.memo(({ percentage, width, className,  text, transition=true }: PercentageCircleProps) => {
   const pct = cleanPercentage(percentage);
   const color = pct > 70 ? "var(--color-accent-1)" : "var(--color-accent-2)";
   return (
-    <svg width={"100%"} height={"100%"} data-percentage={percentage} viewBox="0 0 200 200" className="dr-percentage-circle">
+    <svg width={width??"100%"} data-percentage={percentage} viewBox="0 0 200 200" className={clsx(className, "dr-percentage-circle")}>
       <g transform="rotate(-90 100 100)" >
         <Circle transition={false} color="#ececec" percentage={100} />
         <Circle transition={transition} color={color} percentage={pct} />

@@ -24,7 +24,7 @@ interface TouchableProps {
   // pressed 상태가 변경될 때 호출
   onChangePressedState?: (isPressed: boolean) => void;
 
-  // click인지, long press인지 판단하기 위한 지연시간(default: 200ms)
+  // click인지, long press인지 판단하기 위한 지연시간
   longPressStartDelay?: number;
 
   // long press가 시작될 때 호출
@@ -43,7 +43,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
 
   const clickPreventRef = useRef<boolean>(false);
   const performanceRef = useRef<number>(0);
-  const startDelay = useMemo(() => props.longPressStartDelay??100, [props.longPressStartDelay]);
+  const startDelay = useMemo(() => props.longPressStartDelay??150, [props.longPressStartDelay]);
   const longPressDelay = useMemo(() => props.longPressDelay??500, [props.longPressDelay]);
   const isMovedRef = useRef<boolean>(false);
   const isTouchRef = useRef<boolean>(false);

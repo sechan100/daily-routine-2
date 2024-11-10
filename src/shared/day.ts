@@ -45,6 +45,14 @@ export class Day {
     return this.#moment.isSame(moment(), 'day');
   }
 
+  isBefore(day: Day){
+    return this.#moment.isBefore(day.#moment);
+  }
+
+  isAfter(day: Day){
+    return this.#moment.isAfter(day.#moment);
+  }
+
   add(amount: number, unit: moment.unitOfTime.DurationConstructor){
     this.#moment.add(amount, unit);
     return this;

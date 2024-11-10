@@ -4,7 +4,6 @@ import { DailyRoutineView } from "./DailyRoutineView";
 
 
 
-
 export class DailyRoutineObsidianView extends ReactView {
   static VIEW_TYPE = "daily-routine-view";
 

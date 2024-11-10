@@ -8,6 +8,7 @@ import React, { useEffect, useRef } from "react";
 interface IconProps {
   icon: string;
   accent?: boolean;
+  color?: string;
   className?: string;
 }
 export const Icon = React.memo((props: IconProps) => {
@@ -25,11 +26,14 @@ export const Icon = React.memo((props: IconProps) => {
   }, [props]);
   
   return (
-    <span 
+    <span
       className={props.className}
-      ref={ref} 
+      ref={ref}
       css={{
-        color: props.accent ? "var(--interactive-accent)" : "inherit",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: props.accent ? "var(--interactive-accent)" : props.color,
       }}
     />
   )

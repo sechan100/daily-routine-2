@@ -3,7 +3,6 @@ import { RoutineNote, routineNoteArchiver, routineNoteService, Task as TaskEntit
 import React, { useCallback, useMemo, useRef, useState } from "react"
 import { useRoutineNote } from "entities/note";
 import _ from "lodash";
-import { DRAG_PRESS_DELAY } from "../constants";
 import { Touchable } from 'shared/components/Touchable';
 import { dr } from 'shared/daily-routine-bem';
 import { Icon } from 'shared/components/Icon';
@@ -11,7 +10,6 @@ import { TaskName } from './TaskName';
 import { Checkbox } from './Checkbox';
 import { css } from '@emotion/react';
 import { useTaskDnd } from '../hooks/use-task-dnd';
-import { moment } from 'obsidian';
 
 
 // [[ Styles
@@ -26,6 +24,7 @@ const taskPressedAndDraggingStyle = css({
     height: "100%",
     borderRadius: "5px",
     backgroundColor: "hsla(var(--color-accent-1-hsl), 0.5)",
+    transition: "background-color 0.5s",
   }
 })
 
@@ -128,12 +127,15 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
           touchAction: "manipulation",
           userSelect: "none",
         },
+        "&::after": {
+          content: "''",
+        },
         "&.dr-task--pressed, &.dr-task--dragging": taskPressedAndDraggingStyle
       }}
     >
       <Touchable
         onClick={onClick}
-        longPressDelay={DRAG_PRESS_DELAY}
+        longPressDelay={500}
         onChangePressedState={setIsPressed}
         onLongPressStart={onLongPressStart}
         onAfterLongPressDelay={onAfterLongPressDelay}
@@ -168,7 +170,7 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
           e.stopPropagation();
         }}
       >
-        <Icon icon="menu" />
+        <Icon icon="menu" color='var(--color-base-40)' />
       </div>
     </div>
   )

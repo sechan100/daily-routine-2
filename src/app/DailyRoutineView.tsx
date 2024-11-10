@@ -1,18 +1,31 @@
 /** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
 import { RoutineNote } from 'pages/routine-note';
 import { RoutineCalendar } from "pages/calendar";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Day } from "shared/day";
 import { usePageRoute } from "./use-page-route";
 import "./style.css";
 import { DailyRoutineObsidianView } from './obsidian-view';
 import { useLeaf } from 'shared/view/react-view';
 import { Button } from 'shared/components/Button';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { MUIThemeProvider } from './MUIThemProvider';
+import { Box } from '@mui/material';
+import { Icon } from "shared/components/Icon";
 
 
 
-const pageNavbarHeight = 50;
+const tabsHeight = "50px";
+const tabsBottomGap = "25px";
 
+const tabCss = css({
+  boxShadow: "none !important",
+  backgroundColor: "transparent !important",
+  minHeight: "0 !important",
+  fontSize: "0.7em",
+})
 
 
 // FIXME: setPage로 렌더링 1번, cmd를 적용해서 다시 렌더링까지 총 2번의 렌더링이 발생한다. 추후 여건되면 최적화 가능
@@ -24,6 +37,9 @@ export const DailyRoutineView = () => {
   }, [routePage]);
 
   const { view } = useLeaf<DailyRoutineObsidianView>();
+  useEffect(() => {
+    view.contentEl.style.padding = "0";
+  }, [view]);
 
   const viewContentRealHeight = useMemo(() => {
     const viewContainer = view.contentEl;
@@ -36,56 +52,35 @@ export const DailyRoutineView = () => {
 
   
   return (
-    <div 
-      className='dr-page' 
-      style={{
-        scrollbarWidth: "none",
-        height: (viewContentRealHeight - pageNavbarHeight - 1), // 1은 offset
-      }}
-    >
-      {page === "note" && <RoutineNote day={routedDay} />}
-      {page === "calendar" && <RoutineCalendar onDayTileClick={onDayTileClick} defaultDay={routedDay} />}
-      <div
+    <MUIThemeProvider>
+      <div 
+        className="dr-page"
         css={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "stretch",
-          position: "fixed",
-          width: "100%",
-          height: pageNavbarHeight,
-          left: "0",
-          bottom: "0",
+          height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
         }}
       >
-        <ViewNavItem active={page==="note"} onClick={() => routePage("note", Day.now())}>Routine Note</ViewNavItem>
-        <ViewNavItem active={page==="calendar"} onClick={() => routePage("calendar", Day.now())}>Calendar</ViewNavItem>
-        <ViewNavItem active={page==="achivement"} onClick={() => routePage("achivement", Day.now())}>Achivement</ViewNavItem>
+        {page === "note" && <RoutineNote day={routedDay} />}
+        {page === "calendar" && <RoutineCalendar onDayTileClick={onDayTileClick} defaultDay={routedDay} />}
       </div>
-    </div>
-  );
-}
-
-
-interface ViewNavItemProps {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}
-const ViewNavItem = ({ active, onClick, children }: ViewNavItemProps) => {
-  return (
-    <Button
-      css={{
-        display: "block",
-        alignSelf: "stretch",
-        height: "auto",
-        width: "100%",
-        borderRadius: "0.2em 0.2em 0 0",
-        fontWeight: "var(--font-weight)"
-      }}
-      accent={active} 
-      onClick={onClick}
-    >
-      {children}
-    </Button>
+      <Tabs
+        value={page}
+        className="dr-tabs"
+        scrollButtons={false}
+        centered
+        sx={{ borderTop: 1, borderColor: 'divider' }}
+        onChange={(e, value) => routePage(value, Day.now())}
+        css={{
+          position: "fixed",
+          height: tabsHeight,
+          width: "100%",
+          left: "0",
+          bottom: tabsBottomGap,
+        }}
+      >
+        <Tab icon={<Icon icon="notebook-pen" />} iconPosition="start" label="Note" css={tabCss} value={"note"} />
+        <Tab icon={<Icon icon="calendar-check-2" />} iconPosition="start" label="Calendar" css={tabCss} value={"calendar"} />
+        <Tab icon={<Icon icon="book-check" />} iconPosition="start" label="Achivement" css={tabCss} value={"achivement"} />
+      </Tabs>
+    </MUIThemeProvider>
   );
 }

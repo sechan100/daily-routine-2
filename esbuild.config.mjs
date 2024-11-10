@@ -107,7 +107,8 @@ async function copyPluginFilesTo_iCloud() {
   ];
 
   const destinationDir = '/Users/sechan/Library/Mobile Documents/iCloud~md~obsidian/Documents/main/.obsidian/plugins/daily-routine-2/';
-  // const destinationDir = '/Users/sechan/local/obsidian/plugin-dev';
+  // const destinationDir = '/Users/sechan/Library/Mobile Documents/iCloud~md~obsidian/Documents/cloud-test/.obsidian/plugins/daily-routine-2/';
+
 
   // 현재 파일의 URL을 파일 경로로 변환
   const __filename = fileURLToPath(import.meta.url);

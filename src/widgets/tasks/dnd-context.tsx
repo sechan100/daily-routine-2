@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Task } from "entities/note";
-import React, { CSSProperties, useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import {
@@ -11,7 +10,6 @@ import {
   createTransition,
 } from "react-dnd-multi-backend";
 import { Preview } from "react-dnd-preview";
-import { DRAG_PRESS_DELAY } from "./constants";
 import { TaskPreview } from "./ui/TaskPreview";
 import { useDndScroll } from "./use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
@@ -49,7 +47,7 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
           backend: TouchBackend,
           options: {
             enableMouseEvents: false,
-            delayTouchStart: DRAG_PRESS_DELAY,
+            delayTouchStart: 500,
             ignoreContextMenu: false
           },
           transition: TouchTransition
@@ -99,10 +97,11 @@ const ScrollComponent = ({ children }: ScrollComponentProps) => {
   return (
     <div 
       ref={listRef}
-      className="dr-note__task-scroll"
+      className="dr-scroll-container"
       css={{
         height: "100%",
         overflowY: "auto",
+        padding: "0 10px",
       }}
     >
       {children}

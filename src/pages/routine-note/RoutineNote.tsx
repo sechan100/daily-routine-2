@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from 'entities/note';
 import { useStartRoutineModal } from "features/routine";
-import { DaysNav } from "features/days";
+import { Weeks } from "features/weeks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Day } from "shared/day";
 import { dr } from "shared/daily-routine-bem";
@@ -54,8 +54,6 @@ const RoutineNotePage = () => {
   const { note, setNote } = useRoutineNote();
   const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
 
-  const mainRef = useRef<HTMLDivElement>(null);
-
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
   
@@ -84,76 +82,53 @@ const RoutineNotePage = () => {
   const bem = useMemo(() => dr("note"), []);
   return (
     <div 
+      className={bem()}
       css={{
         height: "100%",
-      }} 
-      className={bem()}
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
     >
-      <DaysNav 
-        currentDay={note.day} 
-        currentDayPercentage={percentage} 
-        resizeObserver={entry => {
-          const navHeight = entry.contentRect.height;
-          if(mainRef.current){
-            mainRef.current.style.height = `calc(100% - ${navHeight}px)`;
-          }
-        }}
+      <Weeks
+        className={bem("weeks")}
+        currentDay={note.day}
+        currentDayPercentage={percentage}
       />
-      <div className={bem("main")} ref={mainRef} css={{
-        "--header-height": "4.5em",
-        "--header-padding-y": "0.3em",
-      }}>
-        <header
-          css={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "var(--header-padding-y) 0.5em",
-            height: "var(--header-height)",
-          }} 
-          className={bem("header")}
-        >
-          <h4 css={{display: "inline-block"}}>
-            {note.day.getBaseFormat() + " / " + note.day.getDayOfWeek()}
-          </h4>
-          <div css={{ display: "flex", gap: "1.5em", alignContent: "center"}}>
-            <Button 
-              onClick={() => AddTodoModal.open({})}
-              css={{
-                display: "flex",
-                gap: "0.5em",
-                height: "fit-content",
-                backgroundColor: "var(--color-primary) !important",
-                border: "1px solid var(--color-base-40)",
-                padding: "0.4em 0.5em",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "var(--font-ui-smaller)",
-                fontWeight: "var(--font-normal)",
-              }}
-            >
-              <Icon accent icon='square-check-big' />
-              <span>Add Todo</span>
-            </Button>
-            <MenuComponent onMenuShow={onNoteMenuShow} />
-          </div>
-        </header>
-        <div 
-          className={bem("tasks")}
-          css={{
-            height: "calc(100% - var(--header-height) - var(--header-padding-y) * 2)",
-          }}
-        >
-          <TaskDndContext>
-            {note.tasks.map(task => {
-              switch(task.type){
-                case "routine": return <RoutineTask key={task.name} task={task} />
-                case "todo": return <TodoTask key={task.name} task={task} />
-                default: task as never;
-              }
-            })}
-          </TaskDndContext>
-        </div>
+      <header
+        css={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0.5em 1em",
+          // height: "4.5em",
+        }} 
+        className={bem("header")}
+      >
+        <span css={{
+          fontWeight: "bold",
+          fontSize: "1.2em",
+        }}>
+          {note.day.getBaseFormat() + " / " + note.day.getDayOfWeek()}
+        </span>
+        <MenuComponent onMenuShow={onNoteMenuShow} icon="ellipsis" />
+      </header>
+      <div
+        className={bem("tasks")}
+        css={{
+          flexGrow: 1,
+          overflowY: "auto",
+        }}
+      >
+        <TaskDndContext>
+          {note.tasks.map(task => {
+            switch(task.type){
+              case "routine": return <RoutineTask key={task.name} task={task} />
+              case "todo": return <TodoTask key={task.name} task={task} />
+              default: task as never;
+            }
+          })}
+        </TaskDndContext>
       </div>
       <AddTodoModal />
       <StartRoutineModal />
