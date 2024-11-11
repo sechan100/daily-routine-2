@@ -4,7 +4,7 @@ import { Routine, RoutineProperties } from 'entities/routine';
 import { Notice } from "obsidian";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
-import { ActiveCriteriaOption } from "./ ActiveCriteriaOption";
+import { ActiveCriteriaOption } from "./ui/ ActiveCriteriaOption";
 import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
 import { dr } from 'shared/daily-routine-bem';

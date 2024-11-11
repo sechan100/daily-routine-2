@@ -72,6 +72,8 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
 
   // Modal 오픈 함수
   const openModal = useCallback((props: P) => {
+    if(modalStore.current.getState().modal) return;
+    
     const modal = new Modal(plugin().app);
     // sidebar layout
     if(options?.sidebarLayout) modal.modalEl.addClass("mod-sidebar-layout");

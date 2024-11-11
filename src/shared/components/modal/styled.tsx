@@ -25,12 +25,11 @@ const M = ({ header, className, children, modal }: ModalProps) => {
     <div 
       className={className}
       css={{
-        padding: "2em",
-        width: "100%",
+        padding: "2em !important",
         maxWidth: "1200px",
         margin: "0 auto",
         ".is-phone &": {
-          padding: "0 1em"
+          padding: "0 1em !important",
         }
       }}
     >

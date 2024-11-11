@@ -2,7 +2,7 @@
 import { routineManager } from "entities/routine";
 import { Routine } from "entities/routine";
 import { Notice } from "obsidian";
-import { ActiveCriteriaOption } from "./ ActiveCriteriaOption";
+import { ActiveCriteriaOption } from "./ui/ ActiveCriteriaOption";
 import { DAYS_OF_WEEK } from "shared/day";
 import { useCallback, useState, useMemo } from "react";
 import { createModal } from "shared/components/modal/create-modal";
