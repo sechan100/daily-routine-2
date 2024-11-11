@@ -2,7 +2,7 @@ import { RoutineTask as RoutineTaskEntity, Task, useRoutineNote } from "entities
 import { routineManager } from "entities/routine";
 import { useRoutineOptionModal } from "features/routine";
 import { AbstractTask } from "./ui/AbstractTask";
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect } from "react"
 import { registerRoutineNotesSynchronize } from "entities/note-synchronize";
 
 
@@ -11,18 +11,22 @@ interface RoutineTaskProps {
 }
 export const RoutineTask = React.memo(({ task }: RoutineTaskProps) => {
   const RoutineOptionModal = useRoutineOptionModal();
-  const { note, setNote } = useRoutineNote();
-
 
   const onOptionClick = useCallback(async () => {
     const routine = await routineManager.get(task.name);
     RoutineOptionModal.open({ routine });
   }, [RoutineOptionModal, task.name])
+  
+  // DEV: 바로 루틴 옵션 열어주기
+  useEffect(() => {
+    if(task.name === "💪 틈틈이 어깨펴고 목 펴기"){
+      onOptionClick();
+    }
+  }, [onOptionClick, task.name])
 
 
   const onTaskReorder = useCallback(async (tasks: Task[]) => {
     await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
-
     registerRoutineNotesSynchronize();
   }, [])
 

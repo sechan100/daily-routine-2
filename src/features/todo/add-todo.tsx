@@ -46,9 +46,11 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
 
       <Modal.Section>
         <Button
-          width="100%"
+          css={{
+            width: "100%"
+          }}
           disabled={todo.name.trim() === ""}
-          accent
+          variant={todo.name.trim() === "" ? "disabled" : "accent"}
           onClick={onSave}
         >
           Save

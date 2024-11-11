@@ -8,13 +8,11 @@ import { dr } from "shared/daily-routine-bem";
 import { Button } from "shared/components/Button";
 import ReactDOM from "react-dom";
 import { css } from "@emotion/react";
-import "./days-of-month-calendar-style.scss";
 
 
 
 
-
-interface DaysOptionProps {
+interface ActiveCriteriaOptionProps {
   className?: string;
   criteria: "week" | "month";
   properties: RoutineProperties;
@@ -23,9 +21,9 @@ interface DaysOptionProps {
 /**
  * daysOfWeek, 또는 daysOfMonth를 설정하는 옵션 컴포넌트
  */
-export const DaysOption = ({ className, properties, setProperties }: DaysOptionProps) => {  
+export const ActiveCriteriaOption = ({ className, properties, setProperties }: ActiveCriteriaOptionProps) => {  
 
-  const bem = useMemo(() => dr("days-option"), []);
+  const bem = useMemo(() => dr("active-criteria-option"), []);
   return (
     <div className={clsx(className, bem("", {
       "week": properties.activeCriteria === "week",
@@ -34,7 +32,7 @@ export const DaysOption = ({ className, properties, setProperties }: DaysOptionP
       <>
         {properties.activeCriteria === "week" && 
           <WeekOption
-            className={bem("week-option")}
+            className={bem("week")}
             daysOfWeek={properties.daysOfWeek} 
             setDaysOfweek={(daysOfWeek) => setProperties({...properties, daysOfWeek})} 
           />
@@ -42,7 +40,7 @@ export const DaysOption = ({ className, properties, setProperties }: DaysOptionP
 
         {properties.activeCriteria === "month" && 
           <MonthOption 
-            className={bem("month-option")}
+            className={bem("month")}
             daysOfMonth={properties.daysOfMonth} 
             setDaysOfMonth={(daysOfMonth) => setProperties({...properties, daysOfMonth})} 
           />
@@ -51,11 +49,6 @@ export const DaysOption = ({ className, properties, setProperties }: DaysOptionP
     </div>
   )
 }
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -127,7 +120,7 @@ const WeekOption = ({ daysOfWeek, setDaysOfweek, className }: WeekOptionProps) =
               className={bem("day", {
                 active: isActive
               })}
-              accent={isActive}
+              variant={isActive ? "accent" : "primary"}
             >
               {dayOfWeek}
             </Button>
@@ -139,8 +132,6 @@ const WeekOption = ({ daysOfWeek, setDaysOfweek, className }: WeekOptionProps) =
 }
 
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////
 
 interface LastDayOfMonthButtonProps {
   className?: string;
@@ -176,7 +167,7 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
         activeCn: props.active
       })}
       onClick={onClick}
-      accent={props.active}
+      variant={props.active ? "accent" : "primary"}
       css={css`
         display: block;
         justify-self: start;
@@ -190,6 +181,95 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
       Last Day of Month
     </Button>,
     element
+  )
+}
+
+
+const calendarCss = css({
+  ".react-calendar": {
+    width: "100%",
+    maxWidth: "100%",
+    background: "white",
+    lineHeight: "1.125em",
+  },
+
+  // 요일
+  ".react-calendar__month-view__weekdays": {
+    display: "none !important",
+  },
+
+  ".react-calendar__month-view__weekNumbers .react-calendar__tile": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    font: "inherit",
+    fontSize: "0.75em",
+    fontWeight: "bold",
+  },
+
+  // 날짜 타일 스타일
+  ".react-calendar__month-view__days": {
+    gap: "0.5em 0",
+
+    "abbr": {
+      display: "none",
+    },
+    
+    // 다음달의 1, 2, 3, 4일 타일
+    "button:nth-child(32), button:nth-child(33), button:nth-child(34), button:nth-child(35)": {
+      display: "none",
+    }
+  },
+
+  ".react-calendar__tile": {
+    boxShadow: "none !important",
+    cursor: "pointer !important",
+    padding: "0",
+    backgroundColor: "transparent !important",
+
+    ".react-calendar__tile:hover": {
+      backgroundColor: "var(--color-base-50)",
+    }
+  }
+})
+
+// 달력의 날짜 타일 하나하나를 렌더링하는 방식을 정의
+interface CalendarTileProps { 
+  date: Date;
+  active: boolean; 
+}
+const CalendarTile = ({ date, active }: CalendarTileProps) => {
+
+  const activeStyle = useMemo(() => {
+    if(active){
+      return css({
+        backgroundColor: "var(--interactive-accent) !important",
+        color: "var(--text-on-accent) !important"
+      })
+    } else {
+      return css({
+        color: "black"
+      });
+    }
+  }, [active]);
+
+  return (
+    <div 
+      css={[
+        {
+          display: "flex",
+          width: "40px",
+          height: "40px",
+          border: "1px solid var(--color-base-50)",
+          borderRadius: "50%",
+          justifyContent: "center",
+          alignItems: "center",
+        }, 
+        activeStyle
+      ]}
+    >
+      {date.getDate().toString()} 
+    </div>
   )
 }
 
@@ -209,55 +289,32 @@ const MonthOption = ({ daysOfMonth, setDaysOfMonth, className }: MonthOptionProp
     }
   }, [daysOfMonth, setDaysOfMonth]);
 
-  // BEM
-  const bem = dr("days-of-month-option-calendar");
 
-  const onLasyDayBtnClick = useCallback((isActive: boolean) => {
+  const onLasyDayBtnClick = useCallback((_isActive: boolean) => {
     toggleDay(0);
   }, [toggleDay]);
 
 
   // 날짜타일 클릭시 콜백
-  const onClickDay = useCallback((v: Date, e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickDay = useCallback((v: Date, _e: React.MouseEvent<HTMLButtonElement>) => {
     const date = v.getDate();
     toggleDay(date);
   }, [toggleDay]);
 
-
-  // 달력의 날짜 타일 하나하나를 렌더링하는 방식을 정의
-  const tileContent = ({ date, view }: { date: Date, view: string }) => {
-    return (
-      <Button 
-        className={bem("tile")} 
-        css={{
-          width: "4em",
-          height: "4em",
-          border: "1px solid var(--color-base-50)",
-          borderRadius: "50%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        accent={daysOfMonth.includes(date.getDate())}
-      >
-        {date.getDate().toString()} 
-      </Button>
-    )
-  }
-
   return (
     <div 
-      className={clsx(className, bem())} 
+      className={className} 
       css={{
         width: "100%",
       }}>
       <Calendar
-        tileContent={tileContent}
+        tileContent={({ date }) => <CalendarTile date={date} active={daysOfMonth.includes(date.getDate())} />}
         value={new Date(2024, 0, 1)}
         allowPartialRange={false}
         selectRange={false}
         showNavigation={false}
         onClickDay={onClickDay}
+        css={calendarCss}
       />
       <LastDayOfMonthButton
         onClick={onLasyDayBtnClick}

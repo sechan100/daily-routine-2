@@ -4,7 +4,7 @@ import { Routine, RoutineProperties } from 'entities/routine';
 import { Notice } from "obsidian";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
-import { DaysOption } from "./DaysOption";
+import { ActiveCriteriaOption } from "./ ActiveCriteriaOption";
 import { Button } from 'shared/components/Button';
 import { TextEditComponent } from 'shared/components/TextEditComponent';
 import { dr } from 'shared/daily-routine-bem';
@@ -88,18 +88,18 @@ export const useRoutineOptionModal = createModal(({ routine: propsRoutine, modal
         <nav className={bem("criteria-nav")}>
           <Button
             css={{marginRight: "0.5em"}}
-            accent={routine.properties.activeCriteria === "week"} 
+            variant={routine.properties.activeCriteria === "week" ? "accent" : "primary"} 
             onClick={() => setProperties({activeCriteria: "week"})}
           >Week
           </Button>
           <Button
-            accent={routine.properties.activeCriteria === "month"}
+            variant={routine.properties.activeCriteria === "month" ? "accent" : "primary"}
             onClick={() => setProperties({activeCriteria: "month"})}
           >Month
           </Button>
         </nav>
       </Modal.Section>
-      <DaysOption
+      <ActiveCriteriaOption
         criteria={routine.properties.activeCriteria}
         css={{
           padding: "1em 0"

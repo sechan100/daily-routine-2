@@ -2,7 +2,7 @@
 import { routineManager } from "entities/routine";
 import { Routine } from "entities/routine";
 import { Notice } from "obsidian";
-import { DaysOption } from "./DaysOption";
+import { ActiveCriteriaOption } from "./ ActiveCriteriaOption";
 import { DAYS_OF_WEEK } from "shared/day";
 import { useCallback, useState, useMemo } from "react";
 import { createModal } from "shared/components/modal/create-modal";
@@ -76,18 +76,18 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
         <nav className={bem("criteria-nav")}>
           <Button
             css={{marginRight: "0.5em"}}
-            accent={routine.properties.activeCriteria === "week"} 
+            variant={routine.properties.activeCriteria === "week" ? "accent" : "primary"}
             onClick={() => setProperties({activeCriteria: "week"})}
           >Week
           </Button>
           <Button
-            accent={routine.properties.activeCriteria === "month"}
+            variant={routine.properties.activeCriteria === "month" ? "accent" : "primary"}
             onClick={() => setProperties({activeCriteria: "month"})}
           >Month
           </Button>
         </nav>
       </Modal.Section>
-      <DaysOption
+      <ActiveCriteriaOption
         criteria={routine.properties.activeCriteria}
         css={{
           padding: "1em 0"
@@ -101,9 +101,11 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
       {/* save */}
       <Modal.Section>
         <Button
-          width="100%"
+          css={{
+            width: "100%",
+          }}
           disabled={routine.name.trim() === ""}
-          accent
+          variant={routine.name.trim() === "" ? "disabled" : "accent"}
           onClick={onSaveBtnClick}
         >
           Save

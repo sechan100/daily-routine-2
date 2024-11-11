@@ -8,11 +8,9 @@ import { usePageRoute } from "./use-page-route";
 import "./style.css";
 import { DailyRoutineObsidianView } from './obsidian-view';
 import { useLeaf } from 'shared/view/react-view';
-import { Button } from 'shared/components/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { MUIThemeProvider } from './MUIThemProvider';
-import { Box } from '@mui/material';
 import { Icon } from "shared/components/Icon";
 
 
