@@ -35,38 +35,16 @@ export interface ModalApi {
 export type UseModal<P> = () => ModalFC<P>;
 
 
-const createModalApi = (modal: Modal): ModalApi => {
-  const originalOnClose = modal.onClose;
-
-  return {
-    onClose: (cb) => {
-      modal.onClose = () => {
-        cb();
-        originalOnClose();
-      }
-    },
-    closeWithoutOnClose: () => {
-      modal.onClose = () => {};
-      originalOnClose();
-      modal.close();
-    },
-    close: () => {
-      modal.close();
-    },
-    setTitle: (title) => {
-      modal.setTitle(title);
-    },
-    modalEl: modal.contentEl,
-  }
-}
-
 export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCreateOptions): UseModal<P> => { return () => {
   const modalStore = useRef(create<ModalStore<P>>((set) => ({
     modal: null,
     props: null,
     setModal: (modal: Modal) => set({modal}),
     clearModal: () => {
-      set({modal: null})
+      set({
+        modal: null,
+        props: null,
+      })
     },
   })));
 
@@ -93,18 +71,45 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
   const ModalComponent = useCallback<React.FC<OmitModalProps<P>>>(() => {
     const { modal, props, clearModal } = modalStore.current();
     const container = useMemo<HTMLElement | null>(() => modal?.contentEl??null, [modal]);
+    const customOnClose = useRef<(() => void) | null>();
 
     useEffect(() => {
       if(!modal) return;
-      modal.onClose = () => clearModal();
+      modal.onClose = () => {
+        if(customOnClose.current) {
+          customOnClose.current();
+          customOnClose.current = null;
+        }
+        clearModal();
+      }
     }, [clearModal, modal]);
-
-    if (!container || !modal || !props) return null;
     
-    const modalProps = {
-      ...props,
-      modal: createModalApi(modal),
-    }
+    const modalProps = useMemo(() => {
+      if(!modal || !props) return null;
+
+      const modalApi: ModalApi = {
+        onClose: (cb) => {
+          customOnClose.current = cb;
+        },
+        closeWithoutOnClose: () => {
+          customOnClose.current = null;
+          modal.close();
+        },
+        close: () => {
+          modal.close();
+        },
+        setTitle: (title) => {
+          modal.setTitle(title);
+        },
+        modalEl: modal.contentEl,
+      }
+      return {
+        ...props,
+        modal: modalApi,
+      }
+    }, [modal, props]);
+
+    if (!container || !modalProps) return null;
     return ReactDOM.createPortal(
       <>
         <ContentComponent {...modalProps} />
