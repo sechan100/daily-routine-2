@@ -3,7 +3,6 @@ import { fileAccessor } from "shared/file/file-accessor";
 import { plugin } from "shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";
 import { Day } from "shared/day";
-import moment from "moment";
 import { FileNotFoundError } from "shared/file/errors";
 import { openConfirmModal } from "shared/components/modal/confirm-modal";
 
@@ -60,13 +59,11 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
 
   async loadBetween(start: Day, end: Day): Promise<RoutineNote[]> {
     const notes: RoutineNote[] = [];
-    const s = start.moment;
-    const e = end.moment;
     const routineNoteFiles: TAbstractFile[] = fileAccessor.getFolder(plugin().settings.routineArchiveFolderPath).children.filter(file => file instanceof TFile);
     for(const file of routineNoteFiles){
       if(!(file instanceof TFile)) continue;
-      const day = moment(file.basename);
-      if(day.isBetween(s, e, 'day', '[]')){
+      const day = Day.fromString(file.basename);
+      if(day.isBetween(start, end, 'day', '[]')){
         notes.push(await parseFile(file));
       }
     }
@@ -160,7 +157,7 @@ const getRoutineNoteFile = (day: Day): TFile | null => {
 const parseFile = async (file: TFile): Promise<RoutineNote> => {
   const content = await fileAccessor.readFileAsReadonly(file);
   if(!content) throw new Error('RoutineNote file is empty.');
-  return routineNoteService.deserialize(new Day(moment(file.basename)), content);
+  return routineNoteService.deserialize(Day.fromString(file.basename), content);
 }
 
 

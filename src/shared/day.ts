@@ -28,13 +28,16 @@ export class Day {
     }
   }
 
-
   static now(): Day{
     return new Day(moment());
   }
 
   static max(): Day{
     return new Day(moment('9999-12-31T23:59:59.999Z'));
+  }
+
+  static fromString(str: string){
+    return new Day(moment(str));
   }
 
   format(format: string){
@@ -56,6 +59,10 @@ export class Day {
   add(amount: number, unit: moment.unitOfTime.DurationConstructor){
     this.#moment.add(amount, unit);
     return this;
+  }
+
+  isBetween(start: Day, end: Day, unit?: moment.unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]"){
+    return this.#moment.isBetween(start.#moment, end.#moment, unit, inclusivity);
   }
 
   addOnClone(amount: number, unit: moment.unitOfTime.DurationConstructor){
