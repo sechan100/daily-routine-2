@@ -79,8 +79,8 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       {/* reschedule */}
       <Modal.Section className={bem("reschedule")}>
         <Modal.Name>Reschedule</Modal.Name>
-        <Button onClick={() => onRescheduleBtnClick(note.day.addOnClone(1, "day"))}>Tomorrow</Button>
-        <Button onClick={() => onRescheduleBtnClick(note.day.addOnClone(1, "week"))}>Next Week</Button>
+        <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "day"))}>Tomorrow</Button>
+        <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "week"))}>Next Week</Button>
       </Modal.Section>
 
       {/* delete */}

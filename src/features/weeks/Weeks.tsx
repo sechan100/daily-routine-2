@@ -7,79 +7,57 @@ import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { useRoutineNote } from '@entities/note';
 import { dr } from "@shared/daily-routine-bem";
-import { loadWeeks } from "./load-weeks";
+import { loadWeeks, Week } from "./week";
 
 
 
 interface WeeksProps {
   currentDay: Day;
-  /**
-   * 현재 보고있는 day의 percentage는, note page에서 사용자가 task를 클릭할 때마다 동적으로 변경될 수 있다.
-   */
+  // 현재 보고있는 routineNote의 percentage는 실시간으로 변할 수 있기 때문에 props로 받아서 반영
   currentDayPercentage: number;
   onDayClick?: (day: Day, event?: React.MouseEvent) => void;
   className?: string;
 }
 export const Weeks = ({ currentDay, currentDayPercentage, onDayClick, className }: WeeksProps) => {
   const [ weeks, setWeeks ] = useState<{day:Day, percentage:number}[][]>([]);
-  const currentWeekStartDay = useMemo(() => currentDay.clone(m => m.startOf("week")), [currentDay]);
+  const currentWeek = useMemo(() => new Week(currentDay), [currentDay]);
   const swiperRef = useRef<SwiperRef>(null);
-  // circle 채워지는 애니메이션 on/off
   const circleTransitionRef = useRef<boolean>(true);
   const setClientNote = useRoutineNote(s => s.setNote);
 
 
-  /**
-   * currentDayPercentage가 변경되면 이를 weeks에 반영한다.
-   * 
-   * currentDay의 percentage는 routine note view에 의해서 동적으로 변할 수 있다. 
-   * 해당 훅을 통해서 부모 컴포넌트가 변경된 frash한 percentage를 전달할 수 있도록 한다.
-   * 
-   * 해당 값이 -1인 경우는 부모에서 따로 지정해준 값이 없는 경우이다.
-   */
+  // props로 받은 'currentDayPercentage'를 반영하기
   useEffect(() => {
-    const needPercentageUpdate = weeks.find(week => week.some(
-      ({day, percentage}) => day.isSameDay(currentDay) && percentage !== currentDayPercentage
-    ));
-    if(!needPercentageUpdate) return;
+    let isPercentageUpdated = false;
+    for(const week of weeks){
+      for(const tile of week){
+        if(tile.day.isSameDay(currentDay) && tile.percentage !== currentDayPercentage){
+          tile.percentage = currentDayPercentage;
+          isPercentageUpdated = true;
+          break;
+        }
+      }
+    }
+    if(isPercentageUpdated){
+      setWeeks([...weeks]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDay, currentDayPercentage]);
 
-    setWeeks(weeks => {
-      return weeks.map(week => {
-        return week.map(({day, percentage}) => {
-          return {
-            day,
-            percentage: day.isSameDay(currentDay) ? currentDayPercentage : percentage
-          }
-        })
-      })
+
+  // 'currentWeek'가 변경되면 알맞는 weeks를 로드한다.
+  useEffect(() => {
+    const isCurrentWeekExist = weeks.flat().some(({ day }) => day.isSameDay(currentWeek.startDay));
+    if(isCurrentWeekExist) return;
+
+    loadWeeks(currentWeek, {prev: 1, next: 1}).then(weeks => {
+      setWeeks(weeks);
+      setTimeout(() => {
+        if(swiperRef.current) swiperRef.current.swiper.slideTo(1, 0); // 3개 week중 중앙으로 이동
+      });
     })
-  }, [currentDay, currentDayPercentage, weeks]);
-
-  /**
-   * 최초, 그리고 currentWeekStartDay가 변경될 때마다의 weeks 변경.
-   * 현재 날짜가 weeks 안에 어딘가 존재한다면, 아마 이미 swiper가 해당 날짜를 잘 표현하고 있을 것이므로 추가적인 동작을 수행하지 않음.
-   */
-  useEffect(() => {
-    let ignore = false;
-    if(ignore) return;
-    // weeks에 currentWeekStartDay가 포함되어있지 않다면, 해당 week를 로드한다.
-    if(!weeks.some(week => week.some(({day}) => day.isSameDay(currentWeekStartDay)))){
-      loadWeeks(currentWeekStartDay, {prev: 1, next: 1}) // 해당 week와 앞뒤로 하나씩의 week를 로드한다.
-      .then(weeks => {
-        setWeeks(weeks);
-        // 새롭게 3개의 week를 로드했으므로, swiper를 중간으로 이동시킨다.
-        setTimeout(() => {
-          if(swiperRef.current) swiperRef.current.swiper.slideTo(1, 0);
-        });
-      })
-    }
-
-    return () => {
-      ignore = true;
-    }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWeekStartDay]);
+  }, [currentWeek]);
 
   /**
    * 바로 새롭게 가져온 week(들)을 추가하면 추가되는 week가 현재 index보다 앞에 있는 경우, 
@@ -89,19 +67,18 @@ export const Weeks = ({ currentDay, currentDayPercentage, onDayClick, className 
    */
   const updateWeeksRef = useRef<(() => void) | null>();
 
-  ////////////////////////////////////////////////
   /**
    * 슬라이드가 시작, 또는 끝에 도달한 경우에 해당 콜백을 실행한다. 
    * 구체적으로 시작과 끝보다 이전, 또는 이후의 week를 가져와서 Slider에 추가한다.
    */
   const onSlideToEdge = useCallback(async(edge: "start" | "end") => {
-    const needWeekStartDay = edge === "start" ? weeks[0][0].day.subtractOnClone(1, "week") : weeks[weeks.length-1][0].day.addOnClone(1, "week");
-    const newWeek = (await loadWeeks(needWeekStartDay))[0]; // 새로운 week 하나만 받아옴으로 0번으로 가져옴
+    const loadTargetWeek = edge === "start" ? new Week(weeks[0][0].day).subtract(1) : new Week(weeks[weeks.length-1][0].day).add(1);
+    const newWeek = (await loadWeeks(loadTargetWeek))[0];
+    
     if(edge === "start"){
       updateWeeksRef.current = () => {
         setWeeks([newWeek, ...weeks]);
       }
-    // 뒤
     } else {
       updateWeeksRef.current = () => {
         setWeeks([...weeks, newWeek]);
