@@ -47,9 +47,16 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
     try {
       await routineManager.create(routine);
       new Notice(`Routine '${routine.name}' started! 🎉`);
+      // precond: routineManager.create 함수가 루틴을 반드시 맨 앞 순서에 만든다고 가정
+      setNote({
+        ...note,
+        tasks: [
+          routineManager.deriveRoutineToTask(routine),
+          ...note.tasks
+        ]
+      })
 
-      executeRoutineNotesSynchronize(note => setNote(note), note.day);
-
+      executeRoutineNotesSynchronize();
       modal.close();
     } catch(e) {
       new Notice(e.message);

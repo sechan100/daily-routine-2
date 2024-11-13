@@ -107,9 +107,12 @@ ${routineNote.tasks.map(task => {
   async create(day){
     const routines = await routineManager.getAllRoutines();
     const tasks = routines.flatMap(routine => {
-      const taskOrNull = deriveRoutineTask(routine, day);
-      if(taskOrNull) return taskOrNull;
-      else return [];
+      if(routineManager.isRoutineDueTo(routine, day)){
+        return routineManager.deriveRoutineToTask(routine);
+      } 
+      else {
+        return [];
+      }
     });
     return {
       day: day,
@@ -177,16 +180,6 @@ ${routineNote.tasks.map(task => {
   }
   
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

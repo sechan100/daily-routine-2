@@ -1,2 +1,2 @@
-export { routineManager } from "./routine";
+export { routineManager } from "./routine-manager";
 export * from "./types";

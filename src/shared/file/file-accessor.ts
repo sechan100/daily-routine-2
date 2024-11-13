@@ -77,31 +77,31 @@ export const fileAccessor: FileAccessor = {
   },
 
   readFileAsReadonly: async (file: TFile) => {
-    return plugin().app.vault.cachedRead(file);
+    return await plugin().app.vault.cachedRead(file);
   },
 
   readFileFromDisk: async (file: TFile) => {
-    return plugin().app.vault.read(file);
+    return await plugin().app.vault.read(file);
   },
 
   renameFileWithLinks: async (file: TFile, newName: string) => {
-    return plugin().app.fileManager.renameFile(file, newName);
+    return await plugin().app.fileManager.renameFile(file, newName);
   },
 
   writeFile: async (file: TFile, contentSupplier: (data: string) => string) => {
-    return plugin().app.vault.process(file, contentSupplier);
+    return await plugin().app.vault.process(file, contentSupplier);
   },
 
   createFile: async (path: string, content: string) => {
-    return plugin().app.vault.create(path, content);
+    return await plugin().app.vault.create(path, content);
   },
 
   deleteFile: async (file: TFile) => {
-    return plugin().app.vault.delete(file);
+    return await plugin().app.vault.delete(file);
   },
 
   writeFrontMatter: async (file: TFile, frontMatterModifier) => {
-    return plugin().app.fileManager.processFrontMatter(file, (fm: any) => {
+    return await plugin().app.fileManager.processFrontMatter(file, (fm: any) => {
       const newFm = frontMatterModifier(fm);
       Object.assign(fm, newFm);
     });
