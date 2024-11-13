@@ -1,17 +1,16 @@
-import DailyRoutinePlugin from "main";
+import DailyRoutinePlugin from "src/main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "./suggesters/FileSuggester";
-import { Day } from "shared/day";
 
 
 export interface DailyRoutinePluginSettings {
   routineFolderPath: string;
-  routineArchiveFolderPath: string;
+  noteFolderPath: string;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
   routineFolderPath: "daily-routine/routines",
-  routineArchiveFolderPath: "daily-routine/archive"
+  noteFolderPath: "daily-routine/archive"
 }
 
 
@@ -43,15 +42,15 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     // Routine Archive Path
     new Setting(containerEl)
-    .setName("Routine Archive Path")
+    .setName("Note Archive Path")
     .setDesc("The path to the routine archive folder.")
     .addText(text => {
       new FileSuggest(text.inputEl, "folder");
       text
       .setPlaceholder("daily-routine/archive")
-      .setValue(this.plugin.settings.routineArchiveFolderPath??"")
+      .setValue(this.plugin.settings.noteFolderPath??"")
       .onChange(async (value) => {
-        this.save({ routineArchiveFolderPath: normalizePath(value)});
+        this.save({ noteFolderPath: normalizePath(value)});
       })
     });
   }
@@ -61,7 +60,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     const settings = {...this.plugin.settings, ...partial};
 
     // 루틴폴더와 루틴아카이브폴더의 경로 일치 검사
-    if(settings.routineArchiveFolderPath === settings.routineFolderPath){
+    if(settings.noteFolderPath === settings.routineFolderPath){
       new Notice("Routine folder path and routine archive folder path cannot be the same.");
       return;
     }

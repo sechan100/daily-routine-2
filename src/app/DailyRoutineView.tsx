@@ -1,17 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { RoutineNote } from 'pages/routine-note';
-import { RoutineCalendar } from "pages/calendar";
+import { RoutineNote } from '@pages/routine-note';
+import { RoutineCalendar } from "@pages/calendar";
 import { useCallback, useEffect, useMemo } from "react";
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 import { usePageRoute } from "./use-page-route";
 import "./style.css";
 import { DailyRoutineObsidianView } from './obsidian-view';
-import { useLeaf } from 'shared/view/react-view';
+import { useLeaf } from '@shared/view/react-view';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { MUIThemeProvider } from './MUIThemProvider';
-import { Icon } from "shared/components/Icon";
+import { Icon } from "@shared/components/Icon";
 
 
 

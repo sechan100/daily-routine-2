@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { DailyRoutineBEM } from "shared/daily-routine-bem";
+import { DailyRoutineBEM } from "@shared/daily-routine-bem";
 
 
 

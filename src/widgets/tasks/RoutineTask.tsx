@@ -1,9 +1,9 @@
-import { RoutineTask as RoutineTaskEntity, Task, useRoutineNote } from "entities/note";
-import { routineManager } from "entities/routine";
-import { useRoutineOptionModal } from "features/routine";
+import { RoutineTask as RoutineTaskEntity, Task, useRoutineNote } from "@entities/note";
+import { routineManager } from "@entities/routine";
+import { useRoutineOptionModal } from "@features/routine";
 import { AbstractTask } from "./ui/AbstractTask";
 import React, { useCallback, useEffect } from "react"
-import { registerRoutineNotesSynchronize } from "entities/note-synchronize";
+import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
 
 
 interface RoutineTaskProps {
@@ -20,7 +20,7 @@ export const RoutineTask = React.memo(({ task }: RoutineTaskProps) => {
   
   const onTaskReorder = useCallback(async (tasks: Task[]) => {
     await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
-    registerRoutineNotesSynchronize();
+    executeRoutineNotesSynchronize();
   }, [])
 
   

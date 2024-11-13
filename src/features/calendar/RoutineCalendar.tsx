@@ -1,6 +1,6 @@
-import { routineNoteArchiver, RoutineNote, routineNoteService } from 'entities/note';
-import { Day } from "shared/day";
-import { PercentageCircle } from "shared/components/PercentageCircle";
+import { routineNoteArchiver, RoutineNote, routineNoteService } from '@entities/note';
+import { Day } from "@shared/day";
+import { PercentageCircle } from "@shared/components/PercentageCircle";
 import Calendar from "react-calendar"
 import { moment } from "obsidian";
 import { useCallback, useEffect, useState } from "react";

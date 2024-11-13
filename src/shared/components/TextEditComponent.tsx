@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { TextComponent } from "obsidian";
 import { useRef, useState, useEffect, memo } from "react";
-import { dr } from "shared/daily-routine-bem";
+import { dr } from "@shared/daily-routine-bem";
 import { Button } from "./Button";
 import clsx from "clsx";
 

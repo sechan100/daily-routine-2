@@ -9,8 +9,6 @@ import { MenuComponent } from "@shared/components/Menu";
 import { Menu } from "obsidian";
 import { RoutineTask, TaskDndContext, TodoTask } from '@widgets/tasks';
 import { useAddTodoModal } from '@features/todo';
-import { Icon } from '@shared/components/Icon';
-import { Button } from '@shared/components/Button';
 
 
 interface RoutineNoteProps {

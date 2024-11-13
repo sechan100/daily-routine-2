@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineProperties } from "entities/routine";
+import { RoutineProperties } from "@entities/routine";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import Calendar from "react-calendar";
-import { dr } from "shared/daily-routine-bem";
-import { Button } from "shared/components/Button";
+import { dr } from "@shared/daily-routine-bem";
+import { Button } from "@shared/components/Button";
 import ReactDOM from "react-dom";
 import { css } from "@emotion/react";
 import { WeekOption } from "./WeekOption";

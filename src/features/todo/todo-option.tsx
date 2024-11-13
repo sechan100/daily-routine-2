@@ -2,15 +2,15 @@
 import { Notice } from "obsidian";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
-import { Button } from 'shared/components/Button';
-import { TextEditComponent } from 'shared/components/TextEditComponent';
-import { createModal, ModalApi } from 'shared/components/modal/create-modal';
-import { dr } from 'shared/daily-routine-bem';
-import { openConfirmModal } from 'shared/components/modal/confirm-modal';
-import { Modal } from 'shared/components/modal/styled';
-import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from 'entities/note';
+import { Button } from '@shared/components/Button';
+import { TextEditComponent } from '@shared/components/TextEditComponent';
+import { createModal, ModalApi } from '@shared/components/modal/create-modal';
+import { dr } from '@shared/daily-routine-bem';
+import { openConfirmModal } from '@shared/components/modal/confirm-modal';
+import { Modal } from '@shared/components/modal/styled';
+import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from '@entities/note';
 import { rescheduleTodo } from "./reschedule-todo";
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 
 
 

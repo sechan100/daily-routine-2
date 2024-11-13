@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Button } from "../Button";
 import { Modal } from "obsidian";
-import { plugin } from "shared/plugin-service-locator";
+import { plugin } from "@shared/plugin-service-locator";
 import { createRoot } from "react-dom/client";
 
 

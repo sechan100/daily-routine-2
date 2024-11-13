@@ -1,6 +1,6 @@
 import { TFile } from "obsidian";
-import { fileAccessor } from "shared/file/file-accessor";
-import { plugin } from "shared/plugin-service-locator";
+import { fileAccessor } from "@shared/file/file-accessor";
+import { plugin } from "@shared/plugin-service-locator";
 import { RoutineFrontMatter } from "./front-matter";
 import { validateRoutineProperties } from "./types";
 import { Routine, RoutineProperties } from "./types";
@@ -166,7 +166,7 @@ const getRoutinePath = (routineName: string) =>{
 /**
  * 루틴 파일이 저장되는 폴더 경로를 가져온다.
  */
-const getRoutineFolderPath = () => {  
+const getRoutineFolderPath = () => {
   const path = plugin().settings.routineFolderPath;
   if(!path) {
     throw new Error('Routine folder path is not set.');

@@ -1,5 +1,5 @@
-import { RoutineNote, routineNoteArchiver, routineNoteService, Task, TodoTask } from "entities/note";
-import { Day } from "shared/day";
+import { RoutineNote, routineNoteArchiver, routineNoteService, Task, TodoTask } from "@entities/note";
+import { Day } from "@shared/day";
 
 /**
  * 특정 task의 수행을 다른 날짜로 재조정한다.

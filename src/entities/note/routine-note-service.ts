@@ -1,5 +1,5 @@
-import { routineManager, Routine } from "entities/routine";
-import { Day } from "shared/day";
+import { routineManager, Routine } from "@entities/routine";
+import { Day } from "@shared/day";
 
 
 export type TaskType = "routine" | "todo";

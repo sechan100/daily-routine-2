@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, routineNoteArchiver, routineNoteService, Task as TaskEntity } from 'entities/note';
+import { RoutineNote, routineNoteArchiver, routineNoteService, Task as TaskEntity } from '@entities/note';
 import React, { useCallback, useMemo, useRef, useState } from "react"
-import { useRoutineNote } from "entities/note";
+import { useRoutineNote } from "@entities/note";
 import _ from "lodash";
-import { Touchable } from 'shared/components/Touchable';
-import { dr } from 'shared/daily-routine-bem';
-import { Icon } from 'shared/components/Icon';
+import { Touchable } from '@shared/components/Touchable';
+import { dr } from '@shared/daily-routine-bem';
+import { Icon } from '@shared/components/Icon';
 import { TaskName } from './TaskName';
 import { Checkbox } from './Checkbox';
 import { css } from '@emotion/react';

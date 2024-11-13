@@ -1,7 +1,7 @@
-import { RoutineNote, routineNoteArchiver, routineNoteService } from "entities/note";
+import { RoutineNote, routineNoteArchiver, routineNoteService } from "@entities/note";
 import { TaskCheckedStateNoteDep } from "./dependents/TaskCheckedStateNoteDep";
 import { TodoTaskNoteDep } from "./dependents/TodoTaskNoteDep";
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 
 
 
@@ -16,7 +16,7 @@ export interface RoutineNoteSynchronizer {
   (cb: AllRecreatedNoteCb): void;
 
   /**
-   * 동기화 로직 이후에, day로 지정한 날짜에 해당하는 RoutineNote를 반환해준다.
+   * 동기화 로직 이후에, day로 지정한 날짜에 해당하는 RoutineNote를 cb의 매개로 전달한다.
    * 만약 실제 note가 존재하지 않아도 transient한 note 데이터를 매개해준다.
    * @param day cb로 받을 날짜
    */
@@ -25,8 +25,9 @@ export interface RoutineNoteSynchronizer {
   (): void;
 }
 
-export const registerRoutineNotesSynchronize: RoutineNoteSynchronizer
+export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer
 = (cb?, day?) => {
+  // 모든 등록된 비동기 로직 이후에 실행을 예약
   Promise.resolve().then(async () => {
     const notes = await routineNoteArchiver.loadBetween(Day.now(), Day.max());
     const syncedNotes: RoutineNote[] = [];

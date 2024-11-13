@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { PercentageCircle } from "shared/components/PercentageCircle";
+import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
-import { useRoutineNote } from 'entities/note';
-import { dr } from "shared/daily-routine-bem";
+import { useRoutineNote } from '@entities/note';
+import { dr } from "@shared/daily-routine-bem";
 import { loadWeeks } from "./load-weeks";
 
 

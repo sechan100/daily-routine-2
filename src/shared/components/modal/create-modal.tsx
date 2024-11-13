@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Modal } from 'obsidian';
-import { plugin } from 'shared/plugin-service-locator';
+import { plugin } from '@shared/plugin-service-locator';
 import { create } from 'zustand';
 
 

@@ -3,13 +3,13 @@
  * 모달 내부적으로 새로운 todo task에 대한 입력을 받고, 이를 note에 추가해준다.
  */
 /** @jsxImportSource @emotion/react */
-import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from "entities/note";
+import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from "@entities/note";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createModal, ModalApi } from "shared/components/modal/create-modal";
-import { Modal } from "shared/components/modal/styled";
-import { TextEditComponent } from "shared/components/TextEditComponent";
-import { Button } from "shared/components/Button";
-import { dr } from "shared/daily-routine-bem";
+import { createModal, ModalApi } from "@shared/components/modal/create-modal";
+import { Modal } from "@shared/components/modal/styled";
+import { TextEditComponent } from "@shared/components/TextEditComponent";
+import { Button } from "@shared/components/Button";
+import { dr } from "@shared/daily-routine-bem";
 
 
 

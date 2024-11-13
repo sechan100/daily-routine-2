@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { Button } from "shared/components/Button";
+import { Button } from "@shared/components/Button";
 import clsx from "clsx";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Calendar from "react-calendar";

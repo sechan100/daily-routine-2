@@ -1,4 +1,4 @@
-import { RoutineNote, Task, TodoTask } from "entities/note";
+import { RoutineNote, Task, TodoTask } from "@entities/note";
 import { NoteDependent } from "./NoteDependent";
 
 

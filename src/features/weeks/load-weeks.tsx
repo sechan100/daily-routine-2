@@ -1,6 +1,6 @@
-import { routineNoteArchiver, routineNoteService } from "entities/note";
+import { routineNoteArchiver, routineNoteService } from "@entities/note";
 import { Notice } from "obsidian";
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 import { WeeksDayNode } from "./types";
 
 

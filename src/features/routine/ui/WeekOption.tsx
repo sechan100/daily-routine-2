@@ -2,9 +2,9 @@
 
 import { css } from "@emotion/react";
 import { useMemo, useCallback } from "react";
-import { Button } from "shared/components/Button";
-import { dr } from "shared/daily-routine-bem";
-import { DayOfWeek, DAYS_OF_WEEK } from "shared/day";
+import { Button } from "@shared/components/Button";
+import { dr } from "@shared/daily-routine-bem";
+import { DayOfWeek, DAYS_OF_WEEK } from "@shared/day";
 
 interface WeekOptionProps {
   daysOfWeek: DayOfWeek[];

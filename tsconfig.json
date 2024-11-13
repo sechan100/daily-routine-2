@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "src/",
+    "baseUrl": "",
     "jsx": "react-jsx",
     "inlineSourceMap": true,
     "inlineSources": true,
@@ -19,7 +19,15 @@
       "ES5",
       "ES6",
       "ES7"
-    ]
+    ],
+    "paths" : {
+      "@app/*": ["src/app/*"],
+      "@pages/*": ["src/pages/*"],
+      "@widgets/*": ["src/widgets/*"],
+      "@features/*": ["src/features/*"],
+      "@entities/*": ["src/entities/*"],
+      "@shared/*": ["src/shared/*"],
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "src/index.d.ts"],
 }

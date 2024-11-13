@@ -1,18 +1,18 @@
 /** @jsxImportSource @emotion/react */
-import { routineManager } from "entities/routine";
-import { Routine } from "entities/routine";
+import { routineManager } from "@entities/routine";
+import { Routine } from "@entities/routine";
 import { Notice } from "obsidian";
 import { ActiveCriteriaOption } from "./ui/ ActiveCriteriaOption";
-import { DAYS_OF_WEEK } from "shared/day";
+import { DAYS_OF_WEEK } from "@shared/day";
 import { useCallback, useState, useMemo } from "react";
-import { createModal } from "shared/components/modal/create-modal";
-import { TextEditComponent } from "shared/components/TextEditComponent";
-import { dr } from "shared/daily-routine-bem";
-import { Modal } from "shared/components/modal/styled";
-import { ModalApi } from "shared/components/modal/create-modal";
-import { Button } from "shared/components/Button";
-import { registerRoutineNotesSynchronize } from "entities/note-synchronize";
-import { useRoutineNote } from "entities/note";
+import { createModal } from "@shared/components/modal/create-modal";
+import { TextEditComponent } from "@shared/components/TextEditComponent";
+import { dr } from "@shared/daily-routine-bem";
+import { Modal } from "@shared/components/modal/styled";
+import { ModalApi } from "@shared/components/modal/create-modal";
+import { Button } from "@shared/components/Button";
+import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
+import { useRoutineNote } from "@entities/note";
 import { set } from "lodash";
 
 
@@ -48,7 +48,7 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
       await routineManager.create(routine);
       new Notice(`Routine '${routine.name}' started! 🎉`);
 
-      registerRoutineNotesSynchronize(note => setNote(note), note.day);
+      executeRoutineNotesSynchronize(note => setNote(note), note.day);
 
       modal.close();
     } catch(e) {

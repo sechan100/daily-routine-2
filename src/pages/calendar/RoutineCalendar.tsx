@@ -1,5 +1,5 @@
-import { RoutineCalendar as RoutineCalendarFeature } from "features/calendar"
-import { Day } from "shared/day";
+import { RoutineCalendar as RoutineCalendarFeature } from "@features/calendar"
+import { Day } from "@shared/day";
 
 
 

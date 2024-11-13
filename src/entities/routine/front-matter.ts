@@ -1,5 +1,5 @@
 import { getFrontMatterInfo, Notice, parseYaml, stringifyYaml } from "obsidian";
-import { DayOfWeek } from "shared/day";
+import { DayOfWeek } from "@shared/day";
 import { validateRoutineProperties, RoutineProperties } from "./types";
 
 

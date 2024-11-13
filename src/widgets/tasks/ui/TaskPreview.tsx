@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import { Task as TaskEntity } from 'entities/note';
+import { Task as TaskEntity } from '@entities/note';
 import { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import { useDragLayer } from 'react-dnd';
-import { Icon } from 'shared/components/Icon';
-import { dr } from 'shared/daily-routine-bem';
+import { Icon } from '@shared/components/Icon';
+import { dr } from '@shared/daily-routine-bem';
 import { Checkbox } from './Checkbox';
 import { TaskName } from './TaskName';
 import { DragItem } from '../hooks/use-task-dnd';
-import { plugin } from 'shared/plugin-service-locator';
-import { useLeaf } from 'shared/view/react-view';
+import { plugin } from '@shared/plugin-service-locator';
+import { useLeaf } from '@shared/view/react-view';
 
 
 

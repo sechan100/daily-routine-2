@@ -1,4 +1,4 @@
-import { ReactView } from "shared/view/react-view";
+import { ReactView } from "@shared/view/react-view";
 import { WorkspaceLeaf } from "obsidian";
 import { DailyRoutineView } from "./DailyRoutineView";
 

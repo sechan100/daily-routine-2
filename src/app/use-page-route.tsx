@@ -1,4 +1,4 @@
-import { Day } from "shared/day";
+import { Day } from "@shared/day";
 import { create } from "zustand";
 
 

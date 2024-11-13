@@ -1,4 +1,4 @@
-import DailyRoutinePlugin from "main";
+import DailyRoutinePlugin from "src/main";
 
 let pluginThisRef: DailyRoutinePlugin | null = null;
 

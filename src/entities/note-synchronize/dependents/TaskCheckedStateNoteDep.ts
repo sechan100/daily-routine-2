@@ -3,7 +3,7 @@
  * 때문에 이를 복원할 필요가 있다.
  */
 
-import { RoutineNote } from "entities/note";
+import { RoutineNote } from "@entities/note";
 import { NoteDependent } from "./NoteDependent";
 
 

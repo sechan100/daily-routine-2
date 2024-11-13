@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { keys } from "lodash";
-import { DayOfWeek } from "shared/day";
+import { DayOfWeek } from "@shared/day";
 
 
 /**
