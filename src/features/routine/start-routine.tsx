@@ -2,8 +2,8 @@
 import { routineManager } from "@entities/routine";
 import { Routine } from "@entities/routine";
 import { Notice } from "obsidian";
-import { ActiveCriteriaOption } from "./ui/ ActiveCriteriaOption";
-import { DAYS_OF_WEEK } from "@shared/day";
+import { ActiveCriteriaOption } from "./ui/ActiveCriteriaOption";
+import { Day } from "@shared/day";
 import { useCallback, useState, useMemo } from "react";
 import { createModal } from "@shared/components/modal/create-modal";
 import { TextEditComponent } from "@shared/components/TextEditComponent";
@@ -13,7 +13,6 @@ import { ModalApi } from "@shared/components/modal/create-modal";
 import { Button } from "@shared/components/Button";
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
 import { useRoutineNote } from "@entities/note";
-import { set } from "lodash";
 
 
 
@@ -25,7 +24,7 @@ export const useStartRoutineModal = createModal(({ modal }: { modal: ModalApi}) 
     properties: {
       order: 0,
       activeCriteria: "week",
-      daysOfWeek: DAYS_OF_WEEK,
+      daysOfWeek: Day.getDaysOfWeek(),
       daysOfMonth: [],
     }
   });

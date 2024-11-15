@@ -9,15 +9,14 @@ import { Day } from "@shared/day";
 
 
 
-export interface RoutineCalendarProps {
-  defaultDay?: Day; // 초기값 날짜
-  onDayTileClick?: (day: Day) => void; // 날짜타일 클릭시 콜백
+export interface AchivementPageProps {
+  day: Day;
 }
-export const RoutineCalendar = (props: RoutineCalendarProps) => {
+export const AchivementPage = ({ day }: AchivementPageProps) => {
 
   return (
     <>
-      <RoutineCalendarFeature {...props} />
+      <RoutineCalendarFeature day={day} />
     </>
   )
 }

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Plugin } from 'obsidian';
+import { Plugin, moment } from 'obsidian';
 import { setPlugin } from '@shared/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from '@shared/view/activate-view';
+import { updateMomentConfig } from '@app/settings/moment-config';
 
 
 export default class DailyRoutinePlugin extends Plugin {
@@ -17,6 +18,11 @@ export default class DailyRoutinePlugin extends Plugin {
 
     // setting tab
     this.addSettingTab(new DailyRoutineSettingTab(this.app, this));
+
+    // moment config
+    updateMomentConfig({
+      isMondayStartOfWeek: this.settings.isMondayStartOfWeek
+    });
 
     this.registerView(
       DailyRoutineObsidianView.VIEW_TYPE,

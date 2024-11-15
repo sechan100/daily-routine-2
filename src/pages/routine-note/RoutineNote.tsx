@@ -51,7 +51,7 @@ export const RoutineNote = ({ day }: RoutineNoteProps) => {
 
 
 const RoutineNotePage = () => {
-  const { note, setNote } = useRoutineNote();
+  const { note } = useRoutineNote();
   const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
 
   const AddTodoModal = useAddTodoModal();

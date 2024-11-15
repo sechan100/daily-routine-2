@@ -1,1 +1,1 @@
-export { RoutineCalendar } from "./RoutineCalendar";
+export { AchivementPage as RoutineCalendar } from "./RoutineCalendar";

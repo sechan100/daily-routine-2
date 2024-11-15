@@ -1,16 +1,21 @@
 import DailyRoutinePlugin from "src/main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "@shared/suggesters/FileSuggester";
+import { updateMomentConfig } from "./moment-config";
+import { useTabRoute } from "@shared/use-tab-route";
+import { useLeaf } from "@shared/view/react-view";
 
 
 export interface DailyRoutinePluginSettings {
   routineFolderPath: string;
   noteFolderPath: string;
+  isMondayStartOfWeek: boolean;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
   routineFolderPath: "daily-routine/routines",
-  noteFolderPath: "daily-routine/archive"
+  noteFolderPath: "daily-routine/archive",
+  isMondayStartOfWeek: true
 }
 
 
@@ -40,10 +45,10 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       })
     })
 
-    // Routine Archive Path
+    // Routine Note Folder Path
     new Setting(containerEl)
-    .setName("Note Archive Path")
-    .setDesc("The path to the routine archive folder.")
+    .setName("Routine Note Archive Path")
+    .setDesc("The path to the routine note archive folder.")
     .addText(text => {
       new FileSuggest(text.inputEl, "folder");
       text
@@ -53,13 +58,30 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
         this.save({ noteFolderPath: normalizePath(value)});
       })
     });
+
+    // Start of Week
+    new Setting(containerEl)
+    .setName("Start of Week")
+    .setDesc("Set the start of the week.")
+    .addDropdown(dropdown => {
+      dropdown
+      .addOptions({
+        "monday": "Monday",
+        "sunday": "Sunday"
+      })
+      .setValue(this.plugin.settings.isMondayStartOfWeek ? "monday" : "sunday")
+      .onChange(async (value) => {
+        const isMondayStartOfWeek = value === "monday";
+        this.save({ isMondayStartOfWeek });
+        updateMomentConfig({ isMondayStartOfWeek })
+      })
+    })
   }
 
 
   async save(partial: Partial<DailyRoutinePluginSettings>) {
     const settings = {...this.plugin.settings, ...partial};
 
-    // 루틴폴더와 루틴아카이브폴더의 경로 일치 검사
     if(settings.noteFolderPath === settings.routineFolderPath){
       new Notice("Routine folder path and routine archive folder path cannot be the same.");
       return;
@@ -67,5 +89,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     this.plugin.settings = {...this.plugin.settings, ...partial};
     await this.plugin.saveSettings();
+    
   }
 }

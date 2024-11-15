@@ -6,15 +6,15 @@ import { moment } from "obsidian";
 import { useCallback, useEffect, useState } from "react";
 import { OnArgs } from "react-calendar/dist/cjs/shared/types";
 import "./calendar-style.scss";
+import { useTabRoute } from '@shared/use-tab-route';
 
 
 export interface RoutineCalendarProps {
-  defaultDay?: Day; // 초기값 날짜
-  onDayTileClick?: (day: Day) => void; // 날짜타일 클릭시 콜백
+  day: Day;
 }
-export const RoutineCalendar = ({ defaultDay, onDayTileClick }: RoutineCalendarProps) => {
-  // 현재 기준이 되는 날짜(main state)
-  const [activeDay, setActiveDay] = useState<Day>(defaultDay??Day.now());
+export const RoutineCalendar = ({ day: propsDay }: RoutineCalendarProps) => {
+  const [activeDay, setActiveDay] = useState<Day>(propsDay);
+  const { route } = useTabRoute();
 
 
   /////////////////////////////////////
@@ -31,24 +31,17 @@ export const RoutineCalendar = ({ defaultDay, onDayTileClick }: RoutineCalendarP
   }, [activeDay]);
 
 
-  /////////////////////////////////
   // 월이 바뀔 때
   const onActiveStartDateChange = ({ action, activeStartDate, value, view }: OnArgs) => {
     if(activeStartDate) setActiveDay(new Day(moment(activeStartDate)));
   }
 
-
-  ////////////////////////////////
-  // 날짜타일 클릭시 콜백
   const onClickDay = useCallback((v: Date, e: React.MouseEvent<HTMLButtonElement>) => {
     const day = new Day(moment(v));
-    if(onDayTileClick){
-      onDayTileClick(day);
-    }
-  }, [onDayTileClick]);
+    route("note", { day });
+  }, [route]);
 
 
-  //////////////////////////////////
   // 달력의 날짜 타일 하나하나를 렌더링하는 방식을 정의
   const tileContent = ({ date, view }: { date: Date, view: string }) => {
     if (view !== "month" || !routineNotes) return null;
@@ -65,9 +58,6 @@ export const RoutineCalendar = ({ defaultDay, onDayTileClick }: RoutineCalendarP
     )
   }
 
-  
-  //////////////////////////
-  // 렌더링
   if(!routineNotes) return <div>Loading...</div>;
   return (
     <div className="dr-routine-note-calendar">

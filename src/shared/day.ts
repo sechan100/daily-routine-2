@@ -1,4 +1,7 @@
 import { moment } from "obsidian";
+import { plugin } from "./plugin-service-locator";
+
+
 
 export enum DayOfWeek {
   SUN = "SUN",
@@ -9,7 +12,7 @@ export enum DayOfWeek {
   FRI = "FRI",
   SAT = "SAT"
 }
-export const DAYS_OF_WEEK = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
+
 
 export class Day {
   #moment: moment.Moment;
@@ -18,7 +21,7 @@ export class Day {
   /**
    * 
    * @param day "YYYY-MM-DD" 형식의 문자열
-   */
+   */ 
   constructor(_moment: moment.Moment) {
     const m = moment(_moment);
     if(m.isValid()) {
@@ -40,6 +43,12 @@ export class Day {
     return new Day(moment(str));
   }
 
+  static getDaysOfWeek(): DayOfWeek[] {
+    const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
+    const isMondayStart = plugin().settings.isMondayStartOfWeek;
+    return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
+  }
+
   format(format: string){
     return this.#moment.format(format);
   }
@@ -56,25 +65,15 @@ export class Day {
     return this.#moment.isAfter(day.#moment);
   }
 
-  add(amount: number, unit: moment.unitOfTime.DurationConstructor){
-    this.#moment.add(amount, unit);
-    return this;
-  }
-
   isBetween(start: Day, end: Day, unit?: moment.unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]"){
     return this.#moment.isBetween(start.#moment, end.#moment, unit, inclusivity);
   }
 
-  addOnClone(amount: number, unit: moment.unitOfTime.DurationConstructor){
+  add(amount: number, unit: moment.unitOfTime.DurationConstructor){
     return new Day(this.#moment.clone().add(amount, unit));
   }
 
   subtract(amount: number, unit: moment.unitOfTime.DurationConstructor){
-    this.#moment.subtract(amount, unit);
-    return this
-  }
-
-  subtractOnClone(amount: number, unit: moment.unitOfTime.DurationConstructor){
     return new Day(this.#moment.clone().subtract(amount, unit));
   }
 

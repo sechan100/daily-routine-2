@@ -1,6 +1,6 @@
 import { ReactView } from "@shared/view/react-view";
 import { WorkspaceLeaf } from "obsidian";
-import { DailyRoutineView } from "./DailyRoutineView";
+import { DailyRoutineView } from "./ui/DailyRoutineView";
 
 
 
@@ -13,7 +13,6 @@ export class DailyRoutineObsidianView extends ReactView {
       displayText: "Routine"
     });
   }
-
 
   render() {
     return <DailyRoutineView />

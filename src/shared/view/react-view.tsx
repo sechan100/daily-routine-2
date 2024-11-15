@@ -7,14 +7,26 @@ import { createContext, useContext } from "react";
 const LeafContext = createContext<WorkspaceLeaf | null>(null);
 export const useLeaf = <T extends View>(): {
   leaf: WorkspaceLeaf,
-  view: T
+  view: T,
 } => {
   const leaf = useContext(LeafContext);
   if(!leaf) throw new Error("LeafContext not found");
   return {
-    leaf, 
-    view: leaf.view as T
+    leaf,
+    view: leaf.view as T,
   }
+}
+
+
+
+const AdapterComponent = ({ view }: { view: ReactView }) => {
+  return (
+    <StrictMode>
+      <LeafContext.Provider value={view.leaf}>
+        {view.render()}
+      </LeafContext.Provider>
+    </StrictMode>
+  )
 }
 
 
@@ -39,7 +51,7 @@ export abstract class ReactView extends ItemView {
     return this.viewTypeName;
 	}
 
-	getDisplayText(){
+	getDisplayText() {
     return this.displayText;
   }
 
@@ -50,13 +62,7 @@ export abstract class ReactView extends ItemView {
 
 	async onOpen() {
 		this.root = createRoot(this.containerEl.children[1]);
-		this.root.render(
-      <StrictMode>
-        <LeafContext.Provider value={this.leaf}>
-          {this.render()}
-        </LeafContext.Provider>
-      </StrictMode>
-		);
+		this.root.render(<AdapterComponent view={this} />);
 	}
 
 	async onClose() {
