@@ -1,30 +1,43 @@
-import { StrictMode } from "react";
+import { StrictMode, useState } from "react";
 import { ItemView, View, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
 import { createContext, useContext } from "react";
+import { createStoreContext } from "@shared/zustand/create-store-context";
+import { DailyRoutineObsidianView } from "@app/obsidian-view";
 
 
-const LeafContext = createContext<WorkspaceLeaf | null>(null);
-export const useLeaf = <T extends View>(): {
-  leaf: WorkspaceLeaf,
-  view: T,
-} => {
-  const leaf = useContext(LeafContext);
-  if(!leaf) throw new Error("LeafContext not found");
-  return {
-    leaf,
-    view: leaf.view as T,
-  }
+
+interface UseDrLeafData {
+  leaf: WorkspaceLeaf;
+  setShow: (show: boolean) => void;
 }
-
+interface UseDrLeaf {
+  leaf: WorkspaceLeaf;
+  view: DailyRoutineObsidianView;
+  refresh: () => void;
+}
+export const {StoreProvider: UseLeafContextProvider, useStoreHook: useDrLeaf} = createStoreContext<UseDrLeafData, UseDrLeaf>((data, set, get) => ({
+  leaf: data.leaf,
+  view: data.leaf.view as DailyRoutineObsidianView,
+  refresh: () => {
+    data.setShow(false);
+    setTimeout(() => data.setShow(true), 0);
+  }
+}))
 
 
 const AdapterComponent = ({ view }: { view: ReactView }) => {
+  const [show, setShow] = useState(true);
+
+  if(!show) return null;
   return (
     <StrictMode>
-      <LeafContext.Provider value={view.leaf}>
+      <UseLeafContextProvider data={{
+        leaf: view.leaf,
+        setShow
+      }} onDataChange={() => {}}>
         {view.render()}
-      </LeafContext.Provider>
+      </UseLeafContextProvider>
     </StrictMode>
   )
 }

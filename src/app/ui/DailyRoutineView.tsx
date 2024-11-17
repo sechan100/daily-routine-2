@@ -1,13 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { RoutineNote } from '@pages/routine-note';
-import { RoutineCalendar } from "@pages/calendar";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { Day } from "@shared/day";
 import { DrTabType, useTabRoute } from "@shared/use-tab-route";
 import "./style.css";
-import { DailyRoutineObsidianView } from '../obsidian-view';
-import { useLeaf } from '@shared/view/react-view';
+import { useDrLeaf } from '@shared/view/react-view';
 import TabNav from '@mui/material/Tabs';
 import TabNavItem from '@mui/material/Tab';
 import { MUIThemeProvider } from './MUIThemProvider';
@@ -28,7 +25,7 @@ const tabCss = css({
 export const DailyRoutineView = () => {
   const { tab, route } = useTabRoute();
 
-  const { view } = useLeaf<DailyRoutineObsidianView>();
+  const { view } = useDrLeaf();
 
   useEffect(() => {
     view.contentEl.style.padding = "0";

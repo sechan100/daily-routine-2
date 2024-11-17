@@ -3,7 +3,7 @@
 import { useRoutineNote, RoutineNote, Task } from "@entities/note";
 import { useRef, useCallback, useEffect, RefObject, useState } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
-import { useLeaf } from "@shared/view/react-view";
+import { useDrLeaf } from "@shared/view/react-view";
 
 
 
@@ -25,7 +25,7 @@ interface UseTaskDndResult {
 }
 export const useTaskDnd = ({ task, taskRef, handleRef, onTaskDrop }: UseTaskDndOption): UseTaskDndResult => {
   const setNote = useRoutineNote(s=>s.setNote);
-  const { view } = useLeaf();
+  const { view } = useDrLeaf();
   const dragStartNoteSnapshot = useRef<RoutineNote | null>(null);
 
   const [{ isDragging }, drag, preview] = useDrag({

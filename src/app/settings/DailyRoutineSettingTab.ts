@@ -2,8 +2,7 @@ import DailyRoutinePlugin from "src/main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "@shared/suggesters/FileSuggester";
 import { updateMomentConfig } from "./moment-config";
-import { useTabRoute } from "@shared/use-tab-route";
-import { useLeaf } from "@shared/view/react-view";
+import { useDrLeaf } from "@shared/view/react-view";
 
 
 export interface DailyRoutinePluginSettings {
@@ -89,6 +88,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     this.plugin.settings = {...this.plugin.settings, ...partial};
     await this.plugin.saveSettings();
-    
+    useDrLeaf.getState().refresh();
   }
 }
