@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const cleanPercentage = (percentage: number) => {
   const isNegativeOrNaN = !Number.isFinite(+percentage) || percentage < 0; // we can set non-numbers to 0 here
@@ -13,11 +13,20 @@ interface CircleProps {
   percentage: number;
   transition: boolean;
 }
-const Circle = ({ color, percentage, transition=true }: CircleProps) => {
+const Circle = ({ color, percentage: propsPercentage, transition=true }: CircleProps) => {
+  const [percentage, setPercentage] = useState(transition ? 0 : propsPercentage);
+
   const r = 85;
   const circ = 2 * Math.PI * r;
   const strokePct = ((100 - percentage) * circ) / 100; // where stroke will start, e.g. from 15% to 100%.
   const transitionString = transition ? "all 0.7s ease-in-out" : "none";
+
+  useEffect(() => {
+    if(percentage !== propsPercentage){
+      setPercentage(propsPercentage);
+    }
+  }, [percentage, propsPercentage, transition]);
+
   return (
     <circle
       style={{

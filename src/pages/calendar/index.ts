@@ -1,1 +1,0 @@
-export { AchivementPage as RoutineCalendar } from "./RoutineCalendar";

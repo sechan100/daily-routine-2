@@ -1,4 +1,4 @@
-import { RoutineCalendar as RoutineCalendarFeature } from "@features/calendar"
+import { NoteAchivementCalendar } from "@features/note-achivement"
 import { Day } from "@shared/day";
 
 
@@ -16,7 +16,7 @@ export const AchivementPage = ({ day }: AchivementPageProps) => {
 
   return (
     <>
-      <RoutineCalendarFeature day={day} />
+      <NoteAchivementCalendar day={day} />
     </>
   )
 }

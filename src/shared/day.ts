@@ -43,6 +43,10 @@ export class Day {
     return new Day(moment(str));
   }
 
+  static fromJsDate(date: Date){
+    return new Day(moment(date));
+  }
+
   static getDaysOfWeek(): DayOfWeek[] {
     const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
     const isMondayStart = plugin().settings.isMondayStartOfWeek;

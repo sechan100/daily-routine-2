@@ -1,7 +1,7 @@
 import { useTabRoute } from "@shared/use-tab-route";
 import { Day } from "@shared/day";
 import { useMemo } from "react";
-import { AchivementPage } from "@pages/calendar/RoutineCalendar";
+import { AchivementPage } from "@pages/achivement/AchivementPage";
 
 
 
