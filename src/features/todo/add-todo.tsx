@@ -19,7 +19,8 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const [ todo, setTodo ] = useState<TodoTask>({
     checked: false,
     name: "",
-    type: "todo"
+    type: "todo",
+    showOnCalendar: true,
   });
 
   const onSave = useCallback(() => {

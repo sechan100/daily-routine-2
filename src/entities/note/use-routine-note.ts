@@ -3,7 +3,8 @@
  */
 
 import { createStoreContext } from "@shared/zustand/create-store-context";
-import { RoutineNote, routineNoteService } from "./routine-note-service";
+import { routineNoteService } from "./routine-note-service";
+import { RoutineNote } from "./types";
 import { Day } from "@shared/day";
 import { routineNoteArchiver } from "./routine-note-archive";
 

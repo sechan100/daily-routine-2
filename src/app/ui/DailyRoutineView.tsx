@@ -11,6 +11,7 @@ import { MUIThemeProvider } from './MUIThemProvider';
 import { Icon } from "@shared/components/Icon";
 import { RouitneNoteTab } from "./tab-note";
 import { AchivementTab } from "./tab-achivement";
+import { CalendarTab } from "./tab-calendar";
 
 const tabsHeight = "50px";
 const tabsBottomGap = "25px";
@@ -48,6 +49,7 @@ export const DailyRoutineView = () => {
       >
         <RouitneNoteTab />
         <AchivementTab />
+        <CalendarTab />
       </div>
       <TabNav
         value={tab}

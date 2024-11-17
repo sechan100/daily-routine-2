@@ -1,4 +1,5 @@
-import { RoutineNote, routineNoteService } from "./routine-note-service";
+import { routineNoteService } from "./routine-note-service";
+import { RoutineNote } from "./types";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { plugin } from "@shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";

@@ -5,7 +5,7 @@ import { RoutineFrontMatter } from "./front-matter";
 import { validateRoutineProperties } from "./types";
 import { Routine, RoutineProperties } from "./types";
 import { Day } from "@shared/day";
-import { RoutineTask, Task } from "@entities/note";
+import { RoutineTask } from "@entities/note";
 
 
 interface RoutineManager {
@@ -154,7 +154,8 @@ export const routineManager: RoutineManager = {
     return {
       type: "routine",
       name: routine.name,
-      checked: false
+      checked: false,
+      showOnCalendar: false
     }
   },
 
