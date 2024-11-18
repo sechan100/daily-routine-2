@@ -1,7 +1,6 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
-import { sassPlugin } from 'esbuild-sass-plugin';
 import fs from "node:fs";
 import path from "path";
 import { dirname } from 'path';
@@ -70,7 +69,6 @@ const context = await esbuild.context({
   outfile: "main.js",  // JavaScript 번들 파일
   plugins: [
     renamePlugin,  // CSS 파일 이름 변경 플러그인
-    sassPlugin(),  // SASS 파일 로더
   ],
   minify: prod,
   loader: {
