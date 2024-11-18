@@ -1,29 +1,32 @@
 /** @jsxImportSource @emotion/react */
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 
 
 
-const medium = css`
-  color: var(--text-normal);
-  font-size: var(--font-ui-medium);
-`
+const bold = css({
+  fontWeight: "var(--font-bold)"
+})
 
+const medium = css({
+  color: "var(--text-normal)",
+  fontSize: "var(--font-ui-medium)",
+})
 
-const mediumBold = css`
-  ${medium}
-  font-weight: var(--font-semibold);
-`
+const large = css({
+  color: "var(--text-normal)",
+  fontSize: "var(--font-ui-large)"
+})
 
+const description = css({
+  color: "var(--text-muted)",
+  fontSize: "var(--font-ui-smaller)",
+  paddingTop: "var(--size-4-1)",
+  lineHeight: "var(--line-height-tight)"
+})
 
-const description = css`
-  color: var(--text-muted);
-  font-size: var(--font-ui-smaller);
-  padding-top: var(--size-4-1);
-  line-height: var(--line-height-tight);
-`
-
-export const textCss = {
+export const textStyle = {
+  bold,
   medium,
-  mediumBold,
+  large,
   description
 }

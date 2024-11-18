@@ -3,9 +3,8 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import styled from '@emotion/styled';
-import { textCss } from '../font';
-import { useEffect } from 'react';
+import { textStyle } from '../font';
+import { useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 
 
@@ -33,12 +32,14 @@ const M = ({ header, className, children, modal }: ModalProps) => {
         }
       }}
     >
-      <header css={[{
-        padding: "1em 0",
-        ".is-phone &": {
-          display: "none"
-        },
-      }, textCss.mediumBold]}>
+      <header 
+        css={[{
+          padding: "1em 0",
+          ".is-phone &": {
+            display: "none"
+          },
+        }, textStyle.large, textStyle.bold]}
+      >
         {header}
       </header>
       {children}
@@ -46,38 +47,44 @@ const M = ({ header, className, children, modal }: ModalProps) => {
   )
 }
 
-const Section = styled.div({
-  display: "flex",
-  alignItems: "center",
-  paddingTop: "1em",
-  justifyContent: "space-between",
-  ".is-phone &": {
-    borderTop: "none"
-  }
-})
+interface SeparatorProps {
+  edge?: boolean;
+}
+const Separator = ({ edge = false}: SeparatorProps) => {
+  return <div
+    css={{
+      height: edge ? 0 : "1px",
+      backgroundColor: "var(--background-modifier-border)",
+      margin: edge ? "2em 0 0 0" : "2em 0",
+    }}
+  />
+}
 
-const Name = styled.div`
-  ${textCss.medium}
-`;
-const Description = styled.div`
-  ${textCss.description}
-`;
+interface SectionProps {
+  name?: string;
+  className?: string;
+  children: React.ReactNode;
+}
+const Section = ({ className, name, children }: SectionProps) => {
+  const justifyContent = useMemo(() => name ? "space-between" : "end", [name]);
 
-const Separator = styled.div({
-  height: "1px",
-  backgroundColor: "var(--background-modifier-border)",
-  margin: "1em 0"
-})
-
-
-
-
-
+  return (
+    <section
+      className={className}
+      css={{
+        display: "flex",
+        justifyContent,
+        alignItems: "center",
+      }}
+    >
+      {name ? <div css={textStyle.medium}>{name}</div> : null}
+      {children}
+    </section>
+  )
+}
 
 
 export const Modal = Object.assign(M, {
-  Section,
-  Name,
-  Description,
   Separator,
+  Section
 })

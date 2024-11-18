@@ -7,7 +7,6 @@ import { StoreApi, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import React from 'react';
-import { on } from 'events';
 
 
 
@@ -40,23 +39,26 @@ export type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
 interface StoreContextProviderProps<D, S> {
   data: D;
   children: React.ReactNode;
-  onDataChange: (store: StoreApi<S>, data: D) => void;
+  onDataChange?: (store: StoreApi<S>, data: D) => void;
 }
-export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
-  StoreProvider: React.FC<StoreContextProviderProps<D, S>>,
-  useStoreHook: UseBoundStore<StoreApi<S>>
-} => {
+export const createStoreContext = <D, S>(initializer: Initializer<D, S>): [
+  React.FC<StoreContextProviderProps<D, S>>,
+  UseBoundStore<StoreApi<S>>
+] => {
   const StoreContext = createContext<StoreApi<S> | null>(null);
   const createNewStore = createStoreWithInit<D, S>(initializer);
-
 
   const Provider = React.memo(function Provider({ data, children, onDataChange }: StoreContextProviderProps<D, S>) {
     const storeRef = useRef<StoreApi<S>>(createNewStore(data));
 
     useEffect(() => {
-      onDataChange(storeRef.current, data);
+      if(onDataChange){
+        onDataChange(storeRef.current, data);
+      } 
+      else {
+        storeRef.current = createNewStore(data);
+      }
     }, [data, onDataChange]);
-    
     
     return (
       <StoreContext.Provider value={storeRef.current}>
@@ -73,5 +75,5 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): {
     return useStore(store, selector);
   }) as UseBoundStore<StoreApi<S>>;
 
-  return { StoreProvider: Provider, useStoreHook: useStoreHook };
+  return [Provider, useStoreHook];
 }

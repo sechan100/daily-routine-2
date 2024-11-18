@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from '@entities/note';
-import { useStartRoutineModal } from "@features/routine";
+import { useStartRoutineModal } from "@widgets/routine";
 import { Weeks } from "@features/weeks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Day } from "@shared/day";
 import { dr } from "@shared/daily-routine-bem";
 import { MenuComponent } from "@shared/components/Menu";
 import { Menu } from "obsidian";
-import { RoutineTask, TaskDndContext, TodoTask } from '@widgets/tasks';
-import { useAddTodoModal } from '@features/todo';
+import { RoutineTask, TaskDndContext, TodoTask } from '@widgets/task';
+import { useAddTodoModal } from '@widgets/todo';
 import { Icon } from '@shared/components/Icon';
 import { Button } from '@shared/components/Button';
 

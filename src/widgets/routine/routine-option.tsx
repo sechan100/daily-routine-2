@@ -2,11 +2,11 @@
 import { routineManager } from '@entities/routine';
 import { Routine } from '@entities/routine';
 import { Notice } from "obsidian";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import React from "react";
-import { ActiveCriteriaOption } from "./ui/ActiveCriteriaOption";
+import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
+import { TaskOption } from '@features/task';
 import { Button } from '@shared/components/Button';
-import { TextEditComponent } from '@shared/components/TextEditComponent';
 import { dr } from '@shared/daily-routine-bem';
 import { openConfirmModal } from '@shared/components/modal/confirm-modal';
 import { Modal } from '@shared/components/modal/styled';
@@ -15,35 +15,33 @@ import { useRoutineNote } from '@entities/note';
 import { executeRoutineNotesSynchronize } from '@entities/note-synchronize';
 
 
-
-
 interface RoutineOptionModalProps {
   routine: Routine;
   modal: ModalApi;
 }
-export const useRoutineOptionModal = createModal(({ routine: originalRoutine, modal}: RoutineOptionModalProps) => {
+export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine}: RoutineOptionModalProps) => {
   const bem = useMemo(() => dr("routine-option"), []);
-  const [ routine, setRoutine ] = useState<Routine>(originalRoutine);
-  const originalName = useMemo(() => originalRoutine.name, [originalRoutine]);
   const { note, setNote } = useRoutineNote();
+  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, originalRoutine);
 
 
-  // modal.onClose
+  // modal.onClose를 정의
   useEffect(() => { modal.onClose(async () => {
+    const id = originalRoutine.name;
     const newNote = { ...note };
     let requeireSync = false;
 
-    if(originalName !== routine.name && routine.name.trim() !== ""){
-      await routineManager.rename(originalName, routine.name);
+    if(id !== routine.name && routine.name.trim() !== ""){
+      await routineManager.rename(id, routine.name);
       newNote.tasks.forEach(task => {
-        if(task.name === originalName){
+        if(task.name === id){
           task.name = routine.name;
         }
       });
     }
 
     if(routine.properties !== originalRoutine.properties){
-      await routineManager.editProperties(originalName, routine.properties);
+      await routineManager.editProperties(id, routine.properties);
       requeireSync = true;
       // precondition: 해당 노트에는 이미 해당 루틴이 존재했다고 가정하고, 루틴이 노트에서 빠지는 경우만 처리함
       if(!routineManager.isRoutineDueTo(routine, note.day)){
@@ -52,21 +50,8 @@ export const useRoutineOptionModal = createModal(({ routine: originalRoutine, mo
     }
 
     setNote(newNote);
-
     if(requeireSync) executeRoutineNotesSynchronize();
-    
-  })}, [modal, note, originalName, originalRoutine.properties, routine, setNote]);
-  
-
-  const setProperties = useCallback((propertiesPartial: Partial<Routine["properties"]>) => {
-    setRoutine({
-      ...routine,
-      properties: {
-        ...routine.properties,
-        ...propertiesPartial
-      }
-    });
-  }, [routine]);
+  })}, [modal, note, originalRoutine, routine, setNote]);
 
 
   const onDeleteBtnClick = useCallback((e: React.MouseEvent) => {
@@ -94,47 +79,20 @@ export const useRoutineOptionModal = createModal(({ routine: originalRoutine, mo
 
   return (
     <Modal header='Routine Option' modal={modal}>
-      {/* name */}
-      <Modal.Section className={bem("name")}>
-        <Modal.Name>Name</Modal.Name>
-        <TextEditComponent
-          value={routine.name}
-          onChange={name => setRoutine({...routine, name})} 
-        />
-      </Modal.Section>
-      <Modal.Separator />
-
-      {/* activeCriteria */}
-      <Modal.Section className={bem("criteria")} >
-        <Modal.Name>Active Criteria</Modal.Name>
-        <nav className={bem("criteria-nav")}>
-          <Button
-            css={{marginRight: "0.5em"}}
-            variant={routine.properties.activeCriteria === "week" ? "accent" : "primary"} 
-            onClick={() => setProperties({activeCriteria: "week"})}
-          >Week
-          </Button>
-          <Button
-            variant={routine.properties.activeCriteria === "month" ? "accent" : "primary"}
-            onClick={() => setProperties({activeCriteria: "month"})}
-          >Month
-          </Button>
-        </nav>
-      </Modal.Section>
-      <ActiveCriteriaOption
-        criteria={routine.properties.activeCriteria}
-        css={{
-          padding: "1em 0"
-        }}
-        className={bem("days")} 
-        properties={routine.properties} 
-        setProperties={setProperties}
+      <Modal.Separator edge />
+      <TaskOption.Name
+        value={routine.name}
+        onChange={name => dispatch({ type: "SET_NAME", payload: name })}
       />
       <Modal.Separator />
 
-      {/* delete */}
-      <Modal.Section className={bem("delete")}>
-        <Modal.Name>Delete</Modal.Name>
+      <RoutineOption.ActiveCriteria 
+        routine={routine} 
+        setProperties={properties => dispatch({ type: "SET_PROPERTIES", payload: properties })} 
+      />
+      <Modal.Separator />
+
+      <Modal.Section className={bem("delete")} name='Delete'>
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
     </Modal>

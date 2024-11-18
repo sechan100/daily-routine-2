@@ -16,7 +16,7 @@ interface UseDrLeaf {
   view: DailyRoutineObsidianView;
   refresh: () => void;
 }
-export const {StoreProvider: UseLeafContextProvider, useStoreHook: useDrLeaf} = createStoreContext<UseDrLeafData, UseDrLeaf>((data, set, get) => ({
+export const [UseLeafProvider, useDrLeaf] = createStoreContext<UseDrLeafData, UseDrLeaf>((data, set, get) => ({
   leaf: data.leaf,
   view: data.leaf.view as DailyRoutineObsidianView,
   refresh: () => {
@@ -32,12 +32,12 @@ const AdapterComponent = ({ view }: { view: ReactView }) => {
   if(!show) return null;
   return (
     <StrictMode>
-      <UseLeafContextProvider data={{
+      <UseLeafProvider data={{
         leaf: view.leaf,
         setShow
-      }} onDataChange={() => {}}>
+      }}>
         {view.render()}
-      </UseLeafContextProvider>
+      </UseLeafProvider>
     </StrictMode>
   )
 }

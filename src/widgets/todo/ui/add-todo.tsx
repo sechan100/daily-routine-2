@@ -1,27 +1,25 @@
-/**
- * routine note에 새로운 todo task를 추가하는 모달을 열어주는 함수를 정의한다.
- * 모달 내부적으로 새로운 todo task에 대한 입력을 받고, 이를 note에 추가해준다.
- */
 /** @jsxImportSource @emotion/react */
 import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from "@entities/note";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { TextEditComponent } from "@shared/components/TextEditComponent";
 import { Button } from "@shared/components/Button";
 import { dr } from "@shared/daily-routine-bem";
+import { TaskOption } from "@features/task";
 
 
+const DEFAULT_TASK: TodoTask = {
+  checked: false,
+  name: "",
+  type: "todo",
+  showOnCalendar: true,
+}
 
 export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
+  const [ todo, setTodo ] = useState<TodoTask>(DEFAULT_TASK);
 
-  const [ todo, setTodo ] = useState<TodoTask>({
-    checked: false,
-    name: "",
-    type: "todo",
-    showOnCalendar: true,
-  });
 
   const onSave = useCallback(() => {
     if(todo.name.trim() === "") return;
@@ -35,21 +33,20 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const bem = useMemo(() => dr("add-todo-modal"), []);
   return (
     <Modal className={bem()} header="Add New Todo" modal={modal}>
-      <Modal.Section>
-        <Modal.Name>Name</Modal.Name>
-        <TextEditComponent 
-          value={todo.name} 
-          placeholder="New Today Todo"
-          onChange={(name) => setTodo({...todo, name})} 
-        />
-      </Modal.Section>
+      <Modal.Separator edge />
+
+      {/* name */}
+      <TaskOption.Name
+        value={todo.name}
+        onChange={(name) => setTodo({...todo, name})}
+        placeholder="New Today Todo"
+      />
       <Modal.Separator />
 
+      {/* save */}
       <Modal.Section>
         <Button
-          css={{
-            width: "100%"
-          }}
+          css={{ width: "100%" }}
           disabled={todo.name.trim() === ""}
           variant={todo.name.trim() === "" ? "disabled" : "accent"}
           onClick={onSave}

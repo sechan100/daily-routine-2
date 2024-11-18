@@ -10,10 +10,10 @@ import {
   createTransition,
 } from "react-dnd-multi-backend";
 import { Preview } from "react-dnd-preview";
-import { TaskPreview } from "./ui/TaskPreview";
-import { useDndScroll } from "./use-dnd-scroll";
+import { TaskPreview } from "./TaskPreview";
+import { useDndScroll } from "../hooks/use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
-import { DragItem } from "./hooks/use-task-dnd";
+import { DragItem } from "../hooks/use-task-dnd";
 
 
 

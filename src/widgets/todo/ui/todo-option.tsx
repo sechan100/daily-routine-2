@@ -9,8 +9,9 @@ import { dr } from '@shared/daily-routine-bem';
 import { openConfirmModal } from '@shared/components/modal/confirm-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from '@entities/note';
-import { rescheduleTodo } from "./reschedule-todo";
+import { rescheduleTodo } from "../model/reschedule-todo";
 import { Day } from "@shared/day";
+import { TaskOption } from "@features/task";
 
 
 
@@ -66,26 +67,30 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
 
   return (
     <Modal header='Todo Option' modal={modal}>
+      <Modal.Separator edge />
+
       {/* name */}
-      <Modal.Section className={bem("name")}>
-        <Modal.Name>Name</Modal.Name>
-        <TextEditComponent
-          value={todo.name}
-          onChange={name => setTodo({ ...todo, name,})}
-        />
-      </Modal.Section>
+      <TaskOption.Name 
+        value={todo.name}
+        onChange={name => setTodo({ ...todo, name,})}
+      />
       <Modal.Separator />
 
       {/* reschedule */}
-      <Modal.Section className={bem("reschedule")}>
-        <Modal.Name>Reschedule</Modal.Name>
+      <Modal.Section
+        className={bem("reschedule")}
+        name="Reschedule"
+      >
         <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "day"))}>Tomorrow</Button>
         <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "week"))}>Next Week</Button>
       </Modal.Section>
+      <Modal.Separator />
 
       {/* delete */}
-      <Modal.Section className={bem("delete")}>
-        <Modal.Name>Delete</Modal.Name>
+      <Modal.Section 
+        className={bem("delete")}
+        name="Delete"
+      >
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
     </Modal>

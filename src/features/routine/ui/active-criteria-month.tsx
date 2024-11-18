@@ -5,12 +5,11 @@ import clsx from "clsx";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Calendar from "react-calendar";
 import ReactDOM from "react-dom";
+import { RoutineProperties } from "@entities/routine";
 
 // TODO: BaseCalendar를 사용해서 리팩터링하기
 
-
-
-// base px
+// px
 const tileRadius = 20;
 
 const calendarCss = css({
@@ -55,34 +54,32 @@ const calendarCss = css({
 })
 
 
-
 interface MonthOptionProps {
-  daysOfMonth: number[];
-  setDaysOfMonth: (daysOfMonth: number[]) => void;
   className?: string;
+  daysOfMonth: number[];
+  setProperties: (properties: Partial<RoutineProperties>) => void;
 }
-export const MonthOption = ({ daysOfMonth, setDaysOfMonth, className }: MonthOptionProps) => {
+export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOptionProps) => {
 
-  // 매개변수로 날짜가 있다면 제거, 없다면 추가해주는 함수
   const toggleDay = useCallback((day: number) => {
     if(daysOfMonth.includes(day)){
-      setDaysOfMonth(daysOfMonth.filter(d => d !== day));
-    } else {
-      setDaysOfMonth([...daysOfMonth, day]);
+      setProperties({ daysOfMonth: daysOfMonth.filter(d => d !== day) });
+    } 
+    else {
+      setProperties({ daysOfMonth: [...daysOfMonth, day] });
     }
-  }, [daysOfMonth, setDaysOfMonth]);
+  }, [daysOfMonth, setProperties]);
 
-
-  const onLasyDayBtnClick = useCallback((_isActive: boolean) => {
+  const onLasyDayBtnClick = useCallback(() => {
     toggleDay(0);
   }, [toggleDay]);
 
 
-  // 날짜타일 클릭시 콜백
   const onClickDay = useCallback((v: Date, _e: React.MouseEvent<HTMLButtonElement>) => {
     const date = v.getDate();
     toggleDay(date);
   }, [toggleDay]);
+
 
   return (
     <div 
@@ -106,7 +103,6 @@ export const MonthOption = ({ daysOfMonth, setDaysOfMonth, className }: MonthOpt
     </div>
   )
 }
-
 
 
 interface CalendarTileProps { 
@@ -166,15 +162,12 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
   }, [calendarTileFlexCn]);
 
 
-
   const activeCn = useMemo(() => `${props.className}--active`, [props.className]);
   
-
   const onClick = useCallback((e: React.MouseEvent) => {
     props.onClick(!props.active);
     e.currentTarget.classList.toggle(activeCn);
   }, [activeCn, props]);
-
 
   
   if(!element) return null;

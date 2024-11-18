@@ -1,7 +1,7 @@
 import { RoutineTask as RoutineTaskEntity, Task, useRoutineNote } from "@entities/note";
 import { routineManager } from "@entities/routine";
-import { useRoutineOptionModal } from "@features/routine";
-import { AbstractTask } from "./ui/AbstractTask";
+import { useRoutineOptionModal } from "@widgets/routine";
+import { AbstractTask } from "./AbstractTask";
 import React, { useCallback, useEffect } from "react"
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
 

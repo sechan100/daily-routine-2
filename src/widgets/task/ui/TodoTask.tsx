@@ -1,7 +1,7 @@
 import { TodoTask as TodoTaskEntity, Task, useRoutineNote } from "@entities/note";
-import { AbstractTask } from "./ui/AbstractTask";
+import { AbstractTask } from "./AbstractTask";
 import React, { useCallback } from "react"
-import { useTodoOptionModal } from '@features/todo';
+import { useTodoOptionModal } from '@widgets/todo';
 
 
 interface TodoTaskProps {

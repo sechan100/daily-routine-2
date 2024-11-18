@@ -17,7 +17,7 @@ interface UseRoutineNote {
   setNote(day: Day): void;
 }
 
-export const { StoreProvider: UseRoutineNoteProvider, useStoreHook: useRoutineNote } = 
+export const [UseRoutineNoteProvider, useRoutineNote] = 
 createStoreContext<RoutineNote, UseRoutineNote>((note, set, get) => ({
   note: note,
 
