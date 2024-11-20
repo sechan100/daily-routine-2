@@ -8,7 +8,7 @@ import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine
 import { TaskOption } from '@features/task';
 import { Button } from '@shared/components/Button';
 import { dr } from '@shared/daily-routine-bem';
-import { openConfirmModal } from '@shared/components/modal/confirm-modal';
+import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { useRoutineNote } from '@entities/note';
@@ -54,28 +54,24 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
   })}, [modal, note, originalRoutine, routine, setNote]);
 
 
-  const onDeleteBtnClick = useCallback((e: React.MouseEvent) => {
-    const onConfirm = async () => {
-      routineManager.delete(routine.name);
-      new Notice(`Routine ${routine.name} deleted.`);
-
-      setNote({
-        ...note,
-        tasks: note.tasks.filter(task => task.name !== routine.name)
-      });
-
-      executeRoutineNotesSynchronize();
-      modal.closeWithoutOnClose();
-    }
-
-    openConfirmModal({
-      onConfirm,
-      className: bem("delete-confirm-modal"),
+  const onDeleteBtnClick = useCallback(async (e: React.MouseEvent) => {
+    const deleteConfirm = await doConfirm({
+      title: "Delete Routine",
       confirmText: "Delete",
       description: `Are you sure you want to delete '${routine.name}'?`,
       confirmBtnVariant: "destructive"
     })
-  }, [bem, modal, note, routine.name, setNote])
+    if(!deleteConfirm) return;
+    
+    routineManager.delete(routine.name);
+    new Notice(`Routine ${routine.name} deleted.`);
+    setNote({
+      ...note,
+      tasks: note.tasks.filter(task => task.name !== routine.name)
+    });
+    executeRoutineNotesSynchronize();
+    modal.closeWithoutOnClose();
+  }, [modal, note, routine.name, setNote])
 
   return (
     <Modal header='Routine Option' modal={modal}>

@@ -92,6 +92,9 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const onClick = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if(disableTouch.current) return;
     disableTouch.current = true;
+    
+    // HACK: 이유는 모르겠지만 이거 안하면 모바일 환경에서 모달이 열리자마다 닫혀버림.
+    e.preventDefault();
 
     const newNote = routineNoteService.checkTask(note, task, !task.checked);
     routineNoteArchiver

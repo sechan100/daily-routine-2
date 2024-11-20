@@ -1,17 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { Notice } from "obsidian";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
 import { Button } from '@shared/components/Button';
-import { TextEditComponent } from '@shared/components/TextEditComponent';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { dr } from '@shared/daily-routine-bem';
-import { openConfirmModal } from '@shared/components/modal/confirm-modal';
+import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from '@entities/note';
 import { rescheduleTodo } from "../model/reschedule-todo";
 import { Day } from "@shared/day";
 import { TaskOption } from "@features/task";
+import { TodoValidation, VALID_TODO_VALIDATION, todoValidator } from "@features/todo";
+
 
 
 
@@ -22,47 +23,63 @@ interface TodoOptionModalProps {
 }
 export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: TodoOptionModalProps) => {
   const bem = useMemo(() => dr("todo-option"), []);
-
   const { note, setNote } = useRoutineNote();
   const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
+  const validation = useMemo(() => {
+    const vs: TodoValidation[] = [
+      todoValidator.name(todo.name, { note, originalName }),
+    ];
+    const invalid = vs.find(v => !v.isValid);
+    return invalid ?? VALID_TODO_VALIDATION;
+  }, [note, originalName, todo.name]);
 
-  useEffect(() => {
-    modal.onClose(() => {
-      if(todo.name.trim() !== ""){
-        const newNote = routineNoteService.editTodoTask(note, originalName, todo);
-        setNote(newNote);
-      }
-    })
-  }, [modal, note, originalName, setNote, todo]);
+
+  // modal.onClose 정의
+  useEffect(() => modal.onClose(() => {
+    if(!validation.isValid) return;
+
+    if(originalName !== todo.name){
+      const newNote = routineNoteService.editTodoTask(note, originalName, todo);
+      setNote(newNote);
+    } 
+  }), [modal, note, originalName, setNote, todo, validation.isValid]);
 
 
   const onRescheduleBtnClick = useCallback(async (destDay: Day) => {
+    const rescheduleConfirm = await doConfirm({
+      title: "Res schedule Todo",
+      confirmText: "Reschedule",
+      description: `Are you sure you want to reschedule '${todo.name}' to ${destDay.getBaseFormat()}?`,
+      confirmBtnVariant: "accent",
+    })
+    if(!rescheduleConfirm) return;
+
     const todoDeletedNote = await rescheduleTodo(note, originalName, destDay);
     setNote(todoDeletedNote);
     new Notice(`Todo ${todo.name} rescheduled to ${destDay.getBaseFormat()}.`);
     modal.closeWithoutOnClose();
+
   }, [modal, note, originalName, setNote, todo.name]);
 
 
-  const onDeleteBtnClick = useCallback((e: React.MouseEvent) => {
-    const onConfirm = () => {
-      const deletedNote = routineNoteService.deleteTodoTask(note, originalName);
-      routineNoteArchiver.save(deletedNote);
-      setNote(deletedNote);
-      modal.closeWithoutOnClose();
-    new Notice(`Todo ${todo.name} deleted.`);
-    }
-
-    openConfirmModal({
-      onConfirm,
-      className: bem("delete-confirm-modal"),
+  const onDeleteBtnClick = useCallback(async(e: React.MouseEvent) => {
+    const deleteConfirm = await doConfirm({
+      title: "Delete Todo",
       confirmText: "Delete",
       description: `Are you sure you want to delete '${todo.name}'?`,
-      confirmBtnVariant: "destructive"
+      confirmBtnVariant: "destructive",
     })
-  }, [bem, modal, note, originalName, setNote, todo.name])
+    if(!deleteConfirm) return;
+
+    const deletedNote = routineNoteService.deleteTodoTask(note, originalName);
+    routineNoteArchiver.save(deletedNote);
+    setNote(deletedNote);
+    modal.closeWithoutOnClose();
+    new Notice(`Todo ${todo.name} deleted.`);
+
+  }, [modal, note, originalName, setNote, todo.name])
 
 
   return (
@@ -70,9 +87,10 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       <Modal.Separator edge />
 
       {/* name */}
-      <TaskOption.Name 
+      <TaskOption.Name
         value={todo.name}
-        onChange={name => setTodo({ ...todo, name,})}
+        onChange={name => setTodo(todo => ({ ...todo, name}))}
+        validation={validation}
       />
       <Modal.Separator />
 
@@ -81,9 +99,25 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
         className={bem("reschedule")}
         name="Reschedule"
       >
-        <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "day"))}>Tomorrow</Button>
-        <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "week"))}>Next Week</Button>
+        <div css={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "5px",
+          "& > button": {
+            fontSize: "0.9em",
+          }
+        }}>
+          <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "day"))}>Tomorrow</Button>
+          <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "week"))}>Next Week</Button>
+        </div>
       </Modal.Section>
+      <Modal.Separator />
+
+      {/* show on calendar */}
+      <TaskOption.ShowOnCalendar
+        value={todo.showOnCalendar}
+        onChange={(showOnCalendar) => setTodo(todo => ({...todo, showOnCalendar}))}
+      />
       <Modal.Separator />
 
       {/* delete */}

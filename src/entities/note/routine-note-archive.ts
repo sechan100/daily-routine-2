@@ -5,7 +5,7 @@ import { plugin } from "@shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";
 import { Day } from "@shared/day";
 import { FileNotFoundError } from "@shared/file/errors";
-import { openConfirmModal } from "@shared/components/modal/confirm-modal";
+import { doConfirm } from "@shared/components/modal/confirm-modal";
 
 
 
@@ -104,27 +104,23 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     const file = getRoutineNoteFile(routineNote.day);
   
     // 기존 파일이 있으면 업데이트
-    if (file) {
+    if(file) {
       await routineNoteArchiver.update(routineNote);
       return true;
     } else {
       // 사용자 확인 대기
-      const userConfirmed = await new Promise<boolean>((resolve) => {
-        openConfirmModal({
-          description: `Create note for ${routineNote.day.getBaseFormat()}?`,
-          confirmText: "Create",
-          confirmBtnVariant: "accent",
-          className: "dr-create-feature-note-confirm-modal",
-          onConfirm: () => resolve(true),
-          onCancel: () => resolve(false),
-        });
-      });
+      const isUserConfirmed = await doConfirm({
+        title: "Create Routine Note",
+        description: `Create note for ${routineNote.day.getBaseFormat()}?`,
+        confirmText: "Create",
+        confirmBtnVariant: "accent",
+      })
   
       // 사용자의 응답에 따라 처리
-      if(userConfirmed) {
+      if(isUserConfirmed) {
         await routineNoteArchiver.persist(routineNote);
       }
-      return userConfirmed;
+      return isUserConfirmed;
     }
   },
   

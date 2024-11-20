@@ -7,88 +7,102 @@ import { createRoot } from "react-dom/client";
 
 
 
-
 interface ConfirmModalOptions {
-  description: string;
-  onConfirm: () => void;
   confirmText: string;
+  title: string;
+  description: string;
+  
   confirmBtnVariant?: "primary" | "destructive" | "accent";
-  onCancel?: () => void;
   className?: string;
 }
 
-type WithModal<P> = P & { modal: Modal; }
+type ButtonsProps = Omit<ConfirmModalOptions, "title" & "description"> & { 
+  modal: Modal;
+  resolve: ConfirmResolve;
+}
+
+type ConfirmResolve = (value: boolean) => void;
 
 
-const ConfirmModalContentComponent = (props: WithModal<ConfirmModalOptions>) => {
-  const modal = props.modal;
+const ConfirmModalButtons = ({
+  confirmText,
+  modal,
+  confirmBtnVariant,
+  resolve,
+}: ButtonsProps) => {
 
   return (
     <div 
-      className={props.className}
       css={{
         display: "flex",
         fontSize: "0.9em",
         justifyContent: "space-between",
         alignItems: "center",
-        margin: "1em 0",
+        gap: "1em",
+        ".is-phone &": {
+          flexDirection: "column",
+          "button": {
+            width: "100%",
+          }
+        },
       }}
     >
-      <p>{props.description}</p>
-      <div css={`
-        & button {
-          margin-left: 1em;
-        }
-      `}>
-        <Button onClick={() => {
-          modal.close()
-        }}>Cancel</Button>
-        <Button 
-          variant={props.confirmBtnVariant} 
-          onClick={() => {
-            props.onConfirm();
-            modal.onClose = () => {};
-            modal.close();
-          }}
-        >
-          {props.confirmText}
-        </Button>
-      </div>
+      <Button
+        variant={confirmBtnVariant} 
+        onClick={() => {
+          resolve(true);
+          modal.onClose = () => {};
+          modal.close();
+        }}
+      >
+        {confirmText}
+      </Button>
+      <Button onClick={() => modal.close()}>
+        Cancel
+      </Button>
     </div>
   )
 }
 
-const createConfirmModal = (Component: React.FC<WithModal<ConfirmModalOptions>>, options: ConfirmModalOptions) => {
+const createConfirmModal = (options: ConfirmModalOptions, resolve: ConfirmResolve) => {
   const modal = new Modal(plugin().app);
+  
+  // modal container
+  modal.containerEl.addClass("mod-confirmation");
 
-  // React render
-  const fragment = document.createDocumentFragment();
-  const el = document.createElement('div');
-  el.addClass("dr-modal-root");
-  createRoot(el).render(
-    <Component {...options} modal={modal} />
-  )
-  fragment.appendChild(el);
-  modal.setContent(fragment);
-
-  // .modal-content style
-  modal.contentEl.setCssStyles({
-    display: "block",
-  })
-
+  // modal
+  modal.setTitle(options.title);
+  if(options.className) modal.modalEl.addClass(options.className);
   modal.modalEl.setCssStyles({
     width: "calc(var(--dialog-width))"
   })
 
-  modal.onClose = () => {
-    options.onCancel?.();
-  }
+  // modal button container
+  const modalButtonContainer = document.createElement("div");
+  modalButtonContainer.addClass("modal-button-container");
+  modal.modalEl.appendChild(modalButtonContainer);
+  createRoot(modalButtonContainer).render(
+    <ConfirmModalButtons {...options} modal={modal} resolve={resolve} />
+  )
+
+  // modal content
+  modal.contentEl.appendChild((() => {
+    const p = document.createElement("p");
+    p.setText(options.description);
+    return p;
+  })());
+  
+  modal.onClose = () => resolve(false);
 
   return modal;
 }
 
 
-export const openConfirmModal = (options: ConfirmModalOptions) => {
-  const modal = createConfirmModal(ConfirmModalContentComponent, options);
-  modal.open();
+export const doConfirm = async (options: ConfirmModalOptions): Promise<boolean> => {
+  const confirm = new Promise<boolean>(resolve => {
+    const modal = createConfirmModal(options, resolve);
+    modal.open();
+  });
+
+  return confirm;
 }
