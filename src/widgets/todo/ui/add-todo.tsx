@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from "@entities/note";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { Button } from "@shared/components/Button";
