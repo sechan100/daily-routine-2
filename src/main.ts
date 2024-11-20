@@ -5,6 +5,7 @@ import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } 
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from '@shared/view/activate-view';
 import { updateMomentConfig } from '@app/settings/moment-config';
+import { devRunner } from './dev-runner';
 
 
 export default class DailyRoutinePlugin extends Plugin {
@@ -37,6 +38,8 @@ export default class DailyRoutinePlugin extends Plugin {
       // @ts-ignore
       this.app.emulateMobile(!this.app.isMobile);
     });
+
+    devRunner();
   }
   
   onunload() {

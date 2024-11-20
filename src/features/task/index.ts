@@ -1,6 +1,8 @@
-import { Name } from "./ui/Name";
+import { Name } from "./ui/NameOption";
+import { ShowOnCalendar } from "./ui/ShowOnCalendar";
 
 
-export const TaskOption = Object.assign({}, {
-  Name
-});
+export const TaskOption = {
+  Name,
+  ShowOnCalendar
+};

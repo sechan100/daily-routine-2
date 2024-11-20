@@ -4,7 +4,7 @@ import { dr } from "@shared/daily-routine-bem";
 import { Button } from "@shared/components/Button";
 import { WeekOption } from "./active-criteria-week";
 import { MonthOption } from "./active-criteria-month";
-import { textStyle } from "@shared/components/font";
+import { TEXT_CSS } from "@shared/constants/text-style";
 import { Routine, RoutineProperties } from "@entities/routine";
 
 
@@ -22,7 +22,7 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
 
   const bem = useMemo(() => dr("active-criteria"), []);
   return (
-    <div className={bem("", className)}>
+    <div className={bem("", "", className)}>
       <header
         css={{
           display: "flex",
@@ -32,7 +32,7 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
         }}
         className={bem("header")}
       >
-        <div css={textStyle.medium}>Active Criteria</div>
+        <div css={TEXT_CSS.medium}>Active Criteria</div>
         <nav className={bem("nav")}>
           <Button
             css={{marginRight: "0.5em"}}

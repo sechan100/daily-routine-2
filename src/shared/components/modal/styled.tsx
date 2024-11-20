@@ -3,7 +3,7 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { textStyle } from '../font';
+import { TEXT_CSS } from '../../constants/text-style';
 import { useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 
@@ -38,7 +38,7 @@ const M = ({ header, className, children, modal }: ModalProps) => {
           ".is-phone &": {
             display: "none"
           },
-        }, textStyle.large, textStyle.bold]}
+        }, TEXT_CSS.large, TEXT_CSS.bold]}
       >
         {header}
       </header>
@@ -55,7 +55,7 @@ const Separator = ({ edge = false}: SeparatorProps) => {
     css={{
       height: edge ? 0 : "1px",
       backgroundColor: "var(--background-modifier-border)",
-      margin: edge ? "2em 0 0 0" : "2em 0",
+      margin: edge ? "1em 0 0 0" : "1em 0",
     }}
   />
 }
@@ -77,7 +77,7 @@ const Section = ({ className, name, children }: SectionProps) => {
         alignItems: "center",
       }}
     >
-      {name ? <div css={textStyle.medium}>{name}</div> : null}
+      {name ? <div css={TEXT_CSS.medium}>{name}</div> : null}
       {children}
     </section>
   )

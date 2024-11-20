@@ -18,8 +18,10 @@ import clsx from "clsx";
 interface TextEditComponentProps {
   value: string;
   onChange: (value: string) => void;
+
   onBlur?: (value: string) => void;
   width?: string;
+  focus?: boolean;
   className?: string;
   placeholder?: string;
 }
@@ -36,7 +38,7 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
     .onChange(props.onChange)
     .setPlaceholder(props.placeholder??"")
 
-    textComp.inputEl.focus();
+    if(props.focus) textComp.inputEl.focus();
     textComp.inputEl.onblur = () => {
       if(props.onBlur) props.onBlur(textComp.getValue());
     }
@@ -49,7 +51,7 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
   const bem = dr("text-edit");
   return (
     <div 
-      className={clsx(props.className, bem(""))}
+      className={bem("", "", props.className)}
       css={{
         width: props.width??"auto"
       }}
