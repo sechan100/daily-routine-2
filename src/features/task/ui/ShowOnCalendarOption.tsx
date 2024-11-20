@@ -3,16 +3,16 @@ import { TEXT_CSS } from "@shared/constants/text-style";
 import { ToggleComponent } from "@shared/components/ToggleComponent";
 
 
-interface ShowOnCalendarProps {
+interface ShowOnCalendarOptionProps {
   value: boolean;
   onChange: (ShowOnCalendar: boolean) => void;
   className?: string;
 }
-export const ShowOnCalendar = ({
+export const ShowOnCalendarOption = ({
   value,
   onChange,
   className
-}: ShowOnCalendarProps) => {
+}: ShowOnCalendarOptionProps) => {
   return (
     <div 
       css={{

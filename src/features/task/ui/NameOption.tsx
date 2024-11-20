@@ -4,7 +4,7 @@ import { TextEditComponent } from "@shared/components/TextEditComponent"
 import { useMemo } from "react";
 
 
-interface NameProps {
+interface NameOptionProps {
   value: string;
   onChange: (name: string) => void;
   validation?: {
@@ -14,13 +14,13 @@ interface NameProps {
   className?: string;
   placeholder?: string;
 }
-export const Name = ({
+export const NameOption = ({
   value,
   onChange,
   validation: p_validation,
   className,
   placeholder
-}: NameProps) => {
+}: NameOptionProps) => {
   const validation = useMemo(() => p_validation ?? { isValid: true, message: "" }, [p_validation]);
 
   return (

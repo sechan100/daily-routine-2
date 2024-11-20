@@ -36,15 +36,19 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
   }, [note, originalName, todo.name]);
 
 
-  // modal.onClose 정의
+  // modal.onClose시에 저장
   useEffect(() => modal.onClose(() => {
     if(!validation.isValid) return;
 
-    if(originalName !== todo.name){
+    const nameChanged = originalName !== todo.name;
+    const showOnCalendarChanged = propsTodo.showOnCalendar !== todo.showOnCalendar;
+
+    if(nameChanged || showOnCalendarChanged){
       const newNote = routineNoteService.editTodoTask(note, originalName, todo);
+      routineNoteArchiver.update(newNote);
       setNote(newNote);
-    } 
-  }), [modal, note, originalName, setNote, todo, validation.isValid]);
+    }
+  }), [modal, note, originalName, propsTodo.showOnCalendar, setNote, todo, validation.isValid]);
 
 
   const onRescheduleBtnClick = useCallback(async (destDay: Day) => {
@@ -74,7 +78,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     if(!deleteConfirm) return;
 
     const deletedNote = routineNoteService.deleteTodoTask(note, originalName);
-    routineNoteArchiver.save(deletedNote);
+    routineNoteArchiver.forceSave(deletedNote);
     setNote(deletedNote);
     modal.closeWithoutOnClose();
     new Notice(`Todo ${todo.name} deleted.`);

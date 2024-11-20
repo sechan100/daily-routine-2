@@ -1,8 +1,8 @@
-import { Name } from "./ui/NameOption";
-import { ShowOnCalendar } from "./ui/ShowOnCalendar";
+import { NameOption } from "./ui/NameOption";
+import { ShowOnCalendarOption } from "./ui/ShowOnCalendarOption";
 
 
 export const TaskOption = {
-  Name,
-  ShowOnCalendar
+  Name: NameOption,
+  ShowOnCalendar: ShowOnCalendarOption
 };

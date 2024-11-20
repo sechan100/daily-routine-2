@@ -33,7 +33,7 @@ interface RoutineNoteArchiver {
   /**
    * 이미 routine note가 존재한다면 update, 존재하지 않는다면 persist한다.
    */
-  save(routineNote: RoutineNote): Promise<void>;
+  forceSave(routineNote: RoutineNote): Promise<void>;
 
   /**
    * 기왕이면 update, persist를 사용하도록 하지만, 
@@ -91,7 +91,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     }
   },
 
-  async save(routineNote) {
+  async forceSave(routineNote) {
     const file = getRoutineNoteFile(routineNote.day);
     if(file){
       await routineNoteArchiver.update(routineNote);

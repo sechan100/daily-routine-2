@@ -14,7 +14,7 @@ export const rescheduleTodo = async (routineNote: RoutineNote, taskName: string,
   const todoTask = _t as TodoTask;
 
   const todoDeletedNote = routineNoteService.deleteTodoTask(routineNote, todoTask.name);
-  await routineNoteArchiver.save(todoDeletedNote);
+  await routineNoteArchiver.forceSave(todoDeletedNote);
 
   const destinationNote = (
     await routineNoteArchiver.load(newDay) 
@@ -23,7 +23,7 @@ export const rescheduleTodo = async (routineNote: RoutineNote, taskName: string,
   )
 
   const todoAddedNote = routineNoteService.addTodoTask(destinationNote, todoTask);
-  await routineNoteArchiver.save(todoAddedNote);
+  await routineNoteArchiver.forceSave(todoAddedNote);
 
   return todoDeletedNote;
 }

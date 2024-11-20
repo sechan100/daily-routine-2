@@ -26,7 +26,7 @@ interface RoutineNoteService {
   deleteTodoTask: (routineNote: RoutineNote, todoTaskName: string) => RoutineNote;
 
   // todo task를 수정한다.
-  editTodoTask: (routineNote: RoutineNote, todoTaskName: string, todoTask: TodoTask) => RoutineNote;
+  editTodoTask: (routineNote: RoutineNote, originalName: string, todoTask: TodoTask) => RoutineNote;
 }
 
 export const routineNoteService: RoutineNoteService = {
@@ -129,28 +129,27 @@ ${routineNote.tasks.map(task => {
     }
   },
 
-  editTodoTask(routineNote, todoTaskName, todoTask){
-    let newNote = routineNote;
-
-    // Name Change
-    const originalName = todoTaskName;
+  editTodoTask(routineNote, originalName, todoTask){
     const newName = todoTask.name;
-    if(routineNote.tasks.find(task => task.name === newName)) throw new Error("Duplicated task name");
-    newNote = {
-      ...routineNote,
-      tasks: routineNote.tasks.map(task => {
-        if(task.name === originalName){
-          return {
-            ...task,
-            ...todoTask,
-          }
-        } else {
-          return task;
-        }
-      })
+    if(originalName !== newName && routineNote.tasks.some(task => task.name === newName)){
+      throw new Error("Duplicated task name");
     }
 
-    return newNote;
+    const newTasks: Task[] = routineNote.tasks.map(task => {
+      if(task.name === originalName){
+        return {
+          ...task,
+          ...todoTask,
+        }
+      } else {
+        return task;
+      }
+    });
+
+    return {
+      ...routineNote,
+      tasks: newTasks
+    }
   }
   
 }

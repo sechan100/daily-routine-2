@@ -23,7 +23,9 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
     if(todo.name.trim() === "") return;
     const newNote = routineNoteService.addTodoTask(note, todo);
     setNote(newNote);
-    routineNoteArchiver.save(newNote);
+
+    // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
+    routineNoteArchiver.forceSave(newNote);
     modal.close();
   }, [todo, note, setNote, modal]);
 
