@@ -1,4 +1,4 @@
-import { routineManager, Routine } from "@entities/routine";
+import { routineService, Routine } from "@entities/routine";
 import { Day } from "@shared/day";
 import { RoutineNote, TaskCompletion, Task, TodoTask, TaskMetaData, RoutineTask } from "./types";
 
@@ -79,10 +79,10 @@ ${routineNote.tasks.map(task => {
   },
 
   async create(day){
-    const routines = await routineManager.getAllRoutines();
+    const routines = await routineService.getAllRoutines();
     const tasks = routines.flatMap(routine => {
-      if(routineManager.isRoutineDueTo(routine, day)){
-        return routineManager.deriveRoutineToTask(routine);
+      if(routineService.isRoutineDueTo(routine, day)){
+        return routineService.deriveRoutineToTask(routine);
       } 
       else {
         return [];

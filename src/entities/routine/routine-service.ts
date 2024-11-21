@@ -1,17 +1,16 @@
 import { TFile } from "obsidian";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { plugin } from "@shared/plugin-service-locator";
-import { RoutineFrontMatter } from "./front-matter";
-import { validateRoutineProperties } from "./types";
-import { Routine, RoutineProperties } from "./types";
+import { routineFrontMatterParser } from "./routine-frontmatter-parser";
+import { Routine, RoutineProperties } from "./routine";
 import { Day } from "@shared/day";
 import { RoutineTask } from "@entities/note";
 
 
-interface RoutineManager {
+interface RoutineService {
   /**
    * 모든 루틴들 가져오기
-   * routine properties의 order를 기준으로 정렬.
+   * orderBy: RoutineProperties.order
    */
   getAllRoutines(): Promise<Routine[]>;
 
@@ -31,7 +30,7 @@ interface RoutineManager {
   
   deriveRoutineToTask(routine: Routine): RoutineTask;
 }
-export const routineManager: RoutineManager = {
+export const routineService: RoutineService = {
 
   async getAllRoutines() {
     const path = getRoutineFolderPath();
@@ -53,13 +52,11 @@ export const routineManager: RoutineManager = {
     const file = fileAccessor.getFile(path);
 
     await fileAccessor.writeFrontMatter(file, (fm => {
-      if (!validateRoutineProperties(fm)) throw new Error('Invalid Routine frontmatter.');
-
-      const newProps = {
-        ...fm,
+      const old = routineFrontMatterParser.parse(fm);
+      return {
+        ...old,
         ...newPropertiesPatial
       };
-      return newProps;
     }));
   },
 
@@ -97,7 +94,7 @@ export const routineManager: RoutineManager = {
     for (const routineName of routineNames) {
       // 과거의 note를 편집할 때, 해당 루틴이 지금은 삭제된 루틴인 경우 이름을 찾을 수 없게됨.
       try {
-        const routine = await routineManager.get(routineName);
+        const routine = await routineService.get(routineName);
         routines.push(routine);
       } catch (ignore) {
         //
@@ -110,7 +107,7 @@ export const routineManager: RoutineManager = {
       // 더이상 오름차순을 체크할 필요없이 계속 할당만 해나간다.
       if (newOrder !== 0) {
         routine.properties.order = newOrder;
-        routineManager.editProperties(routine.name, { order: newOrder });
+        routineService.editProperties(routine.name, { order: newOrder });
         newOrder++;
         continue;
       }
@@ -169,10 +166,10 @@ export const routineManager: RoutineManager = {
 //////////////////////////////////////////////////////////////
 
 const serializeRoutine = (routine: Routine) => {
-  const properties = new RoutineFrontMatter(routine.properties);
+  const properties = routineFrontMatterParser.serialize(routine.properties);
   const content = "";
 
-  return `${properties.stringify()}\n${content}`;
+  return `${properties}\n${content}`;
 }
 
 
@@ -181,11 +178,11 @@ const parseRoutine = async (file: TFile): Promise<Routine> => {
   if(!fileContent) {
     throw new Error('Routine file is empty.');
   }
-  const fm = RoutineFrontMatter.fromContent(fileContent);
 
+  const properties = routineFrontMatterParser.deserialize(fileContent);
   return {
     name: file.name.replace('.md', ''),
-    properties: fm.properties
+    properties
   }
 }
 

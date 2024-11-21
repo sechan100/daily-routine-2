@@ -1,5 +1,5 @@
 import { RoutineTask as RoutineTaskEntity, Task } from "@entities/note";
-import { routineManager } from "@entities/routine";
+import { routineService } from "@entities/routine";
 import { useRoutineOptionModal } from "./routine-option";
 import { AbstractTask } from "@features/task";
 import React, { useCallback } from "react";
@@ -13,13 +13,13 @@ export const RoutineTask = React.memo(({ task }: RoutineTaskProps) => {
   const RoutineOptionModal = useRoutineOptionModal();
 
   const onOptionClick = useCallback(async () => {
-    const routine = await routineManager.get(task.name);
+    const routine = await routineService.get(task.name);
     RoutineOptionModal.open({ routine });
   }, [RoutineOptionModal, task.name])
 
   
   const onTaskReorder = useCallback(async (tasks: Task[]) => {
-    await routineManager.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
+    await routineService.reorder(tasks.filter(t => t.type === "routine").map(r => r.name))
     executeRoutineNotesSynchronize();
   }, [])
 

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { routineManager } from "@entities/routine";
+import { DEFAULT_ROUTINE, routineService } from "@entities/routine";
 import { Routine } from "@entities/routine";
 import { Notice } from "obsidian";
 import { Day } from "@shared/day";
@@ -16,16 +16,7 @@ import { TaskOption } from '@features/task';
 
 
 
-// getDaysOfWeek 때문에 lazy하게 만들어야해서 함수로 작성
-const getDefaultRoutine: () => Routine = () => ({
-  name: "",
-  properties: {
-    order: 0,
-    activeCriteria: "week",
-    daysOfWeek: Day.getDaysOfWeek(),
-    daysOfMonth: [],
-  }
-})
+// 이어하기: 위의 default 설정할 때, default properties를 한 곳에서 정의할 필요가 있겠다. ex) entities의 types라던가 아니면 default-routine.ts 파일이라던가
 
 
 interface StartRoutineModalProps {
@@ -33,19 +24,19 @@ interface StartRoutineModalProps {
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
   const { note, setNote } = useRoutineNote();
-  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, getDefaultRoutine());
+  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, DEFAULT_ROUTINE());
 
 
 
   const onSaveBtnClick = useCallback(async () => {
     try {
-      await routineManager.create(routine);
+      await routineService.create(routine);
       new Notice(`Routine '${routine.name}' started! 🎉`);
       // precond: routineManager.create 함수가 루틴을 반드시 맨 앞 순서에 만든다고 가정
       setNote({
         ...note,
         tasks: [
-          routineManager.deriveRoutineToTask(routine),
+          routineService.deriveRoutineToTask(routine),
           ...note.tasks
         ]
       })

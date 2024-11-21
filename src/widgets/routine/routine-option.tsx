@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { routineManager } from '@entities/routine';
+import { routineService } from '@entities/routine';
 import { Routine } from '@entities/routine';
 import { Notice } from "obsidian";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -32,7 +32,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
     let requeireSync = false;
 
     if(id !== routine.name && routine.name.trim() !== ""){
-      await routineManager.rename(id, routine.name);
+      await routineService.rename(id, routine.name);
       newNote.tasks.forEach(task => {
         if(task.name === id){
           task.name = routine.name;
@@ -41,10 +41,10 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
     }
 
     if(routine.properties !== originalRoutine.properties){
-      await routineManager.editProperties(id, routine.properties);
+      await routineService.editProperties(id, routine.properties);
       requeireSync = true;
       // precondition: 해당 노트에는 이미 해당 루틴이 존재했다고 가정하고, 루틴이 노트에서 빠지는 경우만 처리함
-      if(!routineManager.isRoutineDueTo(routine, note.day)){
+      if(!routineService.isRoutineDueTo(routine, note.day)){
         newNote.tasks = newNote.tasks.filter(task => task.name !== routine.name);
       }
     }
@@ -63,7 +63,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
     })
     if(!deleteConfirm) return;
     
-    routineManager.delete(routine.name);
+    routineService.delete(routine.name);
     new Notice(`Routine ${routine.name} deleted.`);
     setNote({
       ...note,
