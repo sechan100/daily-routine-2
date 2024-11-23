@@ -1,4 +1,4 @@
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { RoutineNote, TaskCompletion, Task, TodoTask, TaskMetaData } from "./types";
 import { Routine, RoutineService } from "@entities/routine";
 

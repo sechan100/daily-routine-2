@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { Navigation } from 'swiper/modules';
@@ -7,7 +7,9 @@ import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { useRoutineNote } from "@features/note";
 import { dr } from "@shared/daily-routine-bem";
-import { loadWeeks, Week } from "./week";
+import { loadWeeks } from "./load-weeks";
+import { Week } from "@shared/period/week";
+import { useLeaf } from "@shared/view/react-view";
 
 
 
@@ -24,6 +26,7 @@ export const WeeksWidget = ({ currentDay, currentDayPercentage, onDayClick, clas
   const swiperRef = useRef<SwiperRef>(null);
   const circleTransitionRef = useRef<boolean>(true);
   const setClientNote = useRoutineNote(s => s.setNote);
+  const { leafStyle } = useLeaf();
 
 
   // props로 받은 'currentDayPercentage'를 반영하기
@@ -170,14 +173,7 @@ export const WeeksWidget = ({ currentDay, currentDayPercentage, onDayClick, clas
                   alignItems: "stretch",
                   // gap: "0.3em",
                   flexWrap: "nowrap",
-                  
-                  // 겹쳤을 때, bg가 투명해서 겹쳐보이는 것을 방지
-                  ".workspace-tabs .workspace-leaf &": {
-                    backgroundColor: "var(--background-secondary)",
-                  },
-                  ".workspace-split.mod-root .view-content &": {
-                    backgroundColor: "var(--background-primary)",
-                  }
+                  backgroundColor: leafStyle.backgroundColor,
                 }}
               >
                 {week.map(({day, percentage}, idx) => {
@@ -209,7 +205,7 @@ export const WeeksWidget = ({ currentDay, currentDayPercentage, onDayClick, clas
                           right: "0",
                           bottom: "0",
                           borderRadius: "7px",
-                          background: "var(--background-primary)",
+                          background: leafStyle.backgroundColor,
                           opacity: "0.7",
                         },
                         "&.dr-weeks__day--current": {

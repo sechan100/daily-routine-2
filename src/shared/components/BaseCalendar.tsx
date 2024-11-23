@@ -1,16 +1,18 @@
 /** @jsxImportSource @emotion/react */
-import { Day } from "@shared/day";
-import Calendar from "react-calendar"
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
-import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
 import { css } from '@emotion/react';
+import { Day } from "@shared/period/day";
+import { Month } from "@shared/period/month";
+import { useLeaf } from '@shared/view/react-view';
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import Calendar from "react-calendar";
+import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
 
 
 
 
 export interface BaseCalendarProps {
-  day: Day;
-  setDay: Dispatch<SetStateAction<Day>>;
+  month: Month;
+  setMonth: Dispatch<SetStateAction<Month>>;
   tile: (day: Day) => JSX.Element;
   className?: string;
   onTileClick?: (day: Day) => void;
@@ -19,9 +21,9 @@ export interface BaseCalendarProps {
   tileDisabled?: (day: Day) => boolean;
 }
 export const BaseCalendar = ({ 
-  day, 
-  setDay,
-  className, 
+  month, 
+  setMonth,
+  className,
   tile, 
   onTileClick,
   showWeekdays,
@@ -34,7 +36,7 @@ export const BaseCalendar = ({
 
   const onChangeMonth = ({ activeStartDate }: OnArgs) => {
     if(!activeStartDate) return;
-    setDay(Day.fromJsDate(activeStartDate));
+    setMonth(Month.fromJsDate(activeStartDate));
   }
 
   const renderTileContent = useCallback(({ date, view }: { date: Date, view: string }) => {
@@ -58,7 +60,7 @@ export const BaseCalendar = ({
         className={className}
         css={calendarStyles}
         tileContent={renderTileContent}
-        defaultValue={day.getJsDate()}
+        defaultValue={month.startDay.getJsDate()}
         allowPartialRange={false}
         onActiveStartDateChange={onChangeMonth}
         selectRange={false}
@@ -75,6 +77,7 @@ interface BaseCalendarStylesProps {
   showWeekdays: boolean;
 }
 const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
+  const { leafStyle } = useLeaf();
   const calendarStyles = useMemo(() => css({
     // 네비게이션
     '.react-calendar__navigation': {
@@ -89,7 +92,7 @@ const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
       textAlign: 'center',
       padding: '10px 0',
   
-      // 개발 요일 글자 컨테이너
+      // 개별 요일 글자 컨테이너
       div: {
         // 실제 글자
         abbr: {
@@ -129,11 +132,11 @@ const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: 'var(--background-primary)',
+        backgroundColor: leafStyle.backgroundColor,
         opacity: 0.8,
       },
     }
-  }), []);
+  }), [leafStyle.backgroundColor]);
 
   return calendarStyles;
 }

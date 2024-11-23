@@ -3,7 +3,7 @@ import { RoutineNote } from "./types";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { plugin } from "@shared/plugin-service-locator";
 import { TAbstractFile, TFile } from "obsidian";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { FileNotFoundError } from "@shared/file/errors";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 

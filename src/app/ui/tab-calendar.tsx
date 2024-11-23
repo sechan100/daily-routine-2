@@ -1,33 +1,34 @@
-import { useTabRoute } from "@shared/use-tab-route";
-import { Day } from "@shared/day";
-import { useMemo } from "react";
 import { CalendarPage } from "@pages/calendar";
+import { Month } from "@shared/period/month";
+import { useTabRoute } from "@shared/use-tab-route";
+import { useMemo } from "react";
 
 
 
+// useTabRoute에서 받을 params의 타입
 interface CalendarTabRouteParams {
-  day: Day;
+  month: Month;
 }
 
 export const CalendarTab = () => {
   const { tab, routeParams } = useTabRoute();
 
   const params = useMemo<CalendarTabRouteParams>(() => {
-    if(routeParams){
+    if(tab === "calendar" && routeParams){
       const params = routeParams as CalendarTabRouteParams;
-      if(!params.day){
+      if(!params.month){
         throw new Error("Invalid CalendarTab tab routeParams.");
       }
       return params;
     } else {
-      return { day: Day.now() };
+      return { month: Month.now() };
     }
-  }, [routeParams]);
+  }, [routeParams, tab]);
 
   if(tab !== "calendar") return null;
   return (
     <>
-      <CalendarPage day={params.day} />
+      <CalendarPage month={params.month} />
     </>
   )
 }

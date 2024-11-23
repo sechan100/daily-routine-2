@@ -1,22 +1,15 @@
-import { NoteAchivementCalendar } from "@widgets/note-achivement"
-import { Day } from "@shared/day";
-
-
-
-
-
-
-
+import { Month } from "@shared/period/month";
+import { NoteAchivementCalendar } from "@widgets/note-achivement";
 
 
 export interface AchivementPageProps {
-  day: Day;
+  month: Month;
 }
-export const AchivementPage = ({ day }: AchivementPageProps) => {
+export const AchivementPage = ({ month }: AchivementPageProps) => {
 
   return (
     <>
-      <NoteAchivementCalendar day={day} />
+      <NoteAchivementCalendar month={month} />
     </>
   )
 }

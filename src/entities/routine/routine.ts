@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Day, DayOfWeek } from "@shared/day";
+import { Day, DayOfWeek } from "@shared/period/day";
 
 
 

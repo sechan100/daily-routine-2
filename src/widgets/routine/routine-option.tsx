@@ -1,19 +1,16 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineService, RoutineRepository } from '@entities/routine';
-import { Routine } from '@entities/routine';
-import { Notice } from "obsidian";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import React from "react";
+import { executeRoutineNotesSynchronize } from '@entities/note-synchronize';
+import { Routine, RoutineRepository, RoutineService } from '@entities/routine';
+import { useRoutineNote } from "@features/note";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { TaskOption } from '@features/task';
 import { Button } from '@shared/components/Button';
-import { dr } from '@shared/daily-routine-bem';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
-import { Modal } from '@shared/components/modal/styled';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
-import { useRoutineNote } from "@features/note";
-import { executeRoutineNotesSynchronize } from '@entities/note-synchronize';
-import { Task } from '@entities/note';
+import { Modal } from '@shared/components/modal/styled';
+import { dr } from '@shared/daily-routine-bem';
+import { Notice } from "obsidian";
+import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 
 
 interface RoutineOptionModalProps {

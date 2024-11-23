@@ -1,5 +1,5 @@
 import { moment } from "obsidian";
-import { plugin } from "./plugin-service-locator";
+import { plugin } from "../plugin-service-locator";
 
 
 

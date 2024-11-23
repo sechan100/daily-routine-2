@@ -1,5 +1,5 @@
 import { Routine } from "./routine";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { RoutineTask } from "@entities/note";
 
 

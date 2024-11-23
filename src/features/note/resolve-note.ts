@@ -1,6 +1,6 @@
 import { RoutineNote, NoteRepository, NoteService } from "@entities/note";
 import { RoutineRepository } from "@entities/routine";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 
 
 

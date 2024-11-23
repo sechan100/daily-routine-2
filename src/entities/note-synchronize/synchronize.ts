@@ -1,7 +1,7 @@
 import { RoutineNote, NoteRepository, NoteService } from "@entities/note";
 import { TaskCheckedStateNoteDep } from "./dependents/TaskCheckedStateNoteDep";
 import { TodoTaskNoteDep } from "./dependents/TodoTaskNoteDep";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { Routine, RoutineRepository } from "@entities/routine";
 
 

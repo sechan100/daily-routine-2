@@ -11,14 +11,17 @@ interface UseDrLeafData {
   leaf: WorkspaceLeaf;
   setShow: (show: boolean) => void;
 }
-interface UseDrLeaf {
+interface UseLeaf {
   leaf: WorkspaceLeaf;
   view: DailyRoutineObsidianView;
+  leafStyle: CSSStyleDeclaration;
   refresh: () => void;
 }
-export const [UseLeafProvider, useDrLeaf] = createStoreContext<UseDrLeafData, UseDrLeaf>((data, set, get) => ({
+export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => ({
   leaf: data.leaf,
   view: data.leaf.view as DailyRoutineObsidianView,
+  // @ts-ignore
+  leafStyle: getComputedStyle(data.leaf.containerEl),
   refresh: () => {
     data.setShow(false);
     setTimeout(() => data.setShow(true), 0);

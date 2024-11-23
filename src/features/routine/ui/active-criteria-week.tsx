@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback } from "react";
 import { Button } from "@shared/components/Button";
-import { DayOfWeek, Day } from "@shared/day";
+import { DayOfWeek, Day } from "@shared/period/day";
 import { RoutineProperties } from "@entities/routine";
 
 

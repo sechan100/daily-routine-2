@@ -1,16 +1,17 @@
 import { BaseCalendar } from "@shared/components/BaseCalendar"
-import { Day } from "@shared/day"
+import { Day } from "@shared/period/day"
 import { useCallback, useState } from "react";
 import { CalendarTile } from "./CalendarTile";
+import { Month } from "@shared/period/month";
 
 
 
 
-interface DrCalendarProps {
-  day: Day;
+interface CalendarWidgetProps {
+  month: Month;
 }
-export const CalendarWidget = ({ day: propsDay }: DrCalendarProps) => {
-  const [day, setDay] = useState(propsDay)
+export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
+  const [month, setMonth] = useState(propsMonth);
 
   const tile = useCallback((day: Day) => {
     return <CalendarTile day={day} />
@@ -18,8 +19,8 @@ export const CalendarWidget = ({ day: propsDay }: DrCalendarProps) => {
   
   return (
     <BaseCalendar
-      day={day}
-      setDay={setDay}
+      month={month}
+      setMonth={setMonth}
       tile={tile}
     />
   )

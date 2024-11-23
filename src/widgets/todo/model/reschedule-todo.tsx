@@ -1,6 +1,6 @@
 import { RoutineNote, NoteRepository, NoteService, Task, TodoTask } from "@entities/note";
 import { RoutineRepository } from "@entities/routine";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 
 /**
  * 특정 task의 수행을 다른 날짜로 재조정한다.

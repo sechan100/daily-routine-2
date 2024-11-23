@@ -8,7 +8,7 @@ import { Checkbox } from './Checkbox';
 import { TaskName } from './TaskName';
 import { DragItem } from '../hooks/use-task-dnd';
 import { plugin } from '@shared/plugin-service-locator';
-import { useDrLeaf } from '@shared/view/react-view';
+import { useLeaf } from '@shared/view/react-view';
 
 
 
@@ -24,7 +24,7 @@ export const TaskPreview = ({ item, style, backend }: TaskPreviewProps) => {
     currentOffset: monitor.getSourceClientOffset(),
   }));
 
-  const leaf = useDrLeaf();
+  const leaf = useLeaf();
 
   const previewStyle = useMemo<CSSProperties>(() => {
     if (!currentOffset) return { display: 'none' };

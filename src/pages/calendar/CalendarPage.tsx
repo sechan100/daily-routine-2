@@ -1,5 +1,5 @@
+import { Month } from "@shared/period/month";
 import { CalendarWidget } from "@widgets/calendar";
-import { Day } from "@shared/day";
 
 
 
@@ -10,13 +10,13 @@ import { Day } from "@shared/day";
 
 
 export interface CalendarPageProps {
-  day: Day;
+  month: Month;
 }
-export const CalendarPage = ({ day }: CalendarPageProps) => {
+export const CalendarPage = ({ month }: CalendarPageProps) => {
 
   return (
     <>
-      <CalendarWidget day={day} />
+      <CalendarWidget month={month} />
     </>
   )
 }

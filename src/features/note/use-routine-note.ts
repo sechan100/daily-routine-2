@@ -1,6 +1,6 @@
 import { RoutineNote } from "@entities/note";
 import { createStoreContext } from "@shared/zustand/create-store-context";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { resolveRoutineNote } from "./resolve-note";
 
 

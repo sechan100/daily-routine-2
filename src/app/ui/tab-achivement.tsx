@@ -1,33 +1,33 @@
-import { useTabRoute } from "@shared/use-tab-route";
-import { Day } from "@shared/day";
-import { useMemo } from "react";
 import { AchivementPage } from "@pages/achivement/AchivementPage";
+import { Month } from "@shared/period/month";
+import { useTabRoute } from "@shared/use-tab-route";
+import { useMemo } from "react";
 
 
-
+// useTabRoute에서 받을 params의 타입
 interface AchivementTabRouteParams {
-  day: Day;
+  month: Month;
 }
 
 export const AchivementTab = () => {
   const { tab, routeParams } = useTabRoute();
 
   const params = useMemo<AchivementTabRouteParams>(() => {
-    if(routeParams){
+    if(tab === "achivement" && routeParams){
       const params = routeParams as AchivementTabRouteParams;
-      if(!params.day){
+      if(!params.month){
         throw new Error("Invalid AchivementTab tab routeParams.");
       }
       return params;
     } else {
-      return { day: Day.now() };
+      return { month: Month.now() };
     }
-  }, [routeParams]);
+  }, [routeParams, tab]);
 
   if(tab !== "achivement") return null;
   return (
     <>
-      <AchivementPage day={params.day} />
+      <AchivementPage month={params.month} />
     </>
   )
 }

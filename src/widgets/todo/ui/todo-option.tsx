@@ -8,7 +8,7 @@ import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { dr } from '@shared/daily-routine-bem';
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { rescheduleTodo } from "../model/reschedule-todo";

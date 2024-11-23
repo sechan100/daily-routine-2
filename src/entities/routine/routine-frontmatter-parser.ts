@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getFrontMatterInfo, Notice, parseYaml, stringifyYaml } from "obsidian";
-import { Day, DayOfWeek } from "@shared/day";
+import { Day, DayOfWeek } from "@shared/period/day";
 import { keys } from "lodash";
 import { DEFAULT_ROUTINE, RoutineProperties } from "./routine";
 

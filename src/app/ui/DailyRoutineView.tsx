@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useCallback, useEffect } from "react";
-import { Day } from "@shared/day";
+import { Day } from "@shared/period/day";
 import { DrTabType, useTabRoute } from "@shared/use-tab-route";
 import "./style.css";
-import { useDrLeaf } from '@shared/view/react-view';
+import { useLeaf } from '@shared/view/react-view';
 import TabNav from '@mui/material/Tabs';
 import TabNavItem from '@mui/material/Tab';
 import { MUIThemeProvider } from './MUIThemProvider';
@@ -12,6 +12,7 @@ import { Icon } from "@shared/components/Icon";
 import { RouitneNoteTab } from "./tab-note";
 import { AchivementTab } from "./tab-achivement";
 import { CalendarTab } from "./tab-calendar";
+import { Month } from "@shared/period/month";
 
 const tabsHeight = "50px";
 const tabsBottomGap = "25px";
@@ -26,7 +27,7 @@ const tabCss = css({
 export const DailyRoutineView = () => {
   const { tab, route } = useTabRoute();
 
-  const { view } = useDrLeaf();
+  const { view } = useLeaf();
 
   useEffect(() => {
     view.contentEl.style.padding = "0";
@@ -34,8 +35,17 @@ export const DailyRoutineView = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onTabChange = useCallback((e: React.SyntheticEvent, tab: DrTabType) => {
-    const routeParams = { day: Day.now() };
-    route(tab, routeParams);
+    switch(tab){
+      case "note": 
+        route(tab, { day: Day.now() });
+        break;
+      case "achivement":
+        route(tab, { month: Month.now() });
+        break
+      case "calendar":
+        route(tab, { month: Month.now() });
+        break;
+    }
   }, [route]);
 
 
@@ -71,7 +81,7 @@ export const DailyRoutineView = () => {
           value={"note"} 
           icon={<Icon icon="notebook-pen" />} 
           iconPosition="start"
-          css={tabCss} 
+          css={tabCss}
         />
         <TabNavItem 
           label="Calendar" 
