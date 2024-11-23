@@ -65,10 +65,11 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
       <Modal.Separator />
 
       {/* show on calendar */}
-      {/* <TaskOption.ShowOnCalendar
-        value={routine.properties.}
-        onChange={(showOnCalendar) => setTodo({...todo, showOnCalendar})}
-      /> */}
+      <TaskOption.ShowOnCalendar
+        value={routine.properties.showOnCalendar}
+        onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
+      />
+      <Modal.Separator />
 
       {/* save */}
       <Modal.Section>

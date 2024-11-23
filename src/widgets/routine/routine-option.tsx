@@ -68,18 +68,29 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
   return (
     <Modal header='Routine Option' modal={modal}>
       <Modal.Separator edge />
+      
+      {/* name */}
       <TaskOption.Name
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
       />
       <Modal.Separator />
 
+      {/* active criteria */}
       <RoutineOption.ActiveCriteria 
         routine={routine} 
         setProperties={properties => dispatch({ type: "SET_PROPERTIES", payload: properties })} 
       />
       <Modal.Separator />
 
+      {/* show on calendar */}
+      <TaskOption.ShowOnCalendar
+        value={routine.properties.showOnCalendar}
+        onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
+      />
+      <Modal.Separator />
+
+      {/* delete */}
       <Modal.Section className={bem("delete")} name='Delete'>
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
