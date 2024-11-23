@@ -1,2 +1,2 @@
 export { useStartRoutineModal } from "./start-routine";
-export { RoutineTask } from "./RoutineTask";
+export { RoutineTaskWidget } from "./RoutineTaskWidget";

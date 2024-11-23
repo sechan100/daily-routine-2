@@ -1,41 +1,30 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote as RoutineNoteEntity, routineNoteService, routineNoteArchiver, UseRoutineNoteProvider, useRoutineNote } from '@entities/note';
-import { useStartRoutineModal } from "@widgets/routine";
-import { Weeks } from "@features/weeks";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Menu } from "obsidian";
+import { WeeksWidget } from "@widgets/weeks";
+import { TodoTaskWidget, useAddTodoModal } from '@widgets/todo';
+import { RoutineTaskWidget, useStartRoutineModal } from '@widgets/routine';
+import { UseRoutineNoteProvider, resolveRoutineNote, useRoutineNote } from "@features/note";
+import { TaskDndContext } from '@features/task';
+import { RoutineNote, NoteService } from '@entities/note';
 import { Day } from "@shared/day";
 import { dr } from "@shared/daily-routine-bem";
 import { MenuComponent } from "@shared/components/Menu";
-import { Menu } from "obsidian";
-import { TaskDndContext } from '@features/task';
-import { TodoTask } from '@widgets/todo';
-import { RoutineTask } from '@widgets/routine';
-import { useAddTodoModal } from '@widgets/todo';
 
 
 interface RoutineNoteProps {
   day: Day;
 }
-export const RoutineNote = ({ day }: RoutineNoteProps) => {
-  const [ note, setNote ] = useState<RoutineNoteEntity | null>(null);
-
+const RoutineNotePageContext = ({ day }: RoutineNoteProps) => {
+  const [ note, setNote ] = useState<RoutineNote | null>(null);
 
   useEffect(() => {
-    // note가 존재하면 가지고오고, 없으면 생성하고 저장은 하지 않고 반환한다. 다만, 생성한 노트가 오늘 노트라면 저장까지 해준다.
     (async () => {
-      let routineNote = await routineNoteArchiver.load(day);
-      if(!routineNote){
-        routineNote = await routineNoteService.create(day);
-        if(day.isToday()){
-          await routineNoteArchiver.persist(routineNote, false);
-        }
-      }
+      const routineNote = await resolveRoutineNote(day);
       setNote(routineNote);
     })(); 
   }, [day]);
 
-  
-  
   if(!note) return (<div>Loading...</div>);
   return (
     <UseRoutineNoteProvider 
@@ -44,15 +33,14 @@ export const RoutineNote = ({ day }: RoutineNoteProps) => {
         note: note
       })}
     >
-      <RoutineNotePage />
+      <PageComponent />
     </UseRoutineNoteProvider>
   );
 }
 
-
-const RoutineNotePage = () => {
+const PageComponent = () => {
   const note = useRoutineNote(n=>n.note);
-  const percentage = useMemo(() => routineNoteService.getTaskCompletion(note).percentageRounded, [note]);
+  const percentage = useMemo(() => NoteService.getTaskCompletion(note).percentageRounded, [note]);
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -90,7 +78,7 @@ const RoutineNotePage = () => {
         overflow: "hidden",
       }}
     >
-      <Weeks
+      <WeeksWidget
         className={bem("weeks")}
         currentDay={note.day}
         currentDayPercentage={percentage}
@@ -123,8 +111,8 @@ const RoutineNotePage = () => {
         <TaskDndContext>
           {note.tasks.map(task => {
             switch(task.type){
-              case "routine": return <RoutineTask key={task.name} task={task} />
-              case "todo": return <TodoTask key={task.name} task={task} />
+              case "routine": return <RoutineTaskWidget key={task.name} task={task} />
+              case "todo": return <TodoTaskWidget key={task.name} task={task} />
               default: task as never;
             }
           })}
@@ -135,3 +123,6 @@ const RoutineNotePage = () => {
     </div>
   );  
 }
+
+
+export const RoutineNotePage = RoutineNotePageContext;

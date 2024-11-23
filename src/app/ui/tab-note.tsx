@@ -1,5 +1,5 @@
 import { useTabRoute } from "@shared/use-tab-route";
-import { RoutineNote } from "@pages/routine-note";
+import { RoutineNotePage } from "@pages/routine-note";
 import { Day } from "@shared/day";
 import { useMemo } from "react";
 
@@ -27,7 +27,7 @@ export const RouitneNoteTab = () => {
   if(tab !== "note") return null;
   return (
     <>
-      <RoutineNote day={params.day} />
+      <RoutineNotePage day={params.day} />
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { NoteAchivementCalendar } from "@features/note-achivement"
+import { NoteAchivementCalendar } from "@widgets/note-achivement"
 import { Day } from "@shared/day";
 
 

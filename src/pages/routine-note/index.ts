@@ -1,1 +1,1 @@
-export { RoutineNote } from "./RoutineNotePage";
+export { RoutineNotePage } from "./RoutineNotePage";

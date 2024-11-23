@@ -7,7 +7,7 @@ import { useTodoOptionModal } from './todo-option';
 interface TodoTaskProps {
   task: TodoTaskEntity;
 }
-export const TodoTask = React.memo(({ task }: TodoTaskProps) => {
+export const TodoTaskWidget = React.memo(({ task }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
   
   const onOptionMenu = useCallback(async () => {

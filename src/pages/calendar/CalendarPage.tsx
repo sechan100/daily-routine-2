@@ -1,4 +1,4 @@
-import { DrCalendar } from "@features/calendar";
+import { CalendarWidget } from "@widgets/calendar";
 import { Day } from "@shared/day";
 
 
@@ -16,7 +16,7 @@ export const CalendarPage = ({ day }: CalendarPageProps) => {
 
   return (
     <>
-      <DrCalendar day={day} />
+      <CalendarWidget day={day} />
     </>
   )
 }

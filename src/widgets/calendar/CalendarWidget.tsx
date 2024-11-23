@@ -9,7 +9,7 @@ import { CalendarTile } from "./CalendarTile";
 interface DrCalendarProps {
   day: Day;
 }
-export const DrCalendar = ({ day: propsDay }: DrCalendarProps) => {
+export const CalendarWidget = ({ day: propsDay }: DrCalendarProps) => {
   const [day, setDay] = useState(propsDay)
 
   const tile = useCallback((day: Day) => {

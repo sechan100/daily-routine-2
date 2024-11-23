@@ -1,4 +1,4 @@
-import { routineNoteService } from "./routine-note-service";
+import { NoteService } from "./routine-note-service";
 import { RoutineNote } from "./types";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { plugin } from "@shared/plugin-service-locator";
@@ -9,7 +9,7 @@ import { doConfirm } from "@shared/components/modal/confirm-modal";
 
 
 
-interface RoutineNoteArchiver {
+interface NoteRepository {
   // day에 해당하는 RoutineNote를 archive에서 가져온다. 
   load(day: Day): Promise<RoutineNote | null>;
 
@@ -47,7 +47,7 @@ interface RoutineNoteArchiver {
   delete(day: Day): Promise<void>;
 }
 
-export const routineNoteArchiver: RoutineNoteArchiver = {
+export const NoteRepository: NoteRepository = {
 
   load(day: Day){
     const file = getRoutineNoteFile(day);
@@ -75,7 +75,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
     const file = getRoutineNoteFile(routineNote.day);
     if(!file){
       const path = getRoutineArchivePath(routineNote.day.getBaseFormat());
-      const content = routineNoteService.serialize(routineNote);
+      const content = NoteService.serialize(routineNote);
       await fileAccessor.createFile(path, content);
     } else {
       if(strict) throw new Error('RoutineNote already exists.');
@@ -85,7 +85,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
   async update(routineNote, strict = true) {
     const file = getRoutineNoteFile(routineNote.day);
     if(file){
-      await fileAccessor.writeFile(file, () => routineNoteService.serialize(routineNote));
+      await fileAccessor.writeFile(file, () => NoteService.serialize(routineNote));
     } else {
       if(strict) throw new Error('RoutineNote does not exist.');
     }
@@ -94,9 +94,9 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
   async forceSave(routineNote) {
     const file = getRoutineNoteFile(routineNote.day);
     if(file){
-      await routineNoteArchiver.update(routineNote);
+      await NoteRepository.update(routineNote);
     } else {
-      await routineNoteArchiver.persist(routineNote);
+      await NoteRepository.persist(routineNote);
     }
   },
 
@@ -105,7 +105,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
   
     // 기존 파일이 있으면 업데이트
     if(file) {
-      await routineNoteArchiver.update(routineNote);
+      await NoteRepository.update(routineNote);
       return true;
     } else {
       // 사용자 확인 대기
@@ -118,7 +118,7 @@ export const routineNoteArchiver: RoutineNoteArchiver = {
   
       // 사용자의 응답에 따라 처리
       if(isUserConfirmed) {
-        await routineNoteArchiver.persist(routineNote);
+        await NoteRepository.persist(routineNote);
       }
       return isUserConfirmed;
     }
@@ -154,7 +154,7 @@ const getRoutineNoteFile = (day: Day): TFile | null => {
 const parseFile = async (file: TFile): Promise<RoutineNote> => {
   const content = await fileAccessor.readFileAsReadonly(file);
   if(!content) throw new Error('RoutineNote file is empty.');
-  return routineNoteService.deserialize(Day.fromString(file.basename), content);
+  return NoteService.deserialize(Day.fromString(file.basename), content);
 }
 
 

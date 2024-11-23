@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, routineNoteArchiver, routineNoteService, Task as TaskEntity } from '@entities/note';
+import { RoutineNote, NoteRepository, NoteService, Task as TaskEntity } from '@entities/note';
 import React, { useCallback, useMemo, useRef, useState } from "react"
-import { useRoutineNote } from "@entities/note";
+import { useRoutineNote } from "@features/note";
 import _ from "lodash";
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/daily-routine-bem';
@@ -35,10 +35,6 @@ const taskHeight = "2.5em";
 
 interface TaskProps<T extends TaskEntity> {
   className?: string;
-
-  /**
-   * task 객체가 변경되어야 리렌더링이 된다.
-   */
   task: T;
 
   /**
@@ -47,8 +43,8 @@ interface TaskProps<T extends TaskEntity> {
   onOptionMenu: (task: T) => void;
 
   /**
-   * task가 속한 note가 과거(어제, 또는 더 과거)인 경우에 note를 save해준다.
-   * 만약 미래의 노트인 경우 따로 해당 콜백에서 이벤트를 발행하여, feature-note-updater에게 처리를 위임할 필요가 있다.
+   * 순서를 조정하고, 이를 현재 보고있는 note에 반영하는 로직은 내부적으로 담당한다.
+   * 그 외에 이를 기반으로 실제 routine들의 순서를 업데이트하는 등의 로직은 해당 콜백으로 실행해야한다.
    */
   onTaskReorder?: (tasks: TaskEntity[]) => void;
 
@@ -66,10 +62,9 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
   const { setNote, note } = useRoutineNote();
 
   const onTaskDrop = useCallback<(newNote: RoutineNote, droped: T) => void>((note, droped) => {
-    routineNoteArchiver.update(note, false);
+    NoteRepository.update(note, false);
     onTaskReorder?.(note.tasks);
   }, [onTaskReorder])
-
 
   const { isDragging } = useTaskDnd({ task, taskRef, handleRef, onTaskDrop });
 
@@ -96,8 +91,8 @@ export const AbstractTask = React.memo(<T extends TaskEntity>({ className, task,
     // HACK: 이유는 모르겠지만 이거 안하면 모바일 환경에서 모달이 열리자마다 닫혀버림.
     e.preventDefault();
 
-    const newNote = routineNoteService.checkTask(note, task, !task.checked);
-    routineNoteArchiver
+    const newNote = NoteService.checkTask(note, task, !task.checked);
+    NoteRepository
       .saveOnUserConfirm(newNote)
       .then(isUpdated => {
         if(isUpdated) setNote(newNote);

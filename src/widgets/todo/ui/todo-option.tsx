@@ -1,20 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { Notice } from "obsidian";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import React from "react";
-import { Button } from '@shared/components/Button';
-import { createModal, ModalApi } from '@shared/components/modal/create-modal';
-import { dr } from '@shared/daily-routine-bem';
-import { doConfirm } from '@shared/components/modal/confirm-modal';
-import { Modal } from '@shared/components/modal/styled';
-import { routineNoteArchiver, routineNoteService, TodoTask, useRoutineNote } from '@entities/note';
-import { rescheduleTodo } from "../model/reschedule-todo";
-import { Day } from "@shared/day";
+import { NoteRepository, NoteService, TodoTask } from '@entities/note';
+import { useRoutineNote } from '@features/note';
 import { TaskOption } from "@features/task";
-import { TodoValidation, VALID_TODO_VALIDATION, todoValidator } from "@features/todo";
-
-
-
+import { TodoValidation, todoValidator, VALID_TODO_VALIDATION } from "@features/todo";
+import { Button } from '@shared/components/Button';
+import { doConfirm } from '@shared/components/modal/confirm-modal';
+import { createModal, ModalApi } from '@shared/components/modal/create-modal';
+import { Modal } from '@shared/components/modal/styled';
+import { dr } from '@shared/daily-routine-bem';
+import { Day } from "@shared/day";
+import { Notice } from "obsidian";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { rescheduleTodo } from "../model/reschedule-todo";
 
 
 interface TodoOptionModalProps {
@@ -44,8 +41,8 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     const showOnCalendarChanged = propsTodo.showOnCalendar !== todo.showOnCalendar;
 
     if(nameChanged || showOnCalendarChanged){
-      const newNote = routineNoteService.editTodoTask(note, originalName, todo);
-      routineNoteArchiver.update(newNote);
+      const newNote = NoteService.editTodoTask(note, originalName, todo);
+      NoteRepository.update(newNote);
       setNote(newNote);
     }
   }), [modal, note, originalName, propsTodo.showOnCalendar, setNote, todo, validation.isValid]);
@@ -77,8 +74,8 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     })
     if(!deleteConfirm) return;
 
-    const deletedNote = routineNoteService.deleteTodoTask(note, originalName);
-    routineNoteArchiver.forceSave(deletedNote);
+    const deletedNote = NoteService.deleteTodoTask(note, originalName);
+    NoteRepository.forceSave(deletedNote);
     setNote(deletedNote);
     modal.closeWithoutOnClose();
     new Notice(`Todo ${todo.name} deleted.`);

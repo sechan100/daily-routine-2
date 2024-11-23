@@ -5,7 +5,7 @@ import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
-import { useRoutineNote } from '@entities/note';
+import { useRoutineNote } from "@features/note";
 import { dr } from "@shared/daily-routine-bem";
 import { loadWeeks, Week } from "./week";
 
@@ -18,7 +18,7 @@ interface WeeksProps {
   onDayClick?: (day: Day, event?: React.MouseEvent) => void;
   className?: string;
 }
-export const Weeks = ({ currentDay, currentDayPercentage, onDayClick, className }: WeeksProps) => {
+export const WeeksWidget = ({ currentDay, currentDayPercentage, onDayClick, className }: WeeksProps) => {
   const [ weeks, setWeeks ] = useState<{day:Day, percentage:number}[][]>([]);
   const currentWeek = useMemo(() => new Week(currentDay), [currentDay]);
   const swiperRef = useRef<SwiperRef>(null);

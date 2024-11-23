@@ -3,7 +3,6 @@ import { Day, DayOfWeek } from "@shared/day";
 
 
 
-
 export interface Routine {
   name: string; // 루틴 파일 제목 겸 루틴 내용
   properties: RoutineProperties; // 루틴 파일의 프로퍼티

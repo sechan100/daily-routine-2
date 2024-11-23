@@ -1,1 +1,0 @@
-export { DrCalendar } from "./DrCalendar"

@@ -1,18 +1,15 @@
 /** @jsxImportSource @emotion/react */
-import { DEFAULT_ROUTINE, routineService } from "@entities/routine";
-import { Routine } from "@entities/routine";
-import { Notice } from "obsidian";
-import { Day } from "@shared/day";
-import { useCallback, useMemo, useReducer } from "react";
-import { createModal } from "@shared/components/modal/create-modal";
-import { dr } from "@shared/daily-routine-bem";
-import { Modal } from "@shared/components/modal/styled";
-import { ModalApi } from "@shared/components/modal/create-modal";
-import { Button } from "@shared/components/Button";
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { useRoutineNote } from "@entities/note";
+import { DEFAULT_ROUTINE, RoutineRepository, RoutineService } from "@entities/routine";
+import { useRoutineNote } from "@features/note";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { TaskOption } from '@features/task';
+import { Button } from "@shared/components/Button";
+import { createModal, ModalApi } from "@shared/components/modal/create-modal";
+import { Modal } from "@shared/components/modal/styled";
+import { dr } from "@shared/daily-routine-bem";
+import { Notice } from "obsidian";
+import { useCallback, useMemo, useReducer } from "react";
 
 
 
@@ -26,17 +23,15 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
   const { note, setNote } = useRoutineNote();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, DEFAULT_ROUTINE());
 
-
-
   const onSaveBtnClick = useCallback(async () => {
     try {
-      await routineService.create(routine);
+      await RoutineRepository.persist(routine);
       new Notice(`Routine '${routine.name}' started! 🎉`);
       // precond: routineManager.create 함수가 루틴을 반드시 맨 앞 순서에 만든다고 가정
       setNote({
         ...note,
         tasks: [
-          routineService.deriveRoutineToTask(routine),
+          RoutineService.deriveRoutineToTask(routine),
           ...note.tasks
         ]
       })

@@ -1,7 +1,8 @@
 
 /** @jsxImportSource @emotion/react */
-import { useRoutineNote, RoutineNote, Task } from "@entities/note";
-import { useRef, useCallback, useEffect, RefObject, useState } from "react";
+import { RoutineNote, Task } from "@entities/note";
+import { useRoutineNote } from "@features/note";
+import { useRef, useCallback, useEffect, RefObject } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
 import { useDrLeaf } from "@shared/view/react-view";
 

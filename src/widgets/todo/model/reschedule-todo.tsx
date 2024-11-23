@@ -1,4 +1,5 @@
-import { RoutineNote, routineNoteArchiver, routineNoteService, Task, TodoTask } from "@entities/note";
+import { RoutineNote, NoteRepository, NoteService, Task, TodoTask } from "@entities/note";
+import { RoutineRepository } from "@entities/routine";
 import { Day } from "@shared/day";
 
 /**
@@ -13,17 +14,17 @@ export const rescheduleTodo = async (routineNote: RoutineNote, taskName: string,
   if(!_t || _t.type !== "todo") return routineNote;
   const todoTask = _t as TodoTask;
 
-  const todoDeletedNote = routineNoteService.deleteTodoTask(routineNote, todoTask.name);
-  await routineNoteArchiver.forceSave(todoDeletedNote);
+  const todoDeletedNote = NoteService.deleteTodoTask(routineNote, todoTask.name);
+  await NoteRepository.forceSave(todoDeletedNote);
 
   const destinationNote = (
-    await routineNoteArchiver.load(newDay) 
+    await NoteRepository.load(newDay) 
     ??
-    await routineNoteService.create(newDay)
+    await NoteService.setLoaderForCreateAsync(RoutineRepository.loadAll)(newDay)
   )
 
-  const todoAddedNote = routineNoteService.addTodoTask(destinationNote, todoTask);
-  await routineNoteArchiver.forceSave(todoAddedNote);
+  const todoAddedNote = NoteService.addTodoTask(destinationNote, todoTask);
+  await NoteRepository.forceSave(todoAddedNote);
 
   return todoDeletedNote;
 }

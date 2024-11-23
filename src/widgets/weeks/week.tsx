@@ -1,4 +1,4 @@
-import { routineNoteArchiver, routineNoteService } from "@entities/note";
+import { NoteRepository, NoteService } from "@entities/note";
 import { Day } from "@shared/day";
 
 
@@ -44,11 +44,11 @@ export const loadWeeks: LoadWeeks = async (week, { prev, next } = { prev: 0, nex
   const startDay = startWeek.startDay;
   const endWeek = week.add(next);
   const endDay = endWeek.endDay;
-  const realNotes = await routineNoteArchiver.loadBetween(startDay, endDay);
+  const realNotes = await NoteRepository.loadBetween(startDay, endDay);
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
   const dayNodes: DayNode[] = realNotes.map(note => ({
     day: note.day,
-    percentage: routineNoteService.getTaskCompletion(note).percentageRounded
+    percentage: NoteService.getTaskCompletion(note).percentageRounded
   }))  
   dayNodes.sort((a, b) => a.day.isBefore(b.day) ? -1 : 1);
 

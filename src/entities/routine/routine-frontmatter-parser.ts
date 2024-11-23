@@ -12,7 +12,7 @@ interface RoutineFrontMatterParser {
   serialize(properties: RoutineProperties): string;
 }
 
-export const routineFrontMatterParser: RoutineFrontMatterParser = {
+export const RoutineFrontMatterParser: RoutineFrontMatterParser = {
 
   parse(frontmatter: any): RoutineProperties {
     const fm = (() => {
@@ -87,7 +87,7 @@ export const routineFrontMatterParser: RoutineFrontMatterParser = {
     }
     const yaml = fmInfo.frontmatter.replace('---', '').trim()
     const fm = parseYaml(yaml);
-    return routineFrontMatterParser.parse(fm);
+    return RoutineFrontMatterParser.parse(fm);
   },
 
   serialize: (properties: RoutineProperties): string => {

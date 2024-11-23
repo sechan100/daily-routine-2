@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { routineNoteArchiver, RoutineNote, routineNoteService } from '@entities/note';
+import { NoteRepository, RoutineNote, NoteService } from '@entities/note';
 import { Day } from "@shared/day";
 import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { BaseCalendar } from '@shared/components/BaseCalendar';
@@ -21,7 +21,7 @@ export const NoteAchivementCalendar = ({ day: propsDay }: NoteAchivementCalendar
   useEffect(() => {
     const start = new Day(day.moment.startOf("month"));
     const end = new Day(day.moment.endOf("month"));
-    routineNoteArchiver.loadBetween(start, end)
+    NoteRepository.loadBetween(start, end)
     .then(notes => {
       setRoutineNotes(notes)
     });
@@ -33,7 +33,7 @@ export const NoteAchivementCalendar = ({ day: propsDay }: NoteAchivementCalendar
     if(routineNotes){
       const routineNote = routineNotes.find(note => note.day.isSameDay(tileDay));
       if(routineNote){
-        const completion = routineNoteService.getTaskCompletion(routineNote);
+        const completion = NoteService.getTaskCompletion(routineNote);
         percent = completion.percentageRounded;
       }
     }

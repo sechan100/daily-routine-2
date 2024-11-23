@@ -1,35 +1,32 @@
-import { routineService, Routine } from "@entities/routine";
 import { Day } from "@shared/day";
-import { RoutineNote, TaskCompletion, Task, TodoTask, TaskMetaData, RoutineTask } from "./types";
+import { RoutineNote, TaskCompletion, Task, TodoTask, TaskMetaData } from "./types";
+import { Routine, RoutineService } from "@entities/routine";
 
 
-interface RoutineNoteService {
-  // 루틴 노트의 성취도를 계산한다.
-  getTaskCompletion: (routineNote: RoutineNote) => TaskCompletion;
+interface NoteService {
+  getTaskCompletion(routineNote: RoutineNote): TaskCompletion;
 
-  // 루틴 노트를 문자열로 변환한다.
-  serialize: (routineNote: RoutineNote) => string;
+  serialize(routineNote: RoutineNote): string;
 
-  // 문자열을 루틴 노트로 변환한다.
-  deserialize: (day: Day, content: string) => RoutineNote;
+  deserialize(day: Day, content: string): RoutineNote;
 
-  // 새로운 루틴 노트를 생성한다. 
-  create: (day: Day) => Promise<RoutineNote>;
+  /**
+   * @param loader curring을 통해서 loader에 대한 의존을 주입한다.
+   * 이 때, loader가 반환하는 routine들은 적절한 평가를 거쳐서 최종 RoutineNote 데이터에 반영된다.
+   */
+  setLoaderForCreateAsync(loader: () => Promise<Routine[]>): (day: Day) => Promise<RoutineNote>;
+  setLoaderForCreate(loader: () => Routine[]): (day: Day) => RoutineNote;
 
-  // 특정 task를 check한다.
-  checkTask: (routineNote: RoutineNote, task: Task, checked: boolean) => RoutineNote;
+  checkTask(routineNote: RoutineNote, task: Task, checked: boolean): RoutineNote;
 
-  // todo task를 추가한다.
-  addTodoTask: (routineNote: RoutineNote, todoTask: TodoTask) => RoutineNote;
+  addTodoTask(routineNote: RoutineNote, todoTask: TodoTask): RoutineNote;
 
-  // todo task를 제거한다.
-  deleteTodoTask: (routineNote: RoutineNote, todoTaskName: string) => RoutineNote;
+  deleteTodoTask(routineNote: RoutineNote, todoTaskName: string): RoutineNote;
 
-  // todo task를 수정한다.
-  editTodoTask: (routineNote: RoutineNote, originalName: string, todoTask: TodoTask) => RoutineNote;
+  editTodoTask(routineNote: RoutineNote, originalName: string, todoTask: TodoTask): RoutineNote;
 }
 
-export const routineNoteService: RoutineNoteService = {
+export const NoteService: NoteService = {
   getTaskCompletion(routineNote){
     const total = routineNote.tasks.length;
     const completed = routineNote.tasks.filter(task => task.checked).length;
@@ -78,11 +75,11 @@ ${routineNote.tasks.map(task => {
     };
   },
 
-  async create(day){
-    const routines = await routineService.getAllRoutines();
+  setLoaderForCreate: (loader) => (day) => {
+    const routines = loader();
     const tasks = routines.flatMap(routine => {
-      if(routineService.isRoutineDueTo(routine, day)){
-        return routineService.deriveRoutineToTask(routine);
+      if(RoutineService.isRoutineDueTo(routine, day)){
+        return RoutineService.deriveRoutineToTask(routine);
       } 
       else {
         return [];
@@ -92,6 +89,11 @@ ${routineNote.tasks.map(task => {
       day: day,
       tasks: tasks
     };
+  },
+
+  setLoaderForCreateAsync: (loader) => async (day) => {
+    const routines = await loader();
+    return NoteService.setLoaderForCreate(() => routines)(day);
   },
 
   checkTask(routineNote, task, checked){
