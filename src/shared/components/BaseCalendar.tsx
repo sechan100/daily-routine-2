@@ -34,10 +34,10 @@ export const BaseCalendar = ({
     showWeekdays: showWeekdays ?? true,
   })
 
-  const onChangeMonth = ({ activeStartDate }: OnArgs) => {
+  const onChangeMonth = useCallback(({ activeStartDate }: OnArgs) => {
     if(!activeStartDate) return;
     setMonth(Month.fromJsDate(activeStartDate));
-  }
+  }, [setMonth]);
 
   const renderTileContent = useCallback(({ date, view }: { date: Date, view: string }) => {
     if (view !== "month") return null;

@@ -1,15 +1,21 @@
-import { Day } from "@shared/period/day"
+import { Tile } from "./model/types"
 
 
 
 interface CalendarTileProps {
-  day: Day;
+  tile: Tile;
 }
-export const CalendarTile = ({ day }: CalendarTileProps) => {
+export const CalendarTile = ({ tile }: CalendarTileProps) => {
+
   
   return (
     <div>
-      {day.getDate().toString()}
+      {tile.day.getDate()}일
+      {tile.tasks.map(task => (
+        <div key={task.name}>
+          {task.name}
+        </div>
+      ))}
     </div>
   )
 }

@@ -70,7 +70,7 @@ ${routineNote.tasks.map(task => {
     });
 
     return {
-      day,
+      day: day.clone(),
       tasks
     };
   },
@@ -86,7 +86,7 @@ ${routineNote.tasks.map(task => {
       }
     });
     return {
-      day: day,
+      day: day.clone(),
       tasks: tasks
     };
   },

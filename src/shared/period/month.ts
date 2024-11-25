@@ -17,12 +17,20 @@ export class Month {
     return new Month(Day.now());
   }
 
+  clone() {
+    return new Month(this.#startDay.clone());
+  }
+
   get startDay() {
     return this.#startDay;
   }
 
   get endDay() {
     return this.#startDay.clone(m => m.endOf("month"));
+  }
+
+  getMonth(){
+    return this.#startDay.getMonth();
   }
 
   add(amount: number) {

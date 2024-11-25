@@ -65,8 +65,16 @@ export class Day {
     return this.#moment.isBefore(day.#moment);
   }
 
+  isSameOrBefore(day: Day){
+    return this.#moment.isSameOrBefore(day.#moment);
+  }
+
   isAfter(day: Day){
     return this.#moment.isAfter(day.#moment);
+  }
+
+  isSameOrAfter(day: Day){
+    return this.#moment.isSameOrAfter(day.#moment);
   }
 
   isBetween(start: Day, end: Day, unit?: moment.unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]"){
@@ -85,6 +93,10 @@ export class Day {
     const cloneMoment = this.#moment.clone();
     if(cb) cb(cloneMoment);
     return new Day(cloneMoment);
+  }
+
+  getMonth(){
+    return this.#moment.month() + 1;
   }
 
   getDate(){
