@@ -97,7 +97,7 @@ const PageComponent = () => {
           fontWeight: "bold",
           fontSize: "1.2em",
         }}>
-          {note.day.getBaseFormat() + " / " + note.day.getDayOfWeek()}
+          {note.day.format() + " / " + note.day.getDow()}
         </span>
         <MenuComponent onMenuShow={onNoteMenuShow} icon="ellipsis" />
       </header>

@@ -12,9 +12,9 @@ type LoadWeeks = (week: Week, option?: { prev: number; next: number; }) => Promi
 
 
 export const loadWeeks: LoadWeeks = async (week, { prev, next } = { prev: 0, next: 0 }) => {
-  const startWeek = week.subtract(prev);
+  const startWeek = week.subtract_cpy(prev);
   const startDay = startWeek.startDay;
-  const endWeek = week.add(next);
+  const endWeek = week.add_cpy(next);
   const endDay = endWeek.endDay;
   const realNotes = await NoteRepository.loadBetween(startDay, endDay);
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
@@ -38,7 +38,7 @@ export const loadWeeks: LoadWeeks = async (week, { prev, next } = { prev: 0, nex
     const node = dayNodes[i];
     const nextNode = dayNodes[i + 1];
 
-    const intendedNextDay = node.day.add(1, "day");
+    const intendedNextDay = node.day.clone(m => m.add(1, "day"));
     const isContinueous = intendedNextDay.isSameDay(nextNode.day);
     if(!isContinueous){
       const tempNode = getTempDayNode(intendedNextDay);

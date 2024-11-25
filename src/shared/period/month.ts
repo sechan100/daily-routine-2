@@ -3,10 +3,12 @@ import { Day } from "./day";
 
 
 export class Month {
-  #startDay: Day;
+  readonly #startDay: Day;
+  readonly #endDay: Day;
 
   constructor(day: Day) {
     this.#startDay = day.clone(m => m.startOf("month"));
+    this.#endDay = day.clone(m => m.endOf("month"));
   }
 
   static fromJsDate(date: Date){
@@ -17,31 +19,28 @@ export class Month {
     return new Month(Day.now());
   }
 
-  clone() {
-    return new Month(this.#startDay.clone());
-  }
-
   get startDay() {
     return this.#startDay;
   }
 
   get endDay() {
-    return this.#startDay.clone(m => m.endOf("month"));
+    return this.#endDay;
   }
 
-  getMonth(){
-    return this.#startDay.getMonth();
+  get num(){
+    return this.#startDay.month;
   }
 
-  add(amount: number) {
+  add_cpy(amount: number) {
     return new Month(
-      this.#startDay.add(amount, "month")
+      this.#startDay.clone(m => m.add(amount, "month"))
     );
   }
 
-  subtract(amount: number) {
+  subtract_cpy(amount: number) {
     return new Month(
-      this.#startDay.subtract(amount, "month")
+      this.#startDay.clone(m => m.subtract(amount, "month"))
     );
   }
+
 }

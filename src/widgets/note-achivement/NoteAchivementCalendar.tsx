@@ -38,7 +38,7 @@ export const NoteAchivementCalendar = ({ month: propsMonth }: NoteAchivementCale
       }
     }
     return (
-      <PercentageCircle percentage={percent} text={tileDay.getDate().toString()} />
+      <PercentageCircle percentage={percent} text={tileDay.date.toString()} />
     )
   }, [routineNotes]);
 

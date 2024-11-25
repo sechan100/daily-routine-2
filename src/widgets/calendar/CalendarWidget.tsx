@@ -25,8 +25,8 @@ export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
       day,
       tasks: [] as Task[]
     }
-    if(tiles.value && day.getMonth() === month.getMonth()){
-      tile = tiles.value[day.getDate()-1] || tile ;
+    if(tiles.value && day.month === month.num){
+      tile = tiles.value[day.date-1] || tile ;
     }
     return <CalendarTile tile={tile} />
   }, [month, tiles.value]);

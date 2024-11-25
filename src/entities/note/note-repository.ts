@@ -74,7 +74,7 @@ export const NoteRepository: NoteRepository = {
   async persist(routineNote, strict = true) {
     const file = getRoutineNoteFile(routineNote.day);
     if(!file){
-      const path = getRoutineArchivePath(routineNote.day.getBaseFormat());
+      const path = getRoutineArchivePath(routineNote.day.format());
       const content = NoteService.serialize(routineNote);
       await fileAccessor.createFile(path, content);
     } else {
@@ -111,7 +111,7 @@ export const NoteRepository: NoteRepository = {
       // 사용자 확인 대기
       const isUserConfirmed = await doConfirm({
         title: "Create Routine Note",
-        description: `Create note for ${routineNote.day.getBaseFormat()}?`,
+        description: `Create note for ${routineNote.day.format()}?`,
         confirmText: "Create",
         confirmBtnVariant: "accent",
       })
@@ -138,7 +138,7 @@ export const NoteRepository: NoteRepository = {
  * 특정 day에 해당하는 routineNote file을 가져온다. 
  */
 const getRoutineNoteFile = (day: Day): TFile | null => {
-  const path = getRoutineArchivePath(day.getBaseFormat());
+  const path = getRoutineArchivePath(day.format());
   try {
     return fileAccessor.getFile(path);
   } catch(e) {

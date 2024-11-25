@@ -23,6 +23,6 @@ export const DEFAULT_ROUTINE: () => Routine = () => ({
     showOnCalendar: false,
     activeCriteria: "week",
     daysOfWeek: Day.getDaysOfWeek(),
-    daysOfMonth: [Day.now().getDate()],
+    daysOfMonth: [Day.now().date],
   }
 })

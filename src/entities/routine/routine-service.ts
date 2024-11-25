@@ -21,17 +21,17 @@ export const RoutineService: RoutineService = {
     if (routine.properties.activeCriteria === "month") {
       const days = Array.from(routine.properties.daysOfMonth);
       // 0이 존재하는 경우, 0을 매개받은 day의 달의 마지막 날짜로 치환한다.
-      if (days.contains(0)) {
-        const lastDayOfMonth = day.moment.daysInMonth();
+      if(days.contains(0)) {
+        const lastDayOfMonth = day.daysInMonth();
         days.remove(0);
         days.push(lastDayOfMonth);
       }
-      if (!days.contains(day.getDate())) return false;
+      if (!days.contains(day.date)) return false;
     }
 
     // WEEK 기준
     if (routine.properties.activeCriteria === "week") {
-      if (!routine.properties.daysOfWeek.contains(day.getDayOfWeek())) return false;
+      if (!routine.properties.daysOfWeek.contains(day.getDow())) return false;
     }
 
     return true;

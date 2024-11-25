@@ -20,22 +20,22 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
 
 	const loadedNotes = await NoteRepository.loadBetween(month.startDay, month.endDay);
 	const tiles: Tile[] = [];
-  const day = month.startDay.clone();
-  while(day.isSameOrBefore(month.endDay)){
-    const loaded = loadedNotes.find(n => n.day.isSameDay(day));
+  const date = month.startDay.date;
+  for(let i = 1; i <= month.endDay.date; i++){
+    const loaded = loadedNotes.find(n => n.day.date === i);
     if(loaded){
       tiles.push({
         day: loaded.day,
         tasks: loaded.tasks.filter(t => t.showOnCalendar)
       })
     } else {
-      tiles.push(createTile(day))
+      const day = month.startDay.clone(m => m.add(i-1, "day"));
+      tiles.push(createTile(day));
     }
-    day.moment.add(1, "day");
   }
 
 	return {
-		month: month.clone(),
+		month,
 		tiles,
 	}
 }

@@ -52,14 +52,14 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     const rescheduleConfirm = await doConfirm({
       title: "Res schedule Todo",
       confirmText: "Reschedule",
-      description: `Are you sure you want to reschedule '${todo.name}' to ${destDay.getBaseFormat()}?`,
+      description: `Are you sure you want to reschedule '${todo.name}' to ${destDay.format()}?`,
       confirmBtnVariant: "accent",
     })
     if(!rescheduleConfirm) return;
 
     const todoDeletedNote = await rescheduleTodo(note, originalName, destDay);
     setNote(todoDeletedNote);
-    new Notice(`Todo ${todo.name} rescheduled to ${destDay.getBaseFormat()}.`);
+    new Notice(`Todo ${todo.name} rescheduled to ${destDay.format()}.`);
     modal.closeWithoutOnClose();
 
   }, [modal, note, originalName, setNote, todo.name]);
@@ -108,8 +108,8 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
             fontSize: "0.9em",
           }
         }}>
-          <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "day"))}>Tomorrow</Button>
-          <Button onClick={() => onRescheduleBtnClick(note.day.add(1, "week"))}>Next Week</Button>
+          <Button onClick={() => onRescheduleBtnClick(note.day.clone(m => m.add(1, "day")))}>Tomorrow</Button>
+          <Button onClick={() => onRescheduleBtnClick(note.day.clone(m => m.add(1, "week")))}>Next Week</Button>
         </div>
       </Modal.Section>
       <Modal.Separator />

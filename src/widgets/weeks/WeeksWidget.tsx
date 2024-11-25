@@ -75,7 +75,7 @@ export const WeeksWidget = ({ currentDay, currentDayPercentage, onDayClick, clas
    * 구체적으로 시작과 끝보다 이전, 또는 이후의 week를 가져와서 Slider에 추가한다.
    */
   const onSlideToEdge = useCallback(async(edge: "start" | "end") => {
-    const loadTargetWeek = edge === "start" ? new Week(weeks[0][0].day).subtract(1) : new Week(weeks[weeks.length-1][0].day).add(1);
+    const loadTargetWeek = edge === "start" ? new Week(weeks[0][0].day).subtract_cpy(1) : new Week(weeks[weeks.length-1][0].day).add_cpy(1);
     const newWeek = (await loadWeeks(loadTargetWeek))[0];
     
     if(edge === "start"){

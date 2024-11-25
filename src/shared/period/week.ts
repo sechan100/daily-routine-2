@@ -2,10 +2,12 @@ import { Day } from "./day";
 
 
 export class Week {
-  #startDay: Day;
+  readonly #startDay: Day;
+  readonly #endDay: Day;
 
   constructor(day: Day) {
     this.#startDay = day.clone(m => m.startOf("week"));
+    this.#endDay = day.clone(m => m.endOf("week"));
   }
 
   get startDay() {
@@ -13,18 +15,18 @@ export class Week {
   }
 
   get endDay() {
-    return this.#startDay.clone(m => m.endOf("week"));
+    return this.#endDay;
   }
 
-  add(amount: number) {
+  add_cpy(amount: number) {
     return new Week(
-      this.#startDay.add(amount * 7, "day")
+      this.#startDay.clone(m => m.add(amount * 7, "day"))
     );
   }
 
-  subtract(amount: number) {
+  subtract_cpy(amount: number) {
     return new Week(
-      this.#startDay.subtract(amount * 7, "day")
+      this.#startDay.clone(m => m.subtract(amount * 7, "day"))
     );
   }
 }

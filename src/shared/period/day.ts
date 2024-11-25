@@ -1,5 +1,6 @@
 import { moment } from "obsidian";
 import { plugin } from "../plugin-service-locator";
+import _ from "lodash";
 
 
 
@@ -15,15 +16,14 @@ export enum DayOfWeek {
 
 
 export class Day {
-  #moment: moment.Moment;
-  static defaultFormat = 'YYYY-MM-DD';
+  readonly #moment: moment.Moment;
 
   /**
    * 
    * @param day "YYYY-MM-DD" 형식의 문자열
    */ 
   constructor(_moment: moment.Moment) {
-    const m = moment(_moment);
+    const m = _moment.clone();
     if(m.isValid()) {
       this.#moment = m;
     } else {
@@ -53,8 +53,8 @@ export class Day {
     return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
   }
 
-  format(format: string){
-    return this.#moment.format(format);
+  format(format?: string){
+    return this.#moment.format(format ? format : 'YYYY-MM-DD');
   }
 
   isToday(){
@@ -81,34 +81,26 @@ export class Day {
     return this.#moment.isBetween(start.#moment, end.#moment, unit, inclusivity);
   }
 
-  add(amount: number, unit: moment.unitOfTime.DurationConstructor){
-    return new Day(this.#moment.clone().add(amount, unit));
-  }
-
-  subtract(amount: number, unit: moment.unitOfTime.DurationConstructor){
-    return new Day(this.#moment.clone().subtract(amount, unit));
-  }
-
   clone(cb?: (cloneMoment: moment.Moment) => void){
     const cloneMoment = this.#moment.clone();
     if(cb) cb(cloneMoment);
     return new Day(cloneMoment);
   }
 
-  getMonth(){
+  get year(){
+    return this.#moment.year();
+  }
+
+  get month(){
     return this.#moment.month() + 1;
   }
 
-  getDate(){
+  get date(){
     return this.#moment.date();
   }
 
   getJsDate(){
     return this.#moment.toDate();
-  }
-
-  get moment(){
-    return this.#moment;
   }
 
   /**
@@ -124,11 +116,7 @@ export class Day {
     return week;
   }
 
-  getBaseFormat(){
-    return this.#moment.format(Day.defaultFormat);
-  }
-
-  getDayOfWeek(): DayOfWeek {  
+  getDow(): DayOfWeek {  
     const dayOfWeekNum = Number(this.#moment.format('d'));
     switch(dayOfWeekNum) {
       case 0: return DayOfWeek.SUN;
@@ -150,11 +138,15 @@ export class Day {
     return this.#moment.isSame(day.#moment, 'week');
   }
 
-  isSameDayOfWeek(day: Day | DayOfWeek){
+  isSameDow(day: Day | DayOfWeek){
     if(day instanceof Day) {
-      return this.getDayOfWeek() === day.getDayOfWeek();
+      return this.getDow() === day.getDow();
     } else {
-      return this.getDayOfWeek() === day;
+      return this.getDow() === day;
     }
+  }
+
+  daysInMonth(){
+    return this.#moment.daysInMonth();
   }
 }
