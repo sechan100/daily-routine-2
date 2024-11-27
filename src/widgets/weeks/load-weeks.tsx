@@ -1,17 +1,13 @@
 import { NoteRepository, NoteService } from "@entities/note";
 import { Day } from "@shared/period/day";
+import { DayNode, WeekNode } from "./types";
 import { Week } from "@shared/period/week";
 
 
-export type DayNode = {
-  day: Day;
-  percentage: number;
-};
 
-type LoadWeeks = (week: Week, option?: { prev: number; next: number; }) => Promise<DayNode[][]>;
+export type LoadWeekNodes = (week: Week, option?: { prev: number; next: number; }) => Promise<WeekNode[]>;
 
-
-export const loadWeeks: LoadWeeks = async (week, { prev, next } = { prev: 0, next: 0 }) => {
+export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev: 0, next: 0 }) => {
   const startWeek = week.subtract_cpy(prev);
   const startDay = startWeek.startDay;
   const endWeek = week.add_cpy(next);
@@ -49,13 +45,19 @@ export const loadWeeks: LoadWeeks = async (week, { prev, next } = { prev: 0, nex
   }
 
   // dayNodes를 2차원 배열로 변환
-  const weeks: DayNode[][] = new Array(prev + next + 1).fill([]).map(() => []);
+  const weeks: WeekNode[] = Array.from({ length: prev + next + 1 }, () => ({
+    key: null as unknown as string,
+    week: null as unknown as Week,
+    days: [],
+  }));
   let weekIdx = 0;
   for(const node of dayNodes) {
     const week = weeks[weekIdx];
-    week.push(node);
 
-    if(week.length === 7){
+    if(week.week === null) week.week = new Week(node.day);
+    week.days.push(node);
+    
+    if(week.days.length === 7){
       if(++weekIdx === weeks.length) break;
     }
   }

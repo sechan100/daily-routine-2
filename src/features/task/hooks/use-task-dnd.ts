@@ -4,7 +4,7 @@ import { RoutineNote, Task } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { useRef, useCallback, useEffect, RefObject } from "react";
 import { useDrag, XYCoord, useDrop } from "react-dnd";
-import { useLeaf } from "@shared/view/react-view";
+import { useLeaf } from "@shared/view/use-leaf";
 
 
 

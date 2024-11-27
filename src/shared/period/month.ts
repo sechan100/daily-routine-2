@@ -27,7 +27,7 @@ export class Month {
     return this.#endDay;
   }
 
-  get num(){
+  get monthNum(){
     return this.#startDay.month;
   }
 

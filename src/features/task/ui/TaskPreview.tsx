@@ -8,7 +8,7 @@ import { Checkbox } from './Checkbox';
 import { TaskName } from './TaskName';
 import { DragItem } from '../hooks/use-task-dnd';
 import { plugin } from '@shared/plugin-service-locator';
-import { useLeaf } from '@shared/view/react-view';
+import { useLeaf } from "@shared/view/use-leaf";
 
 
 

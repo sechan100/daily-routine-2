@@ -1,32 +1,8 @@
+import { ItemView, WorkspaceLeaf } from "obsidian";
 import { StrictMode, useState } from "react";
-import { ItemView, View, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
-import { createContext, useContext } from "react";
-import { createStoreContext } from "@shared/zustand/create-store-context";
-import { DailyRoutineObsidianView } from "@app/obsidian-view";
+import { UseLeafProvider } from "./use-leaf";
 
-
-
-interface UseDrLeafData {
-  leaf: WorkspaceLeaf;
-  setShow: (show: boolean) => void;
-}
-interface UseLeaf {
-  leaf: WorkspaceLeaf;
-  view: DailyRoutineObsidianView;
-  leafStyle: CSSStyleDeclaration;
-  refresh: () => void;
-}
-export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => ({
-  leaf: data.leaf,
-  view: data.leaf.view as DailyRoutineObsidianView,
-  // @ts-ignore
-  leafStyle: getComputedStyle(data.leaf.containerEl),
-  refresh: () => {
-    data.setShow(false);
-    setTimeout(() => data.setShow(true), 0);
-  }
-}))
 
 
 const AdapterComponent = ({ view }: { view: ReactView }) => {

@@ -18,6 +18,10 @@ export class Week {
     return this.#endDay;
   }
 
+  get weekNum(){
+    return this.#startDay.week;
+  }
+
   add_cpy(amount: number) {
     return new Week(
       this.#startDay.clone(m => m.add(amount * 7, "day"))

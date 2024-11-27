@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
-import { useLeaf } from '@shared/view/react-view';
+import { useLeaf } from "@shared/view/use-leaf";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import Calendar from "react-calendar";
 import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
@@ -77,7 +77,7 @@ interface BaseCalendarStylesProps {
   showWeekdays: boolean;
 }
 const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
-  const { leafStyle } = useLeaf();
+  const { leafBgColor } = useLeaf();
   const calendarStyles = useMemo(() => css({
     // 네비게이션
     '.react-calendar__navigation': {
@@ -132,11 +132,11 @@ const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: leafStyle.backgroundColor,
+        backgroundColor: leafBgColor,
         opacity: 0.8,
       },
     }
-  }), [leafStyle.backgroundColor]);
+  }), [leafBgColor]);
 
   return calendarStyles;
 }

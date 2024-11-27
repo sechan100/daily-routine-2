@@ -1,18 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useCallback, useEffect } from "react";
-import { Day } from "@shared/period/day";
-import { DrTabType, useTabRoute } from "@shared/use-tab-route";
-import "./style.css";
-import { useLeaf } from '@shared/view/react-view';
-import TabNav from '@mui/material/Tabs';
 import TabNavItem from '@mui/material/Tab';
-import { MUIThemeProvider } from './MUIThemProvider';
+import TabNav from '@mui/material/Tabs';
 import { Icon } from "@shared/components/Icon";
-import { RouitneNoteTab } from "./tab-note";
+import { VirtualSwiper } from "@shared/components/VirtualSwiper";
+import { Day } from "@shared/period/day";
+import { Month } from "@shared/period/month";
+import { DrTabType, useTabRoute } from "@shared/use-tab-route";
+import { useLeaf } from "@shared/view/use-leaf";
+import { useCallback, useEffect } from "react";
+import { MUIThemeProvider } from './MUIThemProvider';
+import "./style.css";
 import { AchivementTab } from "./tab-achivement";
 import { CalendarTab } from "./tab-calendar";
-import { Month } from "@shared/period/month";
+import { RouitneNoteTab } from "./tab-note";
 
 const tabsHeight = "50px";
 const tabsBottomGap = "25px";
@@ -58,6 +59,7 @@ export const DailyRoutineView = () => {
         }}
       >
         <RouitneNoteTab />
+        {/* <SSSSSSS /> */}
         <AchivementTab />
         <CalendarTab />
       </div>
@@ -101,3 +103,42 @@ export const DailyRoutineView = () => {
     </MUIThemeProvider>
   );
 }
+
+
+
+
+
+
+
+
+
+// const SSSSSSS = () => {
+//   return (
+//     <VirtualSwiper
+//       datas={[{key: "1", name: "Slide 1"}, {key: "2", name: "Slide 2"}, {key: "3", name: "Slide 3"}]}
+//       loadEdgeData={async (edge, currentEdge) => {
+//         if(edge === "start"){
+//           const newKey = `${Number(currentEdge.key) - 1 }`;
+//           return {key: newKey, name: `Slide ${newKey}` }
+//         } else {
+//           const newKey = `${Number(currentEdge.key) + 1 }`;
+//           return {key: newKey, name: `Slide ${newKey}` }
+//         }
+//       }}
+//     >
+//       {(data) => {
+//         return (<div
+//           css={{
+//             height: "60px",
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             border: "1px solid black",
+//           }}
+//         >
+//           {data.name}
+//         </div>
+//       )}}
+//     </VirtualSwiper>
+//   );
+// }

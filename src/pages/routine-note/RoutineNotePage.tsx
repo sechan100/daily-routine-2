@@ -80,7 +80,7 @@ const PageComponent = () => {
     >
       <WeeksWidget
         className={bem("weeks")}
-        currentDay={note.day}
+        day={note.day}
         currentDayPercentage={percentage}
       />
       <header

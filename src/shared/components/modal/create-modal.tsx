@@ -35,7 +35,7 @@ export interface ModalApi {
 export type UseModal<P> = () => ModalFC<P>;
 
 
-export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCreateOptions): UseModal<P> => { return () => {
+export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCreateOptions): UseModal<P> => () => {
   const modalStore = useRef(create<ModalStore<P>>((set) => ({
     modal: null,
     props: null,
@@ -119,4 +119,4 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
   }, [modalStore]);
   
   return useMemo(() => Object.assign(ModalComponent, { open: openModal }), [ModalComponent, openModal]);
-}}
+}

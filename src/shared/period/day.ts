@@ -95,6 +95,10 @@ export class Day {
     return this.#moment.month() + 1;
   }
 
+  get week(){
+    return this.#moment.week();
+  }
+
   get date(){
     return this.#moment.date();
   }

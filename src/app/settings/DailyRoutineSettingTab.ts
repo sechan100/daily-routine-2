@@ -2,7 +2,7 @@ import DailyRoutinePlugin from "src/main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "@shared/suggesters/FileSuggester";
 import { updateMomentConfig } from "./moment-config";
-import { useLeaf } from "@shared/view/react-view";
+import { useLeaf } from "@shared/view/use-leaf";
 
 
 export interface DailyRoutinePluginSettings {
