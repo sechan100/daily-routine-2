@@ -1,13 +1,8 @@
-import { Task } from "@entities/note";
-import { BaseCalendar } from "@shared/components/BaseCalendar";
 import { VirtualSwiper } from "@shared/components/VirtualSwiper";
-import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
-import { useAsync } from "@shared/use-async";
 import { useCallback, useEffect, useState } from "react";
 import { CalendarNavigation } from "./CalendarNavigation";
-import { CalendarTile } from "./CalendarTile";
-import { loadCalendar } from "./model/load-calendar";
+import { CalendarSlide } from "./CalendarSlider";
 
 
 
@@ -65,37 +60,4 @@ export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
     </>
   )
 
-}
-
-
-
-interface CalendarSlideProps {
-  month: Month;
-}
-const CalendarSlide = ({ month }: CalendarSlideProps) => {
-  const tiles = useAsync(async () => {
-    const c = await loadCalendar(month);
-    return c.tiles;
-  }, [month]);
-
-  const tile = useCallback((day: Day) => {
-    let tile = {
-      day,
-      tasks: [] as Task[]
-    }
-    if(tiles.value && day.month === month.monthNum){
-      tile = tiles.value[day.date-1] || tile ;
-    }
-    return <CalendarTile tile={tile} />
-  }, [month, tiles.value]);
-
-  if(tiles.loading) return <div>Loading...</div>
-  return (
-    <BaseCalendar
-      month={month}
-      setMonth={() => {}}
-      tile={tile}
-      showNavigation={false}
-    />
-  )
 }

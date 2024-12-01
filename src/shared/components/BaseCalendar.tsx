@@ -19,6 +19,7 @@ export interface BaseCalendarProps {
   showWeekdays?: boolean;
   showNavigation?: boolean;
   tileDisabled?: (day: Day) => boolean;
+  styleOptions?: BaseCalendarStylesProps;
 }
 export const BaseCalendar = ({ 
   month, 
@@ -29,10 +30,9 @@ export const BaseCalendar = ({
   showWeekdays,
   showNavigation,
   tileDisabled: propsTileDisabled,
+  styleOptions: styleOptions,
 }: BaseCalendarProps) => {
-  const calendarStyles = useBaseCalendarStyles({
-    showWeekdays: showWeekdays ?? true,
-  })
+  const calendarStyles = useBaseCalendarStyles(styleOptions??{});
 
   const onChangeMonth = useCallback(({ activeStartDate }: OnArgs) => {
     if(!activeStartDate) return;
@@ -74,9 +74,11 @@ export const BaseCalendar = ({
 
 
 interface BaseCalendarStylesProps {
-  showWeekdays: boolean;
+  neighboringMonthTile?: "hidden" | "blur";
 }
-const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
+const useBaseCalendarStyles = ({ 
+  neighboringMonthTile = "blur"
+}: BaseCalendarStylesProps) => {
   const { leafBgColor } = useLeaf();
   const calendarStyles = useMemo(() => css({
     // 네비게이션
@@ -126,6 +128,7 @@ const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
   
     // 이웃한 달의 날짜
     '.react-calendar__month-view__days__day--neighboringMonth': {
+      visibility: neighboringMonthTile === 'hidden' ? 'hidden' : 'visible',
       position: 'relative',
       '&::after': {
         content: "''",
@@ -136,7 +139,7 @@ const useBaseCalendarStyles = ({ showWeekdays }: BaseCalendarStylesProps) => {
         opacity: 0.8,
       },
     }
-  }), [leafBgColor]);
+  }), [leafBgColor, neighboringMonthTile]);
 
   return calendarStyles;
 }

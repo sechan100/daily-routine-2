@@ -6,7 +6,7 @@ import { Month } from "@shared/period/month";
 
 export interface Calendar {
 	month: Month;
-	tiles: Tile[]; // 28 ~ 31개
+	tiles: Map<string, Tile>;
 }
 
 export interface Tile {

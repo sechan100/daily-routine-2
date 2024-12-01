@@ -31,7 +31,7 @@ export const RoutineService: RoutineService = {
 
     // WEEK 기준
     if (routine.properties.activeCriteria === "week") {
-      if (!routine.properties.daysOfWeek.contains(day.getDow())) return false;
+      if (!routine.properties.daysOfWeek.contains(day.dow)) return false;
     }
 
     return true;

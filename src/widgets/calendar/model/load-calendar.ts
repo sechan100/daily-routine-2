@@ -18,21 +18,30 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
     } as Tile;
   }
 
-	const loadedNotes = await NoteRepository.loadBetween(month.startDay, month.endDay);
-	const tiles: Tile[] = [];
-  const date = month.startDay.date;
-  for(let i = 1; i <= month.endDay.date; i++){
-    const loaded = loadedNotes.find(n => n.day.date === i);
+  // 추가로 로드해야하는 앞달의 tile들 개수
+  const prevNeighboringMonthTilesNum = Day.getDaysOfWeek().indexOf(month.startDay.dow)
+  const startDay = month.startDay.clone(m => m.subtract(prevNeighboringMonthTilesNum, "day"))
+
+  // 뒷달
+  const nextNeighboringMonthTilesNum = 6 - Day.getDaysOfWeek().indexOf(month.endDay.dow);
+  const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
+
+	const loadedNotes = await NoteRepository.loadBetween(startDay, endDay);
+	const tiles: Map<string, Tile> = new Map();
+  let d = startDay;
+  while(d.isSameOrBefore(endDay)){
+    const loaded = loadedNotes.find(n => n.day.isSameDay(d));
     if(loaded){
-      tiles.push({
+      tiles.set(loaded.day.format(), {
         day: loaded.day,
         tasks: loaded.tasks.filter(t => t.showOnCalendar)
       })
     } else {
-      const day = month.startDay.clone(m => m.add(i-1, "day"));
-      tiles.push(createTile(day));
+      tiles.set(d.format(), createTile(d));
     }
+    d = d.clone(m => m.add(1, "day"));
   }
+
 
 	return {
 		month,

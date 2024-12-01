@@ -103,6 +103,20 @@ export class Day {
     return this.#moment.date();
   }
 
+  get dow(): DayOfWeek {  
+    const dayOfWeekNum = Number(this.#moment.format('d'));
+    switch(dayOfWeekNum) {
+      case 0: return DayOfWeek.SUN;
+      case 1: return DayOfWeek.MON;
+      case 2: return DayOfWeek.TUE;
+      case 3: return DayOfWeek.WED;
+      case 4: return DayOfWeek.THU;
+      case 5: return DayOfWeek.FRI;
+      case 6: return DayOfWeek.SAT;
+      default: throw new Error('Invalid day of week number.');
+    }
+  }
+
   getJsDate(){
     return this.#moment.toDate();
   }
@@ -119,20 +133,6 @@ export class Day {
     }
     return week;
   }
-
-  getDow(): DayOfWeek {  
-    const dayOfWeekNum = Number(this.#moment.format('d'));
-    switch(dayOfWeekNum) {
-      case 0: return DayOfWeek.SUN;
-      case 1: return DayOfWeek.MON;
-      case 2: return DayOfWeek.TUE;
-      case 3: return DayOfWeek.WED;
-      case 4: return DayOfWeek.THU;
-      case 5: return DayOfWeek.FRI;
-      case 6: return DayOfWeek.SAT;
-      default: throw new Error('Invalid day of week number.');
-    }
-  }
   
   isSameDay(day: Day){
     return this.#moment.isSame(day.#moment, 'day');
@@ -148,9 +148,9 @@ export class Day {
 
   isSameDow(day: Day | DayOfWeek){
     if(day instanceof Day) {
-      return this.getDow() === day.getDow();
+      return this.dow === day.dow;
     } else {
-      return this.getDow() === day;
+      return this.dow === day;
     }
   }
 
