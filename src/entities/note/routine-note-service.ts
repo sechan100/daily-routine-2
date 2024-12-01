@@ -1,6 +1,7 @@
 import { Day } from "@shared/period/day";
 import { RoutineNote, TaskCompletion, Task, TodoTask, TaskMetaData } from "./types";
 import { Routine, RoutineService } from "@entities/routine";
+import _ from "lodash";
 
 
 interface NoteService {
@@ -59,13 +60,20 @@ ${routineNote.tasks.map(task => {
     const tasks: Task[] = content.split('# Tasks')[1].split('\n').flatMap(line => {
       if(line.trim() === '') return [];
       const checked = line.startsWith('- [x]');
+
       const name = line.split('] ')[1].split('%%')[0].replace('[[', '').replace(']]', '');
-      const data = JSON.parse(line.split('%%')[1].replace('%%', '')) as TaskMetaData;
+
+      const _d = JSON.parse(line.split('%%')[1].replace('%%', '')) as TaskMetaData;
+      const metaData = {
+        type: _d.type,
+        soc: _d.soc ? _d.soc : (_d.type === 'todo' ? true : false)
+      }
+
       return {
-        type: data.type,
+        type: metaData.type,
         name, 
         checked,
-        showOnCalendar: Boolean(data.soc)
+        showOnCalendar: metaData.soc
       };
     });
 

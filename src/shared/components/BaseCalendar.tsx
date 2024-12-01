@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+import { css, CSSObject, Interpolation } from '@emotion/react';
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useLeaf } from "@shared/view/use-leaf";
@@ -16,7 +16,6 @@ export interface BaseCalendarProps {
   tile: (day: Day) => JSX.Element;
   className?: string;
   onTileClick?: (day: Day) => void;
-  showWeekdays?: boolean;
   showNavigation?: boolean;
   tileDisabled?: (day: Day) => boolean;
   styleOptions?: BaseCalendarStylesProps;
@@ -27,7 +26,6 @@ export const BaseCalendar = ({
   className,
   tile, 
   onTileClick,
-  showWeekdays,
   showNavigation,
   tileDisabled: propsTileDisabled,
   styleOptions: styleOptions,
@@ -74,10 +72,20 @@ export const BaseCalendar = ({
 
 
 interface BaseCalendarStylesProps {
-  neighboringMonthTile?: "hidden" | "blur";
+  nav?: CSSObject;
+  weekdays?: CSSObject;
+  weekdayEach?: CSSObject;
+  tileContainer?: CSSObject;
+  tile?: CSSObject;
+  neighboringMonthTile?: CSSObject;
 }
 const useBaseCalendarStyles = ({ 
-  neighboringMonthTile = "blur"
+  nav: navStyle = {},
+  weekdays: weekdaysStyle = {},
+  weekdayEach: weekdayEachStyle = {},
+  tileContainer: tileContainerStyle = {},
+  tile: tileStyle = {},
+  neighboringMonthTile: neighboringMonthTileStyle = {},
 }: BaseCalendarStylesProps) => {
   const { leafBgColor } = useLeaf();
   const calendarStyles = useMemo(() => css({
@@ -87,12 +95,14 @@ const useBaseCalendarStyles = ({
       'button:disabled': {
         backgroundColor: 'var(--color-base-10)',
       },
+      ...navStyle,
     },
   
     // 월화수목금토일 표시
     '.react-calendar__month-view__weekdays': {
       textAlign: 'center',
       padding: '10px 0',
+      ...weekdaysStyle,
   
       // 개별 요일 글자 컨테이너
       div: {
@@ -100,24 +110,28 @@ const useBaseCalendarStyles = ({
         abbr: {
           textDecoration: 'none',
         },
+        ...weekdayEachStyle,
       },
     },
   
     // 월뷰의 날짜 타일 컨테이너
     '.react-calendar__month-view__days': {
       gap: '5px 0',
+      ...tileContainerStyle,
   
       // 타일
       '.react-calendar__tile': {
         padding: '0 !important',
         boxShadow: 'none !important',
         height: 'auto',
-        maxHeight: '80px',
+        width: '100%',
         background: 'none',
   
         '&:hover': {
           backgroundColor: 'var(--color-base-20)',
         },
+
+        ...tileStyle,
       },
   
       // 내부 원래 글씨
@@ -128,7 +142,6 @@ const useBaseCalendarStyles = ({
   
     // 이웃한 달의 날짜
     '.react-calendar__month-view__days__day--neighboringMonth': {
-      visibility: neighboringMonthTile === 'hidden' ? 'hidden' : 'visible',
       position: 'relative',
       '&::after': {
         content: "''",
@@ -138,8 +151,9 @@ const useBaseCalendarStyles = ({
         backgroundColor: leafBgColor,
         opacity: 0.8,
       },
+      ...neighboringMonthTileStyle,
     }
-  }), [leafBgColor, neighboringMonthTile]);
+  }), [leafBgColor, navStyle, neighboringMonthTileStyle, tileContainerStyle, tileStyle, weekdayEachStyle, weekdaysStyle]);
 
   return calendarStyles;
 }
