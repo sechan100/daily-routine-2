@@ -138,6 +138,10 @@ export class Day {
     return this.#moment.isSame(day.#moment, 'day');
   }
 
+  isSameMonth(day: Day){
+    return this.#moment.isSame(day.#moment, 'month');
+  }
+
   isSameWeek(day: Day){
     return this.#moment.isSame(day.#moment, 'week');
   }

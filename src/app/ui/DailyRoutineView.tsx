@@ -3,7 +3,6 @@ import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
 import { Icon } from "@shared/components/Icon";
-import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { DrTabType, useTabRoute } from "@shared/use-tab-route";

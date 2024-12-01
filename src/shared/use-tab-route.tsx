@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { INITIAL_TAB } from "./constants/initial-tab";
 
 export type DrTabType = "calendar" | "note" | "achivement";
 
@@ -8,7 +9,7 @@ interface UseTabRoute {
   routeParams: object | null;
 }
 export const useTabRoute = create<UseTabRoute>((set, get) => ({
-  tab: "note",
+  tab: INITIAL_TAB,
   route: (tab, routeParams = null) => {
     set({ tab, routeParams });
   },

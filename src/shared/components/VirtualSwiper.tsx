@@ -1,11 +1,37 @@
 /** @jsxImportSource @emotion/react */
 import 'swiper/swiper-bundle.css';
 import { Mousewheel } from 'swiper/modules';
-import React, { useCallback, useEffect, useMemo, useRef, useState, Key } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, Key, useLayoutEffect } from "react";
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
+import { Month } from '@shared/period/month';
 
 
 export interface VirtualSlideData {}
+
+
+interface SlideComponentProps<T extends VirtualSlideData> {
+  data: T;
+  id: Key;
+  index: number;
+  renderChildren: (data: T, index?: number) => React.ReactNode;
+}
+const SlideComponent = React.memo(<T extends VirtualSlideData,>({ data, index, renderChildren }: SlideComponentProps<T>) => {
+  const children = useMemo(() => renderChildren(data, index), [data, index, renderChildren]);
+  return (
+    <>
+      {children}
+    </>
+  )
+}, (prev, next) => {
+  return prev.id === next.id;
+});
+
+
+const getCenterIndex = (datas: unknown[]) => {
+  const len = datas.length;
+  return len%2 === 0 ? len/2 : (len-1)/2;
+}
+
 
 interface VirtualSwiperProps<T extends VirtualSlideData> {
   datas: T[];
@@ -23,41 +49,58 @@ interface VirtualSwiperProps<T extends VirtualSlideData> {
   */
   loadEdgeData: (edge: "start" | "end", data: T) => T | Promise<T> | T[] | Promise<T[]>;
   children: (data: T, index?: number) => React.ReactNode;
-
+  
   className?: string;
+  onSlideChange?: (data: T) => void;
   wheelSlide?: boolean; // default: true
   prevNav?: HTMLElement;
   nextNav?: HTMLElement;
 }
 
-export const VirtualSwiper = <T extends VirtualSlideData,>({ 
+const VirtualSwiperComponent = <T extends VirtualSlideData,>({ 
   datas: propsDatas,
   getKey,
   children,
   loadEdgeData,
   className,
+  onSlideChange,
   nextNav,
   prevNav,
   wheelSlide = true
 }: VirtualSwiperProps<T>) => {
   const swiperRef = useRef<SwiperRef>(null);
-  const [datas, setDatas] = useState<T[]>(propsDatas);
+  const [datas, _setDatas] = useState<T[]>(propsDatas);
+
+  /**
+   * swiper.slideTo의 마지막 파라미터로 받는 boolean flag가 이벤트 발생 안하게 막는건데 왜인지 동작은 안함.
+   */
+  const preventSlideEvent = useRef(false);
+  const slideTo = useCallback((index: number) => {
+    if(!swiperRef.current) return;
+    const swiper = swiperRef.current.swiper;
+    if(swiper.activeIndex === index) return;
+    preventSlideEvent.current = true;
+    swiper.slideTo(index, 0);
+  }, []);
 
 
-  // 현재 datas의 중앙 index를 반환한다.
-  const centerIndex = useMemo(() => {
-    const len = datas.length;
-    return len%2 === 0 ? len/2 : (len-1)/2;
-  }, [datas.length]);
+  const newIndexForNewDatasRef = useRef<number>(-1);
+  useLayoutEffect(() => {
+    const idx = newIndexForNewDatasRef.current;
+    if(idx !== -1){
+      slideTo(idx);
+      newIndexForNewDatasRef.current = -1;
+    }
+  }, [datas, slideTo]);
+  const setDatas = useCallback((newDatas: T[], newIndex?: number) => {
+    newIndexForNewDatasRef.current = newIndex ?? -1;
+    _setDatas(newDatas);
+  }, []);
 
 
   // propsDatas가 변경되면 datas를 업데이트하고 slideIndex를 중앙으로 이동시킨다.
   useEffect(() => {
-    if(!swiperRef.current) return;
-
-    setDatas(propsDatas);
-    const swiper = swiperRef.current.swiper;
-    swiper.slideTo(centerIndex, 0);
+    setDatas(propsDatas, getCenterIndex(propsDatas));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propsDatas]);
 
@@ -78,7 +121,7 @@ export const VirtualSwiper = <T extends VirtualSlideData,>({
       nextNav.removeEventListener("click", moveNext);
     }
   }, [nextNav, prevNav]);
-    
+
 
   /**
    * 현재 datas의 0번에 도착했다면, 해당 Slide의 인덱스는 새로운 데이터가 추가됨에 따라 0에서 1이된다.
@@ -86,42 +129,48 @@ export const VirtualSwiper = <T extends VirtualSlideData,>({
    * 따라서 강제로 원래 위치해야했던 index인 1로 slide를 이동시킨다. 
    */
   const onTransitionEnd = useCallback(async (swiper: SwiperClass) => {
-    if(!(swiper.isEnd || swiper.isBeginning)) return;
+    const currentData = datas[swiper.activeIndex];
+    onSlideChange && onSlideChange(currentData);
 
-    const edge = swiper.isBeginning  ? "start" : "end";
-    const currentEdge = edge === "start" ? datas[0] : datas[datas.length - 1];
-    const newEdgeData = [await loadEdgeData(edge, currentEdge)].flatMap(data=>data);
-    setTimeout(() => {
+    if(swiper.isEnd || swiper.isBeginning){
+      const edge = swiper.isBeginning  ? "start" : "end";
+      const currentEdgeData = currentData;
+      const newEdgeData = [await loadEdgeData(edge, currentEdgeData)].flatMap(data=>data);
       if(edge === "start"){
-        setDatas([...newEdgeData, ...datas]);
-        swiper.slideTo(1, 0);
+        setDatas([...newEdgeData, ...datas], 1);
       } else {
         setDatas([...datas, ...newEdgeData]);
       }
-    })
-  }, [datas, loadEdgeData]);
+    }
+  }, [datas, loadEdgeData, onSlideChange, setDatas]);
 
   
   return (
     <div
       className={className}
       onTouchStart={(e) => e.stopPropagation()}
-      // ref={wheelSlideMove}
     >
       <Swiper 
         ref={swiperRef}
         mousewheel={{
           enabled: wheelSlide,
-          thresholdTime: 500,
-          thresholdDelta: 20,
+          thresholdTime: 400,
+          thresholdDelta: 10,
         }}
         modules={[Mousewheel]}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
         preventInteractionOnTransition={false} // transition 중에는 interaction을 막는다.
-        onTransitionEnd={onTransitionEnd}
+        onTransitionEnd={(swiper: SwiperClass) => {
+          if(preventSlideEvent.current){
+            preventSlideEvent.current = false;
+            return;
+          } else {
+            onTransitionEnd(swiper);
+          }
+        }}
         slidesPerView={1}
-        initialSlide={centerIndex}
+        initialSlide={getCenterIndex(propsDatas)}
       >
         {datas.map((data, index) => (
         <SwiperSlide key={getKey(data)}>
@@ -139,19 +188,4 @@ export const VirtualSwiper = <T extends VirtualSlideData,>({
 }
 
 
-interface SlideComponentProps<T extends VirtualSlideData> {
-  data: T;
-  id: Key;
-  index: number;
-  renderChildren: (data: T, index?: number) => React.ReactNode;
-}
-const SlideComponent = React.memo(<T extends VirtualSlideData,>({ data, index, renderChildren }: SlideComponentProps<T>) => {
-  const children = useMemo(() => renderChildren(data, index), [data, index, renderChildren]);
-  return (
-    <>
-      {children}
-    </>
-  )
-}, (prev, next) => {
-  return prev.id === next.id;
-});
+export const VirtualSwiper = React.memo(VirtualSwiperComponent) as typeof VirtualSwiperComponent;
