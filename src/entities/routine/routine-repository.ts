@@ -5,6 +5,7 @@ import { TFile } from "obsidian";
 import { routineSerializer } from "./routine-serializer";
 import { compose } from "@shared/compose";
 import { DR_SETTING } from "@app/settings/setting-provider";
+import { ensureArchive } from "@entities/archives";
 
 
 const ROUTINE_PATH = (routineName: string) =>{
@@ -52,7 +53,7 @@ interface RoutineRepository {
 
 export const RoutineRepository: RoutineRepository = {
   async loadAll() {
-    const routinePromises: Promise<Routine>[] = fileAccessor.getFolder(ROUTINE_FOLDER_PATH()).children
+    const routinePromises: Promise<Routine>[] = (await ensureArchive("routines")).children
     .filter(file => file instanceof TFile)
     .map(file => parseRoutineFile(file as TFile));
     

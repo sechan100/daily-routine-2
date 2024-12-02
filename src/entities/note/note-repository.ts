@@ -7,6 +7,7 @@ import { Day } from "@shared/period/day";
 import { FileNotFoundError } from "@shared/file/errors";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { DR_SETTING } from "@app/settings/setting-provider";
+import { ensureArchive } from "@entities/archives";
 
 
 
@@ -61,7 +62,7 @@ export const NoteRepository: NoteRepository = {
 
   async loadBetween(start: Day, end: Day): Promise<RoutineNote[]> {
     const notes: RoutineNote[] = [];
-    const routineNoteFiles: TAbstractFile[] = fileAccessor.getFolder(DR_SETTING.noteFolderPath()).children.filter(file => file instanceof TFile);
+    const routineNoteFiles: TAbstractFile[] = (await ensureArchive("notes")).children.filter(file => file instanceof TFile);
     for(const file of routineNoteFiles){
       if(!(file instanceof TFile)) continue;
       const day = Day.fromString(file.basename);

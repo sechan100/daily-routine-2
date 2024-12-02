@@ -14,9 +14,14 @@ export interface FileAccessor {
 
   /**
    * 경로로부터 vault의 폴더를 읽어온다.
-   * 만약 경로에 존재하는 폴더가 없거나 file인 경우 에러
    */
-  getFolder: (path: string) => TFolder;
+  getFolder: (path: string) => TFolder | null;
+
+  /**
+   * 폴더를 생성한다.
+   * 이미 같은 경로의 폴더가 존재하면 에러.
+   */
+  createFolder: (path: string) => Promise<TFolder>;
 
   /**
    * 파일을 읽기전용으로 읽어온다.
@@ -72,8 +77,12 @@ export const fileAccessor: FileAccessor = {
     if(file && file instanceof TFolder) {
       return file;
     } else {
-      throw new Error(`Folder not found: ${path}`);
+      return null;
     }
+  },
+
+  createFolder: (path: string) => {
+    return plugin().app.vault.createFolder(path);
   },
 
   readFileAsReadonly: async (file: TFile) => {
