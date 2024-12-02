@@ -6,6 +6,7 @@ import { TAbstractFile, TFile } from "obsidian";
 import { Day } from "@shared/period/day";
 import { FileNotFoundError } from "@shared/file/errors";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
+import { DR_SETTING } from "@app/settings/setting-provider";
 
 
 
@@ -60,7 +61,7 @@ export const NoteRepository: NoteRepository = {
 
   async loadBetween(start: Day, end: Day): Promise<RoutineNote[]> {
     const notes: RoutineNote[] = [];
-    const routineNoteFiles: TAbstractFile[] = fileAccessor.getFolder(plugin().settings.noteFolderPath).children.filter(file => file instanceof TFile);
+    const routineNoteFiles: TAbstractFile[] = fileAccessor.getFolder(DR_SETTING.noteFolderPath()).children.filter(file => file instanceof TFile);
     for(const file of routineNoteFiles){
       if(!(file instanceof TFile)) continue;
       const day = Day.fromString(file.basename);
@@ -164,5 +165,5 @@ const parseFile = async (file: TFile): Promise<RoutineNote> => {
  * 루틴 아카이브 파일 경로를 반환합니다.
  */
 const getRoutineArchivePath = (routineNoteTitle: string) => {
-  return `${plugin().settings.noteFolderPath}/${routineNoteTitle}.md`;
+  return `${DR_SETTING.noteFolderPath()}/${routineNoteTitle}.md`;
 }

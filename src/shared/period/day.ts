@@ -1,6 +1,7 @@
 import { moment } from "obsidian";
 import { plugin } from "../plugin-service-locator";
 import _ from "lodash";
+import { DR_SETTING } from "@app/settings/setting-provider";
 
 
 
@@ -49,7 +50,7 @@ export class Day {
 
   static getDaysOfWeek(): DayOfWeek[] {
     const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-    const isMondayStart = plugin().settings.isMondayStartOfWeek;
+    const isMondayStart = DR_SETTING.isMondayStartOfWeek();
     return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
   }
 

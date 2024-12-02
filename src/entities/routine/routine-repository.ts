@@ -4,6 +4,7 @@ import { fileAccessor } from "@shared/file/file-accessor";
 import { TFile } from "obsidian";
 import { routineSerializer } from "./routine-serializer";
 import { compose } from "@shared/compose";
+import { DR_SETTING } from "@app/settings/setting-provider";
 
 
 const ROUTINE_PATH = (routineName: string) =>{
@@ -15,7 +16,7 @@ const ROUTINE_FILE = (routineName: string) => {
 }
 
 const ROUTINE_FOLDER_PATH = () => {
-  const path = plugin().settings.routineFolderPath;
+  const path = DR_SETTING.routineFolderPath();
   if(!path) {
     throw new Error('Routine folder path is not set.');
   }

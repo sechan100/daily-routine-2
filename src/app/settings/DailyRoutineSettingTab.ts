@@ -6,14 +6,12 @@ import { useLeaf } from "@shared/view/use-leaf";
 
 
 export interface DailyRoutinePluginSettings {
-  routineFolderPath: string;
-  noteFolderPath: string;
+  dailyRoutineFolderPath: string;
   isMondayStartOfWeek: boolean;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
-  routineFolderPath: "daily-routine/routines",
-  noteFolderPath: "daily-routine/archive",
+  dailyRoutineFolderPath: "DAILY_ROUTINE",
   isMondayStartOfWeek: true
 }
 
@@ -30,33 +28,19 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    // Routine Folder Path
+    // DAILY ROUTINE FOLDER PATH
     new Setting(containerEl)
-    .setName("Routine Folder Path") 
-    .setDesc("The path to the routine folder.")
+    .setName("Daily Routine Folder Path") 
+    .setDesc("This is the path to the folder where the Daily Routine Plugin saves notes, routines, and other data.")
     .addText(text => {
       new FileSuggest(text.inputEl, "folder");
       text
-      .setPlaceholder("daily-routine/routines")
-      .setValue(this.plugin.settings.routineFolderPath??"")
+      .setPlaceholder("DAILY_ROUTINE")
+      .setValue(this.plugin.settings.dailyRoutineFolderPath??"")
       .onChange(async (value) => {
-        this.save({ routineFolderPath: normalizePath(value)});
+        this.save({ dailyRoutineFolderPath: normalizePath(value)});
       })
     })
-
-    // Routine Note Folder Path
-    new Setting(containerEl)
-    .setName("Routine Note Archive Path")
-    .setDesc("The path to the routine note archive folder.")
-    .addText(text => {
-      new FileSuggest(text.inputEl, "folder");
-      text
-      .setPlaceholder("daily-routine/archive")
-      .setValue(this.plugin.settings.noteFolderPath??"")
-      .onChange(async (value) => {
-        this.save({ noteFolderPath: normalizePath(value)});
-      })
-    });
 
     // Start of Week
     new Setting(containerEl)
@@ -80,12 +64,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
   async save(partial: Partial<DailyRoutinePluginSettings>) {
     const settings = {...this.plugin.settings, ...partial};
-
-    if(settings.noteFolderPath === settings.routineFolderPath){
-      new Notice("Routine folder path and routine archive folder path cannot be the same.");
-      return;
-    }
-
     this.plugin.settings = {...this.plugin.settings, ...partial};
     await this.plugin.saveSettings();
     useLeaf.getState().refresh();
