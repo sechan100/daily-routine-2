@@ -16,10 +16,6 @@ export const DR_SETTING = {
     return `${s().dailyRoutineFolderPath}/notes`;
   },
 
-  dataFolderPath(){
-    return `${s().dailyRoutineFolderPath}/data`;
-  },
-
   isMondayStartOfWeek(){
     return s().isMondayStartOfWeek;
   },
