@@ -1,13 +1,13 @@
-import { RoutineNote, Task, TodoTask } from "@entities/note";
+import { RoutineNote, AbstractTask, TodoTask, TaskGroup } from "@entities/note";
 import { NoteDependent } from "./NoteDependent";
-
-
+import { RoutineGroup } from "@entities/routine";
 
 
 interface SandwitchedTask {
-  prev: Task | null;
+  group: string;
+  prev: AbstractTask | null;
   task: TodoTask;
-  next: Task | null;
+  next: AbstractTask | null;
   originalIndex: number;
 }
 
@@ -15,15 +15,21 @@ interface SandwitchedTask {
 export class TodoTaskNoteDep extends NoteDependent {
   #sandwitches: SandwitchedTask[] = [];
 
-  constructor(private note: RoutineNote) {
+  constructor(note: RoutineNote){
     super();
-    note.tasks.forEach((task, i) => {
-      if (task.type === "todo") {
-        const prev = i > 0 ? note.tasks[i - 1] : null;
-        const next = note.tasks.length !== i + 1 ? note.tasks[i + 1] : null;
-        const originalIndex = i;
-        this.#sandwitches.push({ prev, task, next, originalIndex });
-      }
+    const tasks: TodoTask[] = note.createTaskArray().filter(t => t instanceof TodoTask)
+    this.#sandwitches = tasks.map((task, i) => {
+      const group = (() => {
+        const p = task.getParent();
+        if(p === null) throw new Error('todo task must have parent');
+        if(p instanceof RoutineNote) return RoutineGroup.UNGROUPED_NAME;
+        else if(p instanceof RoutineGroup) return p.getName();
+        else throw new Error('invalid parent type');
+      })();
+      const prev = i > 0 ? tasks[i - 1] : null;
+      const next = tasks.length !== i + 1 ? tasks[i + 1] : null;
+      const originalIndex = i;
+      return { group, prev, task, next, originalIndex }
     });
   }
 
@@ -35,16 +41,22 @@ export class TodoTaskNoteDep extends NoteDependent {
     4. 만약 둘 중 하나의 루틴이 없다면 있는 쪽에 위치시킨다.(Bad)
     5. 만약 둘 다 없다면 맨 앞에 넣는다 (Worst)
    */
-  restoreData(note: RoutineNote): RoutineNote {
-    const tasks = [...note.tasks];
-    this.#sandwitches.forEach(({ prev, task, next, originalIndex }) => {
-      const prevIndex = prev ? tasks.findIndex(t => t.name === prev.name) : -1;
-      const nextIndex = next ? tasks.findIndex(t => t.name === next.name) : -1;
+  restoreData(note: RoutineNote) {
+    for(const { group: groupName, prev, task, next, originalIndex } of this.#sandwitches){
+      const groupOrNull = note.findGroup(groupName);
+      // 고아가됐다면, 맨 위에 넣는다.
+      if(groupOrNull === null){
+        note.addEl(task);
+      }
+      const group = groupOrNull as TaskGroup;
+      const tasks = group.getTasks();
+      const prevIndex = prev ? tasks.findIndex(t => t.getName() === prev.getName()) : -1;
+      const nextIndex = next ? tasks.findIndex(t => t.getName() === next.getName()) : -1;
 
       // 앞뒤 다 없음
       if (prevIndex === -1 && nextIndex === -1) {
         tasks.unshift(task);
-      } 
+      }
       // 앞만 없음
       else if (prevIndex === -1) {
         // 앞이 없어진게 아니라 원래 없었던 경우: 원래 맨 앞이었다는 뜻
@@ -73,7 +85,6 @@ export class TodoTaskNoteDep extends NoteDependent {
           tasks.splice(nextIndex, 0, task);
         }
       }
-    });
-    return { ...note, tasks };
+    }
   }
 }

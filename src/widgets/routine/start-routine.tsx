@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { DEFAULT_ROUTINE, RoutineRepository, RoutineService } from "@entities/routine";
+import { RoutineRepository } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
-import { TaskOption } from '@features/task';
+import { TaskOption } from '@features/task-el';
 import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";

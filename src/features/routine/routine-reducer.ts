@@ -1,4 +1,4 @@
-import { Routine, RoutineProperties } from "@entities/routine";
+import { RoutineDto, RoutinePropertiesDto } from "@entities/routine";
 
 
 export type RoutineReduceAction = 
@@ -7,11 +7,11 @@ export type RoutineReduceAction =
   payload: string;
 } | {
   type: "SET_PROPERTIES",
-  payload: Partial<RoutineProperties>;
+  payload: Partial<RoutinePropertiesDto>;
 }
 
 export interface RoutineReducer {
-  (state: Routine, action: RoutineReduceAction): Routine;
+  (state: RoutineDto, action: RoutineReduceAction): RoutineDto;
 }
 
 

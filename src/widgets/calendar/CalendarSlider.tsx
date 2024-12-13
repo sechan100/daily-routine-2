@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Task } from "@entities/note";
+import { TaskDto } from "@entities/note";
 import { BaseCalendar } from "@shared/components/BaseCalendar";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
@@ -30,7 +30,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
   const tile = useCallback((day: Day) => {
     let tile = {
       day,
-      tasks: [] as Task[]
+      tasks: [] as TaskDto[]
     };
     tile = tiles.get(day.format()) || tile;
     return <CalendarTile tile={tile} />;

@@ -1,5 +1,4 @@
 import { moment } from "obsidian";
-import { plugin } from "../plugin-service-locator";
 import _ from "lodash";
 import { DR_SETTING } from "@app/settings/setting-provider";
 

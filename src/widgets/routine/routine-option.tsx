@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { executeRoutineNotesSynchronize } from '@entities/note-synchronize';
-import { Routine, RoutineRepository, RoutineService } from '@entities/routine';
+import { RoutineDto, RoutineRepository } from '@entities/routine';
 import { useRoutineNote } from "@features/note";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
-import { TaskOption } from '@features/task';
+import { TaskOption } from '@features/task-el';
 import { Button } from '@shared/components/Button';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
@@ -11,38 +11,24 @@ import { Modal } from '@shared/components/modal/styled';
 import { dr } from '@shared/daily-routine-bem';
 import { Notice } from "obsidian";
 import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import { saveRoutine } from './model/save-routine';
 
 
-interface RoutineOptionModalProps {
-  routine: Routine;
+interface Props {
+  routine: RoutineDto;
   modal: ModalApi;
 }
-export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine}: RoutineOptionModalProps) => {
+export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine}: Props) => {
   const bem = useMemo(() => dr("routine-option"), []);
   const { note, setNote } = useRoutineNote();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, originalRoutine);
   const id = useMemo(() => originalRoutine.name, [originalRoutine.name]);
 
 
-  // modal.onClose를 정의
+  // modal.onClose
   useEffect(() => { modal.onClose(async () => {
-    const newNote = { ...note };
-    newNote.tasks.flatMap(task => {
-      if(task.name !== id) return task;
-      if(RoutineService.isRoutineDueTo(routine, note.day)){
-        return {
-          ...task,
-          name: routine.name,
-        }
-      }
-      else {
-        return [];
-      }
-    });
+    const newNote = await saveRoutine(note, routine);
     setNote(newNote);
-
-    await RoutineRepository.update(id, routine);
-    executeRoutineNotesSynchronize();
   })}, [id, modal, note, routine, setNote]);
 
 
@@ -59,7 +45,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
     new Notice(`Routine ${routine.name} deleted.`);
     setNote({
       ...note,
-      tasks: note.tasks.filter(task => task.name !== routine.name)
+      root: note.root.filter(task => task.name !== routine.name)
     });
     executeRoutineNotesSynchronize();
     modal.closeWithoutOnClose();

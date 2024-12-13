@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TFile, TFolder } from "obsidian";
 import { plugin } from "@shared/plugin-service-locator";
-import { FileNotFoundError } from "./errors";
+import { TFile, TFolder } from "obsidian";
 
 
 
 export interface FileAccessor {
   /**
    * 경로로부터 vault의 파일을 읽어온다.
-   * @throws FileNotFoundError 만약 경로에 존재하는 파일이 없거나 folder인 경우 에러
    */
-  getFile: (path: string) => TFile;
+  loadFile: (path: string) => TFile | null;
 
   /**
    * 경로로부터 vault의 폴더를 읽어온다.
    */
-  getFolder: (path: string) => TFolder | null;
+  loadFolder: (path: string) => TFolder | null;
 
   /**
    * 폴더를 생성한다.
@@ -63,16 +61,16 @@ export interface FileAccessor {
 
 export const fileAccessor: FileAccessor = {
 
-  getFile: (path: string): TFile => {
+  loadFile: (path) => {
     const file = plugin().app.vault.getAbstractFileByPath(path);
     if(file && file instanceof TFile) {
       return file;
     } else {
-      throw new FileNotFoundError(path);
+      return null;
     }
   },
 
-  getFolder: (path: string) => {
+  loadFolder: (path: string) => {
     const file = plugin().app.vault.getAbstractFileByPath(path);
     if(file && file instanceof TFolder) {
       return file;

@@ -2,13 +2,13 @@
 import { useCallback } from "react";
 import { Button } from "@shared/components/Button";
 import { DayOfWeek, Day } from "@shared/period/day";
-import { RoutineProperties } from "@entities/routine";
+import { RoutinePropertiesDto } from "@entities/routine";
 
 
 interface WeekOptionProps {
   className?: string;
   daysOfWeek: DayOfWeek[];
-  setProperties: (properties: Partial<RoutineProperties>) => void;
+  setProperties: (properties: Partial<RoutinePropertiesDto>) => void;
 }
 export const WeekOption = ({ className, daysOfWeek, setProperties }: WeekOptionProps) => {
   

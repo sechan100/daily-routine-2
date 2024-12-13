@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, RoutineNote, NoteService } from '@entities/note';
+import { NoteRepository, RoutineNote } from '@entities/note';
 import { Day } from "@shared/period/day";
 import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { BaseCalendar } from '@shared/components/BaseCalendar';
@@ -15,7 +15,7 @@ export interface NoteAchivementCalendarProps {
 export const NoteAchivementCalendar = ({ month: propsMonth }: NoteAchivementCalendarProps) => {
   const [month, setMonth] = useState<Month>(propsMonth);
   const { route } = useTabRoute();
-  const [routineNotes, setRoutineNotes] = useState<RoutineNote[] | null>(null);
+  const [notes, setNotes] = useState<RoutineNote[] | null>(null);
 
 
   // 해당 월의 루틴 노트들을 가져온다.
@@ -23,24 +23,24 @@ export const NoteAchivementCalendar = ({ month: propsMonth }: NoteAchivementCale
     NoteRepository
     .loadBetween(month.startDay, month.endDay)
     .then(notes => {
-      setRoutineNotes(notes)
+      setNotes(notes)
     });
   }, [month]);
 
 
   const tile = useCallback((tileDay: Day) => {
     let percent = 0;
-    if(routineNotes){
-      const routineNote = routineNotes.find(note => note.day.isSameDay(tileDay));
-      if(routineNote){
-        const completion = NoteService.getTaskCompletion(routineNote);
+    if(notes){
+      const note = notes.find(note => note.getDay().isSameDay(tileDay));
+      if(note){
+        const completion = note.getCompletion();
         percent = completion.percentageRounded;
       }
     }
     return (
       <PercentageCircle percentage={percent} text={tileDay.date.toString()} />
     )
-  }, [routineNotes]);
+  }, [notes]);
 
 
   return (

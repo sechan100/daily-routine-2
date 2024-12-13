@@ -5,13 +5,13 @@ import { Button } from "@shared/components/Button";
 import { WeekOption } from "./active-criteria-week";
 import { MonthOption } from "./active-criteria-month";
 import { TEXT_CSS } from "@shared/constants/text-style";
-import { Routine, RoutineProperties } from "@entities/routine";
+import { RoutineDto, RoutinePropertiesDto } from "@entities/routine";
 
 
 interface ActiveCriteriaProps {
   className?: string;
-  routine: Routine;
-  setProperties: (properties: Partial<RoutineProperties>) => void;
+  routine: RoutineDto;
+  setProperties: (properties: Partial<RoutinePropertiesDto>) => void;
 }
 /**
  * daysOfWeek, 또는 daysOfMonth를 설정하는 옵션 컴포넌트

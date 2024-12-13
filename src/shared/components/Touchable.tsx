@@ -22,7 +22,7 @@ interface TouchableProps {
   longPressDelay?: number;
 
   // pressed 상태가 변경될 때 호출
-  onChangePressedState?: (isPressed: boolean) => void;
+  onPressChange?: (isPressed: boolean) => void;
 
   // click인지, long press인지 판단하기 위한 지연시간
   longPressStartDelay?: number;
@@ -55,7 +55,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   );
   const longPressStartDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
     _.debounce((e: React.TouchEvent) => {
-      props.onChangePressedState?.(true);
+      props.onPressChange?.(true);
       props.onLongPressStart?.(e);
     }, startDelay)
   );
@@ -70,7 +70,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
     isTouchRef.current = false;
     longPressDebounce.current.cancel();
     longPressStartDebounce.current.cancel();
-    props.onChangePressedState?.(false);
+    props.onPressChange?.(false);
   }, [props]);
   
   const onClick = useCallback((e: React.MouseEvent) => {

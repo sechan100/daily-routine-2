@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { NoteService, RoutineNote } from '@entities/note';
+import { RoutineNoteDto, RoutineTaskDto, TaskDto, TaskGroupDto, TodoTask, TodoTaskDto } from '@entities/note';
 import { UseRoutineNoteProvider, resolveRoutineNote, useRoutineNote } from "@features/note";
-import { TaskDndContext } from '@features/task';
+import { TaskDndContext } from '@features/task-el';
 import { MenuComponent } from "@shared/components/Menu";
 import { dr } from "@shared/daily-routine-bem";
 import { Day } from "@shared/period/day";
@@ -10,13 +10,17 @@ import { TodoTaskWidget, useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
 import { Menu } from "obsidian";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { getCompletion } from './get-completion';
+import { BaseGroupHeadFeature } from '@features/task-el/ui/TaskGroupHeadFeature';
+import { TaskGroupWidget } from './TaskGroupWidget';
+import { renderTask } from './render-task-widget';
 
 
 interface RoutineNoteProps {
   day: Day;
 }
 const RoutineNotePageContext = ({ day }: RoutineNoteProps) => {
-  const [ note, setNote ] = useState<RoutineNote | null>(null);
+  const [ note, setNote ] = useState<RoutineNoteDto | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -40,7 +44,7 @@ const RoutineNotePageContext = ({ day }: RoutineNoteProps) => {
 
 const PageComponent = () => {
   const note = useRoutineNote(n=>n.note);
-  const percentage = useMemo(() => NoteService.getTaskCompletion(note).percentageRounded, [note]);
+  const percentage = useMemo(() => getCompletion(note).percentageRounded, [note]);
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -108,21 +112,25 @@ const PageComponent = () => {
           overflowY: "auto",
         }}
       >
-        <TaskDndContext>
-          {note.tasks.map(task => {
-            switch(task.type){
-              case "routine": return <RoutineTaskWidget key={task.name} task={task} />
-              case "todo": return <TodoTaskWidget key={task.name} task={task} />
-              default: task as never;
-            }
-          })}
-        </TaskDndContext>
+        <TaskDndContext> {note.root.map(el => {
+          if(el.elementType === "group"){
+            return (
+              <TaskGroupWidget
+                key={`${el.elementType}-${el.name}`}
+                group={el as TaskGroupDto} 
+              />)
+          } else {
+            return renderTask(el as TaskDto, null);
+          }
+        })}</TaskDndContext>
       </div>
       <AddTodoModal />
       <StartRoutineModal />
     </div>
   );  
 }
+
+
 
 
 export const RoutineNotePage = RoutineNotePageContext;

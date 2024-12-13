@@ -12,22 +12,18 @@ import { NoteDependent } from "./NoteDependent";
 export class TaskCheckedStateNoteDep extends NoteDependent {
   #checkedTasks: string[] = [];
 
-  constructor(private note: RoutineNote) {
+  constructor(note: RoutineNote) {
     super();
-    this.#checkedTasks = note.tasks.filter(t => t.checked).map(t => t.name);
+    this.#checkedTasks = note.createTaskArray()
+    .filter(t => t.isChecked())
+    .map(t => t.getName());
   }
 
-  restoreData(note: RoutineNote): RoutineNote {
-    const newTasks = note.tasks.map(t => {
-      if(this.#checkedTasks.includes(t.name)){
-        t.checked = true;
+  restoreData(note: RoutineNote) {
+    for(const task of note.createTaskArray()){
+      if(this.#checkedTasks.includes(task.getName())){
+        task.check();
       }
-      return t;
-    })
-
-    return {
-      ...note,
-      tasks: newTasks,
     }
   }
 }

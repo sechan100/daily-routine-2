@@ -1,6 +1,5 @@
 import { DR_SETTING } from "@app/settings/setting-provider";
 import { fileAccessor } from "@shared/file/file-accessor";
-import assert from "assert";
 
 export type DrArchives = "notes" | "routines";
 
@@ -10,9 +9,8 @@ export const ensureArchive = async (archive: DrArchives) => {
     notes: DR_SETTING.noteFolderPath(),
     routines: DR_SETTING.routineFolderPath(),
   }[archive];
-  assert(archivePath, `Archive path is not set. ${archive}`);
 
-  const folder = fileAccessor.getFolder(archivePath);
+  const folder = fileAccessor.loadFolder(archivePath);
   if(!folder){
     return await fileAccessor.createFolder(archivePath);
   } else {

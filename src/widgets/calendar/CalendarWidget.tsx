@@ -1,6 +1,6 @@
 import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { CalendarNavigation } from "./CalendarNavigation";
 import { CalendarSlide } from "./CalendarSlider";
 

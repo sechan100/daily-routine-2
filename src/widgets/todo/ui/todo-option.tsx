@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, NoteService, TodoTask } from '@entities/note';
+import { NoteRepository, TodoTaskDto } from '@entities/note';
 import { useRoutineNote } from '@features/note';
-import { TaskOption } from "@features/task";
+import { TaskOption } from "@features/task-el";
 import { TodoValidation, todoValidator, VALID_TODO_VALIDATION } from "@features/todo";
 import { Button } from '@shared/components/Button';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
@@ -15,13 +15,13 @@ import { rescheduleTodo } from "../model/reschedule-todo";
 
 
 interface TodoOptionModalProps {
-  todo: TodoTask;
+  todo: TodoTaskDto;
   modal: ModalApi;
 }
 export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: TodoOptionModalProps) => {
   const bem = useMemo(() => dr("todo-option"), []);
   const { note, setNote } = useRoutineNote();
-  const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
+  const [ todo, setTodo ] = useState<TodoTaskDto>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
   const validation = useMemo(() => {

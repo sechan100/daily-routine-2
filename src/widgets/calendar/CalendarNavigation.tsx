@@ -1,11 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useLeaf } from "@shared/view/use-leaf";
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Calendar from "react-calendar";
-import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
+import { OnArgs } from "react-calendar/dist/cjs/shared/types";
 
 
 

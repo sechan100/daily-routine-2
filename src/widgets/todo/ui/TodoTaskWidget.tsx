@@ -1,13 +1,14 @@
-import { TodoTask as TodoTaskEntity } from "@entities/note";
-import { AbstractTask } from "@features/task";
+import { TaskGroupDto, TodoTaskDto } from "@entities/note";
+import { AbstractTaskWidget } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useTodoOptionModal } from './todo-option';
 
 
 interface TodoTaskProps {
-  task: TodoTaskEntity;
+  task: TodoTaskDto;
+  parent: TaskGroupDto | null;
 }
-export const TodoTaskWidget = React.memo(({ task }: TodoTaskProps) => {
+export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
   
   const onOptionMenu = useCallback(async () => {
@@ -16,9 +17,10 @@ export const TodoTaskWidget = React.memo(({ task }: TodoTaskProps) => {
 
   return (
     <>
-      <AbstractTask 
-        className="dr-todo-task"
+      <AbstractTaskWidget 
         task={task}
+        parent={parent}
+        className="dr-todo-task"
         onOptionMenu={onOptionMenu}
       />
       <TodoOptionModal />

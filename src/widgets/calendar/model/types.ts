@@ -1,4 +1,4 @@
-import { Task } from "@entities/note";
+import { TaskDto } from "@entities/note";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 
@@ -11,5 +11,5 @@ export interface Calendar {
 
 export interface Tile {
 	day: Day;
-	tasks: Task[] // 0 ~ n개
+	tasks: TaskDto[] // 0 ~ n개
 }

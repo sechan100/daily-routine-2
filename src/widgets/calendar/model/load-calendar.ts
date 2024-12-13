@@ -1,20 +1,22 @@
 import { Month } from "@shared/period/month";
 import { Calendar, Tile } from "./types";
 import { RoutineRepository } from "@entities/routine";
-import { NoteRepository, NoteService } from "@entities/note";
+import { NoteRepository, RoutineTask } from "@entities/note";
 import { Day } from "@shared/period/day";
 
 
 
 export const loadCalendar = async (month: Month): Promise<Calendar> => {
   const routines = await RoutineRepository.loadAll();
-  const showOnCalendarRoutines = routines.filter((r) => r.properties.showOnCalendar);
-  const createTile = (day: Day) => {
-    const noteCreator = NoteService.setLoaderForCreate(() => showOnCalendarRoutines);
-    const note = noteCreator(day);
+  const showOnCalendarRoutines = routines.filter((r) => r.getProperties().isShowOnCalendar());
+  const createTile = (day: Day): Tile => {
+    const tileTasks = showOnCalendarRoutines
+    .filter(r => r.isDueTo(day))
+    .map(r => RoutineTask.fromRoutine(r))
+    .map(t => t.toJSON());
     return {
-      day: note.day,
-      tasks: note.tasks,
+      day,
+      tasks: tileTasks,
     } as Tile;
   }
 
@@ -30,11 +32,14 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
 	const tiles: Map<string, Tile> = new Map();
   let d = startDay;
   while(d.isSameOrBefore(endDay)){
-    const loaded = loadedNotes.find(n => n.day.isSameDay(d));
+    const loaded = loadedNotes.find(n => n.getDay().isSameDay(d));
     if(loaded){
-      tiles.set(loaded.day.format(), {
-        day: loaded.day,
-        tasks: loaded.tasks.filter(t => t.showOnCalendar)
+      const loadedDay = loaded.getDay();
+      tiles.set(loadedDay.format(), {
+        day: loadedDay,
+        tasks: loaded.createTaskArray()
+              .filter(t => t.isShowOnCalendar())
+              .map(t => t.toJSON())
       })
     } else {
       tiles.set(d.format(), createTile(d));

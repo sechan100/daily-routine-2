@@ -1,21 +1,21 @@
-import { RoutineNote } from "@entities/note";
+import { RoutineNoteDto } from "@entities/note";
 import { createStoreContext } from "@shared/zustand/create-store-context";
 import { Day } from "@shared/period/day";
 import { resolveRoutineNote } from "./resolve-note";
 
 
 interface UseRoutineNote {
-  note: RoutineNote;
-  setNote(note: RoutineNote): void;
+  note: RoutineNoteDto;
+  setNote(note: RoutineNoteDto): void;
   setNote(day: Day): void;
 }
 
 export const [UseRoutineNoteProvider, useRoutineNote] = 
-createStoreContext<RoutineNote, UseRoutineNote>((routineNote, set, get) => ({
+createStoreContext<RoutineNoteDto, UseRoutineNote>((routineNote, set, get) => ({
   note: routineNote,
 
-  async setNote(noteOrDay: RoutineNote | Day){
-    let note: RoutineNote;
+  async setNote(noteOrDay: RoutineNoteDto | Day){
+    let note: RoutineNoteDto;
     if(noteOrDay instanceof Day){
       note = await resolveRoutineNote(noteOrDay);
     } else {
