@@ -14,11 +14,11 @@ type AllRecreatedNoteCb = (notes: RoutineNote[]) => void;
 export interface RoutineNoteSynchronizer {
   // @param cb 동기화 완료후 실행할 콜백
   (cb: AllRecreatedNoteCb): void;
-
+  (excludeDay?: Day): void;
   (): void;
 }
 
-export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (cb?) => {
+export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (arg?) => {
   const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
 
   const doSync = async (note: RoutineNote): Promise<RoutineNote> => {
@@ -39,10 +39,13 @@ export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (cb
 
   // 모든 등록된 비동기 로직 이후에 실행을 예약
   Promise.resolve().then(async () => {
-    const notes = await NoteRepository.loadBetween(Day.now(), Day.max());
+    let notes = await NoteRepository.loadBetween(Day.now(), Day.max());
+    if(arg instanceof Day){
+      notes = notes.filter(n => !n.getDay().isSameDay(arg));
+    }
     const syncedNotes = await Promise.all(notes.map(doSync));
-    if(cb){
-      (cb as AllRecreatedNoteCb)(syncedNotes);
+    if(typeof arg === 'function'){
+      (arg as AllRecreatedNoteCb)(syncedNotes);
     }
   })
 }

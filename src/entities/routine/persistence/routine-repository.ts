@@ -72,7 +72,7 @@ export const RoutineRepository: RoutineRepository = {
   async update(routine: Routine){
     const file = fileAccessor.loadFile(ROUTINE_PATH(routine.getName()));
     if(!file) throw new Error('Routine file not found.');
-    await fileAccessor.writeFrontMatter(file, () => routine.getProperties().serialize());
+    await fileAccessor.writeFrontMatter(file, () => routine.getProperties().toJSON());
     return routine;
   },
 }

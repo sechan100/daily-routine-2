@@ -16,7 +16,7 @@ export const ROUTINE_PATH = (routineName: string) => {
 export const GROUP_PREFIX = "_g_";
 
 export const GROUP_PATH = (groupName: string) => {
-  return `${ROUTINE_FOLDER_PATH()}/${GROUP_PREFIX}${groupName}`;
+  return `${ROUTINE_FOLDER_PATH()}/${GROUP_PREFIX}${groupName}.md`;
 };
 
 

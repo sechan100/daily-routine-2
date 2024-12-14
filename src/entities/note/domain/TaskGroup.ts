@@ -85,16 +85,15 @@ export class TaskGroup implements TaskElement<TaskGroupDto>, TaskParent {
    * @param groupBlock: 
    * `
    * ## {name}
-   * ...tasks
+   * ...tasks?
    * ` 형식의 마크다운 블록
    */
   static deserialize(groupBlock: string): Result<TaskGroup, string> {
-    const regex = /##\s*(.+?)\s*\n([\s\S]*)/;
+    const regex = /##\s*(.+?)\s*(?:\n([\s\S]*?))?(?=\n##|$)/;
     const match = groupBlock.match(regex);
     if(!match) return err('invalid-group-format');
-
     const name = match[1].trim();
-    const taskLines = match[2].trim().split("\n");
+    const taskLines = match[2]?.trim().split("\n") ?? [];
     const tasks: AbstractTask[] = taskLines
       .map(l => {
         if(AbstractTask.investigateTaskType(l) === "routine"){

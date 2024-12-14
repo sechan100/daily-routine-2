@@ -23,6 +23,7 @@ interface GroupRepository {
   isExist(groupName: string): Promise<boolean>;
   persist(group: RoutineGroup): Promise<boolean>;
   delete(groupName: string): Promise<void>;
+  update(entity: RoutineGroup): Promise<RoutineGroup>; 
   changeName(originalName: string, newName: string): Promise<void>;
 }
 export const GroupRepository: GroupRepository = {
@@ -58,7 +59,13 @@ export const GroupRepository: GroupRepository = {
     if(!file) return;
     await fileAccessor.deleteFile(file);
   },
-  
+    
+  async update(group: RoutineGroup){
+    const file = fileAccessor.loadFile(GROUP_PATH(group.getName()));
+    if(!file) throw new Error('Group file not found.');
+    await fileAccessor.writeFrontMatter(file, () => group.getProperties().toJSON());
+    return group;
+  },
   
   async changeName(originalName: string, newName: string){
     const file = fileAccessor.loadFile(GROUP_PATH(originalName));

@@ -37,12 +37,12 @@ export abstract class AbstractTask<T extends TaskDto = RoutineTaskDto | TodoTask
     line = line.trim();
     if(line === '') throw new Error('empty-line');
 
-    const metaDataErr = 'invalid-task-meta-data-format';
     const regex = /%%(.*?)%%/;
     const match = line.match(regex);
-    if(!match) throw new Error(metaDataErr);
+    if(!match) throw new Error(`task metadata not found: ${line}`);
+
     const metaData = JSON.parse(match[1]);
-    if("type" in metaData === false) throw new Error(metaDataErr);
+    if("type" in metaData === false) throw new Error(`task 'type' not found: ${line}`);
     
     return metaData.type;
   }

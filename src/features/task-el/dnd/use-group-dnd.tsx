@@ -58,9 +58,10 @@ export const useGroupDnd = ({
   const evaluateHitArea = useCallback((dropped: TaskElementDto, monitor: DropTargetMonitor) => {
     if(dropped.name === group.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, isGroupOpen);
+    const inCmdAvailable = !isGroupOpen || group.tasks.length === 0;
+    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, inCmdAvailable);
     return hit;
-  }, [group.name, groupRef, isGroupOpen])
+  }, [group, groupRef, isGroupOpen])
 
   const [{ isOver }, drop ] = useDrop({
     accept: ["TASK", "GROUP"],

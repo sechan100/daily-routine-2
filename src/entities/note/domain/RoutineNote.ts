@@ -67,7 +67,7 @@ export class RoutineNote implements JsonConvertible<RoutineNoteDto>, TaskParent 
   }
 
   static deserialize(day: Day, content: string): Result<RoutineNote, string> {
-    const regex = /##\s*.*?\n[\s\S]*?(?=\n##|$)/g;
+    const regex = /##\s+.*(?:\n(?!##|$).*)*/g;
     const blocks = content.match(regex);
     if(!blocks) return err('no-task-blocks');
 
