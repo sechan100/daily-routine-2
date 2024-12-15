@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { RoutineRepository } from "@entities/routine";
+import { RoutineEntity } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { TaskOption } from '@features/task-el';
@@ -12,36 +12,26 @@ import { Notice } from "obsidian";
 import { useCallback, useMemo, useReducer } from "react";
 
 
-
-// 이어하기: 위의 default 설정할 때, default properties를 한 곳에서 정의할 필요가 있겠다. ex) entities의 types라던가 아니면 default-routine.ts 파일이라던가
-
-
 interface StartRoutineModalProps {
   modal: ModalApi;
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
   const { note, setNote } = useRoutineNote();
-  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, DEFAULT_ROUTINE());
+  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, RoutineEntity.DEFAULT_ROUTINE());
 
   const onSaveBtnClick = useCallback(async () => {
-    try {
-      await RoutineRepository.persist(routine);
-      new Notice(`Routine '${routine.name}' started! 🎉`);
-      // precond: routineManager.create 함수가 루틴을 반드시 맨 앞 순서에 만든다고 가정
-      setNote({
-        ...note,
-        tasks: [
-          RoutineService.deriveRoutineToTask(routine),
-          ...note.tasks
-        ]
-      })
-
-      executeRoutineNotesSynchronize();
-      modal.close();
-    } catch(e) {
-      new Notice(e.message);
-    }
-  }, [modal, note, routine, setNote]);
+    // try {
+    //   const noteDomain = RoutineNote.fromJSON(note);
+    //   const task = RoutineTask.fromRoutine(routine);
+    //   noteDomain.addTask();
+      
+    //   executeRoutineNotesSynchronize();
+    //   modal.close();
+    //   new Notice(`Routine '${routine.name}' started! 🎉`);
+    // } catch(e) {
+    //   new Notice(e.message);
+    // }
+  }, []);
 
 
   const bem = useMemo(() => dr("start-new-routine"), []);

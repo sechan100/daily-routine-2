@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNoteDto, TaskDto, TaskElementDto, TaskGroupDto } from "@entities/note";
+import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { useLeaf } from "@shared/view/use-leaf";
 import React, { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
@@ -12,11 +12,11 @@ import { DroppedElReplacer } from "../model/reorder-elements";
 
 
 interface UseGroupDndOption {
-  group: TaskGroupDto;
+  group: TaskGroup;
   groupRef: RefObject<HTMLElement | null>; // 드래그 타겟
   isGroupOpen: boolean;
   onElDragEnd?: () => void;
-  onElDrop?: (updatedNote: RoutineNoteDto, dropped: TaskElementDto) => void;
+  onElDrop?: (updatedNote: RoutineNote, dropped: NoteElement) => void;
 }
 interface UseGroupDndResult {
   isDragging: boolean;
@@ -55,10 +55,10 @@ export const useGroupDnd = ({
     })
   }, [group])
 
-  const evaluateHitArea = useCallback((dropped: TaskElementDto, monitor: DropTargetMonitor) => {
+  const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === group.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const inCmdAvailable = !isGroupOpen || group.tasks.length === 0;
+    const inCmdAvailable = !isGroupOpen || group.children.length === 0;
     const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, inCmdAvailable);
     return hit;
   }, [group, groupRef, isGroupOpen])
@@ -76,17 +76,17 @@ export const useGroupDnd = ({
     drop: async (item, monitor) => {
       if(!hit) return;
       const dropped = item.el;
-      let newNote: RoutineNoteDto;
+      let newNote: RoutineNote;
       if(dropped.elementType === "task") {
         newNote = DroppedElReplacer.taskDropOnGroup({
-          dropped: dropped as TaskDto,
+          dropped: dropped as Task,
           on: group,
           hit,
         });
       } else {
         if(hit === "in") return null;
         newNote = DroppedElReplacer.groupDropOnGroup({
-          dropped: dropped as TaskGroupDto,
+          dropped: dropped as TaskGroup,
           on: group,
           hit,
         }); 

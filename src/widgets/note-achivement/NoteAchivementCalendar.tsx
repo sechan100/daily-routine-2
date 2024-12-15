@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, RoutineNote } from '@entities/note';
+import { NoteEntity, NoteRepository, RoutineNote } from '@entities/note';
 import { Day } from "@shared/period/day";
 import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { BaseCalendar } from '@shared/components/BaseCalendar';
@@ -31,9 +31,9 @@ export const NoteAchivementCalendar = ({ month: propsMonth }: NoteAchivementCale
   const tile = useCallback((tileDay: Day) => {
     let percent = 0;
     if(notes){
-      const note = notes.find(note => note.getDay().isSameDay(tileDay));
+      const note = notes.find(note => note.day.isSameDay(tileDay));
       if(note){
-        const completion = note.getCompletion();
+        const completion = NoteEntity.getCompletion(note);
         percent = completion.percentageRounded;
       }
     }

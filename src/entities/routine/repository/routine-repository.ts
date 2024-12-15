@@ -1,21 +1,30 @@
 import { ensureArchive } from "@entities/archives";
 import { compose } from "@shared/compose";
 import { fileAccessor } from "@shared/file/file-accessor";
-import { TFile } from "obsidian";
-import { Routine } from "../domain/Routine";
+import { stringifyYaml, TFile } from "obsidian";
 import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";
+import { parseFrontmatter } from "@shared/file/parse-frontmatter";
+import { RoutineEntity } from "../domain/routine";
+import dedent from "dedent";
+import { Routine } from "../domain/routine.type";
 
 
 const parse = async (file: TFile): Promise<Routine> => {
-  const fileContent = await fileAccessor.readFileAsReadonly(file);
-  if(!fileContent) {
-    throw new Error('Routine file is empty.');
+  const content = await fileAccessor.readFileAsReadonly(file);
+  const result = RoutineEntity.validateRoutineProperties(parseFrontmatter(content));
+  if(result.isErr()) throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
+  return {
+    name: file.basename,
+    properties: result.value
   }
-  return Routine.fromFile(
-    file.basename, 
-    fileContent
-  );
 }
+
+const serialize = (routine: Routine) => dedent`
+  ---
+  ${stringifyYaml(routine.properties)}
+  ---
+`;
+
 
 interface RoutineRepository {
   loadAll(): Promise<Routine[]>;
@@ -44,10 +53,10 @@ export const RoutineRepository: RoutineRepository = {
   },
 
   async persist(routine: Routine){
-    const path = ROUTINE_PATH(routine.getName());
+    const path = ROUTINE_PATH(routine.name);
     const file = fileAccessor.loadFile(path);
     if(!file){
-      await fileAccessor.createFile(path, routine.serialize());
+      await fileAccessor.createFile(path, serialize(routine));
       return true;
     } else {
       return false;
@@ -70,9 +79,9 @@ export const RoutineRepository: RoutineRepository = {
   },
   
   async update(routine: Routine){
-    const file = fileAccessor.loadFile(ROUTINE_PATH(routine.getName()));
+    const file = fileAccessor.loadFile(ROUTINE_PATH(routine.name));
     if(!file) throw new Error('Routine file not found.');
-    await fileAccessor.writeFrontMatter(file, () => routine.getProperties().toJSON());
+    await fileAccessor.writeFile(file, () => serialize(routine));
     return routine;
   },
 }

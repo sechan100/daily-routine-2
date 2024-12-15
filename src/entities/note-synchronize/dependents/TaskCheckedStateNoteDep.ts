@@ -5,6 +5,7 @@
 
 import { RoutineNote } from "@entities/note";
 import { NoteDependent } from "./NoteDependent";
+import { NoteEntity } from "@entities/note/domain/note";
 
 
 
@@ -14,15 +15,15 @@ export class TaskCheckedStateNoteDep extends NoteDependent {
 
   constructor(note: RoutineNote) {
     super();
-    this.#checkedTasks = note.createTaskArray()
-    .filter(t => t.isChecked())
-    .map(t => t.getName());
+    this.#checkedTasks = NoteEntity.flatten(note)
+    .filter(t => t.checked)
+    .map(t => t.name);
   }
 
   restoreData(note: RoutineNote) {
-    for(const task of note.createTaskArray()){
-      if(this.#checkedTasks.includes(task.getName())){
-        task.check();
+    for(const task of NoteEntity.flatten(note)){
+      if(this.#checkedTasks.includes(task.name)){
+        task.checked = true;
       }
     }
   }

@@ -1,5 +1,5 @@
-import { TaskElementDto } from "@entities/note";
+import { NoteElement } from "@entities/note";
 
 export interface TaskElDragItem {
-  el: TaskElementDto;
+  el: NoteElement;
 }

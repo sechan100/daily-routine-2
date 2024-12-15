@@ -1,4 +1,4 @@
-import { NoteRepository } from "@entities/note";
+import { NoteEntity, NoteRepository } from "@entities/note";
 import { Day } from "@shared/period/day";
 import { DayNode, WeekNode } from "./types";
 import { Week } from "@shared/period/week";
@@ -15,8 +15,8 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
   const realNotes = await NoteRepository.loadBetween(startDay, endDay);
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
   const dayNodes: DayNode[] = realNotes.map(note => ({
-    day: note.getDay(),
-    percentage: note.getCompletion().percentageRounded
+    day: note.day,
+    percentage: NoteEntity.getCompletion(note).percentageRounded
   }))  
   dayNodes.sort((a, b) => a.day.isBefore(b.day) ? -1 : 1);
 

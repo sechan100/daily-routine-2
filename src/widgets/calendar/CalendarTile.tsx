@@ -2,7 +2,7 @@
 import { Day } from "@shared/period/day";
 import { Tile } from "./model/types"
 import { TEXT_CSS } from "@shared/constants/text-style";
-import { TaskDto } from "@entities/note";
+import { Task } from "@entities/note";
 import { css } from "@emotion/react";
 
 
@@ -35,7 +35,7 @@ const DateBadge = ({ day }: { day: Day }) => {
 }
 
 
-const TaskLineContainer = ({ tasks }: { tasks: TaskDto[] }) => {
+const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   if(tasks.length <= 4){
     return (
       <div>
@@ -70,7 +70,7 @@ const TaskLineContainer = ({ tasks }: { tasks: TaskDto[] }) => {
   )
 }
 
-const TaskLine = ({ task }: { task: TaskDto }) => {
+const TaskLine = ({ task }: { task: Task }) => {
   return (
     <div css={[TEXT_CSS.onAccent, defaultTextStyle, {
       margin: '1px 1px',

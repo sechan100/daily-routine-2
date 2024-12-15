@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNoteDto, TaskDto, TaskElementDto, TaskGroupDto } from "@entities/note";
+import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { useLeaf } from "@shared/view/use-leaf";
 import { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
@@ -11,11 +11,11 @@ import { TaskElDragItem } from "./drag-item";
 
 
 interface UseTaskDndOption {
-  task: TaskDto;
-  group: TaskGroupDto | null;
+  task: Task;
+  group: TaskGroup | null;
   taskRef: RefObject<HTMLElement | null>; // 드래그 타겟
   onElDragEnd?: () => void;
-  onElDrop?: (updatedNote: RoutineNoteDto, dropped: TaskElementDto) => void;
+  onElDrop?: (updatedNote: RoutineNote, dropped: NoteElement) => void;
 }
 interface UseTaksDndResult {
   isDragging: boolean;
@@ -40,16 +40,16 @@ export const useTaskDnd = ({
     if(!group) return false;
     const note = useRoutineNote.getState().note;
     const lastGroup = (() => {
-      const groupOrTask = note.root[note.root.length - 1];
+      const groupOrTask = note.children[note.children.length - 1];
       if(groupOrTask.elementType === "group"){
-        return groupOrTask as TaskGroupDto;
+        return groupOrTask as TaskGroup;
       } else {
         return null;
       }
     })();
 
     if(lastGroup){
-      return lastGroup.tasks[lastGroup.tasks.length - 1].name === task.name;
+      return lastGroup.children[lastGroup.children.length - 1].name === task.name;
     } else {
       return false;
     }
@@ -73,7 +73,7 @@ export const useTaskDnd = ({
     })
   }, [task])
 
-  const evaluateHitArea = useCallback((dropped: TaskElementDto, monitor: DropTargetMonitor) => {
+  const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === task.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
     const hit = HitAreaEvaluator.evaluateTask(coord, taskRef.current as HTMLElement, isLastNode);
@@ -96,16 +96,16 @@ export const useTaskDnd = ({
     drop: async (item, monitor) => {
       if(!hit) return;
       const dropped = item.el;
-      let newNote: RoutineNoteDto;
+      let newNote: RoutineNote;
       if(dropped.elementType === "task") {
         newNote = DroppedElReplacer.taskDropOnTask({
-          dropped: dropped as TaskDto,
+          dropped: dropped as Task,
           on: task,
           hit
         });
       } else {
         newNote = DroppedElReplacer.groupDropOnTask({
-          dropped: dropped as TaskGroupDto,
+          dropped: dropped as TaskGroup,
           on: task,
           hit,
         }); 

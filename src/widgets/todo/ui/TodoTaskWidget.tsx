@@ -1,12 +1,12 @@
-import { TaskGroupDto, TodoTaskDto } from "@entities/note";
-import { AbstractTaskWidget } from "@features/task-el";
+import { TaskGroup, TodoTask } from "@entities/note";
+import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useTodoOptionModal } from './todo-option';
 
 
 interface TodoTaskProps {
-  task: TodoTaskDto;
-  parent: TaskGroupDto | null;
+  task: TodoTask;
+  parent: TaskGroup | null;
 }
 export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
@@ -17,7 +17,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
 
   return (
     <>
-      <AbstractTaskWidget 
+      <BaseTaskFeature 
         task={task}
         parent={parent}
         className="dr-todo-task"

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { RoutineDto, RoutinePropertiesDto } from "@entities/routine";
+import { RoutineProperties } from "@entities/routine";
 import { Button } from "@shared/components/Button";
 import clsx from "clsx";
 import { useState, useMemo, useEffect, useCallback } from "react";
@@ -57,7 +57,7 @@ const calendarCss = css({
 interface MonthOptionProps {
   className?: string;
   daysOfMonth: number[];
-  setProperties: (properties: Partial<RoutinePropertiesDto>) => void;
+  setProperties: (properties: Partial<RoutineProperties>) => void;
 }
 export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOptionProps) => {
 

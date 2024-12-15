@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, TodoTaskDto } from '@entities/note';
+import { NoteRepository, TodoTask } from '@entities/note';
 import { useRoutineNote } from '@features/note';
 import { TaskOption } from "@features/task-el";
 import { TodoValidation, todoValidator, VALID_TODO_VALIDATION } from "@features/todo";
@@ -15,13 +15,13 @@ import { rescheduleTodo } from "../model/reschedule-todo";
 
 
 interface TodoOptionModalProps {
-  todo: TodoTaskDto;
+  todo: TodoTask;
   modal: ModalApi;
 }
 export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: TodoOptionModalProps) => {
   const bem = useMemo(() => dr("todo-option"), []);
   const { note, setNote } = useRoutineNote();
-  const [ todo, setTodo ] = useState<TodoTaskDto>(propsTodo);
+  const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
   const validation = useMemo(() => {
@@ -41,9 +41,9 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     const showOnCalendarChanged = propsTodo.showOnCalendar !== todo.showOnCalendar;
 
     if(nameChanged || showOnCalendarChanged){
-      const newNote = NoteService.editTodoTask(note, originalName, todo);
-      NoteRepository.update(newNote);
-      setNote(newNote);
+      // const newNote = NoteService.editTodoTask(note, originalName, todo);
+      // NoteRepository.update(newNote);
+      // setNote(newNote);
     }
   }), [modal, note, originalName, propsTodo.showOnCalendar, setNote, todo, validation.isValid]);
 
@@ -74,13 +74,13 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     })
     if(!deleteConfirm) return;
 
-    const deletedNote = NoteService.deleteTodoTask(note, originalName);
-    NoteRepository.forceSave(deletedNote);
-    setNote(deletedNote);
+    // const deletedNote = NoteService.deleteTodoTask(note, originalName);
+    // NoteRepository.forceSave(deletedNote);
+    // setNote(deletedNote);
     modal.closeWithoutOnClose();
     new Notice(`Todo ${todo.name} deleted.`);
 
-  }, [modal, note, originalName, setNote, todo.name])
+  }, [modal, todo.name])
 
 
   return (

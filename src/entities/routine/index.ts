@@ -1,12 +1,10 @@
-// persistence
-export { RoutineRepository } from "./persistence/routine-repository";
-export { GroupRepository } from "./persistence/group-repository";
+// repository
+export { RoutineRepository } from "./repository/routine-repository";
+export { GroupRepository } from "./repository/group-repository";
 
 // types
-export * from "./types";
+export * from "./domain/routine.type";
 
 // domain
-export { Routine } from "./domain/Routine";
-export { RoutineProperties } from "./domain/RoutineProperties";
-export { RoutineGroup } from "./domain/RoutineGroup";
-export { GroupProperties } from "./domain/GroupProperties";
+export { RoutineEntity } from "./domain/routine";
+export { RoutineGroupEntity } from "./domain/routine-group";

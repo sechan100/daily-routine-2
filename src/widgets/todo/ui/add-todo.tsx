@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, TodoTaskDto } from "@entities/note";
+import { TaskEntity, TodoTask } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { TaskOption } from "@features/task-el";
 import { Button } from "@shared/components/Button";
@@ -9,21 +9,13 @@ import { dr } from "@shared/daily-routine-bem";
 import { useCallback, useMemo, useState } from "react";
 
 
-const DEFAULT_TASK: TodoTaskDto = {
-  checked: false,
-  name: "",
-  elementType: "task",
-  taskType: "todo",
-  showOnCalendar: true,
-}
-
 export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
-  const [ todo, setTodo ] = useState<TodoTaskDto>(DEFAULT_TASK);
+  const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask("New Todo"));
   
   const onSave = useCallback(() => {
-    // if(todo.name.trim() === "") return;
-    // const newNote = NoteService.addTodoTask(note, todo);
+    // const noteDomain = RoutineNote.fromJSON(note);
+    // noteDomain.add
     // setNote(newNote);
 
     // // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)

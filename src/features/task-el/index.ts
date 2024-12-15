@@ -6,4 +6,4 @@ export const TaskOption = {
   ShowOnCalendar: ShowOnCalendarOption
 };
 export { TaskDndContext } from "./ui/dnd-context";
-export { BaseTaskFeature as AbstractTaskWidget } from "./ui/BaseTaskFeature";
+export { BaseTaskFeature } from "./ui/BaseTaskFeature";

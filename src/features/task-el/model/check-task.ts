@@ -1,16 +1,11 @@
-import { NoteRepository, RoutineNote, RoutineNoteDto, TaskDto } from "@entities/note";
+import { NoteEntity, NoteRepository, RoutineNote } from "@entities/note";
 
 
-export const checkTask = async (noteDto: RoutineNoteDto, taskDto: TaskDto, check: boolean): Promise<RoutineNoteDto> => {
-  const note = RoutineNote.fromJSON(noteDto);
-  const task = note.findTask(taskDto.name);
+export const checkTask = async (note: RoutineNote, taskName: string, check: boolean): Promise<RoutineNote> => {
+  const task = NoteEntity.findTask(note, taskName);
   if(!task) throw new Error("Check state change target task not found");
   
-  task.check(check);
-  const isSaved = await NoteRepository.saveOnUserConfirm(note);
-  if(isSaved){
-    return note.toJSON();
-  } else {
-    return { ...noteDto };
-  }
+  task.checked = check;
+  await NoteRepository.saveOnUserConfirm(note);
+  return { ...note };
 }

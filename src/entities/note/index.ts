@@ -1,13 +1,10 @@
 // REPOSITORY
-export { NoteRepository } from "./persistence/note-repository";
+export { NoteRepository } from "./repository/note-repository";
 
 // DOMAIN
-export { AbstractTask } from "./domain/AbstractTask";
-export { RoutineNote } from "./domain/RoutineNote";
-export { RoutineTask } from "./domain/RoutineTask";
-export { TaskGroup } from "./domain/TaskGroup";
-export { TodoTask } from "./domain/TodoTask";
+export { NoteEntity } from "./domain/note";
+export { TaskEntity } from "./domain/task";
+export { TaskGroupEntity } from "./domain/task-group";
 
 // TYPES
-export * from "./types/routine-note";
-export * from "./types/task";
+export * from "./domain/note.type";

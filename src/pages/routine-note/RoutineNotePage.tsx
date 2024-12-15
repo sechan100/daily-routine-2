@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNoteDto, RoutineTaskDto, TaskDto, TaskGroupDto, TodoTask, TodoTaskDto } from '@entities/note';
+import { NoteEntity, RoutineNote, Task, TaskGroup, TodoTask } from '@entities/note';
 import { UseRoutineNoteProvider, resolveRoutineNote, useRoutineNote } from "@features/note";
 import { TaskDndContext } from '@features/task-el';
 import { MenuComponent } from "@shared/components/Menu";
@@ -10,7 +10,6 @@ import { TodoTaskWidget, useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
 import { Menu } from "obsidian";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getCompletion } from './get-completion';
 import { BaseGroupHeadFeature } from '@features/task-el/ui/TaskGroupHeadFeature';
 import { TaskGroupWidget } from './TaskGroupWidget';
 import { renderTask } from './render-task-widget';
@@ -20,7 +19,7 @@ interface RoutineNoteProps {
   day: Day;
 }
 const RoutineNotePageContext = ({ day }: RoutineNoteProps) => {
-  const [ note, setNote ] = useState<RoutineNoteDto | null>(null);
+  const [ note, setNote ] = useState<RoutineNote | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -44,7 +43,7 @@ const RoutineNotePageContext = ({ day }: RoutineNoteProps) => {
 
 const PageComponent = () => {
   const note = useRoutineNote(n=>n.note);
-  const percentage = useMemo(() => getCompletion(note).percentageRounded, [note]);
+  const percentage = useMemo(() => NoteEntity.getCompletion(note).percentageRounded, [note]);
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -112,15 +111,15 @@ const PageComponent = () => {
           overflowY: "auto",
         }}
       >
-        <TaskDndContext> {note.root.map(el => {
+        <TaskDndContext> {note.children.map(el => {
           if(el.elementType === "group"){
             return (
               <TaskGroupWidget
                 key={`${el.elementType}-${el.name}`}
-                group={el as TaskGroupDto} 
+                group={el as TaskGroup} 
               />)
           } else {
-            return renderTask(el as TaskDto, null);
+            return renderTask(el as Task, null);
           }
         })}</TaskDndContext>
       </div>

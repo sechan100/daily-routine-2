@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNoteDto, TaskGroupDto } from '@entities/note';
+import { RoutineNote, TaskGroup } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
@@ -18,13 +18,13 @@ const bem = dr("group");
 type GroupMode = "idle" | "pressed" | "drag-ready" | "dragging";
 
 interface Props {
-  group: TaskGroupDto;
+  group: TaskGroup;
   children: React.ReactNode;
 
-  onOptionMenu?: (group: TaskGroupDto) => void;
+  onOptionMenu?: (group: TaskGroup) => void;
   className?: string;
-  onGroupReorder?: (note: RoutineNoteDto, group: TaskGroupDto) => void;
-  onGroupClick?: (group: TaskGroupDto) => void;
+  onGroupReorder?: (note: RoutineNote, group: TaskGroup) => void;
+  onGroupClick?: (group: TaskGroup) => void;
 }
 export const BaseGroupHeadFeature = React.memo(({ 
   group,
@@ -39,7 +39,7 @@ export const BaseGroupHeadFeature = React.memo(({
   const bgColor = useLeaf(s=>s.leafBgColor);
   const [open, setOpen] = useState(true);
 
-  const onElDrop = useCallback((newNote: RoutineNoteDto, dropped: TaskGroupDto) => {
+  const onElDrop = useCallback((newNote: RoutineNote, dropped: TaskGroup) => {
     onGroupReorder?.(newNote, dropped);
   }, [onGroupReorder])
 

@@ -2,10 +2,26 @@ import { ensureArchive } from "@entities/archives";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { Day } from "@shared/period/day";
 import { TAbstractFile, TFile } from "obsidian";
-import { RoutineNote } from "../domain/RoutineNote";
 import { DR_SETTING } from "@app/settings/setting-provider";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
+import { RoutineNote } from "../domain/note.type";
+import { parseRoutineNote, serializeRoutineNote } from "./serializer";
 
+
+
+const parseNote = async (day: Day, file: TFile): Promise<RoutineNote> => {
+  const content = await fileAccessor.readFileAsReadonly(file);
+  return parseRoutineNote(day, content);
+};
+
+export const ROUTINE_NOTE_FILE = (day: Day): TFile | null => {
+  const path = ROUTINE_ARCHIVE_PATH(day);
+  return fileAccessor.loadFile(path);
+};
+
+export const ROUTINE_ARCHIVE_PATH = (day: Day) => {
+  return `${DR_SETTING.noteFolderPath()}/${day.format()}.md`;
+};
 
 
 interface NoteRepository {
@@ -38,7 +54,7 @@ export const NoteRepository: NoteRepository = {
   async load(day: Day){
     const file = ROUTINE_NOTE_FILE(day);
     if(file){
-      return await parseFileToDomain(day, file);
+      return await parseNote(day, file);
     } else {
       return Promise.resolve(null);
     }
@@ -51,7 +67,7 @@ export const NoteRepository: NoteRepository = {
       if(!(file instanceof TFile)) continue;
       const day = Day.fromString(file.basename);
       if(day.isBetween(start, end, 'day', '[]')){
-        notes.push(await parseFileToDomain(day, file));
+        notes.push(await parseNote(day, file));
       }
     }
     return notes;
@@ -62,11 +78,11 @@ export const NoteRepository: NoteRepository = {
   },
 
   async persist(routineNote) {
-    const day = routineNote.getDay();
+    const day = routineNote.day;
     const file = ROUTINE_NOTE_FILE(day);
     if(!file){
       const path = ROUTINE_ARCHIVE_PATH(day);
-      await fileAccessor.createFile(path, routineNote.serialize());
+      await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       return true;
     } else {
       return false;
@@ -74,7 +90,7 @@ export const NoteRepository: NoteRepository = {
   },
 
   async saveOnUserConfirm(routineNote: RoutineNote){
-    const file = ROUTINE_NOTE_FILE(routineNote.getDay());
+    const file = ROUTINE_NOTE_FILE(routineNote.day);
 
     if(file) {
       await NoteRepository.update(routineNote);
@@ -83,7 +99,7 @@ export const NoteRepository: NoteRepository = {
       // 사용자 확인 대기
       const isUserConfirmed = await doConfirm({
         title: "Create Routine Note",
-        description: `Create note for ${routineNote.getDay().format()}?`,
+        description: `Create note for ${routineNote.day.format()}?`,
         confirmText: "Create",
         confirmBtnVariant: "accent",
       })
@@ -97,10 +113,10 @@ export const NoteRepository: NoteRepository = {
   },
 
   async update(routineNote: RoutineNote){
-    const day = routineNote.getDay();
+    const day = routineNote.day;
     const file = ROUTINE_NOTE_FILE(day);
     if(file){
-      await fileAccessor.writeFile(file, () => routineNote.serialize());
+      await fileAccessor.writeFile(file, () => serializeRoutineNote(routineNote));
     } else {
       throw new Error('RoutineNote file is not exist.');
     }
@@ -111,20 +127,3 @@ export const NoteRepository: NoteRepository = {
     if(file) await fileAccessor.deleteFile(file);
   }
 }
-
-
-const parseFileToDomain = async (day: Day, file: TFile): Promise<RoutineNote> => {
-  const content = await fileAccessor.readFileAsReadonly(file);
-  if(!content) throw new Error('RoutineNote file is empty.');
-  const result = RoutineNote.deserialize(day, content);
-  if(result.isErr()) throw result.error;
-  return result.value;
-};
-export const ROUTINE_NOTE_FILE = (day: Day): TFile | null => {
-  const path = ROUTINE_ARCHIVE_PATH(day);
-  return fileAccessor.loadFile(path);
-};
-
-export const ROUTINE_ARCHIVE_PATH = (day: Day) => {
-  return `${DR_SETTING.noteFolderPath()}/${day.format()}.md`;
-};

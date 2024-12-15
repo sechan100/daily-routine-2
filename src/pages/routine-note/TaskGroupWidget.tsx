@@ -1,11 +1,11 @@
-import { TaskGroupDto } from "@entities/note";
+import { TaskGroup } from "@entities/note";
 import { BaseGroupHeadFeature } from "@features/task-el/ui/TaskGroupHeadFeature"
 import { renderTask } from "./render-task-widget";
 
 
 
 interface Props {
-  group: TaskGroupDto;
+  group: TaskGroup;
 }
 export const TaskGroupWidget = ({
   group
@@ -13,7 +13,7 @@ export const TaskGroupWidget = ({
   
   return (
     <BaseGroupHeadFeature group={group}>
-      {group.tasks.map(task => renderTask(task, group))}
+      {group.children.map(task => renderTask(task, group))}
     </BaseGroupHeadFeature>
   )
 }

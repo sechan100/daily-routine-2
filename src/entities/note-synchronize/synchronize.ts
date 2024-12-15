@@ -22,7 +22,7 @@ export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (ar
   const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
 
   const doSync = async (note: RoutineNote): Promise<RoutineNote> => {
-    const day = note.getDay();
+    const day = note.day;
     // note로부터 NoteDepentdent를 추출한다. 구체적인 추출 로직은 각 클래스의 생성자에서 담당한다.
     const dependents = [
       new TodoTaskNoteDep(note),
@@ -31,7 +31,7 @@ export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (ar
     await NoteRepository.delete(day);
     const newNote = noteCreator.create(day);
     for(const dep of dependents){
-      dep.restoreData(note);
+      dep.restoreData(newNote);
     }
     await NoteRepository.persist(newNote);
     return newNote;
@@ -41,7 +41,7 @@ export const executeRoutineNotesSynchronize: RoutineNoteSynchronizer = async (ar
   Promise.resolve().then(async () => {
     let notes = await NoteRepository.loadBetween(Day.now(), Day.max());
     if(arg instanceof Day){
-      notes = notes.filter(n => !n.getDay().isSameDay(arg));
+      notes = notes.filter(n => !n.day.isSameDay(arg));
     }
     const syncedNotes = await Promise.all(notes.map(doSync));
     if(typeof arg === 'function'){

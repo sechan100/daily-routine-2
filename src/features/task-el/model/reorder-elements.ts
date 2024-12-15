@@ -1,25 +1,16 @@
-import { NoteRepository, RoutineNote, RoutineNoteDto, TaskDto, TaskElementDto, TaskGroup, TaskGroupDto } from "@entities/note";
+import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, NoteRepository, RoutineNote, Task, TaskGroup, TaskParent } from "@entities/note";
 import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { TaskParent } from "@entities/note/domain/TaskParent";
-import { GroupRepository, Routine, RoutineGroup, RoutineRepository } from "@entities/routine";
+import { GroupRepository, isRoutine, RoutineElement, RoutineGroupEntity, RoutineRepository } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
-import { flatMap } from "lodash";
 
-
-const NOTE_DOMAIN = () => {
-  return RoutineNote.fromJSON(useRoutineNote.getState().note);
-}
 
 const save = async (note: RoutineNote) => {
-  if(await NoteRepository.isExist(note.getDay())){
+  if(await NoteRepository.isExist(note.day)){
     await NoteRepository.update(note);
   }
 }
 
-
-type RoutineObject = Routine | RoutineGroup;
-
-type OrderChangeList = RoutineObject[];
+type OrderChangeList = RoutineElement[];
 
 const ORDER_OFFSET = 1000;
 /**
@@ -29,40 +20,39 @@ const ORDER_OFFSET = 1000;
 const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> => {
   const routines = await RoutineRepository.loadAll();
   const groups = await GroupRepository.loadAll();
-  const map = new Map<string, RoutineObject>([...routines, ...groups].map(r => [r.getName(), r]));
+  const map = new Map<string, RoutineElement>([...routines, ...groups].map(r => [r.name, r]));
 
   type Acc = {
     changeList: OrderChangeList;
     prevOrder: number;
   }
-  
-  return parent.getChildren()
+  return parent.children
   .map(c => {
-    const rOrG = map.get(c.getName());
+    const rOrG = map.get(c.name);
     if(!rOrG) throw new Error("Routine or Group not found");
     return rOrG;
   })
-  .reduce((acc, ro) => {
+  .reduce((acc, el) => {
     // order
-    let currentOrder = ro.getProperties().getOrder();
+    let currentOrder = el.properties.order;
     if(!(acc.prevOrder < currentOrder)){
       currentOrder = acc.prevOrder + ORDER_OFFSET;
-      ro.getProperties().setOrder(currentOrder);
+      el.properties.order = currentOrder;
     }
     acc.prevOrder = currentOrder;
 
     // group
-    if(ro instanceof Routine){
-      const group = ro.getProperties().getGroup();
-      if(parent instanceof RoutineNote && group !== RoutineGroup.UNGROUPED_NAME){
-        ro.getProperties().setGroup(RoutineGroup.UNGROUPED_NAME);
+    if(isRoutine(el)){
+      const group = el.properties.group;
+      if(isRoutineNote(parent) && group !== RoutineGroupEntity.UNGROUPED_NAME){
+        el.properties.group = RoutineGroupEntity.UNGROUPED_NAME;
       }
-      else if(parent instanceof TaskGroup && group !== parent.getName()){
-        ro.getProperties().setGroup(parent.getName());
+      else if(isTaskGroup(parent) && group !== parent.name){
+        el.properties.group = parent.name;
       }
     }
 
-    acc.changeList.push(ro);
+    acc.changeList.push(el);
     return acc;
   }, { changeList: [], prevOrder: 0 } as Acc)
   .changeList;
@@ -73,110 +63,141 @@ const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> =
  */
 const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
   const list = await resolveChangeList(parent);
-  for(const ro of list){
-    if(ro instanceof Routine){
-      await RoutineRepository.update(ro);
+  for(const el of list){
+    if(isRoutine(el)){
+      await RoutineRepository.update(el);
     } else {
-      await GroupRepository.update(ro);
+      await GroupRepository.update(el);
     }
   }
 }
 
+type AddTaskArgs = {
+  parent: TaskParent;
+  base: NoteElement;
+  target: NoteElement;
+  pos: "before" | "after";
+}
+const addTask = ({
+  parent,
+  base,
+  target: task,
+  pos
+}: AddTaskArgs) => {
+  const idx = parent.children.findIndex(t => t.name === base.name);
+  if(pos === "before"){
+    parent.children.splice(idx, 0, task);
+  } else {
+    parent.children.splice(idx + 1, 0, task);
+  }
+}
 
 type TaskOnTask = {
-  dropped: TaskDto;
-  on: TaskDto;
+  dropped: Task;
+  on: Task;
   hit: "top" | "bottom";
 }
 const taskDropOnTask = (args: TaskOnTask) => {
   if(args.dropped.name === args.on.name) throw new Error("Cannot drop on itself");
+  const note = { ...useRoutineNote.getState().note };
   
-  const note = NOTE_DOMAIN();
-  const on = note.findTask(args.on.name);
-  const dropped = note.findTask(args.dropped.name);
+  const on = NoteEntity.findTask(note, args.on.name);
+  const dropped = NoteEntity.findTask(note, args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Task or Dropped Task not found");
 
-  const parent = on.getParent();
-  parent.addTask(dropped, (arr) => {
-    const idx = arr.indexOf(on);
-    return args.hit === "top" ? idx : idx + 1
-  });
+  NoteEntity.removeTask(note, dropped.name);
+  const parent = NoteEntity.findParent(note, on.name);
+  addTask({
+    parent,
+    base: on,
+    target: dropped,
+    pos: args.hit === "top" ? "before" : "after"
+  })
   save(note);
   updateRoutineAndRoutineGroups(parent)
-  .then(() => executeRoutineNotesSynchronize(note.getDay()));
-  return note.toJSON();
+  .then(() => executeRoutineNotesSynchronize(note.day));
+  return note;
 }
 
 type GroupOnTask = {
-  dropped: TaskGroupDto;
-  on: TaskDto;
+  dropped: TaskGroup;
+  on: Task;
   hit: "top" | "bottom";
 }
 const groupDropOnTask = (args: GroupOnTask) => {
-  const note = NOTE_DOMAIN();
-  const root = note.getChildren();
-  const on = root.find(t => t.getName() === args.on.name);
-  const dropped = root.find(t => t.getName() === args.dropped.name);
+  const note = { ...useRoutineNote.getState().note };
+  const root = note.children;
+  const on = root.find(t => t.name === args.on.name);
+  const dropped = root.find(t => t.name === args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Task or Dropped Task not found. Or group has dropped in another group.");
 
-  note.addEl(dropped, (arr) => {
-    const idx = arr.indexOf(on);
-    return args.hit === "top" ? idx : idx + 1
-  });
+  NoteEntity.removeTask(note, dropped.name);
+  addTask({
+    parent: note,
+    base: on,
+    target: dropped,
+    pos: args.hit === "top" ? "before" : "after"
+  })
   save(note);
   updateRoutineAndRoutineGroups(note)
-  .then(() => executeRoutineNotesSynchronize(note.getDay()));
-  return note.toJSON();
+  .then(() => executeRoutineNotesSynchronize(note.day));
+  return note;
 }
 
 type TaskOnGroup = {
-  dropped: TaskDto;
-  on: TaskGroupDto;
+  dropped: Task;
+  on: TaskGroup;
   hit: "top" | "bottom" | "in";
 }
 const taskDropOnGroup = (args: TaskOnGroup) => {
-  const note = NOTE_DOMAIN();
-  const on = note.findGroup(args.on.name);
-  const dropped = note.findTask(args.dropped.name);
+  const note = { ...useRoutineNote.getState().note };
+  const on = NoteEntity.findGroup(note, args.on.name);
+  const dropped = NoteEntity.findTask(note, args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Group or Dropped Task not found.");
-
+  
+  NoteEntity.removeTask(note, dropped.name);
   let parent: TaskParent;
   if(args.hit === "in"){
-    on.addTask(dropped);
+    on.children.unshift(dropped);
     parent = on;
   } else {
-    note.addTask(dropped, (arr) => {
-      const idx = arr.indexOf(on);
-      return args.hit === "top" ? idx : idx + 1
-    });
+    addTask({
+      parent: note,
+      base: on,
+      target: dropped,
+      pos: args.hit === "top" ? "before" : "after"
+    })
     parent = note;
   }
   save(note);
   updateRoutineAndRoutineGroups(parent)
-  .then(() => executeRoutineNotesSynchronize(note.getDay()));
-  return note.toJSON();
+  .then(() => executeRoutineNotesSynchronize(note.day));
+  return note;
 }
 
 type GroupOnGroup = {
-  dropped: TaskGroupDto;
-  on: TaskGroupDto;
+  dropped: TaskGroup;
+  on: TaskGroup;
   hit: "top" | "bottom";
 }
 const groupDropOnGroup = (args: GroupOnGroup)=> {
-  const note = NOTE_DOMAIN();
-  const root = note.getChildren();
-  const on = root.find(t => t.getName() === args.on.name);
-  const dropped = root.find(t => t.getName() === args.dropped.name);
+  const note = { ...useRoutineNote.getState().note };
+  const root = note.children;
+  const on = root.find(t => t.name === args.on.name);
+  const dropped = root.find(t => t.name === args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Group or Dropped Group not found.");
 
-  note.addEl(dropped, (arr) => {
-    const idx = arr.indexOf(on);
-    return args.hit === "top" ? idx : idx + 1
-  });
+  NoteEntity.removeTask(note, dropped.name);
+  addTask({
+    parent: note,
+    base: on,
+    target: dropped,
+    pos: args.hit === "top" ? "before" : "after"
+  })
   save(note);
   updateRoutineAndRoutineGroups(note)
-  .then(() => executeRoutineNotesSynchronize(note.getDay()));
-  return note.toJSON();
+  .then(() => executeRoutineNotesSynchronize(note.day));
+  return note;
 }
 
 

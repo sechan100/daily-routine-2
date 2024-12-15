@@ -1,36 +1,44 @@
-import { RoutineNote, AbstractTask, TodoTask, TaskGroup } from "@entities/note";
+import { RoutineNote, NoteEntity, TodoTask, TaskGroup, isTodoTask, Task, isTaskGroup, TaskParent, isTask, NoteElement } from "@entities/note";
+import { RoutineGroup, RoutineGroupEntity } from "@entities/routine";
 import { NoteDependent } from "./NoteDependent";
-import { RoutineGroup } from "@entities/routine";
 
 
 interface SandwitchedTask {
-  group: string;
-  prev: AbstractTask | null;
+  parentName: string;
+  prev: NoteElement | null;
   task: TodoTask;
-  next: AbstractTask | null;
+  next: NoteElement | null;
   originalIndex: number;
 }
 
+const extractSandwitch = (todoTask: TodoTask, parent: TaskParent): SandwitchedTask => {
+  const index = parent.children.indexOf(todoTask);
+  const prev = index > 0 ? parent.children[index - 1] : null;
+  const next = parent.children.length !== index + 1 ? parent.children[index + 1] : null;
+  const originalIndex = index;
+  return { 
+    parentName: isTaskGroup(parent) ? parent.name : RoutineGroupEntity.UNGROUPED_NAME,
+    prev, 
+    task: todoTask,
+    next, 
+    originalIndex 
+  }
+}
 
 export class TodoTaskNoteDep extends NoteDependent {
   #sandwitches: SandwitchedTask[] = [];
 
   constructor(note: RoutineNote){
     super();
-    const tasks: TodoTask[] = note.createTaskArray().filter(t => t instanceof TodoTask)
-    this.#sandwitches = tasks.map((task, i) => {
-      const group = (() => {
-        const p = task.getParent();
-        if(p === null) throw new Error('todo task must have parent');
-        if(p instanceof RoutineNote) return RoutineGroup.UNGROUPED_NAME;
-        else if(p instanceof RoutineGroup) return p.getName();
-        else throw new Error('invalid parent type');
-      })();
-      const prev = i > 0 ? tasks[i - 1] : null;
-      const next = tasks.length !== i + 1 ? tasks[i + 1] : null;
-      const originalIndex = i;
-      return { group, prev, task, next, originalIndex }
-    });
+    this.#sandwitches = note.children.flatMap(el => {
+      if(isTaskGroup(el)){
+        return el.children.filter(isTodoTask).map(task => extractSandwitch(task, el));
+      } else if(isTodoTask(el)){
+        return [extractSandwitch(el, note)];
+      } else {
+        return [];
+      }
+    })
   }
 
   /**
@@ -42,47 +50,54 @@ export class TodoTaskNoteDep extends NoteDependent {
     5. 만약 둘 다 없다면 맨 앞에 넣는다 (Worst)
    */
   restoreData(note: RoutineNote) {
-    for(const { group: groupName, prev, task, next, originalIndex } of this.#sandwitches){
-      const groupOrNull = note.findGroup(groupName);
-      // 고아가됐다면, 맨 위에 넣는다.
-      if(groupOrNull === null){
-        note.addEl(task);
+    for(const { parentName, prev, task, next, originalIndex } of this.#sandwitches){
+      let parent: TaskParent;
+      if(parentName !== RoutineGroupEntity.UNGROUPED_NAME){
+        const parentOrNull = NoteEntity.findGroup(note, parentName);
+        // 고아가 된 경우
+        if(parentOrNull === null){
+          note.children.unshift(task);
+          continue;
+        } else {
+          parent = parentOrNull as TaskGroup;
+        }
+      } else {
+        parent = note;
       }
-      const group = groupOrNull as TaskGroup;
-      const tasks = group.getTasks();
-      const prevIndex = prev ? tasks.findIndex(t => t.getName() === prev.getName()) : -1;
-      const nextIndex = next ? tasks.findIndex(t => t.getName() === next.getName()) : -1;
+      const children = isTaskGroup(parent) ? parent.children : parent.children;
+      const prevIndex = prev ? children.findIndex(t => t.name === prev.name) : -1;
+      const nextIndex = next ? children.findIndex(t => t.name === next.name) : -1;
 
       // 앞뒤 다 없음
-      if (prevIndex === -1 && nextIndex === -1) {
-        tasks.unshift(task);
+      if(prevIndex === -1 && nextIndex === -1) {
+        children.unshift(task);
       }
       // 앞만 없음
       else if (prevIndex === -1) {
         // 앞이 없어진게 아니라 원래 없었던 경우: 원래 맨 앞이었다는 뜻
         if(prev === null) {
-          tasks.unshift(task);
+          children.unshift(task);
           return;
         }
-        tasks.splice(nextIndex, 0, task);
+        children.splice(nextIndex, 0, task);
       } 
       // 뒤만 없음
       else if (nextIndex === -1) {
         // 뒤가 없어진게 아니라 원래 없었던 경우: 원래 맨 뒤였다는 뜻
         if(next === null) {
-          tasks.push(task);
+          children.push(task);
           return;
         }
-        tasks.splice(prevIndex + 1, 0, task);
+        children.splice(prevIndex + 1, 0, task);
       } 
       // 둘 다 있음
       else {
         const prevDiff = Math.abs(prevIndex - originalIndex);
         const nextDiff = Math.abs(nextIndex - originalIndex + 1); // next는 앞에 todo가 삽입되므로 +1
         if (prevDiff < nextDiff) {
-          tasks.splice(prevIndex + 1, 0, task);
+          children.splice(prevIndex + 1, 0, task);
         } else {
-          tasks.splice(nextIndex, 0, task);
+          children.splice(nextIndex, 0, task);
         }
       }
     }

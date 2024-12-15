@@ -1,4 +1,4 @@
-import { RoutineNoteDto } from "@entities/note";
+import { RoutineNote } from "@entities/note";
 
 
 export interface TodoValidation {
@@ -15,7 +15,7 @@ export const VALID_TODO_VALIDATION: TodoValidation = {
 
 
 interface ValidateNameData {
-  note: RoutineNoteDto;
+  note: RoutineNote;
   originalName?: string;
 }
 const validateName = (name: string, { note, originalName }: ValidateNameData): TodoValidation => {
@@ -27,7 +27,7 @@ const validateName = (name: string, { note, originalName }: ValidateNameData): T
     };
   }
 
-  const sameNameTodo = note.root.filter((task) => task.name === name)[0] ?? null;
+  const sameNameTodo = note.children.filter((task) => task.name === name)[0] ?? null;
   if(sameNameTodo && sameNameTodo.name !== originalName) {
     return {
       isValid: false,

@@ -1,20 +1,30 @@
 import { fileAccessor } from "@shared/file/file-accessor";
-import { RoutineGroup } from "../domain/RoutineGroup";
 import { GROUP_PATH, GROUP_PREFIX } from "./utils";
 import { parseFrontmatter } from "@shared/file/parse-frontmatter";
-import { GroupProperties } from "../domain/GroupProperties";
-import { TFile } from "obsidian";
+import { RoutineGroup, RoutineGroupProperties } from "../domain/routine.type";
+import { stringifyYaml, TFile } from "obsidian";
 import { ensureArchive } from "@entities/archives";
+import dedent from "dedent";
+import { RoutineGroupEntity } from "../domain/routine-group";
 
 
 const parse = async (file: TFile): Promise<RoutineGroup> => {
   const content = await fileAccessor.readFileAsReadonly(file);
-  const obj = parseFrontmatter(content);
-  return new RoutineGroup(
-    file.basename,
-    GroupProperties.fromJsonObj(obj)
-  );
+  const name = file.basename.startsWith(GROUP_PREFIX) ? file.basename.slice(GROUP_PREFIX.length) : file.basename;
+  const properties = RoutineGroupEntity.validateGroupProperties(parseFrontmatter(content));
+  if(properties.isErr()) throw new Error(`[RoutineGroup '${name}' Parse Error] ${properties.error}`);
+
+  return {
+    name: name,
+    properties: properties.value
+  }
 }
+
+const serialize = (group: RoutineGroup) => dedent`
+  ---
+  ${stringifyYaml(group.properties)}
+  ---
+`;
 
 
 interface GroupRepository {
@@ -46,11 +56,11 @@ export const GroupRepository: GroupRepository = {
   },
 
   async persist(group){
-    const path = GROUP_PATH(group.getName());
+    const path = GROUP_PATH(group.name);
     const file = fileAccessor.loadFile(path);
     if(file) return false;
 
-    await fileAccessor.createFile(path, group.serialize());
+    await fileAccessor.createFile(path, serialize(group));
     return true;
   },
   
@@ -61,9 +71,9 @@ export const GroupRepository: GroupRepository = {
   },
     
   async update(group: RoutineGroup){
-    const file = fileAccessor.loadFile(GROUP_PATH(group.getName()));
+    const file = fileAccessor.loadFile(GROUP_PATH(group.name));
     if(!file) throw new Error('Group file not found.');
-    await fileAccessor.writeFrontMatter(file, () => group.getProperties().toJSON());
+    await fileAccessor.writeFile(file, () => serialize(group));
     return group;
   },
   

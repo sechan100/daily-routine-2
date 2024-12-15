@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNoteDto, TaskDto, TaskGroupDto } from '@entities/note';
+import { RoutineNote, Task, TaskGroup } from '@entities/note';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRoutineNote } from "@features/note";
 import _ from "lodash";
@@ -26,16 +26,16 @@ const bem = dr("task");
 
 type TaskMode = "idle" | "pressed" | "drag-ready" | "dragging";
 
-interface TaskProps<T extends TaskDto> {
+interface TaskProps<T extends Task> {
   task: T;
-  parent: TaskGroupDto | null;
+  parent: TaskGroup | null;
   onOptionMenu: (task: T) => void;
 
   className?: string;
-  onTaskReorder?: (note: RoutineNoteDto, task: T) => void;
+  onTaskReorder?: (note: RoutineNote, task: T) => void;
   onTaskClick?: (task: T) => void;
 }
-export const BaseTaskFeature = React.memo(<T extends TaskDto>({ 
+export const BaseTaskFeature = React.memo(<T extends Task>({ 
   task,
   parent,
   className,
@@ -47,7 +47,7 @@ export const BaseTaskFeature = React.memo(<T extends TaskDto>({
   const [taskMode, setTaskMode] = useState<TaskMode>("idle");
   const { setNote, note } = useRoutineNote();
 
-  const onElDrop = useCallback((newNote: RoutineNoteDto, dropped: T) => {
+  const onElDrop = useCallback((newNote: RoutineNote, dropped: T) => {
     onTaskReorder?.(newNote, dropped);
   }, [onTaskReorder])
 
@@ -95,7 +95,7 @@ export const BaseTaskFeature = React.memo(<T extends TaskDto>({
     e.preventDefault();
 
     const checked = !task.checked;
-    const newNote = await checkTask(note, task, checked);
+    const newNote = await checkTask(note, task.name, checked);
     setNote(newNote);
     if(onTaskClick) onTaskClick({ ...task, checked });
 

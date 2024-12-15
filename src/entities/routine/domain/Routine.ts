@@ -1,100 +1,148 @@
-import { err, ok, Result } from "neverthrow";
-import { RoutineDto } from "../types";
-import { RoutineProperties } from "./RoutineProperties";
-import { ObsidianFileTitleValidation, validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Day, DayOfWeek } from "@shared/period/day";
+import { keys } from "lodash";
+import { stringifyYaml } from "obsidian";
+import { err, Result, ok, Err } from "neverthrow";
 import { parseFrontmatter } from "@shared/file/parse-frontmatter";
-import { JsonConvertible } from "@shared/JsonConvertible";
-import { Day } from "@shared/period/day";
-import { RoutineTask } from "@entities/note";
+import dedent from "dedent";
+import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+import { Routine, RoutineProperties } from "./routine.type";
+import { RoutineGroupEntity } from "./routine-group";
 
 
-
-type RoutineNameValidation = 'duplicated' | & ObsidianFileTitleValidation;
-
-
-export class Routine implements JsonConvertible<RoutineDto> {
-  private name: string;
-  private properties: RoutineProperties;
-
-  constructor(name: string, properties?: RoutineProperties){
-    this.name = name;
-    this.properties = properties ?? new RoutineProperties();
-  }
-
-  static fromFile(name: string, content: string): Routine {
-    const fm = parseFrontmatter(content);
-    return new Routine(name, RoutineProperties.fromObject(fm));
-  }
-
-  static fromJSON(json: RoutineDto): Routine {
-    return new Routine(json.name, new RoutineProperties(json.properties));
-  }
-
-  serialize(): string {
-    const properties = this.properties.serialize();
-    const content = "";
-    return `${properties}\n${content}`;
-  }
-
-  toJSON(): RoutineDto {
-    return {
-      name: this.name,
-      properties: this.properties.toJSON()
+const DEFAULT_ROUTINE = (): Routine => {
+  return {
+    name: "New Routine",
+    properties: {
+      order: 0,
+      group: RoutineGroupEntity.UNGROUPED_NAME,
+      showOnCalendar: false,
+      activeCriteria: "week",
+      daysOfWeek: Day.getDaysOfWeek(),
+      daysOfMonth: [Day.now().date],
     }
   }
+}
 
-  getName(): string {
-    return this.name;
+type NameValidationArgs = {
+  name: string;
+  existingNames: string[];
+}
+const validateName = ({
+  name: name0,
+  existingNames
+}: NameValidationArgs): Result<string, string> => {
+  return validateObsidianFileTitle(name0)
+  .andThen(name1 => {
+    return existingNames.includes(name1) ? err('duplicated') : ok(name1);
+  });
+}
+
+/**
+ * @param frontmatter frontmatter를 해석한 js object
+ */
+const validateRoutineProperties = (p: any): Result<RoutineProperties, string> => {
+  if(typeof p !== 'object'){
+    return err('RoutineProperties validation target is not object.');
+  }
+  const propsErr = (propertyName: string, value: any, msg?: string): Err<RoutineProperties, string> => {
+    return err(`[Invalid RoutineProperties]: ${msg??"invalid format"}(${propertyName}: ${value})`);
   }
 
-  getProperties(): RoutineProperties {
-    return this.properties;
+  if(
+    'order' in p &&
+    typeof p.order === 'number'
+  ){
+    if(p.order < 0) return propsErr('order', p.order, "Order must be a non-negative integer.");
+  } else {
+    return propsErr('order', p.order);
   }
 
-  /**
-   * 
-   * @param newName 변경할 이름
-   * @param routineNames 기존에 존재하는 루틴 이름들
-   */
-  changeName(newName: string, routineNames: string[]): Result<string, RoutineNameValidation> {
-    return Routine
-    .validateName(newName, routineNames)
-    .andThen(validated => {
-      this.name = validated;
-      return ok(validated);
-    });
+  if(
+    'group' in p &&
+    typeof p.group === 'string'
+  ){
+    //
+  } else {
+    return propsErr('group', p.group);
   }
 
-  static validateName(name: string, routineNames: string[]): Result<string, RoutineNameValidation> {
-    return validateObsidianFileTitle(name)
-    .andThen(validated => {
-      routineNames = routineNames.filter(rn => rn !== name);
-      return routineNames.includes(validated) ? err('duplicated') : ok(validated);
-    });
+  if(
+    'showOnCalendar' in p && 
+    typeof p.showOnCalendar === 'boolean'
+  ){
+    //
+  } else {
+    return propsErr('showOnCalendar', p.showOnCalendar);
   }
 
-  /**
-   * NOTE: daysOfWeek와 daysOfMonth를 기준으로 루틴을 수행할지 말지를 결정한다.
-   * - daysOfMonth가 0인 경우는 매월의 마지막 날을 의미한다.
-   */
-  isDueTo(day: Day): boolean {
-    // MONTH 기준
-    if(this.properties.getActiveCriteria() === "month") {
-      const days = Array.from(this.properties.getDaysOfMonth());
-      // 0이 존재하는 경우, 0을 매개받은 day의 달의 마지막 날짜로 치환한다.
-      if(days.contains(0)) {
-        const lastDayOfMonth = day.daysInMonth();
-        days.remove(0);
-        days.push(lastDayOfMonth);
-      }
-      if(!days.contains(day.date)) return false;
+  if(
+    'activeCriteria' in p && 
+    typeof p.activeCriteria === 'string'
+  ){
+    if(!["week", "month"].includes(p.activeCriteria)) return propsErr('activeCriteria', p.activeCriteria);
+  } else {
+    return propsErr('activeCriteria', p.activeCriteria);
+  }
+
+  if(
+    'daysOfWeek' in p &&
+    Array.isArray(p.daysOfWeek)
+  ){
+    for(const d of p.daysOfWeek){
+      if(typeof d !== 'string') return propsErr('daysOfWeek', p.daysOfWeek, `Invalid day of week: ${d}`);
+      if(!keys(DayOfWeek).includes(d)) return propsErr('daysOfWeek', p.daysOfWeek, `Invalid day of week: ${d}`);
     }
-
-    // WEEK 기준
-    if(this.properties.getActiveCriteria() === "week") {
-      if(!this.properties.getDaysOfWeek().contains(day.dow)) return false;
-    }
-    return true;
+  } else {
+    return propsErr('daysOfWeek', p.daysOfWeek);
   }
 
+  if(
+    'daysOfMonth' in p &&
+    Array.isArray(p.daysOfMonth)
+  ){
+    for(const d of p.daysOfMonth){
+      if(typeof d !== 'number') return propsErr('daysOfMonth', p.daysOfMonth, `Invalid day of month: ${d}`);
+      if(d < 0 || d > 31) return propsErr('daysOfMonth', p.daysOfMonth, `Range of day of month is 0~31: ${d}`);
+    }
+  } else {
+    return propsErr('daysOfMonth', p.daysOfMonth);
+  }
+
+  return ok(p as RoutineProperties);
+}
+
+/**
+ * NOTE: daysOfWeek와 daysOfMonth를 기준으로 루틴을 수행할지 말지를 결정한다.
+ * - daysOfMonth가 0인 경우는 매월의 마지막 날을 의미한다.
+ */
+const isDueTo = (routine: Routine, day: Day): boolean => {
+  const p = routine.properties;
+
+  if(p.activeCriteria === "month"){
+    const days = Array.from(p.daysOfMonth);
+    // 0이 존재하는 경우, 0을 매개받은 day의 달의 마지막 날짜로 치환한다.
+    if(days.contains(0)) {
+      const lastDayOfMonth = day.daysInMonth();
+      days.remove(0);
+      days.push(lastDayOfMonth);
+    }
+    if(!days.contains(day.date)) return false;
+  }
+  else if(p.activeCriteria === "week") {
+    if(!p.daysOfWeek.contains(day.dow)) return false;
+  }
+  else {
+    throw new Error('Invalid activeCriteria');
+  }
+  return true;
+}
+
+
+
+export const RoutineEntity = {
+  DEFAULT_ROUTINE,
+  validateName,
+  validateRoutineProperties,
+  isDueTo,
 }
