@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { RoutineEntity } from "@entities/routine";
-import { useRoutineNote } from "@features/note";
+import { routineRepository } from "@entities/routine";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { TaskOption } from '@features/task-el';
 import { Button } from "@shared/components/Button";
@@ -9,41 +7,38 @@ import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/daily-routine-bem";
 import { Notice } from "obsidian";
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useReducer } from "react";
+import { createNewRoutine } from "../create-routine";
+import { useRoutineMutationMerge } from "@features/merge-note";
+
+
+const bem = dr("start-new-routine");
 
 
 interface StartRoutineModalProps {
   modal: ModalApi;
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
-  const { note, setNote } = useRoutineNote();
-  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, RoutineEntity.DEFAULT_ROUTINE());
+  const { mergeNote } = useRoutineMutationMerge();
+  const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {
-    // try {
-    //   const noteDomain = RoutineNote.fromJSON(note);
-    //   const task = RoutineTask.fromRoutine(routine);
-    //   noteDomain.addTask();
-      
-    //   executeRoutineNotesSynchronize();
-    //   modal.close();
-    //   new Notice(`Routine '${routine.name}' started! 🎉`);
-    // } catch(e) {
-    //   new Notice(e.message);
-    // }
-  }, []);
+    await routineRepository.persist(routine);
+    mergeNote();
+    modal.close();
+    new Notice(`Routine '${routine.name}' started! 🎉`);
+  }, [mergeNote, modal, routine]);
 
-
-  const bem = useMemo(() => dr("start-new-routine"), []);
   return (
     <Modal header="Start New Routine" className={bem()} modal={modal}>
       <Modal.Separator edge />
 
       {/* name */}
       <TaskOption.Name
+        focus
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
-        placeholder="New Daily Routine"
+        placeholder="New Routine"
       />
       <Modal.Separator />
 
@@ -59,7 +54,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />
-      <Modal.Separator />
+      <Modal.Separator edge />
 
       {/* save */}
       <Modal.Section>

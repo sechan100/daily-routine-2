@@ -26,17 +26,18 @@ const serialize = (group: RoutineGroup) => dedent`
   ---
 `;
 
-
-interface GroupRepository {
+export interface GroupQuery {
   loadAll(): Promise<RoutineGroup[]>;
   load(groupName: string): Promise<RoutineGroup>;
-  isExist(groupName: string): Promise<boolean>;
+}
+export interface GroupRepository extends GroupQuery {
+  isExist(groupName: string): boolean;
   persist(group: RoutineGroup): Promise<boolean>;
   delete(groupName: string): Promise<void>;
-  update(entity: RoutineGroup): Promise<RoutineGroup>; 
+  update(group: RoutineGroup): Promise<RoutineGroup>; 
   changeName(originalName: string, newName: string): Promise<void>;
 }
-export const GroupRepository: GroupRepository = {
+export const groupRepository: GroupRepository = {
 
   async loadAll(){
     const groupFiles = (await ensureArchive("routines")).children
@@ -51,7 +52,7 @@ export const GroupRepository: GroupRepository = {
     return await parse(file);
   },
 
-  async isExist(groupName: string){
+  isExist(groupName: string){
     return fileAccessor.loadFile(GROUP_PATH(groupName)) !== null;
   },
 

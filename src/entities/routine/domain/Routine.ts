@@ -1,28 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Day, DayOfWeek } from "@shared/period/day";
-import { keys } from "lodash";
-import { stringifyYaml } from "obsidian";
-import { err, Result, ok, Err } from "neverthrow";
-import { parseFrontmatter } from "@shared/file/parse-frontmatter";
-import dedent from "dedent";
 import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+import { keys } from "lodash";
+import { err, Err, ok, Result } from "neverthrow";
 import { Routine, RoutineProperties } from "./routine.type";
-import { RoutineGroupEntity } from "./routine-group";
 
-
-const DEFAULT_ROUTINE = (): Routine => {
-  return {
-    name: "New Routine",
-    properties: {
-      order: 0,
-      group: RoutineGroupEntity.UNGROUPED_NAME,
-      showOnCalendar: false,
-      activeCriteria: "week",
-      daysOfWeek: Day.getDaysOfWeek(),
-      daysOfMonth: [Day.now().date],
-    }
-  }
-}
 
 type NameValidationArgs = {
   name: string;
@@ -141,7 +123,6 @@ const isDueTo = (routine: Routine, day: Day): boolean => {
 
 
 export const RoutineEntity = {
-  DEFAULT_ROUTINE,
   validateName,
   validateRoutineProperties,
   isDueTo,

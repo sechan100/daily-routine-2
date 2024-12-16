@@ -7,6 +7,7 @@ import { useMemo } from "react";
 interface NameOptionProps {
   value: string;
   onChange: (name: string) => void;
+  focus?: boolean;
   validation?: {
     isValid: boolean;
     message: string;
@@ -17,6 +18,7 @@ interface NameOptionProps {
 export const NameOption = ({
   value,
   onChange,
+  focus,
   validation: p_validation,
   className,
   placeholder
@@ -43,6 +45,7 @@ export const NameOption = ({
           onChange={name => onChange(name)}
           placeholder={placeholder}
           css={!validation.isValid ? TEXT_CSS.errorColor : null}
+          focus={focus}
         />
         {!validation.isValid && (
           <div css={[TEXT_CSS.description, TEXT_CSS.errorColor]}>{validation.message}</div>

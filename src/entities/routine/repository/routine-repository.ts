@@ -25,16 +25,17 @@ const serialize = (routine: Routine) => dedent`
   ---
 `;
 
-
-interface RoutineRepository {
+export interface RoutineQuery {
   loadAll(): Promise<Routine[]>;
   load(routineName: string): Promise<Routine>;
+}
+export interface RoutineRepository extends RoutineQuery {
   persist(entity: Routine): Promise<boolean>;
   delete(routineName: string): Promise<void>;
   changeName(originalName: string, newName: string): Promise<void>;
-  update(entity: Routine): Promise<Routine>; 
+  update(routine: Routine): Promise<Routine>;
 }
-export const RoutineRepository: RoutineRepository = {
+export const routineRepository: RoutineRepository = {
 
   async loadAll(){
     const routinePromises: Promise<Routine>[] = (await ensureArchive("routines")).children

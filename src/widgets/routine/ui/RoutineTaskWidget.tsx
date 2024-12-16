@@ -1,8 +1,8 @@
 import { RoutineTask, TaskGroup } from "@entities/note";
-import { RoutineRepository } from "@entities/routine";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useRoutineOptionModal } from "./routine-option";
+import { routineRepository } from "@entities/routine";
 
 interface RoutineTaskProps {
   task: RoutineTask;
@@ -12,7 +12,7 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
   const RoutineOptionModal = useRoutineOptionModal();
 
   const onOptionClick = useCallback(async () => {
-    const routine = await RoutineRepository.load(task.name);
+    const routine = await routineRepository.load(task.name);
     RoutineOptionModal.open({ routine });
   }, [RoutineOptionModal, task.name])
   

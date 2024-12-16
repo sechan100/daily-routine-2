@@ -1,4 +1,4 @@
-import { RoutineNote, NoteRepository, TodoTask } from "@entities/note";
+import { RoutineNote, noteRepository, TodoTask } from "@entities/note";
 import { RoutineRepository } from "@entities/routine";
 import { Day } from "@shared/period/day";
 

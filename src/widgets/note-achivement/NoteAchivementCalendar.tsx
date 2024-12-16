@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteEntity, NoteRepository, RoutineNote } from '@entities/note';
+import { NoteEntity, noteRepository, RoutineNote } from '@entities/note';
 import { Day } from "@shared/period/day";
 import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { BaseCalendar } from '@shared/components/BaseCalendar';
@@ -20,7 +20,7 @@ export const NoteAchivementCalendar = ({ month: propsMonth }: NoteAchivementCale
 
   // 해당 월의 루틴 노트들을 가져온다.
   useEffect(() => {
-    NoteRepository
+    noteRepository
     .loadBetween(month.startDay, month.endDay)
     .then(notes => {
       setNotes(notes)

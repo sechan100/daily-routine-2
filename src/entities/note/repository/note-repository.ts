@@ -31,7 +31,7 @@ interface NoteRepository {
   // start와 end를 '포함한' 사이의 모든 루틴 노트를 가져온다.
   loadBetween(start: Day, end: Day): Promise<RoutineNote[]>;
 
-  isExist(day: Day): Promise<boolean>;
+  isExist(day: Day): boolean;
 
   /**
    * 이미 routine note가 존재한다면 아무것도 하지 않는다.
@@ -46,10 +46,12 @@ interface NoteRepository {
 
   update(routineNote: RoutineNote): Promise<void>;
 
+  updateIfExist(routineNote: RoutineNote): Promise<boolean>;
+
   delete(day: Day): Promise<void>;
 }
 
-export const NoteRepository: NoteRepository = {
+export const noteRepository: NoteRepository = {
 
   async load(day: Day){
     const file = ROUTINE_NOTE_FILE(day);
@@ -73,7 +75,7 @@ export const NoteRepository: NoteRepository = {
     return notes;
   },
 
-  async isExist(day: Day){
+  isExist(day: Day){
     return ROUTINE_NOTE_FILE(day) !== null;
   },
 
@@ -93,7 +95,7 @@ export const NoteRepository: NoteRepository = {
     const file = ROUTINE_NOTE_FILE(routineNote.day);
 
     if(file) {
-      await NoteRepository.update(routineNote);
+      await noteRepository.update(routineNote);
       return true;
     } else {
       // 사용자 확인 대기
@@ -106,7 +108,7 @@ export const NoteRepository: NoteRepository = {
 
       // 사용자의 응답에 따라 처리
       if(isUserConfirmed) {
-        await NoteRepository.persist(routineNote);
+        await noteRepository.persist(routineNote);
       }
       return isUserConfirmed;
     }
@@ -119,6 +121,15 @@ export const NoteRepository: NoteRepository = {
       await fileAccessor.writeFile(file, () => serializeRoutineNote(routineNote));
     } else {
       throw new Error('RoutineNote file is not exist.');
+    }
+  },
+
+  async updateIfExist(routineNote: RoutineNote){
+    if(noteRepository.isExist(routineNote.day)){
+      await noteRepository.update(routineNote);
+      return true;
+    } else {
+      return false;
     }
   },
   

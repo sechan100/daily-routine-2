@@ -1,4 +1,4 @@
-import { NoteRepository, RoutineNote } from "@entities/note";
+import { noteRepository, RoutineNote } from "@entities/note";
 import { RoutineNoteCreator } from "@entities/routine-to-note/RoutineNoteCreator";
 import { Day } from "@shared/period/day";
 
@@ -8,12 +8,12 @@ import { Day } from "@shared/period/day";
  * note가 존재한다면 반환하고, 존재하지 않는다면 생성한 다음 오늘에 해당하는 노트라면 저장하는등의 복잡한 과정을 수행할 수 있다.
  */
 export const resolveRoutineNote = async (day: Day): Promise<RoutineNote> => {
-  let routineNote = await NoteRepository.load(day);
+  let routineNote = await noteRepository.load(day);
   if(!routineNote){
     const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
     routineNote = noteCreator.create(day);
     if(day.isToday()){
-      await NoteRepository.persist(routineNote);
+      await noteRepository.persist(routineNote);
     }
   }
   return routineNote;

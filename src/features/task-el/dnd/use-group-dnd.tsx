@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
-import { useRoutineNote } from "@features/note";
 import { useLeaf } from "@shared/view/use-leaf";
 import React, { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
@@ -8,6 +7,7 @@ import { TaskElDragItem } from "./drag-item";
 import { GroupHitArea, HitAreaEvaluator } from "./hit-area";
 import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
+import { useRoutineMutationMerge } from "@features/merge-note";
 
 
 
@@ -29,7 +29,7 @@ export const useGroupDnd = ({
   onElDragEnd,
   onElDrop
 }: UseGroupDndOption): UseGroupDndResult => {
-  const setNote = useRoutineNote(s=>s.setNote);
+  const { mergeNote } = useRoutineMutationMerge();
   const { view } = useLeaf();
   const [hit, setHit] = useState<GroupHitArea | null>(null);
   const indicator = useMemo<React.ReactNode | null>(() => {
@@ -58,8 +58,8 @@ export const useGroupDnd = ({
   const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === group.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const inCmdAvailable = !isGroupOpen || group.children.length === 0;
-    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, inCmdAvailable);
+    const in_hit_available = !isGroupOpen || group.children.length === 0;
+    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, in_hit_available);
     return hit;
   }, [group, groupRef, isGroupOpen])
 
@@ -78,21 +78,21 @@ export const useGroupDnd = ({
       const dropped = item.el;
       let newNote: RoutineNote;
       if(dropped.elementType === "task") {
-        newNote = DroppedElReplacer.taskDropOnGroup({
+        newNote = await DroppedElReplacer.taskDropOnGroup({
           dropped: dropped as Task,
           on: group,
           hit,
         });
       } else {
         if(hit === "in") return null;
-        newNote = DroppedElReplacer.groupDropOnGroup({
+        newNote = await DroppedElReplacer.groupDropOnGroup({
           dropped: dropped as TaskGroup,
           on: group,
           hit,
         }); 
       }
       setHit(null);
-      setNote(newNote);
+      mergeNote(newNote);
       onElDrop?.(newNote, dropped);
     },
 
@@ -100,7 +100,7 @@ export const useGroupDnd = ({
       isOver: monitor.isOver(),
     })
 
-  }, [group, hit, onElDrop, setNote, evaluateHitArea])
+  }, [group, hit, onElDrop, mergeNote, evaluateHitArea])
 
   // hoverOut시에 indicator를 제거
   useEffect(() => {

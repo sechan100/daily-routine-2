@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { executeRoutineNotesSynchronize } from '@entities/note-synchronize';
-import { Routine, RoutineRepository } from '@entities/routine';
-import { useRoutineNote } from "@features/note";
+import { Routine, routineRepository } from '@entities/routine';
+import { useRoutineMutationMerge } from '@features/merge-note';
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { TaskOption } from '@features/task-el';
 import { Button } from '@shared/components/Button';
@@ -10,7 +9,7 @@ import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { dr } from '@shared/daily-routine-bem';
 import { Notice } from "obsidian";
-import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import React, { useCallback, useMemo, useReducer } from "react";
 
 
 const bem = dr("routine-option");
@@ -20,17 +19,18 @@ interface Props {
   modal: ModalApi;
 }
 export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine}: Props) => {
+  const { mergeNote } = useRoutineMutationMerge();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, originalRoutine);
-  const { note, setNote } = useRoutineNote();
   const originalName = useMemo(() => originalRoutine.name, [originalRoutine.name]);
 
   const onSaveBtnClick = useCallback(async () => {
-    // change name
     if(routine.name.trim() !== "" && originalName !== routine.name){
-      await RoutineRepository.changeName(originalName, routine.name);
+      await routineRepository.changeName(originalName, routine.name);
     }
-    await RoutineRepository.update(routine);
-  }, [originalName, routine]);
+    await routineRepository.update(routine);
+    mergeNote();
+    modal.close();
+  }, [mergeNote, modal, originalName, routine]);
 
   const onDeleteBtnClick = useCallback(async (e: React.MouseEvent) => {
     const deleteConfirm = await doConfirm({
@@ -41,15 +41,11 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
     })
     if(!deleteConfirm) return;
     
-    RoutineRepository.delete(originalName);
+    await routineRepository.delete(originalName);
+    mergeNote();
+    modal.close();
     new Notice(`Routine ${routine.name} deleted.`);
-    setNote({
-      ...note,
-      children: note.children.filter(task => task.name !== routine.name)
-    });
-    executeRoutineNotesSynchronize();
-    modal.closeWithoutOnClose();
-  }, [originalName, modal, note, routine.name, setNote])
+  }, [routine.name, originalName, mergeNote, modal])
 
   return (
     <Modal header='Routine Option' modal={modal}>
@@ -80,6 +76,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       <Modal.Section className={bem("delete")} name='Delete'>
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
+      <Modal.Separator edge />
 
       {/* save */}
       <Modal.Section>

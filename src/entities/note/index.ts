@@ -1,5 +1,5 @@
 // REPOSITORY
-export { NoteRepository } from "./repository/note-repository";
+export { noteRepository } from "./repository/note-repository";
 
 // DOMAIN
 export { NoteEntity } from "./domain/note";

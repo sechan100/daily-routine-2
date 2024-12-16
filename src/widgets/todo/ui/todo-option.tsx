@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, TodoTask } from '@entities/note';
+import { noteRepository, TodoTask } from '@entities/note';
 import { useRoutineNote } from '@features/note';
 import { TaskOption } from "@features/task-el";
 import { TodoValidation, todoValidator, VALID_TODO_VALIDATION } from "@features/todo";

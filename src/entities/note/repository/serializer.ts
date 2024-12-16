@@ -69,7 +69,7 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
 const serializeRoutineTask = (routineTask: RoutineTask) => {
   const c = routineTask.checked ? 'x' : ' ';
   const meta = {
-    type: 'todo',
+    type: routineTask.taskType,
     soc: Number(routineTask.showOnCalendar)
   }
   return `- [${c}] [[${routineTask.name}]]%%${JSON.stringify(meta)}%%`;
@@ -78,7 +78,7 @@ const serializeRoutineTask = (routineTask: RoutineTask) => {
 const serializeTodoTask = (todo: TodoTask) => {
   const c = todo.checked ? 'x' : ' ';
   const meta = {
-    type: 'todo',
+    type: todo.taskType,
     soc: Number(todo.showOnCalendar)
   }
   return `- [${c}] ${todo.name}%%${JSON.stringify(meta)}%%`;

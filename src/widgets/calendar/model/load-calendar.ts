@@ -1,13 +1,13 @@
 import { Month } from "@shared/period/month";
 import { Calendar, Tile } from "./types";
-import { RoutineEntity, RoutineRepository } from "@entities/routine";
-import { NoteEntity, NoteRepository, TaskEntity } from "@entities/note";
+import { RoutineEntity, routineRepository } from "@entities/routine";
+import { NoteEntity, noteRepository, TaskEntity } from "@entities/note";
 import { Day } from "@shared/period/day";
 
 
 
 export const loadCalendar = async (month: Month): Promise<Calendar> => {
-  const routines = await RoutineRepository.loadAll();
+  const routines = await routineRepository.loadAll();
   const showOnCalendarRoutines = routines.filter((r) => r.properties.showOnCalendar);
   const createTile = (day: Day): Tile => {
     const tileTasks = showOnCalendarRoutines
@@ -28,7 +28,7 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
   const nextNeighboringMonthTilesNum = 6 - Day.getDaysOfWeek().indexOf(month.endDay.dow);
   const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
 
-	const loadedNotes = await NoteRepository.loadBetween(startDay, endDay);
+	const loadedNotes = await noteRepository.loadBetween(startDay, endDay);
 	const tiles: Map<string, Tile> = new Map();
   let d = startDay;
   while(d.isSameOrBefore(endDay)){

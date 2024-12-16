@@ -8,6 +8,7 @@ import { HitAreaEvaluator, TaskHitArea } from "./hit-area";
 import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
 import { TaskElDragItem } from "./drag-item";
+import { useRoutineMutationMerge } from "@features/merge-note";
 
 
 interface UseTaskDndOption {
@@ -28,7 +29,7 @@ export const useTaskDnd = ({
   onElDragEnd,
   onElDrop, 
 }: UseTaskDndOption): UseTaksDndResult => {
-  const setNote = useRoutineNote(s=>s.setNote);
+  const { mergeNote } = useRoutineMutationMerge();
   const { view } = useLeaf();
   const [hit, setHit] = useState<TaskHitArea | null>(null);
   const indicator = useMemo<React.ReactNode | null>(() => {
@@ -98,20 +99,20 @@ export const useTaskDnd = ({
       const dropped = item.el;
       let newNote: RoutineNote;
       if(dropped.elementType === "task") {
-        newNote = DroppedElReplacer.taskDropOnTask({
+        newNote = await DroppedElReplacer.taskDropOnTask({
           dropped: dropped as Task,
           on: task,
           hit
         });
       } else {
-        newNote = DroppedElReplacer.groupDropOnTask({
+        newNote = await DroppedElReplacer.groupDropOnTask({
           dropped: dropped as TaskGroup,
           on: task,
-          hit,
+          hit
         }); 
       }
       setHit(null);
-      setNote(newNote);
+      mergeNote(newNote);
       onElDrop?.(newNote, dropped);
     },
 
@@ -119,7 +120,7 @@ export const useTaskDnd = ({
       isOver: monitor.isOver(),
     })
 
-  }, [task, setNote, group, onElDrop, evaluateHitArea, hit])
+  }, [task, mergeNote, group, onElDrop, evaluateHitArea, hit])
 
   // hoverOut시에 hit을 초기화
   useEffect(() => {

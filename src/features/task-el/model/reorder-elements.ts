@@ -1,14 +1,8 @@
-import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, NoteRepository, RoutineNote, Task, TaskGroup, TaskParent } from "@entities/note";
-import { executeRoutineNotesSynchronize } from "@entities/note-synchronize";
-import { GroupRepository, isRoutine, RoutineElement, RoutineGroupEntity, RoutineRepository } from "@entities/routine";
+import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, noteRepository, RoutineNote, Task, TaskGroup, TaskParent } from "@entities/note";
+import { groupRepository, GroupRepository, isRoutine, RoutineElement, RoutineGroupEntity, routineRepository, RoutineRepository } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
 
 
-const save = async (note: RoutineNote) => {
-  if(await NoteRepository.isExist(note.day)){
-    await NoteRepository.update(note);
-  }
-}
 
 type OrderChangeList = RoutineElement[];
 
@@ -18,8 +12,8 @@ const ORDER_OFFSET = 1000;
  * @param parent 
  */
 const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> => {
-  const routines = await RoutineRepository.loadAll();
-  const groups = await GroupRepository.loadAll();
+  const routines = await routineRepository.loadAll();
+  const groups = await groupRepository.loadAll();
   const map = new Map<string, RoutineElement>([...routines, ...groups].map(r => [r.name, r]));
 
   type Acc = {
@@ -65,9 +59,9 @@ const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
   const list = await resolveChangeList(parent);
   for(const el of list){
     if(isRoutine(el)){
-      await RoutineRepository.update(el);
+      await routineRepository.update(el);
     } else {
-      await GroupRepository.update(el);
+      await groupRepository.update(el);
     }
   }
 }
@@ -97,7 +91,7 @@ type TaskOnTask = {
   on: Task;
   hit: "top" | "bottom";
 }
-const taskDropOnTask = (args: TaskOnTask) => {
+const taskDropOnTask = async (args: TaskOnTask) => {
   if(args.dropped.name === args.on.name) throw new Error("Cannot drop on itself");
   const note = { ...useRoutineNote.getState().note };
   
@@ -113,9 +107,7 @@ const taskDropOnTask = (args: TaskOnTask) => {
     target: dropped,
     pos: args.hit === "top" ? "before" : "after"
   })
-  save(note);
-  updateRoutineAndRoutineGroups(parent)
-  .then(() => executeRoutineNotesSynchronize(note.day));
+  await updateRoutineAndRoutineGroups(parent);
   return note;
 }
 
@@ -124,7 +116,7 @@ type GroupOnTask = {
   on: Task;
   hit: "top" | "bottom";
 }
-const groupDropOnTask = (args: GroupOnTask) => {
+const groupDropOnTask = async (args: GroupOnTask) => {
   const note = { ...useRoutineNote.getState().note };
   const root = note.children;
   const on = root.find(t => t.name === args.on.name);
@@ -138,9 +130,7 @@ const groupDropOnTask = (args: GroupOnTask) => {
     target: dropped,
     pos: args.hit === "top" ? "before" : "after"
   })
-  save(note);
-  updateRoutineAndRoutineGroups(note)
-  .then(() => executeRoutineNotesSynchronize(note.day));
+  await updateRoutineAndRoutineGroups(note);
   return note;
 }
 
@@ -149,7 +139,7 @@ type TaskOnGroup = {
   on: TaskGroup;
   hit: "top" | "bottom" | "in";
 }
-const taskDropOnGroup = (args: TaskOnGroup) => {
+const taskDropOnGroup = async (args: TaskOnGroup) => {
   const note = { ...useRoutineNote.getState().note };
   const on = NoteEntity.findGroup(note, args.on.name);
   const dropped = NoteEntity.findTask(note, args.dropped.name);
@@ -169,9 +159,7 @@ const taskDropOnGroup = (args: TaskOnGroup) => {
     })
     parent = note;
   }
-  save(note);
-  updateRoutineAndRoutineGroups(parent)
-  .then(() => executeRoutineNotesSynchronize(note.day));
+  await updateRoutineAndRoutineGroups(parent);
   return note;
 }
 
@@ -180,7 +168,7 @@ type GroupOnGroup = {
   on: TaskGroup;
   hit: "top" | "bottom";
 }
-const groupDropOnGroup = (args: GroupOnGroup)=> {
+const groupDropOnGroup = async (args: GroupOnGroup)=> {
   const note = { ...useRoutineNote.getState().note };
   const root = note.children;
   const on = root.find(t => t.name === args.on.name);
@@ -194,9 +182,7 @@ const groupDropOnGroup = (args: GroupOnGroup)=> {
     target: dropped,
     pos: args.hit === "top" ? "before" : "after"
   })
-  save(note);
-  updateRoutineAndRoutineGroups(note)
-  .then(() => executeRoutineNotesSynchronize(note.day));
+  await updateRoutineAndRoutineGroups(note);
   return note;
 }
 

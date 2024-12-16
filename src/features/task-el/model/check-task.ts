@@ -1,4 +1,4 @@
-import { NoteEntity, NoteRepository, RoutineNote } from "@entities/note";
+import { NoteEntity, noteRepository, RoutineNote } from "@entities/note";
 
 
 export const checkTask = async (note: RoutineNote, taskName: string, check: boolean): Promise<RoutineNote> => {
@@ -6,6 +6,6 @@ export const checkTask = async (note: RoutineNote, taskName: string, check: bool
   if(!task) throw new Error("Check state change target task not found");
   
   task.checked = check;
-  await NoteRepository.saveOnUserConfirm(note);
+  await noteRepository.saveOnUserConfirm(note);
   return { ...note };
 }

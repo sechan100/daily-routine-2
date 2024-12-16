@@ -42,7 +42,10 @@ export const HitAreaEvaluator = {
     }
   },
 
-  evaluateGroup({ y }: XYCoord, node: HTMLElement, activeInCmd: boolean): GroupHitArea | null {
+  /**
+   * @param in_hit 'in' hit 활성화 여부
+   */
+  evaluateGroup({ y }: XYCoord, node: HTMLElement, in_hit: boolean): GroupHitArea | null {
     const rect: NodeRect = node.getBoundingClientRect();
     const dropTargetHeight = rect.height;
     const hitBoundary = 0.30;
@@ -54,14 +57,14 @@ export const HitAreaEvaluator = {
 
     // BOTTOM HIT
     } else if(y > rect.bottom - hixbox){
-      if(activeInCmd){
+      if(!in_hit){
         return null;
       } else {
         return "bottom";
       }
     // MIDDLE HIT
     } else {
-      if(activeInCmd){
+      if(in_hit){
         return "in";
       } else {
         return null;
