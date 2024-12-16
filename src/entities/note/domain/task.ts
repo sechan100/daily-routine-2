@@ -1,7 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
 import { Routine } from "@entities/routine";
-import { RoutineTask, TodoTask } from "./note.type";
+import { RoutineNote, RoutineTask, TodoTask } from "./note.type";
+import { NoteEntity } from "./note";
 
 
 
@@ -30,9 +31,25 @@ const createTodoTask = (name: string): TodoTask => ({
   showOnCalendar: true,
 })
 
+const removeTask = (note: RoutineNote, name: string): RoutineNote => {
+  const parent = NoteEntity.findParent(note, name);
+  parent.children = parent.children.filter(t => t.name !== name);
+  return { ...note };
+}
+
+const updateTask = (note: RoutineNote, originalName: string, task: RoutineTask | TodoTask): RoutineNote => {
+  note = { ...note };
+  const parent = NoteEntity.findParent(note, originalName);
+  const idx = parent.children.findIndex(t => t.name === originalName);
+  parent.children[idx] = task;
+  return note;
+}
+
 
 export const TaskEntity = {
   validateTaskName,
   createRoutineTask,
-  createTodoTask
+  createTodoTask,
+  removeTask,
+  updateTask,
 }

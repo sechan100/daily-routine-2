@@ -1,2 +1,2 @@
-export { useStartRoutineModal } from "./ui/start-routine";
+export { useStartRoutineModal } from "./start-routine";
 export { RoutineTaskWidget } from "./ui/RoutineTaskWidget";

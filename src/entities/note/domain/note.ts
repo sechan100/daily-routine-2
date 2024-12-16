@@ -58,11 +58,6 @@ const flatten = (note: RoutineNote): Task[] => {
   return note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
 }
 
-const removeTask = (note: RoutineNote, name: string): RoutineNote => {
-  const parent = findParent(note, name);
-  parent.children = parent.children.filter(t => t.name !== name);
-  return { ...note };
-}
 
 export const NoteEntity = {
   getCompletion,
@@ -70,6 +65,5 @@ export const NoteEntity = {
   findGroup,
   findTask,
   findParent,
-  flatten,
-  removeTask
+  flatten
 }

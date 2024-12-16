@@ -1,5 +1,5 @@
-import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, noteRepository, RoutineNote, Task, TaskGroup, TaskParent } from "@entities/note";
-import { groupRepository, GroupRepository, isRoutine, RoutineElement, RoutineGroupEntity, routineRepository, RoutineRepository } from "@entities/routine";
+import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, TaskEntity, Task, TaskGroup, TaskParent } from "@entities/note";
+import { groupRepository, isRoutine, RoutineElement, RoutineGroupEntity, routineRepository } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
 
 
@@ -99,7 +99,7 @@ const taskDropOnTask = async (args: TaskOnTask) => {
   const dropped = NoteEntity.findTask(note, args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Task or Dropped Task not found");
 
-  NoteEntity.removeTask(note, dropped.name);
+  TaskEntity.removeTask(note, dropped.name);
   const parent = NoteEntity.findParent(note, on.name);
   addTask({
     parent,
@@ -123,7 +123,7 @@ const groupDropOnTask = async (args: GroupOnTask) => {
   const dropped = root.find(t => t.name === args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Task or Dropped Task not found. Or group has dropped in another group.");
 
-  NoteEntity.removeTask(note, dropped.name);
+  TaskEntity.removeTask(note, dropped.name);
   addTask({
     parent: note,
     base: on,
@@ -145,7 +145,7 @@ const taskDropOnGroup = async (args: TaskOnGroup) => {
   const dropped = NoteEntity.findTask(note, args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Group or Dropped Task not found.");
   
-  NoteEntity.removeTask(note, dropped.name);
+  TaskEntity.removeTask(note, dropped.name);
   let parent: TaskParent;
   if(args.hit === "in"){
     on.children.unshift(dropped);
@@ -175,7 +175,7 @@ const groupDropOnGroup = async (args: GroupOnGroup)=> {
   const dropped = root.find(t => t.name === args.dropped.name);
   if(!on || !dropped) throw new Error("Dest Group or Dropped Group not found.");
 
-  NoteEntity.removeTask(note, dropped.name);
+  TaskEntity.removeTask(note, dropped.name);
   addTask({
     parent: note,
     base: on,

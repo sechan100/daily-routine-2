@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { noteRepository, TodoTask } from '@entities/note';
+import { noteRepository, TaskEntity, TodoTask } from '@entities/note';
 import { useRoutineNote } from '@features/note';
 import { TaskOption } from "@features/task-el";
-import { TodoValidation, todoValidator, VALID_TODO_VALIDATION } from "@features/todo";
 import { Button } from '@shared/components/Button';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
@@ -11,7 +10,7 @@ import { dr } from '@shared/daily-routine-bem';
 import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { rescheduleTodo } from "../model/reschedule-todo";
+import { rescheduleTodo } from "./reschedule-todo";
 
 
 interface TodoOptionModalProps {
@@ -24,28 +23,13 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
   const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
-  const validation = useMemo(() => {
-    const vs: TodoValidation[] = [
-      todoValidator.name(todo.name, { note, originalName }),
-    ];
-    const invalid = vs.find(v => !v.isValid);
-    return invalid ?? VALID_TODO_VALIDATION;
-  }, [note, originalName, todo.name]);
-
-
-  // modal.onClose시에 저장
-  useEffect(() => modal.onClose(() => {
-    if(!validation.isValid) return;
-
-    const nameChanged = originalName !== todo.name;
-    const showOnCalendarChanged = propsTodo.showOnCalendar !== todo.showOnCalendar;
-
-    if(nameChanged || showOnCalendarChanged){
-      // const newNote = NoteService.editTodoTask(note, originalName, todo);
-      // NoteRepository.update(newNote);
-      // setNote(newNote);
-    }
-  }), [modal, note, originalName, propsTodo.showOnCalendar, setNote, todo, validation.isValid]);
+  const onSave = useCallback(async () => {
+    if(todo.name.trim() === "") return;
+    const newNote = TaskEntity.updateTask(note, originalName, todo);
+    setNote(newNote);
+    await noteRepository.update(newNote);
+    modal.close();
+  }, [modal, note, originalName, setNote, todo]);
 
 
   const onRescheduleBtnClick = useCallback(async (destDay: Day) => {
@@ -60,8 +44,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     const todoDeletedNote = await rescheduleTodo(note, originalName, destDay);
     setNote(todoDeletedNote);
     new Notice(`Todo ${todo.name} rescheduled to ${destDay.format()}.`);
-    modal.closeWithoutOnClose();
-
+    modal.close();
   }, [modal, note, originalName, setNote, todo.name]);
 
 
@@ -74,13 +57,12 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     })
     if(!deleteConfirm) return;
 
-    // const deletedNote = NoteService.deleteTodoTask(note, originalName);
-    // NoteRepository.forceSave(deletedNote);
-    // setNote(deletedNote);
-    modal.closeWithoutOnClose();
+    const newNote = TaskEntity.removeTask(note, todo.name);
+    setNote(newNote);
+    await noteRepository.update(newNote);
+    modal.close();
     new Notice(`Todo ${todo.name} deleted.`);
-
-  }, [modal, todo.name])
+  }, [modal, note, setNote, todo.name])
 
 
   return (
@@ -91,7 +73,6 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       <TaskOption.Name
         value={todo.name}
         onChange={name => setTodo(todo => ({ ...todo, name}))}
-        validation={validation}
       />
       <Modal.Separator />
 
@@ -127,6 +108,19 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
         name="Delete"
       >
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
+      </Modal.Section>
+      <Modal.Separator edge />
+
+      {/* save */}
+      <Modal.Section>
+        <Button
+          css={{ width: "100%" }}
+          disabled={todo.name.trim() === ""}
+          variant={todo.name.trim() === "" ? "disabled" : "accent"}
+          onClick={onSave}
+        >
+          Save
+        </Button>
       </Modal.Section>
     </Modal>
   )

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { TaskEntity, TodoTask } from "@entities/note";
+import { noteRepository, TaskEntity, TodoTask } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { TaskOption } from "@features/task-el";
 import { Button } from "@shared/components/Button";
@@ -11,17 +11,18 @@ import { useCallback, useMemo, useState } from "react";
 
 export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
-  const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask("New Todo"));
+  const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask(""));
   
   const onSave = useCallback(() => {
-    // const noteDomain = RoutineNote.fromJSON(note);
-    // noteDomain.add
-    // setNote(newNote);
-
-    // // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
-    // NoteRepository.forceSave(newNote);
-    // modal.close();
-  }, []);
+    const newNote = {
+      ...note,
+      children: [todo, ...note.children]
+    }
+    // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
+    noteRepository.save(newNote);
+    setNote(newNote);
+    modal.close();
+  }, [modal, note, setNote, todo]);
 
 
   const bem = useMemo(() => dr("add-todo-modal"), []);
@@ -33,7 +34,8 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
       <TaskOption.Name
         value={todo.name}
         onChange={name => setTodo(todo => ({...todo, name}))}
-        placeholder="New Today Todo"
+        placeholder="New Todo"
+        focus
       />
       <Modal.Separator />
 

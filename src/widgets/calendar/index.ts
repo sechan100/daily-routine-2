@@ -1,1 +1,1 @@
-export { CalendarWidget } from "./CalendarWidget"
+export { CalendarWidget } from "./ui/CalendarWidget"

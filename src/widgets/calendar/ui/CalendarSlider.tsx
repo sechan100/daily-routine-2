@@ -6,8 +6,8 @@ import { Month } from "@shared/period/month";
 import { useAsync } from "@shared/use-async";
 import { useCallback, useMemo } from "react";
 import { CalendarTile } from "./CalendarTile";
-import { loadCalendar } from "./model/load-calendar";
-import { Tile } from "./model/types";
+import { loadCalendar } from "../model/load-calendar";
+import { Tile } from "../model/types";
 import { useTabRoute } from "@shared/use-tab-route";
 
 

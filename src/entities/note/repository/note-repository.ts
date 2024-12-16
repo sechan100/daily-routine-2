@@ -44,6 +44,8 @@ interface NoteRepository {
    */
   saveOnUserConfirm(routineNote: RoutineNote): Promise<boolean>;
 
+  save(routineNote: RoutineNote): Promise<void>;
+
   update(routineNote: RoutineNote): Promise<void>;
 
   updateIfExist(routineNote: RoutineNote): Promise<boolean>;
@@ -111,6 +113,14 @@ export const noteRepository: NoteRepository = {
         await noteRepository.persist(routineNote);
       }
       return isUserConfirmed;
+    }
+  },
+
+  async save(routineNote: RoutineNote){
+    if(noteRepository.isExist(routineNote.day)){
+      await noteRepository.update(routineNote);
+    } else {
+      await noteRepository.persist(routineNote);
     }
   },
 
