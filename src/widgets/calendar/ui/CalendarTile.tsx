@@ -17,17 +17,20 @@ const DateBadge = ({ day }: { day: Day }) => {
     <div css={[{
       position: 'relative',
       textAlign: 'start',
-      padding: day.isToday() ? '1px 0 0 1px ' : '0 0 0 3px',
+      padding: '0 0 0 3px',
+      // padding: day.isToday() ? '1px 0 0 1px ' : '0 0 0 3px',
     }, TEXT_CSS.description]}>
-      <span css={[{
+      <span css={{
         display: 'inline-block',
         width: '15px',
         height: '15px',
         lineHeight: '15px',
         borderRadius: '50%',
-        textAlign: day.isToday() ? 'center' : 'start',
-        backgroundColor: day.isToday() ? 'var(--color-accent)' : 'transparent',
-      }, (day.isToday() && TEXT_CSS.onAccent)]}>
+        textAlign: 'start',
+        backgroundColor: 'transparent',
+        // textAlign: day.isToday() ? 'center' : 'start',
+        // backgroundColor: day.isToday() ? 'var(--color-accent)' : 'transparent',
+      }}>
         {day.date}
       </span>
     </div>
@@ -50,7 +53,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   }
 
   return (
-    <div>
+    <div className="dr-calendar-tasks">
       {tasks.slice(0, 3).map(task => (
         <TaskLine 
           key={task.name}
@@ -75,13 +78,14 @@ const TaskLine = ({ task }: { task: Task }) => {
     <div css={[TEXT_CSS.onAccent, defaultTextStyle, {
       margin: '1px 1px',
       padding: '2px 0 2px 2px',
-      backgroundColor: 'var(--color-accent)',
+      backgroundColor: 'var(--color-accent-1)',
       borderRadius: '2px',
       textAlign: 'start',
+      textOverflow: 'ellipsis',
+      overflow: "hidden",
+      whiteSpace: "nowrap",
     }]}>
-      <span>
-        {task.name}
-      </span>
+      {task.name}
     </div>
   )
 }
@@ -97,6 +101,9 @@ export const CalendarTile = ({ tile }: CalendarTileProps) => {
     <div css={{
       height: '77px',
       width: '100%',
+      ...(tile.day.isToday() && {
+        background: "hsla(var(--color-accent-2-hsl), 0.5)",
+      }),
     }}>
       <DateBadge day={tile.day} />
       <TaskLineContainer tasks={tile.tasks} />

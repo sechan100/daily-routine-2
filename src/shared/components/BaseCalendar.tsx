@@ -55,6 +55,7 @@ export const BaseCalendar = ({
   return (
     <>
       <Calendar
+        calendarType='gregory'
         className={className}
         css={calendarStyles}
         tileContent={renderTileContent}
