@@ -14,6 +14,7 @@ import { ElementPreview } from "./ElementPreview";
 import { useDndScroll } from "../dnd/use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
 import { TaskElDragItem } from '../dnd/drag-item';
+import { isNoteElement, isTaskGroup } from "@entities/note";
 
 
 export const DELAY_TOUCH_START = 1000;
@@ -63,13 +64,20 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
         {children}
       </ScrollComponent>
       <div className="dr-task-preview-context">
-        <Preview generator={({ item, style }) => (
-          <ElementPreview
-            item={item as TaskElDragItem}
-            style={style} 
-            backend={backend}
-          />
-        )}/>
+        <Preview generator={({ item, style }) => {
+          // @ts-ignore
+          if(item.el !== undefined && isNoteElement(item.el)){
+            return (
+              <ElementPreview
+                item={item as TaskElDragItem}
+                style={style} 
+                backend={backend}
+              />
+            )
+          } else {
+            return <></>
+          }
+        }}/>
       </div>
     </DndProvider>
   )

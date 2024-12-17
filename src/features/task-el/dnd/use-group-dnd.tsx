@@ -58,8 +58,9 @@ export const useGroupDnd = ({
   const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === group.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const in_hit_available = !isGroupOpen || group.children.length === 0;
-    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, in_hit_available);
+    const isGroupCloseOrNoChildren = !isGroupOpen || group.children.length === 0;
+    const isDroppedElTypeofGroup = dropped.elementType === "group";
+    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, isGroupCloseOrNoChildren && !isDroppedElTypeofGroup);
     return hit;
   }, [group, groupRef, isGroupOpen])
 

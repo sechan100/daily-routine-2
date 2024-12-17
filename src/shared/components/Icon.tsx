@@ -10,6 +10,7 @@ interface IconProps {
   accent?: boolean;
   color?: string;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 export const Icon = React.memo((props: IconProps) => {
   const ref = useRef<HTMLElement>(null);
@@ -29,6 +30,7 @@ export const Icon = React.memo((props: IconProps) => {
     <span
       className={props.className}
       ref={ref}
+      onClick={props.onClick}
       css={{
         display: "flex",
         alignItems: "center",

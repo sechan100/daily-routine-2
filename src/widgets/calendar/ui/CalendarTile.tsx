@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Day } from "@shared/period/day";
-import { Tile } from "./model/types"
+import { Tile } from "../model/types"
 import { TEXT_CSS } from "@shared/constants/text-style";
 import { Task } from "@entities/note";
 import { css } from "@emotion/react";

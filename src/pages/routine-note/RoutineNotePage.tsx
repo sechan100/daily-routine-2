@@ -13,7 +13,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BaseGroupHeadFeature } from '@features/task-el/ui/TaskGroupHeadFeature';
 import { TaskGroupWidget } from './TaskGroupWidget';
 import { renderTask } from './render-task-widget';
+import { Icon } from '@shared/components/Icon';
 
+
+const startRoutineIcon = "alarm-clock-plus";
+const addTodoIcon = "square-check";
 
 interface RoutineNoteProps {
   day: Day;
@@ -51,7 +55,7 @@ const PageComponent = () => {
   const onNoteMenuShow = useCallback((m: Menu) => {
     // Start New Routine
     m.addItem(item => {
-      item.setIcon("alarm-clock-plus");
+      item.setIcon(startRoutineIcon);
       item.setTitle("Start New Routine");
       item.onClick(() => {
         StartRoutineModal.open({});
@@ -62,7 +66,7 @@ const PageComponent = () => {
 
     // Add Todo
     m.addItem(item => {
-      item.setIcon("square-check-big");
+      item.setIcon(addTodoIcon);
       item.setTitle("Add Todo");
       item.onClick(() => {
         AddTodoModal.open({});
@@ -91,18 +95,24 @@ const PageComponent = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0.5em 1em",
+          padding: "0.7em 0.7em",
           // height: "4.5em",
         }} 
         className={bem("header")}
       >
         <span css={{
           fontWeight: "bold",
-          fontSize: "1.2em",
+          fontSize: "1em",
         }}>
           {note.day.format() + " / " + note.day.dow}
         </span>
-        <MenuComponent onMenuShow={onNoteMenuShow} icon="ellipsis" />
+        <div css={{
+          display: "flex",
+          gap: "1.5em",
+        }}>
+          <Icon icon={addTodoIcon} onClick={() => AddTodoModal.open({})} />
+          <MenuComponent onMenuShow={onNoteMenuShow} icon="menu" />
+        </div>
       </header>
       <div
         className={bem("tasks")}

@@ -16,6 +16,11 @@ export type NoteElement = {
   elementType: "group" | "task";
   name: string;
 }
+export const isNoteElement = (noteElement: any): noteElement is NoteElement => {
+  const hasName = typeof noteElement.name === "string";
+  const hasType = noteElement.elementType === "group" || noteElement.elementType === "task";
+  return hasName && hasType;
+}
 
 export type TaskGroup = NoteElement & {
   elementType: "group";
