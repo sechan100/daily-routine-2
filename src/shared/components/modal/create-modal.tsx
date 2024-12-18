@@ -58,6 +58,8 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
     // 기본값은 flex
     modal.contentEl.setCssStyles({
       display: "block",
+      overflow: "auto",
+      padding: "0",
     })
     modal.open();
     modalStore.current.setState({

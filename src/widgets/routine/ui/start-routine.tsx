@@ -1,8 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { routineRepository } from "@entities/routine";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
-import { TaskOption } from '@features/task-el';
-import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/daily-routine-bem";
@@ -31,10 +29,10 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
 
   return (
     <Modal header="Start New Routine" className={bem()} modal={modal}>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* name */}
-      <TaskOption.Name
+      <Modal.NameSection
         focus
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
@@ -50,23 +48,18 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
       <Modal.Separator />
 
       {/* show on calendar */}
-      <TaskOption.ShowOnCalendar
+      <Modal.ToggleSection
+        name="Show On Calendar"
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* save */}
-      <Modal.Section>
-        <Button
-          css={{ width: "100%" }}
-          disabled={routine.name.trim() === ""}
-          variant={routine.name.trim() === "" ? "disabled" : "accent"}
-          onClick={onSaveBtnClick}
-        >
-          Save
-        </Button>
-      </Modal.Section>
+      <Modal.SaveBtn
+        disabled={routine.name.trim() === ""}
+        onSaveBtnClick={onSaveBtnClick}
+      />
     </Modal>
   )
 }, {

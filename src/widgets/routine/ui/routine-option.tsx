@@ -2,7 +2,6 @@
 import { Routine, routineRepository } from '@entities/routine';
 import { useRoutineMutationMerge } from '@features/merge-note';
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
-import { TaskOption } from '@features/task-el';
 import { Button } from '@shared/components/Button';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
@@ -49,10 +48,10 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
 
   return (
     <Modal header='Routine Option' modal={modal}>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
       
       {/* name */}
-      <TaskOption.Name
+      <Modal.NameSection
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
       />
@@ -60,13 +59,14 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
 
       {/* active criteria */}
       <RoutineOption.ActiveCriteria 
-        routine={routine} 
+        routine={routine}
         setProperties={properties => dispatch({ type: "SET_PROPERTIES", payload: properties })} 
       />
       <Modal.Separator />
 
       {/* show on calendar */}
-      <TaskOption.ShowOnCalendar
+      <Modal.ToggleSection
+        name='Show On Calendar'
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />
@@ -76,19 +76,14 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       <Modal.Section className={bem("delete")} name='Delete'>
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* save */}
-      <Modal.Section>
-        <Button
-          css={{ width: "100%" }}
-          disabled={routine.name.trim() === ""}
-          variant={routine.name.trim() === "" ? "disabled" : "accent"}
-          onClick={onSaveBtnClick}
-        >
-          Save
-        </Button>
-      </Modal.Section>
+      <Modal.SaveBtn
+        disabled={routine.name.trim() === ""}
+        onSaveBtnClick={onSaveBtnClick}
+      />
+
     </Modal>
   )
 }, {

@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { noteRepository, TaskEntity, TodoTask } from "@entities/note";
 import { useRoutineNote } from "@features/note";
-import { TaskOption } from "@features/task-el";
 import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
@@ -13,7 +12,7 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
   const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask(""));
   
-  const onSave = useCallback(() => {
+  const onSaveBtnClick = useCallback(() => {
     const newNote = {
       ...note,
       children: [todo, ...note.children]
@@ -28,10 +27,10 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const bem = useMemo(() => dr("add-todo-modal"), []);
   return (
     <Modal className={bem()} header="Add New Todo" modal={modal}>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* name */}
-      <TaskOption.Name
+      <Modal.NameSection
         value={todo.name}
         onChange={name => setTodo(todo => ({...todo, name}))}
         placeholder="New Todo"
@@ -40,23 +39,18 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
       <Modal.Separator />
 
       {/* show on calendar */}
-      <TaskOption.ShowOnCalendar
+      <Modal.ToggleSection
+        name="Show On Calendar"
         value={todo.showOnCalendar}
         onChange={showOnCalendar => setTodo(todo => ({...todo, showOnCalendar}))}
       />
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* save */}
-      <Modal.Section>
-        <Button
-          css={{ width: "100%" }}
-          disabled={todo.name.trim() === ""}
-          variant={todo.name.trim() === "" ? "disabled" : "accent"}
-          onClick={onSave}
-        >
-          Save
-        </Button>
-      </Modal.Section>
+      <Modal.SaveBtn
+        disabled={todo.name.trim() === ""}
+        onSaveBtnClick={onSaveBtnClick}
+      />
     </Modal>
   );
 }, {

@@ -4,12 +4,12 @@ import { Month } from "@shared/period/month";
 
 
 
-export interface Calendar {
+export type Calendar = {
 	month: Month;
 	tiles: Map<string, Tile>;
 }
 
-export interface Tile {
+export type Tile = {
 	day: Day;
 	tasks: Task[] // 0 ~ n개
 }

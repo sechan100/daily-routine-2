@@ -93,14 +93,15 @@ const PageComponent = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0.7em 0.7em",
+          padding: "1em 0.7em",
+          borderBottom: "1px solid var(--background-modifier-border)",
           // height: "4.5em",
         }} 
         className={bem("header")}
       >
         <span css={{
           fontWeight: "bold",
-          fontSize: "1em",
+          fontSize: "1.2em",
         }}>
           {note.day.format() + " / " + note.day.dow}
         </span>
@@ -108,8 +109,8 @@ const PageComponent = () => {
           display: "flex",
           gap: "1.5em",
         }}>
-          <Icon icon={addTodoIcon} onClick={() => AddTodoModal.open({})} />
-          <MenuComponent onMenuShow={onNoteMenuShow} icon="menu" />
+          <Icon size='21px' icon={addTodoIcon} onClick={() => AddTodoModal.open({})} />
+          <MenuComponent size='21px' onMenuShow={onNoteMenuShow} icon="menu" />
         </div>
       </header>
       <div

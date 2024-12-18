@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { noteRepository, TaskEntity, TodoTask } from '@entities/note';
 import { useRoutineNote } from '@features/note';
-import { TaskOption } from "@features/task-el";
 import { Button } from '@shared/components/Button';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
@@ -9,7 +8,7 @@ import { Modal } from '@shared/components/modal/styled';
 import { dr } from '@shared/daily-routine-bem';
 import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { rescheduleTodo } from "../reschedule-todo";
 
 
@@ -23,7 +22,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
   const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
-  const onSave = useCallback(async () => {
+  const onSaveBtnClick = useCallback(async () => {
     if(todo.name.trim() === "") return;
     const newNote = TaskEntity.updateTask(note, originalName, todo);
     setNote(newNote);
@@ -67,10 +66,10 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
 
   return (
     <Modal header='Todo Option' modal={modal}>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* name */}
-      <TaskOption.Name
+      <Modal.NameSection
         value={todo.name}
         onChange={name => setTodo(todo => ({ ...todo, name}))}
       />
@@ -96,7 +95,8 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       <Modal.Separator />
 
       {/* show on calendar */}
-      <TaskOption.ShowOnCalendar
+      <Modal.ToggleSection
+        name="Show On Calendar"
         value={todo.showOnCalendar}
         onChange={(showOnCalendar) => setTodo(todo => ({...todo, showOnCalendar}))}
       />
@@ -109,19 +109,13 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       >
         <Button variant='destructive' onClick={onDeleteBtnClick}>Delete</Button>
       </Modal.Section>
-      <Modal.Separator edge />
+      <Modal.Separator edgeWithtransparent />
 
       {/* save */}
-      <Modal.Section>
-        <Button
-          css={{ width: "100%" }}
-          disabled={todo.name.trim() === ""}
-          variant={todo.name.trim() === "" ? "disabled" : "accent"}
-          onClick={onSave}
-        >
-          Save
-        </Button>
-      </Modal.Section>
+      <Modal.SaveBtn
+        disabled={todo.name.trim() === ""}
+        onSaveBtnClick={onSaveBtnClick}
+      />
     </Modal>
   )
 }), {

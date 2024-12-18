@@ -7,6 +7,7 @@ import React, { useEffect, useRef } from "react";
 
 interface IconProps {
   icon: string;
+  size?: string;
   accent?: boolean;
   color?: string;
   className?: string;
@@ -32,6 +33,7 @@ export const Icon = React.memo((props: IconProps) => {
       ref={ref}
       onClick={props.onClick}
       css={{
+        ...(props.size && {"--icon-size": props.size}),
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

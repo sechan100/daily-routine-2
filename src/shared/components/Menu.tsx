@@ -11,11 +11,13 @@ import { Icon } from "./Icon";
 interface MenuComponentProps {
   onMenuShow: (menu: Menu) => void;
   icon?: string;
+  size?: string;
   iconAccent?: boolean;
 }
 export const MenuComponent = ({
   onMenuShow,
   icon = "menu",
+  size,
   iconAccent = false
 }: MenuComponentProps) => {
 
@@ -33,7 +35,7 @@ export const MenuComponent = ({
         cursor: "pointer",
       }}
     >
-      <Icon icon={icon} accent={iconAccent} />
+      <Icon size={size} icon={icon} accent={iconAccent} />
     </div>
   )
 }
