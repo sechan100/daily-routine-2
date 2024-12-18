@@ -1,19 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { NoteEntity, RoutineNote, Task, TaskGroup, TodoTask } from '@entities/note';
-import { UseRoutineNoteProvider, resolveRoutineNote, useRoutineNote } from "@features/note";
-import { TaskDndContext } from '@features/task-el';
+import { isTask, isTaskGroup, NoteEntity, RoutineNote } from '@entities/note';
+import { resolveRoutineNote, useRoutineNote, UseRoutineNoteProvider } from "@features/note";
+import { renderTask, TaskDndContext } from '@features/task-el';
+import { Icon } from '@shared/components/Icon';
 import { MenuComponent } from "@shared/components/Menu";
 import { dr } from "@shared/daily-routine-bem";
 import { Day } from "@shared/period/day";
-import { RoutineTaskWidget, useStartRoutineModal } from '@widgets/routine';
-import { TodoTaskWidget, useAddTodoModal } from '@widgets/todo';
+import { useStartRoutineModal } from '@widgets/routine';
+import { TaskGroupWidget } from '@widgets/task-group';
+import { useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
 import { Menu } from "obsidian";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BaseGroupHeadFeature } from '@features/task-el/ui/TaskGroupHeadFeature';
-import { TaskGroupWidget } from './TaskGroupWidget';
-import { renderTask } from './render-task-widget';
-import { Icon } from '@shared/components/Icon';
 
 
 const startRoutineIcon = "alarm-clock-plus";
@@ -122,14 +120,16 @@ const PageComponent = () => {
         }}
       >
         <TaskDndContext> {note.children.map(el => {
-          if(el.elementType === "group"){
+          if(isTaskGroup(el)) {
             return (
               <TaskGroupWidget
                 key={`${el.elementType}-${el.name}`}
-                group={el as TaskGroup} 
+                group={el} 
               />)
+          } else if(isTask(el)) {
+            return renderTask(el, null);
           } else {
-            return renderTask(el as Task, null);
+            return null;
           }
         })}</TaskDndContext>
       </div>

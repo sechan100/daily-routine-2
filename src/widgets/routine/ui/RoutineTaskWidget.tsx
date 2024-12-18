@@ -1,7 +1,7 @@
 import { RoutineTask, TaskGroup } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
-import { useRoutineOptionModal } from "../routine-option";
+import { useRoutineOptionModal } from "./routine-option";
 import { routineRepository } from "@entities/routine";
 
 interface RoutineTaskProps {

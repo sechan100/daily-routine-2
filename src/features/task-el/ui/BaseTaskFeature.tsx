@@ -6,7 +6,7 @@ import _ from "lodash";
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/daily-routine-bem';
 import { Icon } from '@shared/components/Icon';
-import { TaskName } from './TaskName';
+import { CheckableName } from './CheckableName';
 import { Checkbox } from './Checkbox';
 import { useTaskDnd } from '../dnd/use-task-dnd';
 import { checkTask } from '../model/check-task';
@@ -135,7 +135,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
         }}
       >
         <Checkbox isChecked={task.checked} />
-        <TaskName name={task.name} isChecked={task.checked} />
+        <CheckableName name={task.name} isChecked={task.checked} />
       </Touchable>
       <OptionIcon onClick={() => onOptionMenu(task)} />
       {indicator}

@@ -1,7 +1,7 @@
 import { TaskGroup, TodoTask } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
-import { useTodoOptionModal } from '../todo-option';
+import { useTodoOptionModal } from './todo-option';
 
 
 interface TodoTaskProps {

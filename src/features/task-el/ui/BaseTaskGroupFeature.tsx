@@ -10,6 +10,8 @@ import { useGroupDnd } from '../dnd/use-group-dnd';
 import { baseHeaderStyle, draggingStyle, dragReadyStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from './dnd-context';
 import { OptionIcon } from './OptionIcon';
+import { CheckableName } from './CheckableName';
+import { renderTask } from './render-task-widget';
 
 
 
@@ -19,16 +21,13 @@ type GroupMode = "idle" | "pressed" | "drag-ready" | "dragging";
 
 interface Props {
   group: TaskGroup;
-  children: React.ReactNode;
-
   onOptionMenu?: (group: TaskGroup) => void;
   className?: string;
   onGroupReorder?: (note: RoutineNote, group: TaskGroup) => void;
   onGroupClick?: (group: TaskGroup) => void;
 }
-export const BaseGroupHeadFeature = React.memo(({ 
+export const BaseTaskGroupFeature = React.memo(({ 
   group,
-  children,
   className,
   onGroupReorder,
   onOptionMenu,
@@ -154,14 +153,17 @@ export const BaseGroupHeadFeature = React.memo(({
                 },
               }}
             >
-              {group.name}
+              <CheckableName
+                name={group.name}
+                isChecked={group.children.every(task => task.checked)}
+              />
             </AccordionSummary>
           </Touchable>
           <OptionIcon onClick={() => onOptionMenu?.(group)} />
           {indicator}
         </header>
         <AccordionDetails css={{padding: "0"}}>
-          {children}
+          {group.children.map(task => renderTask(task, group))}
         </AccordionDetails>
       </Accordion>
     </div>

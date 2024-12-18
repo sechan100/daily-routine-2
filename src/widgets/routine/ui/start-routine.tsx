@@ -8,7 +8,7 @@ import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
-import { createNewRoutine } from "./create-routine";
+import { createNewRoutine } from "../create-routine";
 import { useRoutineMutationMerge } from "@features/merge-note";
 
 

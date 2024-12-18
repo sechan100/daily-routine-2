@@ -10,7 +10,7 @@ import { dr } from '@shared/daily-routine-bem';
 import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { rescheduleTodo } from "./reschedule-todo";
+import { rescheduleTodo } from "../reschedule-todo";
 
 
 interface TodoOptionModalProps {

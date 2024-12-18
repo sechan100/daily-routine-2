@@ -32,7 +32,7 @@ interface Props {
   name: string;
   isChecked: boolean;
 }
-export const TaskName = ({
+export const CheckableName = ({
   name,
   isChecked
 }: Props) => {
