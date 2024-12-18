@@ -8,23 +8,24 @@ const bem = dr("task-name");
 const baseStyle = css({
   position: "relative",
   cursor: "pointer",
-  transition: "color 0.3s ease",
+  transition: "color 0.5s ease",
   "&:after": {
     content: "''",
     position: "absolute",
     top: "50%",
     left: 0,
     width: 0,
-    height: "1px",
-    background: "#9098a9",
+    transform: "translateY(-50%)",
+    height: "1.5px", // check 취소선 두께
+    background: "var(--color-base-60)", // check 취소선 색
   }
 })
 
 const chechedStyle = css({
-  color: "#9098a9",
+  color: "#9098a9", // check된 상태에서 글자색
   "&:after": {
     width: "100%",
-    transition: "all 0.4s ease",
+    transition: "all 0.5s ease",
   }
 })
 
