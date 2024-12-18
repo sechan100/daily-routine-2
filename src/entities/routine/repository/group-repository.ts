@@ -15,6 +15,7 @@ const parse = async (file: TFile): Promise<RoutineGroup> => {
   if(properties.isErr()) throw new Error(`[RoutineGroup '${name}' Parse Error] ${properties.error}`);
 
   return {
+    routineElementType: "routine-group",
     name: name,
     properties: properties.value
   }

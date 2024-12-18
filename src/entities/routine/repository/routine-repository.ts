@@ -15,6 +15,7 @@ const parse = async (file: TFile): Promise<Routine> => {
   if(result.isErr()) throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
   return {
     name: file.basename,
+    routineElementType: "routine",
     properties: result.value
   }
 }

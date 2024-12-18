@@ -1,5 +1,5 @@
-import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, TaskEntity, Task, TaskGroup, TaskParent } from "@entities/note";
-import { groupRepository, isRoutine, RoutineElement, RoutineGroupEntity, routineRepository } from "@entities/routine";
+import { isRoutineNote, isTaskGroup, NoteElement, NoteEntity, TaskEntity, Task, TaskGroup, TaskParent, isRoutineTask } from "@entities/note";
+import { groupRepository, isRoutine, isRoutineGroup, Routine, RoutineElement, RoutineGroupEntity, routineRepository } from "@entities/routine";
 import { useRoutineNote } from "@features/note";
 
 
@@ -7,22 +7,38 @@ import { useRoutineNote } from "@features/note";
 type OrderChangeList = RoutineElement[];
 
 const ORDER_OFFSET = 1000;
+
+const loadRoutineElementRegistry = async () => {
+  const routineMap = new Map<string, Routine>([...await routineRepository.loadAll()].map(r => [r.name, r]));
+  const groupMap = new Map<string, RoutineElement>([...await groupRepository.loadAll()].map(g => [g.name, g]));
+  return (name: string, type: "routine" | "routine-group"): RoutineElement => {
+    if(type === "routine"){
+      const r = routineMap.get(name);
+      if(!r) throw new Error("Routine not found");
+      return r;
+    } else {
+      const g = groupMap.get(name);
+      if(!g) throw new Error("Group not found");
+      return g;
+    }
+  }
+}
 /**
  * parent의 자식의 순서들을 반영하여 order, group등이 적절하게 변경된 Routine, RoutineGroup의 배열을 반환한다.
  * @param parent 
  */
 const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> => {
-  const routines = await routineRepository.loadAll();
-  const groups = await groupRepository.loadAll();
-  const map = new Map<string, RoutineElement>([...routines, ...groups].map(r => [r.name, r]));
+  const get = await loadRoutineElementRegistry();
 
   type Acc = {
     changeList: OrderChangeList;
     prevOrder: number;
   }
   return parent.children
+  .filter(c => isTaskGroup(c) || isRoutineTask(c))
   .map(c => {
-    const rOrG = map.get(c.name);
+    const routineElementType = isTaskGroup(c) ? "routine-group" : "routine";
+    const rOrG = get(c.name, routineElementType);
     if(!rOrG) throw new Error("Routine or Group not found");
     return rOrG;
   })
@@ -60,8 +76,10 @@ const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
   for(const el of list){
     if(isRoutine(el)){
       await routineRepository.update(el);
-    } else {
+    } else if(isRoutineGroup(el)){
       await groupRepository.update(el);
+    } else {
+      throw new Error("Invalid RoutineElement");
     }
   }
 }

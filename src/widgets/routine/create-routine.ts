@@ -5,6 +5,7 @@ import { Day } from "@shared/period/day"
 export const createNewRoutine = (): Routine => {
   return {
     name: "",
+    routineElementType: "routine",
     properties: {
       order: 0,
       group: RoutineGroupEntity.UNGROUPED_NAME,
