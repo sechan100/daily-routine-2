@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { DailyRoutineBEM, dr } from "@shared/daily-routine-bem"
+import { dr } from "@shared/daily-routine-bem";
 
 
 const bem = dr("task-name");
@@ -21,8 +21,12 @@ const baseStyle = css({
   }
 })
 
-const chechedStyle = css({
-  color: "#9098a9", // check된 상태에서 글자색
+const cancelTextStyle = css({
+  color: "var(--color-base-35)", // check된 상태에서 글자색
+})
+
+const cancelLineStyle = css({
+  color: "var(--color-base-40)",
   "&:after": {
     width: "100%",
     transition: "all 0.5s ease",
@@ -31,16 +35,18 @@ const chechedStyle = css({
 
 interface Props {
   name: string;
-  isChecked: boolean;
+  cancel: boolean;
+  withoutCancelLine?: boolean;
 }
-export const CheckableName = ({
+export const CancelLineName = ({
   name,
-  isChecked
+  cancel,
+  withoutCancelLine
 }: Props) => {
   return (
     <span 
       className={bem("name")}
-      css={[baseStyle, isChecked && chechedStyle]}
+      css={[baseStyle, cancel && cancelTextStyle, cancel && !withoutCancelLine && cancelLineStyle]}
     >
       {name}
     </span>

@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
 import { Routine } from "@entities/routine";
-import { RoutineNote, RoutineTask, TodoTask } from "./note.type";
+import { RoutineNote, RoutineTask, Task, TodoTask } from "./note.type";
 import { NoteEntity } from "./note";
 
 
@@ -19,7 +19,7 @@ const createRoutineTask = (routine: Routine): RoutineTask => ({
   elementType: "task",
   name: routine.name,
   taskType: "routine",
-  checked: false,
+  state: "un-checked",
   showOnCalendar: routine.properties.showOnCalendar,
 })
 
@@ -27,7 +27,7 @@ const createTodoTask = (name: string): TodoTask => ({
   elementType: "task",
   name,
   taskType: "todo",
-  checked: false,
+  state: "un-checked",
   showOnCalendar: true,
 })
 
@@ -45,6 +45,10 @@ const updateTask = (note: RoutineNote, originalName: string, task: RoutineTask |
   return note;
 }
 
+const isChecked = (task: Task): boolean => {
+  return task.state !== "un-checked";
+}
+
 
 export const TaskEntity = {
   validateTaskName,
@@ -52,4 +56,5 @@ export const TaskEntity = {
   createTodoTask,
   removeTask,
   updateTask,
+  isChecked
 }

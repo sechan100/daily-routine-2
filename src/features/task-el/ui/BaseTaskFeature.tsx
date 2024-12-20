@@ -1,19 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, Task, TaskGroup } from '@entities/note';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { css } from '@emotion/react';
+import { RoutineNote, Task, TaskEntity, TaskGroup, TaskState } from '@entities/note';
 import { useRoutineNote } from "@features/note";
-import _ from "lodash";
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/daily-routine-bem';
-import { Icon } from '@shared/components/Icon';
-import { CheckableName } from './CheckableName';
-import { Checkbox } from './Checkbox';
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTaskDnd } from '../dnd/use-task-dnd';
-import { checkTask } from '../model/check-task';
+import { changeTaskState } from '../model/change-task-state';
+import { CancelLineName } from './CancelLineName';
+import { Checkbox } from './Checkbox';
 import { OptionIcon } from './OptionIcon';
+import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from './dnd-context';
-import { baseHeaderStyle, pressedStyle, dragReadyStyle, draggingStyle, elementHeight } from './base-element-style';
-import { css } from '@emotion/react';
 
 
 const indentStyle = css({
@@ -94,10 +92,10 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
     // HACK: 이유는 모르겠지만 이거 안하면 모바일 환경에서 모달이 열리자마다 닫혀버림.
     e.preventDefault();
 
-    const checked = !task.checked;
-    const newNote = await checkTask(note, task.name, checked);
+    const state: TaskState = task.state === "un-checked" ? "accomplished" : "un-checked";
+    const newNote = await changeTaskState(note, task.name, state);
     setNote(newNote);
-    if(onTaskClick) onTaskClick({ ...task, checked });
+    if(onTaskClick) onTaskClick({ ...task, checked: state });
 
     // HACK: 빠르게 인접한 task를 클릭하면 클릭히 씹히거나 두번 클릭되는 문제가 있어서, 일단 0.5초 정도 막아둠으로 해결
     setTimeout(() => {
@@ -134,8 +132,8 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
           lineHeight: 1
         }}
       >
-        <Checkbox isChecked={task.checked} />
-        <CheckableName name={task.name} isChecked={task.checked} />
+        <Checkbox state={task.state} />
+        <CancelLineName name={task.name} cancel={TaskEntity.isChecked(task)} withoutCancelLine={task.state === "failed"} />
       </Touchable>
       <OptionIcon onClick={() => onOptionMenu(task)} />
       {indicator}

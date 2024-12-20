@@ -1,4 +1,5 @@
-import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TodoTask } from "../domain/note.type";
+import { switchTo } from "@shared/\bswitch-utils";
+import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TaskState, TodoTask } from "../domain/note.type";
 import { Day } from "@shared/period/day";
 import dedent from "dedent";
 
@@ -27,11 +28,15 @@ const parseTask = (line: string): Task => {
   line = line.trim();
   if(line === '') throw new Error('empty-line');
 
-  const regex = /-\s*\[(x|\s?)\]\s*(\[\[(.*?)\]\]|(.*?))\s*%%(.*?)%%/;
+  const regex = /-\s*\[(x|o|\s?)\]\s*(\[\[(.*?)\]\]|(.*?))\s*%%(.*?)%%/;
   const match = line.match(regex);
   if(!match) throw new Error('invalid-task-format');
   
-  const checked = match[1] === 'x';
+  const state = switchTo<string, TaskState>(match[1], {
+    'o': 'accomplished',
+    'x': 'failed',
+    ' ': 'un-checked'
+  });
   const name = match[3] || match[4];
   const metaData = JSON.parse(match[5]);
 
@@ -39,7 +44,7 @@ const parseTask = (line: string): Task => {
     elementType: 'task',
     taskType: metaData.type,
     name,
-    checked,
+    state,
     showOnCalendar: metaData.soc === 1,
   }
 }
@@ -66,22 +71,30 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
 
 /////////////////////////////////////////////////////////////////////
 
+const switchStateToChar = (state: TaskState) => {
+  return switchTo<TaskState, string>(state, {
+    'accomplished': 'o',
+    'failed': 'x',
+    'un-checked': ' '
+  });
+}
+
 const serializeRoutineTask = (routineTask: RoutineTask) => {
-  const c = routineTask.checked ? 'x' : ' ';
+  const s = switchStateToChar(routineTask.state);
   const meta = {
     type: routineTask.taskType,
     soc: Number(routineTask.showOnCalendar)
   }
-  return `- [${c}] [[${routineTask.name}]]%%${JSON.stringify(meta)}%%`;
+  return `- [${s}] [[${routineTask.name}]]%%${JSON.stringify(meta)}%%`;
 }
 
 const serializeTodoTask = (todo: TodoTask) => {
-  const c = todo.checked ? 'x' : ' ';
+  const s = switchStateToChar(todo.state);
   const meta = {
     type: todo.taskType,
     soc: Number(todo.showOnCalendar)
   }
-  return `- [${c}] ${todo.name}%%${JSON.stringify(meta)}%%`;
+  return `- [${s}] ${todo.name}%%${JSON.stringify(meta)}%%`;
 }
 
 const serializeTask = (task: Task) => {

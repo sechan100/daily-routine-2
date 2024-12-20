@@ -49,7 +49,7 @@ export class TodoTaskNoteDep extends NoteDependent {
     4. 만약 둘 중 하나의 루틴이 없다면 있는 쪽에 위치시킨다.(Bad)
     5. 만약 둘 다 없다면 맨 앞에 넣는다 (Worst)
    */
-  restoreData(note: RoutineNote) {
+  restoreData(note: RoutineNote){
     for(const { parentName, prev, task, next, originalIndex } of this.#sandwitches){
       let parent: TaskParent;
       if(parentName !== RoutineGroupEntity.UNGROUPED_NAME){
@@ -77,7 +77,7 @@ export class TodoTaskNoteDep extends NoteDependent {
         // 앞이 없어진게 아니라 원래 없었던 경우: 원래 맨 앞이었다는 뜻
         if(prev === null) {
           children.unshift(task);
-          return;
+          continue;
         }
         children.splice(nextIndex, 0, task);
       } 
@@ -86,7 +86,7 @@ export class TodoTaskNoteDep extends NoteDependent {
         // 뒤가 없어진게 아니라 원래 없었던 경우: 원래 맨 뒤였다는 뜻
         if(next === null) {
           children.push(task);
-          return;
+          continue;
         }
         children.splice(prevIndex + 1, 0, task);
       } 
@@ -101,5 +101,6 @@ export class TodoTaskNoteDep extends NoteDependent {
         }
       }
     }
+    return { ...note };
   }
 }

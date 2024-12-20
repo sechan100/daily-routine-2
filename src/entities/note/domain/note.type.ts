@@ -35,26 +35,26 @@ export const isTaskGroup = (taskGroup: any): taskGroup is TaskGroup => {
 export type TaskParent = RoutineNote | TaskGroup;
 
 export type TaskType = "routine" | "todo";
-
+export type TaskState = "un-checked" | "accomplished" | "failed";
 export type Task = NoteElement & {
   elementType: "task";
   taskType: TaskType;
-  checked: boolean;
+  state: TaskState;
   showOnCalendar: boolean;
 }
 export const isTask = (task: any): task is Task => {
   const elementType = task.elementType === "task";
   const hasTaskType = task.taskType === "routine" || task.taskType === "todo";
-  const hasChecked = typeof task.checked === "boolean";
+  const hasState = task.state === "un-checked" || task.state === "accomplished" || task.state === "failed";
   const hasShowOnCalendar = typeof task.showOnCalendar === "boolean";
-  return elementType && hasTaskType && hasChecked && hasShowOnCalendar;
+  return elementType && hasTaskType && hasState && hasShowOnCalendar;
 }
 
 export type RoutineTask = Task & {
   taskType: "routine";
 }
 export const isRoutineTask = (routineTask: any): routineTask is RoutineTask => {
-  return isTask(routineTask) && routineTask.taskType === "routine";
+  return isTask(routineTask) && routineTask.taskType == "routine";
 }
 
 export type TodoTask = Task & {

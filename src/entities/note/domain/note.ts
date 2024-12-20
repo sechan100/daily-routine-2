@@ -1,10 +1,11 @@
 import { isTask, isTaskGroup, NoteCompletion, NoteElement, RoutineNote, Task, TaskGroup, TaskParent } from "./note.type";
+import { TaskEntity } from "./task";
 
 
 const getCompletion = (note: RoutineNote): NoteCompletion => {
   const tasks = note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
   const total = tasks.length;
-  const completed = tasks.filter(t => t.checked).length;
+  const completed = tasks.filter(TaskEntity.isChecked).length;
   const uncompleted = total - completed;
   const percentage = total === 0 ? 0 : (completed / total) * 100;
   const percentageRounded = Math.round(percentage);

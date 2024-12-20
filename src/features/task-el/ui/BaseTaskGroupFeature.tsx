@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, TaskGroup } from '@entities/note';
+import { RoutineNote, TaskEntity, TaskGroup } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
@@ -10,7 +10,7 @@ import { useGroupDnd } from '../dnd/use-group-dnd';
 import { baseHeaderStyle, draggingStyle, dragReadyStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from './dnd-context';
 import { OptionIcon } from './OptionIcon';
-import { CheckableName } from './CheckableName';
+import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';
 
 
@@ -153,9 +153,9 @@ export const BaseTaskGroupFeature = React.memo(({
                 },
               }}
             >
-              <CheckableName
+              <CancelLineName
                 name={group.name}
-                isChecked={group.children.every(task => task.checked)}
+                cancel={group.children.every(TaskEntity.isChecked)}
               />
             </AccordionSummary>
           </Touchable>

@@ -52,6 +52,7 @@
     "react-dnd-multi-backend": "^8.0.3",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^18.3.1",
+    "react-transition-group": "^4.4.5",
     "swiper": "^11.1.14",
     "zustand": "^5.0.0-rc.2"
   }

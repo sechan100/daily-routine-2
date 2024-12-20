@@ -3,7 +3,7 @@
  * 때문에 이를 복원할 필요가 있다.
  */
 
-import { RoutineNote } from "@entities/note";
+import { RoutineNote, TaskState } from "@entities/note";
 import { NoteDependent } from "./NoteDependent";
 import { NoteEntity } from "@entities/note/domain/note";
 
@@ -11,20 +11,23 @@ import { NoteEntity } from "@entities/note/domain/note";
 
 
 export class TaskCheckedStateNoteDep extends NoteDependent {
-  #checkedTasks: string[] = [];
+  #checkedTasks: [string, TaskState][] = [];
 
   constructor(note: RoutineNote) {
     super();
     this.#checkedTasks = NoteEntity.flatten(note)
-    .filter(t => t.checked)
-    .map(t => t.name);
+    .filter(t => t.state !== 'un-checked')
+    .map(t => [t.name, t.state]);
   }
 
-  restoreData(note: RoutineNote) {
+  restoreData(note: RoutineNote){
     for(const task of NoteEntity.flatten(note)){
-      if(this.#checkedTasks.includes(task.name)){
-        task.checked = true;
+      let originalTaskIndex: number;
+      if((originalTaskIndex = this.#checkedTasks.findIndex(([name]) => name === task.name)) !== -1){
+        const [_, state] = this.#checkedTasks[originalTaskIndex];
+        task.state = state;
       }
     }
+    return { ...note };
   }
 }
