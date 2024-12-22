@@ -12,6 +12,7 @@ import { DELAY_TOUCH_START } from './dnd-context';
 import { OptionIcon } from './OptionIcon';
 import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';
+import { Menu } from 'obsidian';
 
 
 
@@ -21,7 +22,7 @@ type GroupMode = "idle" | "pressed" | "drag-ready" | "dragging";
 
 interface Props {
   group: TaskGroup;
-  onOptionMenu?: (group: TaskGroup) => void;
+  onOptionMenu?: (m: Menu, group: TaskGroup) => void;
   className?: string;
   onGroupReorder?: (note: RoutineNote, group: TaskGroup) => void;
   onGroupClick?: (group: TaskGroup) => void;
@@ -159,7 +160,7 @@ export const BaseTaskGroupFeature = React.memo(({
               />
             </AccordionSummary>
           </Touchable>
-          <OptionIcon onClick={() => onOptionMenu?.(group)} />
+          <OptionIcon onOptionMenu={(m) => onOptionMenu?.(m, group)} />
           {indicator}
         </header>
         <AccordionDetails css={{padding: "0"}}>

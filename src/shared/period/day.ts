@@ -35,6 +35,10 @@ export class Day {
     return new Day(moment());
   }
 
+  static tomorrow(): Day {
+    return new Day(moment().add(1, 'day'));
+  }
+
   static max(): Day{
     return new Day(moment('9999-12-31T23:59:59.999Z'));
   }

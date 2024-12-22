@@ -12,6 +12,7 @@ import { Checkbox } from './Checkbox';
 import { OptionIcon } from './OptionIcon';
 import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from './dnd-context';
+import { Menu } from 'obsidian';
 
 
 const indentStyle = css({
@@ -27,7 +28,7 @@ type TaskMode = "idle" | "pressed" | "drag-ready" | "dragging";
 interface TaskProps<T extends Task> {
   task: T;
   parent: TaskGroup | null;
-  onOptionMenu: (task: T) => void;
+  onOptionMenu: (m: Menu, task: T) => void;
 
   className?: string;
   onTaskReorder?: (note: RoutineNote, task: T) => void;
@@ -135,7 +136,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
         <Checkbox state={task.state} />
         <CancelLineName name={task.name} cancel={TaskEntity.isChecked(task)} withoutCancelLine={task.state === "failed"} />
       </Touchable>
-      <OptionIcon onClick={() => onOptionMenu(task)} />
+      <OptionIcon onOptionMenu={(m) => onOptionMenu(m, task)} />
       {indicator}
     </div>
   )

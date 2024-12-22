@@ -69,10 +69,11 @@ export type TaskMetaData = {
   soc: boolean; // showOnCalendar
 }
 
-export type NoteCompletion = {
-  total: number;
-  uncompleted: number;
-  completed: number;
-  percentage: number;
-  percentageRounded: number;
+export type NotePerformance = {
+  totalTasks: number;
+  completedTasks: number;
+  uncompletedTasks: number;
+  completion: number;
+  accomplishedTasks: number;
+  accomplishment: number;
 }

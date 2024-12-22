@@ -1,15 +1,34 @@
-import { isTask, isTaskGroup, NoteCompletion, NoteElement, RoutineNote, Task, TaskGroup, TaskParent } from "./note.type";
+import { isTask, isTaskGroup, NotePerformance, NoteElement, RoutineNote, Task, TaskGroup, TaskParent } from "./note.type";
 import { TaskEntity } from "./task";
 
 
-const getCompletion = (note: RoutineNote): NoteCompletion => {
+const getPerformance = (note: RoutineNote): NotePerformance => {
   const tasks = note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
-  const total = tasks.length;
-  const completed = tasks.filter(TaskEntity.isChecked).length;
-  const uncompleted = total - completed;
-  const percentage = total === 0 ? 0 : (completed / total) * 100;
-  const percentageRounded = Math.round(percentage);
-  return { total, completed, uncompleted, percentage, percentageRounded };
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(TaskEntity.isChecked).length;
+  const uncompletedTasks = totalTasks - completedTasks;
+  const completion = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+  const accomplishedTasks = tasks.filter(t => t.state === "accomplished").length;
+  const accomplishment = totalTasks === 0 ? 0 : (accomplishedTasks / totalTasks) * 100;
+  return { 
+    totalTasks,
+    completedTasks,
+    completion,
+    uncompletedTasks,
+    accomplishedTasks,
+    accomplishment,
+  };
+}
+
+const getEmptyNotePerformance = (): NotePerformance => {
+  return {
+    totalTasks: 0,
+    completedTasks: 0,
+    completion: 0,
+    uncompletedTasks: 0,
+    accomplishedTasks: 0,
+    accomplishment: 0,
+  }
 }
 
 const findEl = (parent: TaskParent, name: string): NoteElement | null => {
@@ -61,7 +80,8 @@ const flatten = (note: RoutineNote): Task[] => {
 
 
 export const NoteEntity = {
-  getCompletion,
+  getPerformance,
+  getEmptyNotePerformance,
   findEl,
   findGroup,
   findTask,

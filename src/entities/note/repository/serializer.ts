@@ -2,6 +2,9 @@ import { switchTo } from "@shared/\bswitch-utils";
 import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TaskState, TodoTask } from "../domain/note.type";
 import { Day } from "@shared/period/day";
 import dedent from "dedent";
+import { checkboxChars } from "./serialize-constants";
+
+
 
 /**
  * 
@@ -28,16 +31,31 @@ const parseTask = (line: string): Task => {
   line = line.trim();
   if(line === '') throw new Error('empty-line');
 
-  const regex = /-\s*\[(x|o|\s?)\]\s*(\[\[(.*?)\]\]|(.*?))\s*%%(.*?)%%/;
+  const avaliableCheckMarkChars = [ ' ', ...checkboxChars.accomplished, ...checkboxChars.failed];
+
+  // const regex = /-\s*\[(x|o|\s?)\]\s*(\[\[(.*?)\]\]|(.*?))\s*%%(.*?)%%/;
+  const regex = new RegExp(
+    `-\\s*\\[(${avaliableCheckMarkChars.join('|')})\\]\\s*(\\[\\[(.*?)\\]\\]|(.*?))\\s*%%(.*?)%%`
+  );
   const match = line.match(regex);
   if(!match) throw new Error('invalid-task-format');
   
-  const state = switchTo<string, TaskState>(match[1], {
-    'o': 'accomplished',
-    'x': 'failed',
-    ' ': 'un-checked'
-  });
   const name = match[3] || match[4];
+  const state: TaskState = (()=>{
+    if(checkboxChars.accomplished.includes(match[1])){
+      return 'accomplished';
+    }
+    else if(checkboxChars.failed.includes(match[1])){
+      return 'failed';
+    }
+    else if(match[1] === ' '){
+      return 'un-checked';
+    }
+    else {
+      throw new Error(`[invalid task state char]: '${match[1]}' in task '${name}'. 
+        valid chars are ${avaliableCheckMarkChars.join(', ')}`);
+    }
+  })();
   const metaData = JSON.parse(match[5]);
 
   return {
@@ -73,8 +91,8 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
 
 const switchStateToChar = (state: TaskState) => {
   return switchTo<TaskState, string>(state, {
-    'accomplished': 'o',
-    'failed': 'x',
+    'accomplished': checkboxChars.accomplished[0],
+    'failed': checkboxChars.failed[0],
     'un-checked': ' '
   });
 }

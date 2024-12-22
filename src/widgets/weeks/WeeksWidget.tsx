@@ -10,20 +10,19 @@ import { DayNodeComponent } from "./DayNodeComponent";
 import { loadWeekNodes } from "./load-weeks";
 import { WeekNode } from "./types";
 import { WeeksActiveDayContextProvider } from "./WeeksContext";
+import { NoteEntity } from "@entities/note";
 
 
 
 interface WeeksProps {
-  day: Day;
-  // 현재 보고있는 routineNote의 percentage는 실시간으로 변할 수 있기 때문에 props로 받아서 반영
-  currentDayPercentage: number;
-  onDayClick?: (day: Day, event?: React.MouseEvent) => void;
   className?: string;
 }
-export const WeeksWidget = ({ day: activeDay, currentDayPercentage, onDayClick: p_onDayClick, className }: WeeksProps) => {
-  const [ weeks, setWeeks ] = useState<WeekNode[]>([]);
+export const WeeksWidget = ({ className }: WeeksProps) => {
+  const { note, setNote } = useRoutineNote();
+  const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => new Week(activeDay), [activeDay]);
-  const setNote = useRoutineNote(s => s.setNote);
+  const currentDayPercentage = useMemo(() => NoteEntity.getPerformance(note), [note]);
+  const [ weeks, setWeeks ] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
 
   /**
@@ -52,17 +51,14 @@ export const WeeksWidget = ({ day: activeDay, currentDayPercentage, onDayClick: 
     }
   }, []);
 
-
-  const onDayClick = useCallback((day: Day, event?: React.MouseEvent) => {
-    setNote(day)
-    if(p_onDayClick) p_onDayClick(day, event);
-  }, [p_onDayClick, setNote]);
-
+  const onDayClick = useCallback((day: Day) => {
+    setNote(day);
+  }, [setNote]);
 
   return (
     <WeeksActiveDayContextProvider 
-      data={{ day: activeDay, percentage: currentDayPercentage }}
-      onDataChange={(store, { day, percentage}) => store.setState({ day, percentage })}
+      data={{ day: activeDay, performance: currentDayPercentage }}
+      onDataChange={(store, data) => store.setState(data)}
     >
       <VirtualSwiper
         datas={weeks}

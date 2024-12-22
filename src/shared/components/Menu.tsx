@@ -10,15 +10,17 @@ import { Icon } from "./Icon";
 
 interface MenuComponentProps {
   onMenuShow: (menu: Menu) => void;
+  className?: string;
   icon?: string;
   size?: string;
   iconAccent?: boolean;
 }
 export const MenuComponent = ({
   onMenuShow,
+  className,
   icon = "menu",
   size,
-  iconAccent = false
+  iconAccent = false,
 }: MenuComponentProps) => {
 
   const openMenu = useCallback((e: React.MouseEvent) => {
@@ -31,6 +33,7 @@ export const MenuComponent = ({
   return (
     <div 
       onClick={openMenu}
+      className={className}
       css={{
         cursor: "pointer",
       }}

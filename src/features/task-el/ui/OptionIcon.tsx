@@ -1,27 +1,24 @@
 /** @jsxImportSource @emotion/react */
 import { Icon } from "@shared/components/Icon";
+import { MenuComponent } from "@shared/components/Menu";
+import { Menu } from "obsidian";
 
 
 
 interface OptionIconProps {
-  onClick: () => void;
+  onOptionMenu: (m: Menu) => void;
 }
 export const OptionIcon = ({
-  onClick,
+  onOptionMenu,
 }: OptionIconProps) => {
   return (
-    <div
-      onClick={onClick}
+    <MenuComponent
+      onMenuShow={onOptionMenu} 
+      icon="ellipsis"
       css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexGrow: "1",
+        color: 'var(--color-base-40)',
         width: "3em",
-        alignSelf: "stretch"
       }}
-    >
-      <Icon icon="ellipsis" color='var(--color-base-40)' />
-    </div>
+    />
   )
 }

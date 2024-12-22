@@ -3,7 +3,7 @@ import { Day } from "@shared/period/day";
 import { DayNode, WeekNode } from "./types";
 import { Week } from "@shared/period/week";
 
-
+const getFallbackNode = (day: Day): DayNode => ({ day, performance: NoteEntity.getEmptyNotePerformance()});
 
 export type LoadWeekNodes = (week: Week, option?: { prev: number; next: number; }) => Promise<WeekNode[]>;
 
@@ -16,16 +16,16 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
   const dayNodes: DayNode[] = realNotes.map(note => ({
     day: note.day,
-    percentage: NoteEntity.getCompletion(note).percentageRounded
+    performance: NoteEntity.getPerformance(note)
   }))  
   dayNodes.sort((a, b) => a.day.isBefore(b.day) ? -1 : 1);
 
   // dayNodes를 temp 값들로 채우기 전에, 경계값을 설정해주기
   if (dayNodes.length === 0 || !dayNodes[0].day.isSameDay(startDay)) {
-    dayNodes.unshift(getTempDayNode(startDay));
+    dayNodes.unshift(getFallbackNode(startDay));
   }
   if(!dayNodes[dayNodes.length - 1].day.isSameDay(endDay)){
-    dayNodes.push(getTempDayNode(endDay));
+    dayNodes.push(getFallbackNode(endDay));
   }
 
   // dayNodes를 temp 값들로 매꾸기
@@ -37,7 +37,7 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
     const intendedNextDay = node.day.clone(m => m.add(1, "day"));
     const isContinueous = intendedNextDay.isSameDay(nextNode.day);
     if(!isContinueous){
-      const tempNode = getTempDayNode(intendedNextDay);
+      const tempNode = getFallbackNode(intendedNextDay);
       dayNodes.splice(i + 1, 0, tempNode);
     }
 
@@ -64,6 +64,3 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
 
   return weeks;
 };
-
-
-const getTempDayNode = (day: Day) => ({ day, percentage: 0 });

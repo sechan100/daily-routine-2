@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { PercentageCircle } from "@shared/components/PercentageCircle";
 import { Day } from "@shared/period/day";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DayNode } from "./types";
@@ -7,6 +6,7 @@ import { dr } from "@shared/daily-routine-bem";
 import { useLeaf } from "@shared/view/use-leaf";
 import { css } from "@emotion/react";
 import { useWeeksActiveDay } from "./WeeksContext";
+import { PerformanceCircle } from "@features/performance";
 
 
 
@@ -14,13 +14,13 @@ interface DayNodeProps {
   dayNode: DayNode;
   onClick: (day: Day, event?: React.MouseEvent) => void;
 }
-export const DayNodeComponent = React.memo(({ dayNode: { day, percentage: p_percentage}, onClick }: DayNodeProps) => {
+export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _performance }, onClick }: DayNodeProps) => {
   const { leafBgColor } = useLeaf();
   // const isToday = useMemo(() => day.isSameDay(Day.now()), [day]);
 
-  const { day: activeDay, percentage: activeDayPercentage } = useWeeksActiveDay();
-  const isActiveDay = useMemo(() => day.isSameDay(activeDay), [day, activeDay]);
-  const [percentage, setPercentage] = useState(p_percentage);
+  const activeNode = useWeeksActiveDay();
+  const isActiveDay = useMemo(() => day.isSameDay(activeNode.day), [activeNode.day, day]);
+  const [performance, setPerformance] = useState(_performance);
 
   /**
    * percentage를 적절하게 업데이트한다.
@@ -29,9 +29,9 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, percentage: p_perc
    */
   useEffect(() => {
     if(isActiveDay){
-      setPercentage(activeDayPercentage);
+      setPerformance(activeNode.performance);
     }
-  }, [isActiveDay, activeDayPercentage, p_percentage]);
+  }, [isActiveDay, activeNode.performance]);
 
   const afterStyle = useMemo(() => {
     if(!day.isAfter(Day.now())) return css({});
@@ -84,13 +84,13 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, percentage: p_perc
     >
       {day.format("M/D").toUpperCase()}
     </div>
-    <PercentageCircle
+    <PerformanceCircle
       css={{
         position: "relative",
         bottom: "0px",
       }}
       width="100%"
-      percentage={percentage}
+      performance={performance}
       text={day.format("ddd").toUpperCase()} 
     />
   </div>
