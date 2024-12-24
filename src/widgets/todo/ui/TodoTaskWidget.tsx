@@ -7,6 +7,7 @@ import { useRoutineNote } from "@features/note";
 import { rescheduleTodo } from "../reschedule-todo";
 import { Menu, Notice } from "obsidian";
 import { Day } from "@shared/period/day";
+import { changeTaskState } from "@features/task-el/model/change-task-state";
 
 
 interface TodoTaskProps {
@@ -50,7 +51,15 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
     m.addItem(i => {
       i.setTitle("Edit");
       i.setIcon("pencil");
-      i.onClick(async () => TodoOptionModal.open({ todo: task }))
+      i.onClick(() => TodoOptionModal.open({ todo: task }))
+    })
+    m.addItem(i => {
+      i.setTitle("Check task as failed");
+      i.setIcon("cross");
+      i.onClick(async () => {
+        const newNote = await changeTaskState(note, task.name, "failed");
+        setNote(newNote);
+      });
     })
     m.addItem(i => {
       i.setTitle("Reschedule Todo To Tomorrow");
@@ -62,7 +71,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
       i.setIcon("trash");
       i.onClick(deleteTask);
     })
-  }, [TodoOptionModal, deleteTask, note.day, rescheduleTask, task])
+  }, [TodoOptionModal, deleteTask, note, rescheduleTask, setNote, task])
 
   return (
     <>

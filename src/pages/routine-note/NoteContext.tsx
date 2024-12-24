@@ -2,7 +2,7 @@ import { RoutineNote } from "@entities/note";
 import { resolveRoutineNote, UseRoutineNoteProvider } from "@features/note";
 import { Day } from "@shared/period/day";
 import { useState, useEffect } from "react";
-import { RoutineNoteContent } from "./RoutineNoteContent";
+import { RoutineNoteContent } from "./Content";
 
 
 interface Props {

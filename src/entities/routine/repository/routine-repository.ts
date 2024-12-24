@@ -35,6 +35,7 @@ export interface RoutineRepository extends RoutineQuery {
   delete(routineName: string): Promise<void>;
   changeName(originalName: string, newName: string): Promise<void>;
   update(routine: Routine): Promise<Routine>;
+  updateAll(routines: Routine[]): Promise<Routine[]>;
 }
 export const routineRepository: RoutineRepository = {
 
@@ -51,6 +52,7 @@ export const routineRepository: RoutineRepository = {
     const path = ROUTINE_PATH(routineName);
     const file = fileAccessor.loadFile(path);
     if(!file) throw new Error('Routine file not found.');
+    fileAccessor.loadFrontMatter(file);
     return await parse(file);
   },
 
@@ -86,4 +88,9 @@ export const routineRepository: RoutineRepository = {
     await fileAccessor.writeFile(file, () => serialize(routine));
     return routine;
   },
+
+  async updateAll(routines: Routine[]){
+    const promises = routines.map(routine => routineRepository.update(routine));
+    return await Promise.all(promises);
+  }
 }

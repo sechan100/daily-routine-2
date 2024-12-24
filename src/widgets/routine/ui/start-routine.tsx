@@ -17,15 +17,15 @@ interface StartRoutineModalProps {
   modal: ModalApi;
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
-  const { mergeNote } = useRoutineMutationMerge();
+  const { mergeNotes } = useRoutineMutationMerge();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {
     await routineRepository.persist(routine);
-    mergeNote();
+    mergeNotes();
     modal.close();
     new Notice(`Routine '${routine.name}' started! 🎉`);
-  }, [mergeNote, modal, routine]);
+  }, [mergeNotes, modal, routine]);
 
   return (
     <Modal header="Start New Routine" className={bem()} modal={modal}>

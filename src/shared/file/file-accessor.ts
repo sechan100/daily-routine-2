@@ -57,6 +57,8 @@ export interface FileAccessor {
    * frontmatter 객체는 json object로 전달된다.
    */
   writeFrontMatter: (file: TFile, frontMatterModifier: (frontmatter: any) => any) => Promise<void>;
+
+  loadFrontMatter: (file: TFile) => object | null;
 }
 
 export const fileAccessor: FileAccessor = {
@@ -112,5 +114,10 @@ export const fileAccessor: FileAccessor = {
       const newFm = frontMatterModifier(fm);
       Object.assign(fm, newFm);
     });
+  },
+
+  loadFrontMatter: (file: TFile) => {
+    const metadataCache = plugin().app.metadataCache.getFileCache(file);
+    return metadataCache?.frontmatter ?? null;
   }
 }

@@ -29,7 +29,7 @@ export const useTaskDnd = ({
   onElDragEnd,
   onElDrop, 
 }: UseTaskDndOption): UseTaksDndResult => {
-  const { mergeNote } = useRoutineMutationMerge();
+  const { mergeNotes } = useRoutineMutationMerge();
   const { view } = useLeaf();
   const [hit, setHit] = useState<TaskHitArea | null>(null);
   const indicator = useMemo<React.ReactNode | null>(() => {
@@ -112,7 +112,7 @@ export const useTaskDnd = ({
         }); 
       }
       setHit(null);
-      mergeNote(newNote);
+      mergeNotes(newNote);
       onElDrop?.(newNote, dropped);
     },
 
@@ -120,7 +120,7 @@ export const useTaskDnd = ({
       isOver: monitor.isOver(),
     })
 
-  }, [task, mergeNote, group, onElDrop, evaluateHitArea, hit])
+  }, [task, mergeNotes, group, onElDrop, evaluateHitArea, hit])
 
   // hoverOut시에 hit을 초기화
   useEffect(() => {

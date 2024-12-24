@@ -14,11 +14,11 @@ import { useCallback } from "react";
  * 
  * 호출시에 routine들에 대한 변경사항이 아직 반영중인 상태에서 호출하지 않도록 주의한다.(await로 순서보장에 주의)
  */
-type MergeNote = (note?: RoutineNote) => Promise<void>;
+type MergeNotes = (note?: RoutineNote) => Promise<void>;
 
 
 type UseRoutineMutationMerge = () => {
-  mergeNote: MergeNote;
+  mergeNotes: MergeNotes;
 }
 
 /**
@@ -60,7 +60,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
 
 
   return {
-    mergeNote: mergeMutationToNote,
+    mergeNotes: mergeMutationToNote,
   }
 
 

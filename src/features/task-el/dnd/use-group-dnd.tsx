@@ -29,7 +29,7 @@ export const useGroupDnd = ({
   onElDragEnd,
   onElDrop
 }: UseGroupDndOption): UseGroupDndResult => {
-  const { mergeNote } = useRoutineMutationMerge();
+  const { mergeNotes } = useRoutineMutationMerge();
   const { view } = useLeaf();
   const [hit, setHit] = useState<GroupHitArea | null>(null);
   const indicator = useMemo<React.ReactNode | null>(() => {
@@ -93,7 +93,7 @@ export const useGroupDnd = ({
         }); 
       }
       setHit(null);
-      mergeNote(newNote);
+      mergeNotes(newNote);
       onElDrop?.(newNote, dropped);
     },
 
@@ -101,7 +101,7 @@ export const useGroupDnd = ({
       isOver: monitor.isOver(),
     })
 
-  }, [group, hit, onElDrop, mergeNote, evaluateHitArea])
+  }, [group, hit, onElDrop, mergeNotes, evaluateHitArea])
 
   // hoverOut시에 indicator를 제거
   useEffect(() => {

@@ -8,6 +8,7 @@ import { useRoutineMutationMerge } from "@features/merge-note";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { changeTaskState } from "@features/task-el/model/change-task-state";
 import { useRoutineNote } from "@features/note";
+import { fileAccessor } from "@shared/file/file-accessor";
 
 interface RoutineTaskProps {
   task: RoutineTask;
@@ -15,7 +16,7 @@ interface RoutineTaskProps {
 }
 export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps) => {
   const RoutineOptionModal = useRoutineOptionModal();
-  const { mergeNote } = useRoutineMutationMerge();
+  const { mergeNotes } = useRoutineMutationMerge();
   const { note, setNote } = useRoutineNote();
 
   const deleteRoutine = useCallback(async () => {
@@ -28,9 +29,9 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
     if(!deleteConfirm) return;
     
     await routineRepository.delete(task.name);
-    mergeNote();
+    mergeNotes();
     new Notice(`Routine ${task.name} deleted.`);
-  }, [mergeNote, task.name])
+  }, [mergeNotes, task.name])
 
   const onOptionMenu = useCallback((m: Menu) => {
     m.addItem(i => {

@@ -12,7 +12,7 @@ interface Props {
   modal: ModalApi;
 }
 export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine}: Props) => {
-  const { mergeNote } = useRoutineMutationMerge();
+  const { mergeNotes } = useRoutineMutationMerge();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, originalRoutine);
   const originalName = useMemo(() => originalRoutine.name, [originalRoutine.name]);
 
@@ -21,9 +21,9 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       await routineRepository.changeName(originalName, routine.name);
     }
     await routineRepository.update(routine);
-    mergeNote();
+    mergeNotes();
     modal.close();
-  }, [mergeNote, modal, originalName, routine]);
+  }, [mergeNotes, modal, originalName, routine]);
 
 
   return (

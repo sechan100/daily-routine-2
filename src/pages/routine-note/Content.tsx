@@ -6,7 +6,7 @@ import { Icon } from '@shared/components/Icon';
 import { MenuComponent } from "@shared/components/Menu";
 import { dr } from "@shared/daily-routine-bem";
 import { useStartRoutineModal } from '@widgets/routine';
-import { TaskGroupWidget } from '@widgets/task-group';
+import { TaskGroupWidget, useCreateGroupModal } from '@widgets/task-group';
 import { useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
 import { Menu } from "obsidian";
@@ -26,6 +26,7 @@ export const RoutineNoteContent = () => {
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
+  const CreateGroupModal = useCreateGroupModal();
   
   const onNoteMenuShow = useCallback((m: Menu) => {
     // Start New Routine
@@ -38,7 +39,6 @@ export const RoutineNoteContent = () => {
     });
 
     m.addSeparator();
-
     // Add Todo
     m.addItem(item => {
       item.setIcon(addTodoIcon);
@@ -47,7 +47,18 @@ export const RoutineNoteContent = () => {
         AddTodoModal.open({});
       });
     });
-  }, [AddTodoModal, StartRoutineModal]);
+
+    m.addSeparator();
+    // Add Group
+    m.addItem(item => {
+      item.setIcon("folder");
+      item.setTitle("Add Group");
+      item.onClick(() => {
+        CreateGroupModal.open({});
+      });
+    });
+    
+  }, [AddTodoModal, CreateGroupModal, StartRoutineModal]);
 
   return (
     <div 
@@ -108,6 +119,7 @@ export const RoutineNoteContent = () => {
       </div>
       <AddTodoModal />
       <StartRoutineModal />
+      <CreateGroupModal />
     </div>
   );  
 }

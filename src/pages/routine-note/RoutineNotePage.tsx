@@ -1,4 +1,4 @@
-import { RoutineNoteContent } from "./RoutineNoteContent"
+import { RoutineNoteContent } from "./Content"
 import { Day } from "@shared/period/day";
 import { NoteContext } from "./NoteContext";
 
