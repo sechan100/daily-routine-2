@@ -8,7 +8,7 @@ import { useLeaf } from '@shared/view/use-leaf';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGroupDnd } from '../dnd/use-group-dnd';
 import { baseHeaderStyle, draggingStyle, dragReadyStyle, elementHeight, pressedStyle } from './base-element-style';
-import { DELAY_TOUCH_START } from './dnd-context';
+import { DELAY_TOUCH_START } from '../dnd/dnd-context';
 import { OptionIcon } from './OptionIcon';
 import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';

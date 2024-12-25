@@ -11,7 +11,7 @@ import { CancelLineName } from './CancelLineName';
 import { Checkbox } from './Checkbox';
 import { OptionIcon } from './OptionIcon';
 import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
-import { DELAY_TOUCH_START } from './dnd-context';
+import { DELAY_TOUCH_START } from '../dnd/dnd-context';
 import { Menu } from 'obsidian';
 
 

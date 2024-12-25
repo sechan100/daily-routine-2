@@ -3,7 +3,7 @@ import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
 import { useLeaf } from "@shared/view/use-leaf";
 import React, { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
-import { TaskElDragItem } from "./drag-item";
+import { TaskElDragItem, TaskElDragItemType } from "./drag-item";
 import { GroupHitArea, HitAreaEvaluator } from "./hit-area";
 import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
@@ -22,7 +22,7 @@ interface UseGroupDndResult {
   isDragging: boolean;
   indicator: React.ReactNode | null;
 }
-export const useGroupDnd = ({ 
+export const useGroupDnd = ({
   group,
   groupRef,
   isGroupOpen,
@@ -38,7 +38,7 @@ export const useGroupDnd = ({
   }, [hit])
 
   const [{ isDragging }, drag, preview] = useDrag({
-    type: "GROUP",
+    type: "GROUP" as TaskElDragItemType,
 
     item: () => ({
       el: group,

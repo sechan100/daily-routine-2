@@ -10,11 +10,13 @@ import {
   createTransition,
 } from "react-dnd-multi-backend";
 import { Preview } from "react-dnd-preview";
-import { ElementPreview } from "./ElementPreview";
-import { useDndScroll } from "../dnd/use-dnd-scroll";
+import { ElementPreview } from "../ui/ElementPreview";
+import { useDndScroll } from "./use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
-import { TaskElDragItem } from '../dnd/drag-item';
+import { TaskElDragItem } from './drag-item';
 import { isNoteElement, isTaskGroup } from "@entities/note";
+import { CustomHTML5Backend } from "./CustomHTML5BackendImpl";
+import { CustomTouchBackend } from "./CustomTouchBackendImpl copy";
 
 
 export const DELAY_TOUCH_START = 1000;
@@ -36,27 +38,25 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
   }), [setBackend])
 
   
-  const HTML5toTouch: MultiBackendOptions = useMemo<MultiBackendOptions>(() => {
-    return {
-      backends: [
-        {
-          id: "html5",
-          backend: HTML5Backend,
-          transition: MouseTransition,
+  const HTML5toTouch: MultiBackendOptions = useMemo<MultiBackendOptions>(() => ({
+    backends: [
+      {
+        id: "html5",
+        backend: CustomHTML5Backend,
+        transition: MouseTransition,
+      },
+      {
+        id: "touch",
+        backend: CustomTouchBackend,
+        options: {
+          enableMouseEvents: false,
+          delayTouchStart: DELAY_TOUCH_START,
+          ignoreContextMenu: false
         },
-        {
-          id: "touch",
-          backend: TouchBackend,
-          options: {
-            enableMouseEvents: false,
-            delayTouchStart: DELAY_TOUCH_START,
-            ignoreContextMenu: false
-          },
-          transition: TouchTransition
-        },
-      ],
-    }
-  }, [MouseTransition, TouchTransition])
+        transition: TouchTransition,
+      },
+    ],
+  }), [MouseTransition, TouchTransition])
 
   return (
     <DndProvider options={HTML5toTouch}>
@@ -64,9 +64,9 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
         {children}
       </ScrollComponent>
       <div className="dr-task-preview-context">
-        <Preview generator={({ item, style }) => {
+        <Preview generator={({ item, style, itemType }) => {
           // @ts-ignore
-          if(item.el !== undefined && isNoteElement(item.el)){
+          if(item.el !== undefined && isNoteElement(item.el) && itemType !== "__NATIVE_TEXT__"){
             return (
               <ElementPreview
                 item={item as TaskElDragItem}
@@ -100,6 +100,7 @@ const ScrollComponent = ({ children }: ScrollComponentProps) => {
       const offset = monitor.getSourceClientOffset()?.y as number;
       updatePosition({ position: offset, isScrollAllowed: true });
     });
+
     return unsubscribe;
   }, [monitor, updatePosition]);
 

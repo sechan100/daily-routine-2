@@ -7,7 +7,7 @@ import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { HitAreaEvaluator, TaskHitArea } from "./hit-area";
 import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
-import { TaskElDragItem } from "./drag-item";
+import { TaskElDragItem, TaskElDragItemType } from "./drag-item";
 import { useRoutineMutationMerge } from "@features/merge-note";
 
 
@@ -57,7 +57,7 @@ export const useTaskDnd = ({
   }, [group, task.name])
 
   const [{ isDragging }, drag, preview] = useDrag({
-    type: "TASK",
+    type: "TASK" as TaskElDragItemType,
 
     item: () => ({
       el: task,
