@@ -15,6 +15,7 @@ interface UseTaskDndOption {
   task: Task;
   group: TaskGroup | null;
   taskRef: RefObject<HTMLElement | null>; // 드래그 타겟
+  canDrag: boolean;
   onElDragEnd?: () => void;
   onElDrop?: (updatedNote: RoutineNote, dropped: NoteElement) => void;
 }
@@ -25,7 +26,8 @@ interface UseTaksDndResult {
 export const useTaskDnd = ({ 
   task, 
   group, 
-  taskRef, 
+  taskRef,
+  canDrag,
   onElDragEnd,
   onElDrop, 
 }: UseTaskDndOption): UseTaksDndResult => {
@@ -59,6 +61,8 @@ export const useTaskDnd = ({
   const [{ isDragging }, drag, preview] = useDrag({
     type: "TASK" as TaskElDragItemType,
 
+    canDrag: () => canDrag,
+
     item: () => ({
       el: task,
     } as TaskElDragItem),
@@ -72,7 +76,7 @@ export const useTaskDnd = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     })
-  }, [task])
+  }, [task, canDrag, onElDragEnd])
 
   const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === task.name) return null;

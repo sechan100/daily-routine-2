@@ -13,6 +13,7 @@ import { OptionIcon } from './OptionIcon';
 import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';
 import { Menu } from 'obsidian';
+import { isMobile } from '@shared/plugin-service-locator';
 
 
 
@@ -54,6 +55,7 @@ export const BaseTaskGroupFeature = React.memo(({
     group,
     groupRef,
     isGroupOpen: open,
+    canDrag: isMobile() ? groupMode === "drag-ready" : true,
     onElDrop,
     onElDragEnd,
   });

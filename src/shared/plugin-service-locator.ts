@@ -14,3 +14,6 @@ export const plugin = () => {
 export const setPlugin = (plugin: DailyRoutinePlugin) => {
   pluginThisRef = plugin;
 }
+
+// @ts-ignore
+export const isMobile = () => plugin().app.isMobile;

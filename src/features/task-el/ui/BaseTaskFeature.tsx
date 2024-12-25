@@ -13,6 +13,7 @@ import { OptionIcon } from './OptionIcon';
 import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from '../dnd/dnd-context';
 import { Menu } from 'obsidian';
+import { isMobile } from '@shared/plugin-service-locator';
 
 
 const indentStyle = css({
@@ -58,6 +59,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
     task,
     taskRef,
     group: parent,
+    canDrag: isMobile() ? taskMode === "drag-ready" : true,
     onElDragEnd,
     onElDrop,
   });
