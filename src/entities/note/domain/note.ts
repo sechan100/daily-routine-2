@@ -5,7 +5,7 @@ import { TaskEntity } from "./task";
 const getPerformance = (note: RoutineNote): NotePerformance => {
   const tasks = note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(TaskEntity.isChecked).length;
+  const completedTasks = tasks.filter(t => t.state !== "un-checked").length;
   const uncompletedTasks = totalTasks - completedTasks;
   const completion = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
   const accomplishedTasks = tasks.filter(t => t.state === "accomplished").length;

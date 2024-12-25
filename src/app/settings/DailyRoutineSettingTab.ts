@@ -8,11 +8,13 @@ import { useLeaf } from "@shared/view/use-leaf";
 export interface DailyRoutinePluginSettings {
   dailyRoutineFolderPath: string;
   isMondayStartOfWeek: boolean;
+  confirmUncheckTask: boolean;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
   dailyRoutineFolderPath: "DAILY_ROUTINE",
-  isMondayStartOfWeek: true
+  isMondayStartOfWeek: true,
+  confirmUncheckTask: true
 }
 
 
@@ -57,6 +59,18 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
         const isMondayStartOfWeek = value === "monday";
         this.save({ isMondayStartOfWeek });
         updateMomentConfig({ isMondayStartOfWeek })
+      })
+    })
+
+    // Confirm Uncheck Task
+    new Setting(containerEl)
+    .setName("Do Confirmation when Unchecking Task")
+    .setDesc("When you uncheck a task, a confirmation dialog will appear.")
+    .addToggle(toggle => {
+      toggle
+      .setValue(this.plugin.settings.confirmUncheckTask)
+      .onChange(async (value) => {
+        this.save({ confirmUncheckTask: value });
       })
     })
   }

@@ -45,10 +45,6 @@ const updateTask = (note: RoutineNote, originalName: string, task: RoutineTask |
   return note;
 }
 
-const isChecked = (task: Task): boolean => {
-  return task.state !== "un-checked";
-}
-
 
 export const TaskEntity = {
   validateTaskName,
@@ -56,5 +52,4 @@ export const TaskEntity = {
   createTodoTask,
   removeTask,
   updateTask,
-  isChecked
 }

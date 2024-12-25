@@ -19,4 +19,8 @@ export const DR_SETTING = {
   isMondayStartOfWeek(){
     return s().isMondayStartOfWeek;
   },
+
+  confirmUncheckTask(){
+    return s().confirmUncheckTask;
+  }
 }
