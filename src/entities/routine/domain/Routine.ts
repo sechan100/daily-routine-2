@@ -91,15 +91,25 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     return propsErr('daysOfMonth', p.daysOfMonth);
   }
 
+  if(
+    'finished' in p &&
+    typeof p.finished === 'boolean'
+  ){
+    //
+  } else {
+    return propsErr('finished', p.finished);
+  }
+
   return ok(p as RoutineProperties);
 }
 
 /**
- * NOTE: daysOfWeek와 daysOfMonth를 기준으로 루틴을 수행할지 말지를 결정한다.
- * - daysOfMonth가 0인 경우는 매월의 마지막 날을 의미한다.
+ * routine의 여러 properties들을 분석하여, day에 루틴을 수행해야하는지의 여부를 반환한다.
  */
 const isDueTo = (routine: Routine, day: Day): boolean => {
   const p = routine.properties;
+
+  if(p.finished) return false;
 
   if(p.activeCriteria === "month"){
     const days = Array.from(p.daysOfMonth);

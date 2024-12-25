@@ -19,18 +19,18 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
   const { mergeNotes } = useRoutineMutationMerge();
   const { note, setNote } = useRoutineNote();
 
-  const deleteRoutine = useCallback(async () => {
-    const deleteConfirm = await doConfirm({
-      title: "Delete Routine",
-      confirmText: "Delete",
-      description: `Are you sure you want to delete '${task.name}'?`,
-      confirmBtnVariant: "destructive"
+  const finishRoutine = useCallback(async () => {
+    const finishConfirm = await doConfirm({
+      title: "Finish Routine",
+      confirmText: "Finish",
+      description: `Are you sure you want to finish the routine ${task.name}?`,
+      confirmBtnVariant: "accent"
     })
-    if(!deleteConfirm) return;
+    if(!finishConfirm) return;
     
-    await routineRepository.delete(task.name);
+    await routineRepository.finish(task.name);
     mergeNotes();
-    new Notice(`Routine ${task.name} deleted.`);
+    new Notice(`Routine ${task.name} has been finished 🪄`);
   }, [mergeNotes, task.name])
 
   const onOptionMenu = useCallback((m: Menu) => {
@@ -51,11 +51,11 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
       });
     })
     m.addItem(i => {
-      i.setTitle("Delete");
-      i.setIcon("trash");
-      i.onClick(deleteRoutine);
+      i.setTitle("Finish");
+      i.setIcon("alarm-clock-off");
+      i.onClick(finishRoutine);
     })
-  }, [RoutineOptionModal, deleteRoutine, note, setNote, task.name])
+  }, [RoutineOptionModal, finishRoutine, note, setNote, task.name])
   
   return (
     <>

@@ -30,6 +30,7 @@ export type RoutineProperties = {
   activeCriteria: "week" | "month";
   daysOfWeek: DayOfWeek[];
   daysOfMonth: number[];
+  finished: boolean;
 };
 
 export type RoutineGroup = RoutineElement & {

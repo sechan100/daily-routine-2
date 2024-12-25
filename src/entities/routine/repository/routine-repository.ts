@@ -32,7 +32,7 @@ export interface RoutineQuery {
 }
 export interface RoutineRepository extends RoutineQuery {
   persist(entity: Routine): Promise<boolean>;
-  delete(routineName: string): Promise<void>;
+  finish(routineName: string): Promise<void>;
   changeName(originalName: string, newName: string): Promise<void>;
   update(routine: Routine): Promise<Routine>;
   updateAll(routines: Routine[]): Promise<Routine[]>;
@@ -67,13 +67,10 @@ export const routineRepository: RoutineRepository = {
     }
   },
   
-  async delete(routineName: string){
-    const composed = compose(
-      fileAccessor.deleteFile,
-      fileAccessor.loadFile,
-      ROUTINE_PATH
-    );
-    await composed(routineName);
+  async finish(routineName: string){
+    const routine = await routineRepository.load(routineName);
+    routine.properties.finished = true;
+    await routineRepository.update(routine);
   },
 
   async changeName(originalName: string, newName: string){
