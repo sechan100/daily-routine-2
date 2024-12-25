@@ -157,6 +157,7 @@ export const BaseTaskGroupFeature = React.memo(({
               <CancelLineName
                 name={group.name}
                 cancel={group.children.every(TaskEntity.isChecked)}
+                transparentLine={group.children.length === 0}
               />
             </AccordionSummary>
           </Touchable>

@@ -134,7 +134,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
         }}
       >
         <Checkbox state={task.state} />
-        <CancelLineName name={task.name} cancel={TaskEntity.isChecked(task)} withoutCancelLine={task.state === "failed"} />
+        <CancelLineName name={task.name} cancel={TaskEntity.isChecked(task)} transparentLine={task.state === "failed"} />
       </Touchable>
       <OptionIcon onOptionMenu={(m) => onOptionMenu(m, task)} />
       {indicator}
