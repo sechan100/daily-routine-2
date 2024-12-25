@@ -1,8 +1,10 @@
+/** @jsxImportSource @emotion/react */
 import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
 import { useCallback, useState } from "react";
 import { CalendarNavigation } from "./CalendarNavigation";
 import { CalendarSlide } from "./CalendarSlider";
+import { useLeaf } from "@shared/view/use-leaf";
 
 
 
@@ -31,6 +33,7 @@ interface CalendarWidgetProps {
 export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
   const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
+  const leafBgColor = useLeaf(s=>s.leafBgColor);
 
   const resetMonths = useCallback((month: Month) => {
     setActiveMonth(month);
@@ -42,7 +45,19 @@ export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
   }, []);
 
   return (
-    <>
+    <div css={{
+      position: 'relative',
+      height: '100%',
+    }}>
+      <div css={{
+        position: 'fixed',
+        top: 500,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 10,
+        backgroundColor: leafBgColor,
+      }} />
       <CalendarNavigation
         month={activeMonth}
         onMonthChange={resetMonths}
@@ -52,12 +67,13 @@ export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
         getKey={getKey}
         loadEdgeData={loadEdgeMonth}
         onSlideChange={onSlideChange}
+        verticalHeight={500}
       >
         {(month) => (
           <CalendarSlide month={month} />
         )}
       </VirtualSwiper>
-    </>
+    </div>
   )
 
 }

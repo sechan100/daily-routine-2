@@ -51,6 +51,8 @@ interface VirtualSwiperProps<T extends VirtualSlideData> {
   children: (data: T, index?: number) => React.ReactNode;
   
   className?: string;
+  // 값을 할당하면 자동으로 Swiper가 vertical로 설정된다.
+  verticalHeight?: number;
   onSlideChange?: (data: T) => void;
   wheelSlide?: boolean; // default: true
   prevNav?: HTMLElement;
@@ -63,6 +65,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   children,
   loadEdgeData,
   className,
+  verticalHeight,
   onSlideChange,
   nextNav,
   prevNav,
@@ -148,7 +151,12 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   return (
     <div
       className={className}
-      onTouchStart={(e) => e.stopPropagation()}
+      onTouchStart={(e) => {
+        // 횡 swipe인 경우 경우, 모바일에서 swipe했을 때, leaf가 닫혀버리는 것을 방지
+        if(!verticalHeight){
+          e.stopPropagation();
+        }
+      }}
     >
       <Swiper 
         ref={swiperRef}
@@ -157,6 +165,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
           thresholdTime: 400,
           thresholdDelta: 10,
         }}
+        height={verticalHeight}
         modules={[Mousewheel]}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
@@ -169,6 +178,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
             onTransitionEnd(swiper);
           }
         }}
+        direction={verticalHeight ? "vertical" : "horizontal"}
         slidesPerView={1}
         initialSlide={getCenterIndex(propsDatas)}
       >
