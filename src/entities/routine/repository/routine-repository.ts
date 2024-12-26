@@ -1,7 +1,7 @@
 import { ensureArchive } from "@entities/archives";
 import { compose } from "@shared/utils/compose";
 import { fileAccessor } from "@shared/file/file-accessor";
-import { stringifyYaml, TFile } from "obsidian";
+import { Notice, stringifyYaml, TFile } from "obsidian";
 import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";
 import { parseFrontmatter } from "@shared/file/parse-frontmatter";
 import { RoutineEntity } from "../domain/routine";
@@ -12,7 +12,10 @@ import { Routine } from "../domain/routine.type";
 const parse = async (file: TFile): Promise<Routine> => {
   const content = await fileAccessor.readFileAsReadonly(file);
   const result = RoutineEntity.validateRoutineProperties(parseFrontmatter(content));
-  if(result.isErr()) throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
+  if(result.isErr()){
+    new Notice(`Routine '${file.basename}' frontmatter error: ${result.error}`);
+    throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
+  }
   return {
     name: file.basename,
     routineElementType: "routine",
@@ -32,7 +35,7 @@ export interface RoutineQuery {
 }
 export interface RoutineRepository extends RoutineQuery {
   persist(entity: Routine): Promise<boolean>;
-  finish(routineName: string): Promise<void>;
+  delete(routineName: string): Promise<void>;
   changeName(originalName: string, newName: string): Promise<void>;
   update(routine: Routine): Promise<Routine>;
   updateAll(routines: Routine[]): Promise<Routine[]>;
@@ -66,11 +69,14 @@ export const routineRepository: RoutineRepository = {
       return false;
     }
   },
-  
-  async finish(routineName: string){
-    const routine = await routineRepository.load(routineName);
-    routine.properties.finished = true;
-    await routineRepository.update(routine);
+
+  async delete(routineName: string){
+    const composed = compose(
+      fileAccessor.deleteFile,
+      fileAccessor.loadFile,
+      ROUTINE_PATH
+    );
+    await composed(routineName);
   },
 
   async changeName(originalName: string, newName: string){

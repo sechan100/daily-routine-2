@@ -19,18 +19,34 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
   const { mergeNotes } = useRoutineMutationMerge();
   const { note, setNote } = useRoutineNote();
 
-  const finishRoutine = useCallback(async () => {
-    const finishConfirm = await doConfirm({
-      title: "Finish Routine",
-      confirmText: "Finish",
-      description: `Are you sure you want to finish the routine ${task.name}?`,
+  const disableRoutine = useCallback(async () => {
+    const disableConfirm = await doConfirm({
+      title: "Disable Routine",
+      confirmText: "Disable",
+      description: `Are you sure you want to disable the routine ${task.name}?`,
       confirmBtnVariant: "accent"
     })
-    if(!finishConfirm) return;
+    if(!disableConfirm) return;
     
-    await routineRepository.finish(task.name);
+    const routine = await routineRepository.load(task.name);
+    routine.properties.enabled = false;
+    await routineRepository.update(routine);
     mergeNotes();
-    new Notice(`Routine ${task.name} has been finished 🪄`);
+    new Notice(`Routine '${task.name}' disabled.`);
+  }, [mergeNotes, task.name])
+
+  const deleteRoutine = useCallback(async () => {
+    const deleteConfirm = await doConfirm({
+      title: "Delete Routine",
+      confirmText: "Delete",
+      description: `Are you sure you want to delete the routine ${task.name}?`,
+      confirmBtnVariant: "destructive"
+    })
+    if(!deleteConfirm) return;
+    
+    await routineRepository.delete(task.name);
+    mergeNotes();
+    new Notice(`Routine '${task.name}' deleted.`);
   }, [mergeNotes, task.name])
 
   const onOptionMenu = useCallback((m: Menu) => {
@@ -51,11 +67,16 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
       });
     })
     m.addItem(i => {
-      i.setTitle("Finish");
+      i.setTitle("Disable");
       i.setIcon("alarm-clock-off");
-      i.onClick(finishRoutine);
+      i.onClick(disableRoutine);
     })
-  }, [RoutineOptionModal, finishRoutine, note, setNote, task.name])
+    m.addItem(i => {
+      i.setTitle("Delete");
+      i.setIcon("trash");
+      i.onClick(deleteRoutine);
+    })
+  }, [RoutineOptionModal, deleteRoutine, disableRoutine, note, setNote, task.name])
   
   return (
     <>

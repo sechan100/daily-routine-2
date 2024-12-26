@@ -25,19 +25,16 @@ const validateName = ({
  */
 const validateRoutineProperties = (p: any): Result<RoutineProperties, string> => {
   if(typeof p !== 'object'){
-    return err('RoutineProperties validation target is not object.');
-  }
-  const propsErr = (propertyName: string, value: any, msg?: string): Err<RoutineProperties, string> => {
-    return err(`[Invalid RoutineProperties]: ${msg??"invalid format"}(${propertyName}: ${value})`);
+    return err('Internal error: Invalid frontmatter format');
   }
 
   if(
     'order' in p &&
     typeof p.order === 'number'
   ){
-    if(p.order < 0) return propsErr('order', p.order, "Order must be a non-negative integer.");
+    if(p.order < 0) return err("Order must be a non-negative integer.");
   } else {
-    return propsErr('order', p.order);
+    return err("property 'order' is missing or not a number.");
   }
 
   if(
@@ -46,7 +43,7 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
   ){
     //
   } else {
-    return propsErr('group', p.group);
+    return err("property 'group' is missing or not a existing group name.");
   }
 
   if(
@@ -55,16 +52,16 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
   ){
     //
   } else {
-    return propsErr('showOnCalendar', p.showOnCalendar);
+    return err("property 'showOnCalendar' is missing or not a boolean.");
   }
 
   if(
     'activeCriteria' in p && 
     typeof p.activeCriteria === 'string'
   ){
-    if(!["week", "month"].includes(p.activeCriteria)) return propsErr('activeCriteria', p.activeCriteria);
+    if(!["week", "month"].includes(p.activeCriteria)) return err("property 'activeCriteria' must be either 'week' or 'month'");
   } else {
-    return propsErr('activeCriteria', p.activeCriteria);
+    return err("property 'activeCriteria' is missing or not a string.");
   }
 
   if(
@@ -72,11 +69,10 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     Array.isArray(p.daysOfWeek)
   ){
     for(const d of p.daysOfWeek){
-      if(typeof d !== 'string') return propsErr('daysOfWeek', p.daysOfWeek, `Invalid day of week: ${d}`);
-      if(!keys(DayOfWeek).includes(d)) return propsErr('daysOfWeek', p.daysOfWeek, `Invalid day of week: ${d}`);
+      if(!keys(DayOfWeek).includes(d)) return err(`Invalid property 'dayOfWeek': ${d}`);
     }
   } else {
-    return propsErr('daysOfWeek', p.daysOfWeek);
+    return err("property 'daysOfWeek' is missing or not an array of dayOfWeek.");
   }
 
   if(
@@ -84,20 +80,20 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     Array.isArray(p.daysOfMonth)
   ){
     for(const d of p.daysOfMonth){
-      if(typeof d !== 'number') return propsErr('daysOfMonth', p.daysOfMonth, `Invalid day of month: ${d}`);
-      if(d < 0 || d > 31) return propsErr('daysOfMonth', p.daysOfMonth, `Range of day of month is 0~31: ${d}`);
+      if(typeof d !== 'number') return err(`property 'DayOfMonth' must be a number: ${d}`);
+      if(d < 0 || d > 31) return err(`property 'DayOfMonth' must be between 0 and 31: ${d}`);
     }
   } else {
-    return propsErr('daysOfMonth', p.daysOfMonth);
+    return err("property 'daysOfMonth' is missing or not an array of number.");
   }
 
   if(
-    'finished' in p &&
-    typeof p.finished === 'boolean'
+    'enabled' in p &&
+    typeof p.enabled === 'boolean'
   ){
     //
   } else {
-    return propsErr('finished', p.finished);
+    return err("property 'enabled' is missing or not a boolean.");
   }
 
   return ok(p as RoutineProperties);
@@ -109,7 +105,7 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
 const isDueTo = (routine: Routine, day: Day): boolean => {
   const p = routine.properties;
 
-  if(p.finished) return false;
+  if(!p.enabled) return false;
 
   if(p.activeCriteria === "month"){
     const days = Array.from(p.daysOfMonth);

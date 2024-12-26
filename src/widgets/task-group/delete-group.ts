@@ -11,7 +11,7 @@ export const deleteGroup = async (note: RoutineNote, groupName: string, deleteSu
   if(deleteSubTasks){
     const deleteTargets = routines.filter(routine => routine.properties.group === groupName);
     for(const target of deleteTargets){
-      await routineRepository.finish(target.name);
+      await routineRepository.delete(target.name);
     }
   } else {
     const ungroupTarget = routines.filter(routine => routine.properties.group === groupName);
