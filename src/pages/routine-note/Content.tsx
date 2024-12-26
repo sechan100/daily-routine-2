@@ -9,9 +9,10 @@ import { useStartRoutineModal } from '@widgets/routine';
 import { TaskGroupWidget, useCreateGroupModal } from '@widgets/task-group';
 import { useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
-import { Menu } from "obsidian";
+import { Menu, Notice } from "obsidian";
 import { useCallback, useMemo } from "react";
 import { NoteContext } from './NoteContext';
+import { useRoutineMutationMerge } from '@features/merge-note';
 
 
 const startRoutineIcon = "alarm-clock-plus";
@@ -22,7 +23,7 @@ const bem = dr("note");
 
 export const RoutineNoteContent = () => {
   const note = useRoutineNote(n=>n.note);
-  const performance = useMemo(() => NoteEntity.getPerformance(note), [note]);
+  const { mergeNotes } = useRoutineMutationMerge();
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -38,8 +39,8 @@ export const RoutineNoteContent = () => {
       });
     });
 
-    m.addSeparator();
     // Add Todo
+    m.addSeparator();
     m.addItem(item => {
       item.setIcon(addTodoIcon);
       item.setTitle("Add Todo");
@@ -48,8 +49,8 @@ export const RoutineNoteContent = () => {
       });
     });
 
-    m.addSeparator();
     // Add Group
+    m.addSeparator();
     m.addItem(item => {
       item.setIcon("folder");
       item.setTitle("Add Group");
@@ -57,8 +58,19 @@ export const RoutineNoteContent = () => {
         CreateGroupModal.open({});
       });
     });
+
+    // mergeNotes
+    m.addSeparator();
+    m.addItem(item => {
+      item.setIcon("merge");
+      item.setTitle("Merge Notes");
+      item.onClick(() => {
+        mergeNotes();
+        new Notice("All Notes Merged!");
+      });
+    });
     
-  }, [AddTodoModal, CreateGroupModal, StartRoutineModal]);
+  }, [AddTodoModal, CreateGroupModal, StartRoutineModal, mergeNotes]);
 
   return (
     <div 
