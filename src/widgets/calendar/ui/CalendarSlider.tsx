@@ -3,12 +3,12 @@ import { Task } from "@entities/note";
 import { BaseCalendar } from "@shared/components/BaseCalendar";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
-import { useAsync } from "@shared/use-async";
+import { useAsync } from "@shared/utils/use-async";
 import { useCallback, useMemo } from "react";
 import { CalendarTile } from "./CalendarTile";
 import { loadCalendar } from "../model/load-calendar";
 import { Tile } from "../model/types";
-import { useTabRoute } from "@shared/use-tab-route";
+import { useTabRoute } from "@shared/tab/use-tab-route";
 
 
 interface CalendarSlideProps {

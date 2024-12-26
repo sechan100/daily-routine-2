@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { Err, err, ok, Result } from "neverthrow";
 import { RoutineGroupProperties } from "./routine.type";
 

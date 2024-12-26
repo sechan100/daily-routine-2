@@ -3,7 +3,7 @@ import { routineRepository } from "@entities/routine";
 import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
 import { createNewRoutine } from "../create-routine";

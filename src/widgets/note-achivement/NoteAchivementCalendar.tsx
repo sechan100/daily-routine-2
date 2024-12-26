@@ -3,7 +3,7 @@ import { NoteEntity, noteRepository, RoutineNote } from '@entities/note';
 import { Day } from "@shared/period/day";
 import { BaseCalendar } from '@shared/components/BaseCalendar';
 import { useCallback, useEffect, useState } from "react";
-import { useTabRoute } from '@shared/use-tab-route';
+import { useTabRoute } from '@shared/tab/use-tab-route';
 import { Month } from '@shared/period/month';
 import { PerformanceCircle } from '@features/performance';
 

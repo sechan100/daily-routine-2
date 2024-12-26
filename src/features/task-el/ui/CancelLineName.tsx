@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 
 
 const bem = dr("task-name");

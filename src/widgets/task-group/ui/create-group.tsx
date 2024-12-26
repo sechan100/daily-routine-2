@@ -4,7 +4,7 @@ import { groupReducer, GroupReducer } from "@features/group";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
 

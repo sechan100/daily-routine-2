@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import clsx from "clsx";
 import { ToggleComponent as ObsidianToggleComponent } from "obsidian";
 import { memo, useEffect, useRef } from "react";

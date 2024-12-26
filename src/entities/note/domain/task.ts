@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { Routine } from "@entities/routine";
 import { RoutineNote, RoutineTask, Task, TodoTask } from "./note.type";
 import { NoteEntity } from "./note";

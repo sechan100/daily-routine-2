@@ -5,7 +5,7 @@ import TabNav from '@mui/material/Tabs';
 import { Icon } from "@shared/components/Icon";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
-import { DrTabType, useTabRoute } from "@shared/use-tab-route";
+import { DrTabType, useTabRoute } from "@shared/tab/use-tab-route";
 import { useLeaf } from "@shared/view/use-leaf";
 import { useCallback, useEffect } from "react";
 import { MUIThemeProvider } from './MUIThemProvider';

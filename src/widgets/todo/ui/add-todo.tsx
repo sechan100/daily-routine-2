@@ -4,7 +4,7 @@ import { useRoutineNote } from "@features/note";
 import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { useCallback, useMemo, useState } from "react";
 
 

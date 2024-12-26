@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Day, DayOfWeek } from "@shared/period/day";
-import { validateObsidianFileTitle } from "@shared/validation/validate-obsidian-file-title";
+import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { keys } from "lodash";
 import { err, Err, ok, Result } from "neverthrow";
 import { Routine, RoutineProperties } from "./routine.type";

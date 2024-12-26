@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { RoutineNote, Task, TaskEntity, TaskGroup, TaskState } from '@entities/note';
 import { useRoutineNote } from "@features/note";
 import { Touchable } from '@shared/components/Touchable';
-import { dr } from '@shared/daily-routine-bem';
+import { dr } from '@shared/utils/daily-routine-bem';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTaskDnd } from '../dnd/use-task-dnd';
 import { changeTaskState } from '../model/change-task-state';
@@ -13,7 +13,7 @@ import { OptionIcon } from './OptionIcon';
 import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from '../dnd/dnd-context';
 import { Menu } from 'obsidian';
-import { isMobile } from '@shared/plugin-service-locator';
+import { isMobile } from '@shared/utils/plugin-service-locator';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { DR_SETTING } from '@app/settings/setting-provider';
 

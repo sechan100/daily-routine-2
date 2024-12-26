@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { TaskState } from "@entities/note";
 import { Icon } from "@shared/components/Icon";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { useMemo } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 

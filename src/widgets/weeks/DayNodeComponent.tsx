@@ -2,7 +2,7 @@
 import { Day } from "@shared/period/day";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DayNode } from "./types";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { useLeaf } from "@shared/view/use-leaf";
 import { css } from "@emotion/react";
 import { useWeeksActiveDay } from "./WeeksContext";

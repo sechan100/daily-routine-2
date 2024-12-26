@@ -4,7 +4,7 @@ import { useRoutineNote } from "@features/note";
 import { renderTask, TaskDndContext } from '@features/task-el';
 import { Icon } from '@shared/components/Icon';
 import { MenuComponent } from "@shared/components/Menu";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { useStartRoutineModal } from '@widgets/routine';
 import { TaskGroupWidget, useCreateGroupModal } from '@widgets/task-group';
 import { useAddTodoModal } from '@widgets/todo';

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { INITIAL_TAB } from "./constants/initial-tab";
+import { INITIAL_TAB } from "./initial-tab";
 
 export type DrTabType = "calendar" | "note" | "achivement";
 

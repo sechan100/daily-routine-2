@@ -1,4 +1,4 @@
-import { useTabRoute } from "@shared/use-tab-route";
+import { useTabRoute } from "@shared/tab/use-tab-route";
 import { RoutineNotePage } from "@pages/routine-note";
 import { Day } from "@shared/period/day";
 import { useMemo } from "react";

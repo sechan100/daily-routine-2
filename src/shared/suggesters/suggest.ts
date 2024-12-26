@@ -2,7 +2,7 @@
 
 import { ISuggestOwner, Scope } from "obsidian";
 import { createPopper, Instance as PopperInstance } from "@popperjs/core";
-import { plugin } from "@shared/plugin-service-locator";
+import { plugin } from "@shared/utils/plugin-service-locator";
 
 const wrapAround = (value: number, size: number): number => {
   return ((value % size) + size) % size;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { plugin } from "@shared/plugin-service-locator";
+import { plugin } from "@shared/utils/plugin-service-locator";
 import { TFile, TFolder } from "obsidian";
 
 

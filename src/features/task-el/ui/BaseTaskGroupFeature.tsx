@@ -3,7 +3,7 @@ import { RoutineNote, TaskEntity, TaskGroup } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
-import { dr } from '@shared/daily-routine-bem';
+import { dr } from '@shared/utils/daily-routine-bem';
 import { useLeaf } from '@shared/view/use-leaf';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGroupDnd } from '../dnd/use-group-dnd';
@@ -13,7 +13,7 @@ import { OptionIcon } from './OptionIcon';
 import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';
 import { Menu } from 'obsidian';
-import { isMobile } from '@shared/plugin-service-locator';
+import { isMobile } from '@shared/utils/plugin-service-locator';
 
 
 

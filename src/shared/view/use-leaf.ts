@@ -1,5 +1,5 @@
 import { DailyRoutineObsidianView } from "@app/obsidian-view";
-import { plugin } from "@shared/plugin-service-locator";
+import { plugin } from "@shared/utils/plugin-service-locator";
 import { createStoreContext } from "@shared/zustand/create-store-context";
 import { WorkspaceLeaf } from "obsidian";
 

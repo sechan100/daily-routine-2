@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo} from "react";
-import { dr } from "@shared/daily-routine-bem";
+import { dr } from "@shared/utils/daily-routine-bem";
 import { Button } from "@shared/components/Button";
 import { WeekOption } from "./active-criteria-week";
 import { MonthOption } from "./active-criteria-month";
-import { TEXT_CSS } from "@shared/constants/text-style";
+import { TEXT_CSS } from "@shared/components/text-style";
 import { Routine, RoutineProperties } from "@entities/routine";
 
 

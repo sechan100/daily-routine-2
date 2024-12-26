@@ -1,6 +1,6 @@
 import { CalendarPage } from "@pages/calendar";
 import { Month } from "@shared/period/month";
-import { useTabRoute } from "@shared/use-tab-route";
+import { useTabRoute } from "@shared/tab/use-tab-route";
 import { useMemo } from "react";
 
 

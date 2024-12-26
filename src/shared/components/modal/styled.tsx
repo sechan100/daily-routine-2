@@ -3,7 +3,7 @@
  */
 /** @jsxImportSource @emotion/react */
 import { ToggleComponent } from "@shared/components/ToggleComponent";
-import { TEXT_CSS } from '../../constants/text-style';
+import { TEXT_CSS } from '../text-style';
 import { useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 import { TextEditComponent } from "@shared/components/TextEditComponent"

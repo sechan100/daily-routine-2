@@ -3,7 +3,7 @@ import { useLeaf } from "@shared/view/use-leaf";
 import { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { TaskElDragItem } from '../dnd/drag-item';
-import { TEXT_CSS } from "@shared/constants/text-style";
+import { TEXT_CSS } from "@shared/components/text-style";
 import { css } from "@emotion/react";
 
 

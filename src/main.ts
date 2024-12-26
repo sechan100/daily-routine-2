@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Plugin, moment } from 'obsidian';
-import { setPlugin } from '@shared/plugin-service-locator';
+import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from '@shared/view/activate-view';

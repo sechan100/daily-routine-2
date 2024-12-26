@@ -2,7 +2,7 @@
 
 import { TAbstractFile, TFile, TFolder } from "obsidian";
 import { TextInputSuggest } from "./suggest";
-import { plugin } from "@shared/plugin-service-locator";
+import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 export class FileSuggest extends TextInputSuggest<TAbstractFile> {
