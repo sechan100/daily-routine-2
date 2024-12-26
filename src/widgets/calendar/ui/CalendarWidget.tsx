@@ -1,79 +1,49 @@
 /** @jsxImportSource @emotion/react */
-import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
-import { useCallback, useState } from "react";
-import { CalendarNavigation } from "./CalendarNavigation";
-import { CalendarSlide } from "./CalendarSlider";
+import { useCallback, useMemo, useState } from "react";
 import { useLeaf } from "@shared/view/use-leaf";
+import { SwipeableCalendar } from "@shared/components/swipeable-calender/SwipeableCalendar";
+import { useAsync } from "@shared/utils/use-async";
+import { loadCalendar } from "../model/load-calendar";
+import { useTabRoute } from "@shared/tab/use-tab-route";
+import { Day } from "@shared/period/day";
+import { CalendarTile } from "./CalendarTile";
+import { Task } from "@entities/note";
+import { calculateTabHeight } from "@app/ui/calculate-tab-height";
 
 
-
-const loadMonths = (month: Month) => {
-  return [
-    month.subtract_cpy(1),
-    month,
-    month.add_cpy(1)
-  ];
-}
-
-const loadEdgeMonth = (edge: "start" | "end", month: Month) => {
-  if(edge === "start"){
-    return month.subtract_cpy(1);
-  } else {
-    return month.add_cpy(1);
-  }
-};
-
-const getKey = (month: Month) => month.startDay.format()
-
-
-interface CalendarWidgetProps {
+type Props = {
   month: Month;
 }
-export const CalendarWidget = ({ month: propsMonth }: CalendarWidgetProps) => {
-  const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
-  const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
-  const leafBgColor = useLeaf(s=>s.leafBgColor);
+export const CalendarWidget = ({ month }: Props) => {
+  // const leafBgColor = useLeaf(s=>s.leafBgColor);
+  const calendarAsync = useAsync(async () => await loadCalendar(month), [month]);
+  const route = useTabRoute(s=>s.route);
+  const view = useLeaf(s=>s.view);
+  const tabHeight = useMemo(() => calculateTabHeight(view), [view]);
 
-  const resetMonths = useCallback((month: Month) => {
-    setActiveMonth(month);
-    setMonths(loadMonths(month));
-  }, []);
+  const renderTile = useCallback((day: Day) => {
+    let tile = {
+      day,
+      tasks: [] as Task[]
+    };
+    tile = calendarAsync.value?.tiles.get(day.format()) || tile;
+    return <CalendarTile tile={tile} />;
+  }, [calendarAsync.value?.tiles]);
+
+  const onTileClick = useCallback((day: Day) => {
+    route("note", { day });
+  }, [route]);
+
   
-  const onSlideChange = useCallback((month: Month) => {
-    setActiveMonth(month);
-  }, []);
-
+  if(!calendarAsync.value || calendarAsync.loading) return <div>Loading...</div>;
   return (
-    <div css={{
-      position: 'relative',
-      height: '100%',
-    }}>
-      <div css={{
-        position: 'fixed',
-        top: 500,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 10,
-        backgroundColor: leafBgColor,
-      }} />
-      <CalendarNavigation
-        month={activeMonth}
-        onMonthChange={resetMonths}
-      />
-      <VirtualSwiper
-        datas={months}
-        getKey={getKey}
-        loadEdgeData={loadEdgeMonth}
-        onSlideChange={onSlideChange}
-        verticalHeight={500}
-      >
-        {(month) => (
-          <CalendarSlide month={month} />
-        )}
-      </VirtualSwiper>
-    </div>
+    <SwipeableCalendar
+      month={month}
+      onTileClick={onTileClick}
+      tile={renderTile}
+      verticalHeight={tabHeight}
+    />
   )
 
 }

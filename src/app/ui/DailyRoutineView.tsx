@@ -14,8 +14,10 @@ import { AchivementTab } from "./tab-achivement";
 import { CalendarTab } from "./tab-calendar";
 import { RouitneNoteTab } from "./tab-note";
 
-const tabsHeight = "50px";
-const tabsBottomGap = "25px";
+export const num_tabsHeight = 50;
+export const num_tabsBottomGap = 25;
+export const tabsHeight = `${num_tabsHeight}px`;
+export const tabsBottomGap = `${num_tabsBottomGap}px`;
 
 const tabCss = css({
   boxShadow: "none !important",
@@ -77,6 +79,16 @@ export const DailyRoutineView = () => {
           width: "100%",
           left: "0",
           bottom: tabsBottomGap,
+          "&::after": {
+            content: '""',
+            display: "block",
+            position: "fixed",
+            width: "100%",
+            height: tabsBottomGap,
+            backgroundColor: leafBgColor,
+            bottom: 0,
+            zIndex: 1000,
+          }
         }}
       >
         <TabNavItem

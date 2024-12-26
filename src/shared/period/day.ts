@@ -14,6 +14,7 @@ export enum DayOfWeek {
   SAT = "SAT"
 }
 
+export type DayFormat = ReturnType<Day['format']>;
 
 export class Day {
   readonly #moment: moment.Moment;

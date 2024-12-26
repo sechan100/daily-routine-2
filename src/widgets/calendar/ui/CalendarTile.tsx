@@ -37,9 +37,11 @@ const DateBadge = ({ day }: { day: Day }) => {
   )
 }
 
+const taskLineLimit = 5;
+
 
 const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
-  if(tasks.length <= 4){
+  if(tasks.length <= taskLineLimit){
     return (
       <div>
         {tasks.map(task => (
@@ -54,7 +56,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
 
   return (
     <div className="dr-calendar-tasks">
-      {tasks.slice(0, 3).map(task => (
+      {tasks.slice(0, taskLineLimit - 1).map(task => (
         <TaskLine 
           key={task.name}
           task={task}
@@ -66,7 +68,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
         textAlign: 'center',
       }]}>
         <span>
-          + {tasks.length - 3}
+          + {tasks.length - (taskLineLimit - 1)}
         </span>
       </div>
     </div>
@@ -91,15 +93,15 @@ const TaskLine = ({ task }: { task: Task }) => {
 }
 
 
-interface CalendarTileProps {
+type Props = {
   tile: Tile;
 }
-export const CalendarTile = ({ tile }: CalendarTileProps) => {
+export const CalendarTile = ({ tile }: Props) => {
 
   
   return (
     <div css={{
-      height: '77px',
+      height: '88px',
       width: '100%',
       ...(tile.day.isToday() && {
         background: "hsla(var(--color-accent-2-hsl), 0.5)",

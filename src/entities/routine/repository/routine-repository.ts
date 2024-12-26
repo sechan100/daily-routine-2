@@ -1,5 +1,5 @@
 import { ensureArchive } from "@entities/archives";
-import { compose } from "@shared/compose";
+import { compose } from "@shared/utils/compose";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { stringifyYaml, TFile } from "obsidian";
 import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";

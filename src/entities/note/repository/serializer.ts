@@ -1,4 +1,4 @@
-import { switchTo } from "@shared/\bswitch-utils";
+import { switchTo } from "@shared/utils/switch-utils";
 import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TaskState, TodoTask } from "../domain/note.type";
 import { Day } from "@shared/period/day";
 import dedent from "dedent";

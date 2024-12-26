@@ -2,7 +2,7 @@ import { Month } from "@shared/period/month";
 import { Calendar, Tile } from "./types";
 import { RoutineEntity, routineRepository } from "@entities/routine";
 import { NoteEntity, noteRepository, TaskEntity } from "@entities/note";
-import { Day } from "@shared/period/day";
+import { Day, DayFormat } from "@shared/period/day";
 
 
 
@@ -29,7 +29,7 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
   const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
 
 	const loadedNotes = await noteRepository.loadBetween(startDay, endDay);
-	const tiles: Map<string, Tile> = new Map();
+	const tiles: Map<DayFormat, Tile> = new Map();
   let d = startDay;
   while(d.isSameOrBefore(endDay)){
     const loaded = loadedNotes.find(n => n.day.isSameDay(d));

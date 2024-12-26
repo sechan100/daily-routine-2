@@ -1,12 +1,12 @@
 import { Task } from "@entities/note";
-import { Day } from "@shared/period/day";
+import { Day, DayFormat } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 
 
 
 export type Calendar = {
 	month: Month;
-	tiles: Map<string, Tile>;
+	tiles: Map<DayFormat, Tile>;
 }
 
 export type Tile = {
