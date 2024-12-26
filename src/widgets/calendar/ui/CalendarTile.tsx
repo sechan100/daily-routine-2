@@ -4,6 +4,8 @@ import { Tile } from "../model/types"
 import { TEXT_CSS } from "@shared/components/text-style";
 import { Task } from "@entities/note";
 import { css } from "@emotion/react";
+import { useContext } from "react";
+import { useTileHeightInfo } from "./tile-height-info-context";
 
 
 const defaultTextStyle = css({
@@ -37,11 +39,13 @@ const DateBadge = ({ day }: { day: Day }) => {
   )
 }
 
-const taskLineLimit = 5;
+
+
 
 
 const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
-  if(tasks.length <= taskLineLimit){
+  const { limitedTaskPer } = useTileHeightInfo();
+  if(tasks.length <= limitedTaskPer){
     return (
       <div>
         {tasks.map(task => (
@@ -56,7 +60,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
 
   return (
     <div className="dr-calendar-tasks">
-      {tasks.slice(0, taskLineLimit - 1).map(task => (
+      {tasks.slice(0, limitedTaskPer - 1).map(task => (
         <TaskLine 
           key={task.name}
           task={task}
@@ -68,7 +72,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
         textAlign: 'center',
       }]}>
         <span>
-          + {tasks.length - (taskLineLimit - 1)}
+          + {tasks.length - (limitedTaskPer - 1)}
         </span>
       </div>
     </div>
@@ -97,11 +101,11 @@ type Props = {
   tile: Tile;
 }
 export const CalendarTile = ({ tile }: Props) => {
-
+  const { tileHeight } = useTileHeightInfo();
   
   return (
     <div css={{
-      height: '88px',
+      height: tileHeight,
       width: '100%',
       ...(tile.day.isToday() && {
         background: "hsla(var(--color-accent-2-hsl), 0.5)",

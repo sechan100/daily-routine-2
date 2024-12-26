@@ -9,7 +9,8 @@ import { useTabRoute } from "@shared/tab/use-tab-route";
 import { Day } from "@shared/period/day";
 import { CalendarTile } from "./CalendarTile";
 import { Task } from "@entities/note";
-import { calculateTabHeight } from "@app/ui/calculate-tab-height";
+import { useTabHeight } from "@app/ui/use-tab-height";
+import { TileHeightInfoProvider } from "./tile-height-info-context";
 
 
 type Props = {
@@ -19,8 +20,7 @@ export const CalendarWidget = ({ month }: Props) => {
   // const leafBgColor = useLeaf(s=>s.leafBgColor);
   const calendarAsync = useAsync(async () => await loadCalendar(month), [month]);
   const route = useTabRoute(s=>s.route);
-  const view = useLeaf(s=>s.view);
-  const tabHeight = useMemo(() => calculateTabHeight(view), [view]);
+  const tabHeight = useTabHeight();
 
   const renderTile = useCallback((day: Day) => {
     let tile = {
@@ -38,12 +38,14 @@ export const CalendarWidget = ({ month }: Props) => {
   
   if(!calendarAsync.value || calendarAsync.loading) return <div>Loading...</div>;
   return (
-    <SwipeableCalendar
-      month={month}
-      onTileClick={onTileClick}
-      tile={renderTile}
-      verticalHeight={tabHeight}
-    />
+    <TileHeightInfoProvider>
+      <SwipeableCalendar
+        month={month}
+        onTileClick={onTileClick}
+        tile={renderTile}
+        verticalHeight={tabHeight}
+      />
+    </TileHeightInfoProvider>
   )
 
 }
