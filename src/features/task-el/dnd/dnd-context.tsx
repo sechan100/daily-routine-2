@@ -19,7 +19,7 @@ import { CustomHTML5Backend } from "./CustomHTML5BackendImpl";
 import { CustomTouchBackend } from "./CustomTouchBackendImpl copy";
 
 
-export const DELAY_TOUCH_START = 1000;
+export const DELAY_TOUCH_START = 800;
 
 
 export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
@@ -50,7 +50,11 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
         backend: CustomTouchBackend,
         options: {
           enableMouseEvents: false,
-          delayTouchStart: DELAY_TOUCH_START,
+          /**
+           * HACK: 아예 없애버리면 mobile에서 file, 또는 directory의 context menu를 열었을 때,
+           * 앱에서 스크롤이 안되는 버그가 생긴다. 대충 0.5정도로 해서 냅두니 괜찮던데
+           */
+          delayTouchStart: 500,
           ignoreContextMenu: false
         },
         transition: TouchTransition,
