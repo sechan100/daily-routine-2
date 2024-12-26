@@ -6,6 +6,7 @@ import { CalendarNavigation } from "./Nav";
 import { CalendarSlide } from "./CalendarSlide";
 import { useLeaf } from "@shared/view/use-leaf";
 import { Day, DayFormat } from "@shared/period/day";
+import { CalendarStyleOptions } from "../BaseCalendar";
 
 
 
@@ -28,18 +29,20 @@ const loadEdgeMonth = (edge: "start" | "end", month: Month) => {
 const getKey = (month: Month) => month.startDay.format()
 
 
-interface Props<T> {
+interface Props {
   month: Month;
   onTileClick: (day: Day) => void;
   tile: (day: Day) => JSX.Element;
   verticalHeight?: number;
+  stylesOption?: CalendarStyleOptions;
 }
-export const SwipeableCalendar = <T,>({
+export const SwipeableCalendar = ({
   month: propsMonth,
   onTileClick,
   tile,
-  verticalHeight
-}: Props<T>) => {
+  verticalHeight,
+  stylesOption
+}: Props) => {
   const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
 
@@ -73,6 +76,7 @@ export const SwipeableCalendar = <T,>({
             month={month}
             onTileClick={onTileClick}
             tile={tile}
+            styleOptions={stylesOption}
           />
         )}
       </VirtualSwiper>

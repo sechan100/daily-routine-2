@@ -1,20 +1,22 @@
 /** @jsxImportSource @emotion/react */
-import { BaseCalendar } from "@shared/components/BaseCalendar";
+import { BaseCalendar, CalendarStyleOptions } from "@shared/components/BaseCalendar";
 import { Day, DayFormat } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useCallback } from "react";
 
 
-interface Props<T> {
+interface Props {
   month: Month;
   tile: (day: Day) => JSX.Element;
   onTileClick: (day: Day) => void;
+  styleOptions?: CalendarStyleOptions;
 }
-export const CalendarSlide = <T,>({
+export const CalendarSlide = ({
   month,
   tile,
   onTileClick,
-}: Props<T>) => {
+  styleOptions
+}: Props) => {
 
   const tileDisabled = useCallback((day: Day) => {
     return day.month !== month.monthNum;
@@ -28,7 +30,7 @@ export const CalendarSlide = <T,>({
       tile={tile}
       showNavigation={false}
       tileDisabled={tileDisabled}
-      styleOptions={{
+      styleOptions={Object.assign({
         tileContainer: {
           gap: "0",
         },
@@ -36,7 +38,7 @@ export const CalendarSlide = <T,>({
           border: "0.5px solid black",
           borderRadius: "0",
         }
-      }}
+      }, styleOptions)}
     />
   );
 };

@@ -18,7 +18,7 @@ export interface BaseCalendarProps {
   onTileClick?: (day: Day) => void;
   showNavigation?: boolean;
   tileDisabled?: (day: Day) => boolean;
-  styleOptions?: BaseCalendarStylesProps;
+  styleOptions?: CalendarStyleOptions;
 }
 export const BaseCalendar = ({ 
   month, 
@@ -72,7 +72,7 @@ export const BaseCalendar = ({
 }
 
 
-interface BaseCalendarStylesProps {
+export type CalendarStyleOptions = {
   nav?: CSSObject;
   weekdays?: CSSObject;
   weekdayEach?: CSSObject;
@@ -87,7 +87,7 @@ const useBaseCalendarStyles = ({
   tileContainer: tileContainerStyle = {},
   tile: tileStyle = {},
   neighboringMonthTile: neighboringMonthTileStyle = {},
-}: BaseCalendarStylesProps) => {
+}: CalendarStyleOptions) => {
   const { leafBgColor } = useLeaf();
   const calendarStyles = useMemo(() => css({
     // 네비게이션

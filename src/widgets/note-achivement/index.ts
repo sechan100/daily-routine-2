@@ -1,1 +1,1 @@
-export { NoteAchivementCalendar } from "./NoteAchivementCalendar";
+export { NoteAchivementCalendar } from "./ui/NoteAchivementCalendar";
