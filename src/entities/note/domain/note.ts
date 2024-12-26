@@ -78,6 +78,16 @@ const flatten = (note: RoutineNote): Task[] => {
   return note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
 }
 
+const replaceTask = (note: RoutineNote, taskName: string, withTask: Task): RoutineNote => {
+  const parent = findParent(note, taskName);
+  if(isTaskGroup(parent)){
+    parent.children = parent.children.map(t => t.name === taskName ? withTask : t);
+  } else {
+    note.children = note.children.map(t => t.name === taskName ? withTask : t);
+  }
+  return { ...note };
+}
+
 
 export const NoteEntity = {
   getPerformance,
@@ -86,5 +96,6 @@ export const NoteEntity = {
   findGroup,
   findTask,
   findParent,
-  flatten
+  replaceTask,
+  flatten,
 }

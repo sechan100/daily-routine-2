@@ -29,11 +29,7 @@ export default class DailyRoutinePlugin extends Plugin {
       DailyRoutineObsidianView.VIEW_TYPE,
       (leaf) => new DailyRoutineObsidianView(leaf)
     );
-
-    this.addRibbonIcon("dice", "Routine View", () => {
-      activateView(DailyRoutineObsidianView.VIEW_TYPE, confirm("Open on the left?") ? 1 : 0);
-    });
-
+    
     this.addCommand({
       id: "daily-routine-dev-only-mobile-view-toggle",
       name: "Toggle Mobile View",
@@ -42,8 +38,9 @@ export default class DailyRoutinePlugin extends Plugin {
         this.app.emulateMobile(!this.app.isMobile);
       }
     });
-
+    
     devRunner();
+    activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
   }
   
   onunload() {

@@ -60,7 +60,6 @@ export const DailyRoutineView = () => {
         }}
       >
         <RouitneNoteTab />
-        {/* <SSSSSSS /> */}
         <AchivementTab />
         <CalendarTab />
       </div>
@@ -79,16 +78,6 @@ export const DailyRoutineView = () => {
           width: "100%",
           left: "0",
           bottom: tabsBottomGap,
-          "&::after": {
-            content: '""',
-            display: "block",
-            position: "fixed",
-            width: "100%",
-            height: tabsBottomGap,
-            backgroundColor: leafBgColor,
-            bottom: 0,
-            zIndex: 1000,
-          }
         }}
       >
         <TabNavItem
@@ -113,6 +102,15 @@ export const DailyRoutineView = () => {
           css={tabCss} 
         />
       </TabNav>
+      <div css={{
+        display: "block",
+        position: "fixed",
+        width: "100%",
+        height: tabsBottomGap,
+        backgroundColor: leafBgColor,
+        bottom: 0,
+        zIndex: 1000,
+      }} />
     </MUIThemeProvider>
   );
 }
