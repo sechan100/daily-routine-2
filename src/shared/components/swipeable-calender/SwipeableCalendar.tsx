@@ -3,10 +3,6 @@ import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
 import { useCallback, useState } from "react";
 import { CalendarNavigation } from "./Nav";
-import { CalendarSlide } from "./CalendarSlide";
-import { useLeaf } from "@shared/view/use-leaf";
-import { Day, DayFormat } from "@shared/period/day";
-import { CalendarStyleOptions } from "../BaseCalendar";
 
 
 
@@ -31,17 +27,13 @@ const getKey = (month: Month) => month.startDay.format()
 
 interface Props {
   month: Month;
-  onTileClick: (day: Day) => void;
-  tile: (day: Day) => JSX.Element;
+  children: (month: Month, index?: number) => React.ReactNode;
   verticalHeight?: number;
-  stylesOption?: CalendarStyleOptions;
 }
 export const SwipeableCalendar = ({
   month: propsMonth,
-  onTileClick,
-  tile,
+  children,
   verticalHeight,
-  stylesOption
 }: Props) => {
   const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
@@ -71,14 +63,7 @@ export const SwipeableCalendar = ({
         onSlideChange={onSlideChange}
         verticalHeight={verticalHeight}
       >
-        {(month) => (
-          <CalendarSlide
-            month={month}
-            onTileClick={onTileClick}
-            tile={tile}
-            styleOptions={stylesOption}
-          />
-        )}
+        {children}
       </VirtualSwiper>
     </div>
   )
