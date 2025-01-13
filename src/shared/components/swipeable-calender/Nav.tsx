@@ -11,12 +11,12 @@ import { OnArgs } from "react-calendar/dist/cjs/shared/types";
 
 export interface CalendarNavigationProps {
   month: Month;
-  onMonthChange?: (month: Month) => void;
+  setMonth: (month: Month) => void;
   className?: string;
 }
 export const CalendarNavigation = ({ 
   month, 
-  onMonthChange,
+  setMonth,
   className,
 }: CalendarNavigationProps) => {
   const { leafBgColor } = useLeaf();
@@ -27,14 +27,13 @@ export const CalendarNavigation = ({
     // @ts-ignore
     calendarRef.current.setActiveStartDate(month.startDay.getJsDate());
   }, [month]);
-  
-  const onActiveStartDateChange = useCallback(({ activeStartDate, view }: OnArgs) => {
-    if(!activeStartDate || view !== "month") return;
-    const changedMonth = Month.fromJsDate(activeStartDate);
-    if(!changedMonth.startDay.isSameMonth(month.startDay)){
-      onMonthChange?.(changedMonth);
-    }
-  }, [month.startDay, onMonthChange]);
+
+  const lastChangedMonthRef = useRef<Month>(month);
+  const monthChangeHandler = useCallback((month: Month) => {
+    if(lastChangedMonthRef.current.isSameMonth(month)) return;
+    setMonth?.(month);
+    lastChangedMonthRef.current = month;
+  }, [setMonth]);
 
   const calendarStyles = useMemo(() => css({
     // 네비게이션
@@ -48,7 +47,7 @@ export const CalendarNavigation = ({
     // 캘린더 + 월, 년 선택 컨테이너
     ".react-calendar__viewContainer": {
       position: "relative",
-      zIndex: 10,
+      zIndex: 10000,
       
       "div": {
         position: "absolute",
@@ -117,7 +116,15 @@ export const CalendarNavigation = ({
         css={calendarStyles}
         defaultValue={month.startDay.getJsDate()}
         allowPartialRange={false}
-        onActiveStartDateChange={onActiveStartDateChange}
+        onActiveStartDateChange={({ activeStartDate, view }: OnArgs) => {
+          if(!activeStartDate || view !== "month") return;
+          const newMonth = Month.fromJsDate(activeStartDate);
+          monthChangeHandler(newMonth);
+        }}
+        onClickMonth={value => {
+          const month = Month.fromJsDate(value);
+          monthChangeHandler(month);
+        }}
         selectRange={false}
         showNavigation={true}
       />

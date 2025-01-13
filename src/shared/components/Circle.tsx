@@ -1,13 +1,27 @@
-import clsx from "clsx";
+/** @jsxImportSource @emotion/react */
 import React, { useEffect, useState } from "react";
 
 
 interface CircleProps {
   color: string;
   percentage: number;
-  transition: boolean;
+  transition?: boolean;
+  width?: string;
+  strokeWidth?: number;
+  className?: string;
+  rotate?: number;
+  fill?: string;
 }
-export const Circle = ({ color, percentage: propsPercentage, transition=true }: CircleProps) => {
+export const Circle = ({
+  color, 
+  percentage: propsPercentage, 
+  transition = true,
+  width,
+  strokeWidth = 25,
+  className,
+  rotate,
+  fill,
+}: CircleProps) => {
   const [percentage, setPercentage] = useState(transition ? 0 : propsPercentage);
 
   const r = 85;
@@ -22,20 +36,30 @@ export const Circle = ({ color, percentage: propsPercentage, transition=true }: 
   }, [percentage, propsPercentage, transition]);
 
   return (
-    <circle
-      style={{
-        position: "relative",
-        transition: transitionString,
+    <svg 
+      width={width??"100%"}
+      data-percentage={percentage}
+      viewBox="0 0 200 200"
+      className={className}
+      css={{
+        transform: `rotate(${rotate??0}deg)`,
       }}
-      r={r}
-      cx={100}
-      cy={100}
-      stroke={color}
-      strokeDasharray={circ}
-      strokeWidth={25}
-      strokeDashoffset={strokePct}
-      strokeLinecap="butt"
-      fill="transparent"
-    ></circle>
+    >
+      <circle
+        style={{
+          position: "relative",
+          transition: transitionString,
+        }}
+        r={r}
+        cx={100}
+        cy={100}
+        stroke={color}
+        strokeDasharray={circ}
+        strokeWidth={strokeWidth}
+        strokeDashoffset={strokePct}
+        strokeLinecap="butt"
+        fill={fill ?? "transparent"}
+      />
+    </svg>
   );
 };

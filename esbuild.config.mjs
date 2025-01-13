@@ -63,7 +63,7 @@ const context = await esbuild.context({
   },
   format: "cjs",  // CommonJS 포맷
   target: "es2018",
-  logLevel: "info",
+  logLevel: "warning",
   sourcemap: prod ? false : "inline",
   treeShaking: true,
   outfile: "main.js",  // JavaScript 번들 파일

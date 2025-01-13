@@ -17,6 +17,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-warning-comments": ["warn", { "terms": ["TODO", "FIXME"], "location": "start" }],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["off", {}],
     "@typescript-eslint/ban-ts-comment": "off",

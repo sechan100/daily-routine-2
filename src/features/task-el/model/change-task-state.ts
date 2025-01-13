@@ -7,5 +7,5 @@ export const changeTaskState = async (note: RoutineNote, taskName: string, state
   
   task.state = state;
   await noteRepository.saveOnUserConfirm(note);
-  return { ...note };
+  return NoteEntity.replaceTask(note, taskName, task);
 }

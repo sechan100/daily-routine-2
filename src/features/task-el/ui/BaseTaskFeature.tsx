@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTaskDnd } from '../dnd/use-task-dnd';
 import { changeTaskState } from '../model/change-task-state';
 import { CancelLineName } from './CancelLineName';
-import { Checkbox } from './Checkbox';
+import { TaskCheckbox } from './TaskCheckbox';
 import { OptionIcon } from './OptionIcon';
 import { baseHeaderStyle, dragReadyStyle, draggingStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from '../dnd/dnd-context';
@@ -148,8 +148,14 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
           lineHeight: 1
         }}
       >
-        <Checkbox state={task.state} />
-        <CancelLineName name={task.name} cancel={task.state !== "un-checked"} transparentLine={task.state === "failed"} />
+        <TaskCheckbox 
+          state={task.state}
+          size={13}
+          css={{
+            marginRight: "0.5em",
+          }}
+        />
+        <CancelLineName name={task.name} cancel={task.state !== "un-checked"} />
       </Touchable>
       <OptionIcon onOptionMenu={(m) => onOptionMenu(m, task)} />
       {indicator}

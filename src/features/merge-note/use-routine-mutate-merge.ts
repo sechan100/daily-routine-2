@@ -35,7 +35,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
       setNote(manuallyMutatedNote);
       await noteRepository.updateIfExist(manuallyMutatedNote);
       // merge
-      let notes = await noteRepository.loadBetween(Day.now(), Day.max());
+      let notes = await noteRepository.loadBetween(Day.today(), Day.max());
       notes = notes.filter(n => !n.day.isSameDay(currentNote.day));
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for(const note of notes){
@@ -44,7 +44,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
         await noteRepository.persist(merged);
       }
     } else {
-      const notes = await noteRepository.loadBetween(Day.now(), Day.max());
+      const notes = await noteRepository.loadBetween(Day.today(), Day.max());
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for(const note of notes){
         const merged = mergeNote(note, noteCreator);

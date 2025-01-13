@@ -21,7 +21,7 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
   const { note, setNote } = useRoutineNote();
   const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => new Week(activeDay), [activeDay]);
-  const currentDayPercentage = useMemo(() => NoteEntity.getPerformance(note), [note]);
+  const currentNotePerformance = useMemo(() => NoteEntity.getPerformance(note), [note]);
   const [ weeks, setWeeks ] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
 
@@ -57,7 +57,7 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
 
   return (
     <WeeksActiveDayContextProvider 
-      data={{ day: activeDay, performance: currentDayPercentage }}
+      data={{ day: activeDay, performance: currentNotePerformance }}
       onDataChange={(store, data) => store.setState(data)}
     >
       <VirtualSwiper

@@ -12,7 +12,7 @@ export const createNewRoutine = (): Routine => {
       showOnCalendar: false,
       activeCriteria: "week",
       daysOfWeek: Day.getDaysOfWeek(),
-      daysOfMonth: [Day.now().date],
+      daysOfMonth: [Day.today().date],
       enabled: true
     }
   }

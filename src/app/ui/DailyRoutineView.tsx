@@ -23,12 +23,12 @@ const tabCss = css({
   boxShadow: "none !important",
   backgroundColor: "transparent !important",
   minHeight: "0 !important",
+  height: tabsHeight,
   fontSize: "0.7em",
 })
 
 export const DailyRoutineView = () => {
   const { tab, route } = useTabRoute();
-
   const { view, leafBgColor } = useLeaf();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const DailyRoutineView = () => {
   const onTabChange = useCallback((e: React.SyntheticEvent, tab: DrTabType) => {
     switch(tab){
       case "note": 
-        route(tab, { day: Day.now() });
+        route(tab, { day: Day.today() });
         break;
       case "achivement":
         route(tab, { month: Month.now() });
@@ -74,7 +74,7 @@ export const DailyRoutineView = () => {
           zIndex: 1000,
           backgroundColor: leafBgColor,
           position: "fixed",
-          height: tabsHeight,
+          minHeight: 0,
           width: "100%",
           left: "0",
           bottom: tabsBottomGap,

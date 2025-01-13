@@ -40,7 +40,7 @@ export default class DailyRoutinePlugin extends Plugin {
     });
     
     devRunner();
-    activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
+    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
   }
   
   onunload() {

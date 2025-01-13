@@ -16,7 +16,7 @@ export class Month {
   }
 
   static now() {
-    return new Month(Day.now());
+    return new Month(Day.today());
   }
 
   get startDay() {
@@ -29,6 +29,10 @@ export class Month {
 
   get monthNum(){
     return this.#startDay.month;
+  }
+
+  isSameMonth(other: Month){
+    return this.#startDay.isSameMonth(other.startDay);
   }
 
   add_cpy(amount: number) {

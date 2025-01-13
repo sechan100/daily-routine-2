@@ -20,7 +20,7 @@ export const RouitneNoteTab = () => {
       }
       return params;
     } else {
-      return { day: Day.now() };
+      return { day: Day.today() };
     }
   }, [routeParams, tab]);
   

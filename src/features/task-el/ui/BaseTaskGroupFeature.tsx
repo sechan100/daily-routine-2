@@ -5,7 +5,7 @@ import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/utils/daily-routine-bem';
 import { useLeaf } from '@shared/view/use-leaf';
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGroupDnd } from '../dnd/use-group-dnd';
 import { baseHeaderStyle, draggingStyle, dragReadyStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from '../dnd/dnd-context';
@@ -38,7 +38,14 @@ export const BaseTaskGroupFeature = React.memo(({
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
   const bgColor = useLeaf(s=>s.leafBgColor);
-  const [open, setOpen] = useState(true);
+  const isAllSubTasksChecked = group.children.every(t => t.state !== "un-checked")
+  const [open, setOpen] = useState(isAllSubTasksChecked ? false : true);
+  
+  useEffect(() => {
+    if(isAllSubTasksChecked){
+      setOpen(false);
+    }
+  }, [isAllSubTasksChecked])
 
   const onElDrop = useCallback((newNote: RoutineNote, dropped: TaskGroup) => {
     onGroupReorder?.(newNote, dropped);
@@ -158,8 +165,7 @@ export const BaseTaskGroupFeature = React.memo(({
             >
               <CancelLineName
                 name={group.name}
-                cancel={group.children.every(t => t.state !== "un-checked")}
-                transparentLine={group.children.length === 0}
+                cancel={isAllSubTasksChecked}
               />
             </AccordionSummary>
           </Touchable>

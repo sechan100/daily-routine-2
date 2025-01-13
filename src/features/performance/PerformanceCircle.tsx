@@ -1,6 +1,6 @@
 import { NotePerformance } from "@entities/note";
 import { Circle } from "@shared/components/Circle";
-import clsx from "clsx";
+import { getCustomAccentHSL } from "@shared/components/obsidian-accent-color";
 import React from "react";
 
 const cleanPercentage = (percentage: number) => {
@@ -10,8 +10,13 @@ const cleanPercentage = (percentage: number) => {
 };
 
 
-const completionCircleColor = "hsla(var(--color-accent-2-hsl), 1)";
-const accomplishmentCircleColor = "hsla(var(--color-accent-hsl), 1)";
+const completionCircleColor = getCustomAccentHSL({
+  h: 1,
+  s: 1,
+  l: 1.2,
+  a: 1,
+})
+const accomplishmentCircleColor = "hsl(var(--color-accent-hsl))";
 
 
 interface PercentageCircleProps {
@@ -31,11 +36,11 @@ export const PerformanceCircle = React.memo(({
   const accomplishment = cleanPercentage(performance.accomplishment);
   const completion = cleanPercentage(performance.completion);
   return (
-    <svg width={width??"100%"} data-percentage={completion} viewBox="0 0 200 200" className={className}>
+    <svg width={width??"100%"} viewBox="0 0 200 200" className={className}>
       <g transform="rotate(-90 100 100)" >
         <Circle transition={false} color="#ececec" percentage={100} />
-        <Circle transition={transition} color={completionCircleColor} percentage={completion} />
-        <Circle transition={transition} color={accomplishmentCircleColor} percentage={accomplishment} />
+        <Circle transition={transition} color={completion ? completionCircleColor : "transparent"} percentage={completion} />
+        <Circle transition={transition} color={completion ? accomplishmentCircleColor : "transparent"} percentage={accomplishment} />
       </g>
       <text
         x="50%"

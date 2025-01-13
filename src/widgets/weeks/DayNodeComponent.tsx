@@ -34,7 +34,7 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
   }, [isActiveDay, activeNode.performance]);
 
   const afterStyle = useMemo(() => {
-    if(!day.isAfter(Day.now())) return css({});
+    if(!day.isAfter(Day.today())) return css({});
     return css({
       content: "''",
       position: "absolute",

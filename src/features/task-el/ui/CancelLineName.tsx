@@ -36,17 +36,15 @@ const cancelLineStyle = css({
 interface Props {
   name: string;
   cancel: boolean;
-  transparentLine?: boolean;
 }
 export const CancelLineName = ({
   name,
   cancel,
-  transparentLine
 }: Props) => {
   return (
     <span 
       className={bem("name")}
-      css={[baseStyle, cancel && cancelTextStyle, cancel && !transparentLine && cancelLineStyle]}
+      css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}
     >
       {name}
     </span>

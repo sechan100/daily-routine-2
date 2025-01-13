@@ -32,7 +32,7 @@ export class Day {
     }
   }
 
-  static now(): Day{
+  static today(): Day{
     return new Day(moment());
   }
 
@@ -159,6 +159,7 @@ export class Day {
     }
   }
 
+  // FIXME: 이건 Month에 있어야 맞지않냐
   daysInMonth(){
     return this.#moment.daysInMonth();
   }

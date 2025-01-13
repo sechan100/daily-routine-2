@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { Day } from "@shared/period/day";
-import { Tile } from "../model/load-tile-map";
+import { Day, DayOfWeek } from "@shared/period/day";
+import { Tile } from "../model/types";
 import { TEXT_CSS } from "@shared/components/text-style";
 import { Task } from "@entities/note";
 import { css } from "@emotion/react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useTileHeightInfo } from "./tile-height-info-context";
 
 
@@ -15,6 +15,8 @@ const defaultTextStyle = css({
 
 
 const DateBadge = ({ day }: { day: Day }) => {
+  const isWeekend = day.isSameDow(DayOfWeek.SAT) || day.isSameDow(DayOfWeek.SUN);
+
   return (
     <div css={[{
       position: 'relative',
@@ -30,8 +32,7 @@ const DateBadge = ({ day }: { day: Day }) => {
         borderRadius: '50%',
         textAlign: 'start',
         backgroundColor: 'transparent',
-        // textAlign: day.isToday() ? 'center' : 'start',
-        // backgroundColor: day.isToday() ? 'var(--color-accent)' : 'transparent',
+        color: isWeekend ? 'var(--color-accent-1)' : "var(--text-color)",
       }}>
         {day.date}
       </span>
@@ -47,7 +48,9 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   const { limitedTaskPer } = useTileHeightInfo();
   if(tasks.length <= limitedTaskPer){
     return (
-      <div>
+      <div className="dr-calendar-tasks" css={{
+        width: '100%',
+      }}>
         {tasks.map(task => (
           <TaskLine 
             key={task.name}
@@ -59,9 +62,11 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   }
 
   return (
-    <div className="dr-calendar-tasks">
+    <div className="dr-calendar-tasks" css={{
+      width: '100%',
+    }}>
       {tasks.slice(0, limitedTaskPer - 1).map(task => (
-        <TaskLine 
+        <TaskLine
           key={task.name}
           task={task}
         />
@@ -88,7 +93,6 @@ const TaskLine = ({ task }: { task: Task }) => {
       borderRadius: '2px',
       textAlign: 'start',
       textOverflow: 'ellipsis',
-      overflow: "hidden",
       whiteSpace: "nowrap",
     }]}>
       {task.name}

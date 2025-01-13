@@ -130,8 +130,8 @@ export const useGroupDnd = ({
       const div = document.createElement("div");
       div.setCssStyles({
         backgroundColor: "red",
-        width: "0.01px",
-        height: "0.01px",
+        width: "0.1px",
+        height: "0.1px",
       })
       div.id = "dr-pseudo-preview";
       view.containerEl.appendChild(div);
