@@ -3,6 +3,7 @@ import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
 import { useCallback, useEffect, useState } from "react";
 import { CalendarNavigation } from "./Nav";
+import { useLeaf } from "@shared/view/use-leaf";
 
 
 
@@ -41,26 +42,24 @@ export const SwipeableCalendar = ({
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
 
   const resetMonths = useCallback((month: Month) => {
-    console.log("resetMonths");
     setActiveMonth(month);
     setMonths(loadMonths(month));
   }, []);
-
-  useEffect(() => {
-    console.log(activeMonth.monthNum);
-    console.log(months.map(m => m.monthNum));
-  }, [activeMonth, months]);
   
   const onSlideChange = useCallback((month: Month) => {
     setActiveMonth(month);
   }, []);
 
   return (
-    <div css={{
-      position: 'relative',
-      height: '100%',
-      maxWidth,
-    }}>
+    <div 
+      className="dr-swipeable-calendar"
+      css={{
+        position: 'relative',
+        height: `calc(var(--input-height) + ${verticalHeight}px)`,
+        overflow: 'hidden',
+        maxWidth,
+      }}
+    >
       <CalendarNavigation
         month={activeMonth}
         setMonth={resetMonths}

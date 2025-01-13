@@ -47,7 +47,7 @@ export const CalendarNavigation = ({
     // 캘린더 + 월, 년 선택 컨테이너
     ".react-calendar__viewContainer": {
       position: "relative",
-      zIndex: 10000,
+      zIndex: 10,
       
       "div": {
         position: "absolute",
@@ -71,7 +71,7 @@ export const CalendarNavigation = ({
         "div": {
           display: "flex",
           alignItems: "center",
-          flexFlow: "column !important",
+          flexFlow: "wrap !important",
 
           // flex item
           "button": {

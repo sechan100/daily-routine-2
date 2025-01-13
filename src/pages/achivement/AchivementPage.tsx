@@ -66,19 +66,10 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
       }}>
         <div>
         {type === "note" ?
-          <NoteAchivementWidget month={month} height={390} maxWidth={420} />
+          <NoteAchivementWidget month={month} height={360} maxWidth={420} />
           :
-          <RoutineAchivementWidget month={month} height={390} maxWidth={420} routineName={"🛏️ 이부자리 정리하기"} />
+          <RoutineAchivementWidget month={month} height={360} maxWidth={420} routineName={"🛏️ 이부자리 정리하기"} />
         }
-        <div css={{
-          position: "fixed",
-          top: "470px",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: leafBgColor,
-          zIndex: 50,
-        }} />
         </div>
       </div>
     </>
