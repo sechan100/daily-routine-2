@@ -27,7 +27,7 @@ export const CalendarTile = ({
     <div css={{
       position: "relative",
     }}>
-      <Badge badgeContent="Tdy" color="primary" overlap="circular" invisible={!tile.day.isToday()} css={{
+      <Badge badgeContent="T" color="primary" overlap="circular" invisible={!tile.day.isToday()} css={{
         "& > .MuiBadge-badge": {
           padding: "2px 5px",
           height: "fit-content",

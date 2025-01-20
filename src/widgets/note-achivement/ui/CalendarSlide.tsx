@@ -31,7 +31,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
         width: "100%",
         height: "100%",
       }}>
-        <Badge badgeContent="Tdy" color="primary" overlap="circular" invisible={!day.isToday()} css={{
+        <Badge badgeContent="T" color="primary" overlap="circular" invisible={!day.isToday()} css={{
           "& > .MuiBadge-badge": {
             padding: "2px 5px",
             height: "fit-content",
