@@ -6,6 +6,7 @@ import { Task } from "@entities/note";
 import { css } from "@emotion/react";
 import { useContext, useEffect } from "react";
 import { useTileHeightInfo } from "./tile-height-info-context";
+import { last } from "lodash";
 
 
 const defaultTextStyle = css({
@@ -16,23 +17,39 @@ const defaultTextStyle = css({
 
 const DateBadge = ({ day }: { day: Day }) => {
   const isWeekend = day.isSameDow(DayOfWeek.SAT) || day.isSameDow(DayOfWeek.SUN);
+  const isToday = day.isToday();
 
   return (
     <div css={[{
       position: 'relative',
-      textAlign: 'start',
-      padding: '0 0 0 3px',
-      // padding: day.isToday() ? '1px 0 0 1px ' : '0 0 0 3px',
+      width: "100%",
+      margin: '2px 0 0 0',
     }, TEXT_CSS.description]}>
       <span css={{
         display: 'inline-block',
+        position: 'relative',
         width: '15px',
         height: '15px',
         lineHeight: '15px',
         borderRadius: '50%',
-        textAlign: 'start',
+        textAlign: 'center',
         backgroundColor: 'transparent',
-        color: isWeekend ? 'var(--color-accent-1)' : "var(--text-color)",
+        color: isToday ? "var(--text-on-accent)" : isWeekend ? 'var(--color-accent-1)' : "var(--text-color)",
+        zIndex: 2,
+
+        "&::after": isToday && {
+          content: '""',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'block',
+          width: '130%',
+          height: '130%',
+          borderRadius: '50%',
+          backgroundColor: 'var(--color-accent-1)',
+          zIndex: -10,
+        },
       }}>
         {day.date}
       </span>
@@ -41,16 +58,19 @@ const DateBadge = ({ day }: { day: Day }) => {
 }
 
 
-
-
-
 const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   const { limitedTaskPer } = useTileHeightInfo();
+
+
+  const taskListStyle = css({
+    width: '100%',
+    "li:nth-child(1)": firstTaskLineStyle,
+    "li:last-child": lastTaskLineStyle,
+  });
+
   if(tasks.length <= limitedTaskPer){
     return (
-      <div className="dr-calendar-tasks" css={{
-        width: '100%',
-      }}>
+      <div className="dr-calendar-tasks" css={taskListStyle}>
         {tasks.map(task => (
           <TaskLine 
             key={task.name}
@@ -62,17 +82,16 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   }
 
   return (
-    <div className="dr-calendar-tasks" css={{
-      width: '100%',
-    }}>
-      {tasks.slice(0, limitedTaskPer - 1).map(task => (
-        <TaskLine
-          key={task.name}
-          task={task}
-        />
-      ))}
+    <>
+      <div className="dr-calendar-tasks" css={taskListStyle}>
+        {tasks.slice(0, limitedTaskPer - 1).map(task => (
+          <TaskLine
+            key={task.name}
+            task={task}
+          />
+        ))}
+      </div>
       <div css={[defaultTextStyle, {
-        margin: '1px 1px',
         padding: '2px 0 2px 2px',
         textAlign: 'center',
       }]}>
@@ -80,23 +99,33 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
           + {tasks.length - (limitedTaskPer - 1)}
         </span>
       </div>
-    </div>
+    </>
   )
 }
 
+
+const taskLineBorderStyle = "1px solid var(--color-base-60)";
+
+const firstTaskLineStyle = css({
+});
+
+const lastTaskLineStyle = css({
+  borderBottom: taskLineBorderStyle
+});
+
 const TaskLine = ({ task }: { task: Task }) => {
   return (
-    <div css={[TEXT_CSS.onAccent, defaultTextStyle, {
-      margin: '1px 1px',
+    <li css={[defaultTextStyle, {
+      margin: '0px',
       padding: '2px 0 2px 2px',
-      backgroundColor: 'var(--color-accent-1)',
-      borderRadius: '2px',
+      // backgroundColor: 'var(--color-accent-1)',
       textAlign: 'start',
       textOverflow: 'ellipsis',
       whiteSpace: "nowrap",
+      borderTop: taskLineBorderStyle,
     }]}>
       {task.name}
-    </div>
+    </li>
   )
 }
 
@@ -111,9 +140,6 @@ export const CalendarTile = ({ tile }: Props) => {
     <div css={{
       height: tileHeight,
       width: '100%',
-      ...(tile.day.isToday() && {
-        background: "hsla(var(--color-accent-2-hsl), 0.5)",
-      }),
     }}>
       <DateBadge day={tile.day} />
       <TaskLineContainer tasks={tile.tasks} />
