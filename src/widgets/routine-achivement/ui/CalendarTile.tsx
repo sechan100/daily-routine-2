@@ -2,13 +2,8 @@
 import { TaskCheckbox } from "@features/task-el";
 import { Tile } from "../model/types"
 import { Circle } from "@shared/components/Circle";
-import { getCustomAccentHSL } from "@shared/components/obsidian-accent-color";
 import { Day } from "@shared/period/day";
 import { Badge } from "@mui/material";
-
-
-
-
 
 
 

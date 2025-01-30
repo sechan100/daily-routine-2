@@ -26,7 +26,7 @@ export interface AchivementPageProps {
 }
 export const AchivementPage = ({ month }: AchivementPageProps) => {
   // FIXME: routine -> note로
-  const [type, setType] = useState<AchivementType>("routine");
+  const [type, setType] = useState<AchivementType>("note");
   const { view, leafBgColor } = useLeaf();
 
   return (
@@ -66,9 +66,9 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
       }}>
         <div>
         {type === "note" ?
-          <NoteAchivementWidget month={month} height={360} maxWidth={420} />
+          <NoteAchivementWidget month={month} height={400} maxWidth={420} />
           :
-          <RoutineAchivementWidget month={month} height={360} maxWidth={420} routineName={"🛏️ 이부자리 정리하기"} />
+          <RoutineAchivementWidget month={month} height={400} maxWidth={420} />
         }
         </div>
       </div>

@@ -31,25 +31,31 @@ interface Props {
   children: (month: Month, index?: number) => React.ReactNode;
   verticalHeight?: number;
   maxWidth?: number
+  onMonthChange?: (month: Month) => void;
 }
 export const SwipeableCalendar = ({
   month: propsMonth,
   children,
   verticalHeight,
   maxWidth,
+  onMonthChange
 }: Props) => {
   const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
 
-  const resetMonths = useCallback((month: Month) => {
-    setActiveMonth(month);
-    setMonths(loadMonths(month));
-  }, []);
-  
+
   const onSlideChange = useCallback((month: Month) => {
     setActiveMonth(month);
-  }, []);
+    onMonthChange?.(month);
+  }, [onMonthChange]);
 
+
+  const resetMonths = useCallback((month: Month) => {
+    setMonths(loadMonths(month));
+    onSlideChange(month);
+  }, [onSlideChange]);
+  
+  
   return (
     <div 
       className="dr-swipeable-calendar"

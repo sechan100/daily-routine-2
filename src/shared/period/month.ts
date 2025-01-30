@@ -2,6 +2,8 @@ import { Day } from "./day";
 
 
 
+export type MonthFormat = string;
+
 export class Month {
   readonly #startDay: Day;
   readonly #endDay: Day;
@@ -45,6 +47,10 @@ export class Month {
     return new Month(
       this.#startDay.clone(m => m.subtract(amount, "month"))
     );
+  } 
+
+  format(): MonthFormat {
+    return this.#startDay.format("YYYY-MM");
   }
 
 }

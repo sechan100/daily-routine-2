@@ -1,43 +1,35 @@
 /** @jsxImportSource @emotion/react */
-import { Month } from '@shared/period/month';
 import { SwipeableCalendar } from '@shared/components/swipeable-calender/SwipeableCalendar';
+import { Month } from '@shared/period/month';
+import { useState } from 'react';
 import { CalendarSlide } from './CalendarSlide';
-import { TEXT_CSS } from '@shared/components/text-style';
-import { useLeaf } from '@shared/view/use-leaf';
+import { RoutineSelector } from './RoutineSelector';
 
 
 
 export interface Props {
   month: Month;
-  routineName: string;
   height: number;
   maxWidth: number;
 }
 export const RoutineAchivementWidget = ({ 
-  month,
+  month: propsMonth,
   height,
-  routineName,
   maxWidth
 }: Props) => {
-    const { view, leafBgColor } = useLeaf();
+  const [month, setMonth] = useState<Month>(propsMonth);
   
   return (
-    <div>
-      <div css={[TEXT_CSS.medium, {
-        padding: "1em 1em",
-      }]}>
-        {routineName}
-      </div>
+    <>
+      <RoutineSelector month={month} maxWidth={maxWidth} />
       <SwipeableCalendar
         month={month}
         verticalHeight={height}
         maxWidth={maxWidth}
+        onMonthChange={setMonth}
       >
-        {month => <CalendarSlide month={month} routineName={routineName} />}
+        {month => <CalendarSlide month={month} />}
       </SwipeableCalendar>
-      <div>
-        세차니
-      </div>
-    </div>
+    </>
   )
 }

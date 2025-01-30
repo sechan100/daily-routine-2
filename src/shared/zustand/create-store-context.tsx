@@ -30,7 +30,7 @@ type ExtractState<S> = S extends {
   getState: () => infer T;
 } ? T : never;
 type ReadonlyStoreApi<T> = Pick<StoreApi<T>, 'getState' | 'getInitialState' | 'subscribe'>;
-export type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
+type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
   (): ExtractState<S>;
   <U>(selector: (state: ExtractState<S>) => U): U;
 } & S;
