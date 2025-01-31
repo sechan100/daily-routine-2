@@ -40,7 +40,7 @@ export const BaseTaskGroupFeature = React.memo(({
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
   const bgColor = useLeaf(s=>s.leafBgColor);
   const { note } = useRoutineNote();
-  const isAllSubTasksChecked = group.children.every(t => t.state !== "un-checked")
+  const isAllSubTasksChecked = group.children.length !== 0 && group.children.every(t => t.state !== "un-checked")
 
   const [open, _setOpen] = useState(group.isOpen);
 

@@ -1,7 +1,7 @@
 import { ensureArchive } from "@entities/archives";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { Day } from "@shared/period/day";
-import { TAbstractFile, TFile } from "obsidian";
+import { Notice, TAbstractFile, TFile } from "obsidian";
 import { DR_SETTING } from "@app/settings/setting-provider";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { RoutineNote } from "../domain/note.type";
@@ -16,7 +16,12 @@ const parseNote = async (day: Day, file: TFile): Promise<RoutineNote> => {
 
 export const ROUTINE_NOTE_FILE = (day: Day): TFile | null => {
   const path = ROUTINE_ARCHIVE_PATH(day);
-  return fileAccessor.loadFile(path);
+  try {
+    return fileAccessor.loadFile(path);
+  } catch (e) {
+    new Notice(`Error while loading note file. Please check the path: ${path}`);
+    return null;
+  }
 };
 
 export const ROUTINE_ARCHIVE_PATH = (day: Day) => {
@@ -86,7 +91,12 @@ export const noteRepository: NoteRepository = {
     const file = ROUTINE_NOTE_FILE(day);
     if(!file){
       const path = ROUTINE_ARCHIVE_PATH(day);
-      await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
+      try {
+        await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
+      } catch (e) {
+        await fileAccessor.createFolder(DR_SETTING.noteFolderPath());
+        await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
+      }
       return true;
     } else {
       return false;

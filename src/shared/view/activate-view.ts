@@ -21,8 +21,7 @@ export const activateView = async (viewTypeName: string, pos = 0) => {
 
   if(!leaf) {
     leaf = getLeaf() as WorkspaceLeaf;
-    await leaf.setViewState({ type: viewTypeName });
+    await leaf.setViewState({ type: viewTypeName, active: false });
   }
 
-  app.workspace.revealLeaf(leaf);
 }

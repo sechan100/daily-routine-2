@@ -115,19 +115,38 @@ export const RoutineNoteContent = () => {
           overflowY: "auto",
         }}
       >
-        <TaskDndContext> {note.children.map(el => {
-          if(isTaskGroup(el)) {
+        <TaskDndContext>
+        {(() => {
+          if(note.children.length === 0) {
             return (
-              <TaskGroupWidget
-                key={`${el.elementType}-${el.name}`}
-                group={el} 
-              />)
-          } else if(isTask(el)) {
-            return renderTask(el, null);
-          } else {
-            return null;
+              <div css={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                color: "var(--text-muted)",
+                fontSize: "1.2em",
+              }}>
+                No Tasks.. Add some todos or routines 🤗
+              </div>
+            )
           }
-        })}</TaskDndContext>
+
+          return note.children.map(el => {
+            if(isTaskGroup(el)) {
+              return (
+                <TaskGroupWidget
+                  key={`${el.elementType}-${el.name}`}
+                  group={el} 
+                />)
+            } else if(isTask(el)) {
+              return renderTask(el, null);
+            } else {
+              return null;
+            }
+          })
+        })()}
+        </TaskDndContext>
       </div>
       <AddTodoModal />
       <StartRoutineModal />

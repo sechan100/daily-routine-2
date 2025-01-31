@@ -76,9 +76,15 @@ const parseTask = (line: string): Task => {
 }
 
 export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
+  const formatCheckRegex = /# Tasks\s*.*/;
+  if(!formatCheckRegex.test(content)) throw new Error('invalid-note-format');
+
   const regex = /##\s+.*(?:\n(?!##|$).*)*/g;
   const blocks = content.match(regex);
-  if(!blocks) throw new Error('no task blocks found');
+  if(!blocks) return {
+    day,
+    children: [] 
+  };
 
   const root: NoteElement[] = blocks.flatMap(b => {
     if(b.startsWith("## UNGROUPED")){

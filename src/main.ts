@@ -5,7 +5,7 @@ import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } 
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from '@shared/view/activate-view';
 import { updateMomentConfig } from '@app/settings/moment-config';
-import { devRunner } from './dev-runner';
+import { DAILY_ROUTINE_ICON_NAME } from '@app/ui/daily-routine-icon';
 
 
 export default class DailyRoutinePlugin extends Plugin {
@@ -31,16 +31,16 @@ export default class DailyRoutinePlugin extends Plugin {
     );
     
     this.addCommand({
-      id: "daily-routine-dev-only-mobile-view-toggle",
-      name: "Toggle Mobile View",
+      id: "daily-routine-open-routine-view",
+      icon: DAILY_ROUTINE_ICON_NAME,
+      name: "Open Routine View",
       callback: () => {
-        // @ts-ignore
-        this.app.emulateMobile(!this.app.isMobile);
+        activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
       }
     });
+    // this.app.emulateMobile(!this.app.isMobile);
     
-    devRunner();
-    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
+    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 0);
   }
   
   onunload() {

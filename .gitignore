@@ -5,6 +5,9 @@
 *.iml
 .idea
 
+# env
+.env
+
 # npm
 node_modules
 

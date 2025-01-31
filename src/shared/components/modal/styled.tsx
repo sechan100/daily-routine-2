@@ -4,7 +4,7 @@
 /** @jsxImportSource @emotion/react */
 import { ToggleComponent } from "@shared/components/ToggleComponent";
 import { TEXT_CSS } from '../text-style';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 import { TextEditComponent } from "@shared/components/TextEditComponent"
 import { Button } from "@shared/components/Button"
@@ -172,6 +172,15 @@ export const SaveBtn = ({
   onSaveBtnClick,
   name,
 }: SaveBtnProps) => {
+
+  const handleEnterKeyDown = useCallback((e: KeyboardEvent) => {
+    if(e.key === "Enter" && !disabled) onSaveBtnClick?.();
+  }, [disabled, onSaveBtnClick]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleEnterKeyDown, true);
+    return () => document.removeEventListener('keydown', handleEnterKeyDown);
+  }, [handleEnterKeyDown]);
   
   return (
     <div css={{
