@@ -22,6 +22,5 @@ export const deleteGroup = async (note: RoutineNote, groupName: string, deleteSu
   }
   // note에서 그룹 삭제
   const newNote = TaskGroupEntity.deleteTaskGroup(note, groupName, deleteSubTasks);
-  await noteRepository.update(newNote);
   return newNote;
 }

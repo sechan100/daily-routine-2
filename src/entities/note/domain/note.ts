@@ -1,6 +1,4 @@
 import { isTask, isTaskGroup, NotePerformance, NoteElement, RoutineNote, Task, TaskGroup, TaskParent } from "./note.type";
-import { TaskEntity } from "./task";
-
 
 const getPerformance = (note: RoutineNote): NotePerformance => {
   const tasks = note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);

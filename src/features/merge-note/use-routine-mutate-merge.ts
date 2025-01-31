@@ -35,7 +35,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
    * 또한 수동으로 제공된 currentNote는 file로 실제 존재하지 않아도 괜찮다.
    * 
    */
-  const mergeMutationToNote = useCallback(async (manuallyMergedCurrentNote?: RoutineNote) => {
+  const mergeMutationToNotes = useCallback(async (manuallyMergedCurrentNote?: RoutineNote) => {
     if(manuallyMergedCurrentNote){
       if(!manuallyMergedCurrentNote.day.isSameDay(currentNote.day)) throw new Error("manuallyMergedCurrentNote must be same day with currentNote.");
       
@@ -67,7 +67,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
 
 
   return {
-    mergeNotes: mergeMutationToNote,
+    mergeNotes: mergeMutationToNotes,
   }
 
 

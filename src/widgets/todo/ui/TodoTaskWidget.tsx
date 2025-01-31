@@ -18,6 +18,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
   const { note, setNote } = useRoutineNote();
 
+
   const rescheduleTask = useCallback(async (destDay: Day) => {
     const rescheduleConfirm = await doConfirm({
       title: "Res schedule Todo",
@@ -32,6 +33,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
     new Notice(`Todo ${task.name} rescheduled to ${destDay.format()}.`);
   }, [note, setNote, task.name]);
   
+
   const deleteTask = useCallback(async () => {
     const deleteConfirm = await doConfirm({
       title: "Delete Todo",
@@ -46,13 +48,25 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
     await noteRepository.update(newNote);
     new Notice(`Todo ${task.name} deleted.`);
   }, [note, setNote, task.name])
+
   
   const onOptionMenu = useCallback((m: Menu) => {
+    /**
+     * TODO INFO
+     */
+    m.addItem(i => {
+      i.setTitle(`Todo: ${task.name}`);
+      i.setIcon("info");
+    })
+    m.addSeparator();
+
+
     m.addItem(i => {
       i.setTitle("Edit");
       i.setIcon("pencil");
       i.onClick(() => TodoOptionModal.open({ todo: task }))
     })
+
     m.addItem(i => {
       i.setTitle("Check task as failed");
       i.setIcon("cross");
@@ -61,11 +75,13 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
         setNote(newNote);
       });
     })
+
     m.addItem(i => {
       i.setTitle("Reschedule Todo To Tomorrow");
       i.setIcon("calendar");
       i.onClick(() => rescheduleTask(note.day.clone(m=>m.add(1, "day"))));
     })
+
     m.addItem(i => {
       i.setTitle("Delete");
       i.setIcon("trash");

@@ -1,14 +1,14 @@
-import { RoutineTask, TaskGroup } from "@entities/note";
+import { NoteEntity, noteRepository, RoutineTask, TaskEntity, TaskGroup, TaskGroupEntity } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useRoutineOptionModal } from "./routine-option";
-import { routineRepository } from "@entities/routine";
+import { isRoutine, routineRepository } from "@entities/routine";
 import { Menu, Notice } from "obsidian";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { changeTaskState } from "@features/task-el/model/change-task-state";
 import { useRoutineNote } from "@features/note";
-import { fileAccessor } from "@shared/file/file-accessor";
+import { ResultAsync, safeTry } from "neverthrow";
 
 interface RoutineTaskProps {
   task: RoutineTask;
@@ -19,21 +19,21 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
   const { mergeNotes } = useRoutineMutationMerge();
   const { note, setNote } = useRoutineNote();
 
-  const disableRoutine = useCallback(async () => {
-    const disableConfirm = await doConfirm({
-      title: "Disable Routine",
-      confirmText: "Disable",
-      description: `Are you sure you want to disable the routine ${task.name}?`,
-      confirmBtnVariant: "accent"
+
+  const removeRoutineFromNoteOnly = useCallback(async () => {
+    const removeConfirm = await doConfirm({
+      title: "Remove routine from this note",
+      confirmText: "Remove",
+      description: `Are you sure you want to remove '${task.name}'? This will only remove 'routine task' in this note not the 'routine' itself.`,
+      confirmBtnVariant: "destructive"
     })
-    if(!disableConfirm) return;
-    
-    const routine = await routineRepository.load(task.name);
-    routine.properties.enabled = false;
-    await routineRepository.update(routine);
-    mergeNotes();
-    new Notice(`Routine '${task.name}' disabled.`);
-  }, [mergeNotes, task.name])
+    if(!removeConfirm) return;
+
+    const newNote = TaskEntity.removeTask(note, task.name);
+    setNote(newNote);
+    await noteRepository.save(newNote);
+  }, [note, setNote, task.name])
+
 
   const deleteRoutine = useCallback(async () => {
     const deleteConfirm = await doConfirm({
@@ -49,15 +49,34 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
     new Notice(`Routine '${task.name}' deleted.`);
   }, [mergeNotes, task.name])
 
-  const onOptionMenu = useCallback((m: Menu) => {
+
+  const onOptionMenu = useCallback(async (m: Menu) => {
+    const routineResult = await (ResultAsync.fromThrowable(async () => await routineRepository.load(task.name)))();
+    const routine = routineResult.isOk() ? routineResult.value : null;
+    /**
+     * 과거에 수행했던 routine을 오늘날에 와서 삭제했을 때, 그 routine을 수행했던 과거노트에서 routine option을 열 수 있다.
+     * 이 경우 현재는 존재하지 않는 routine에 대한 option을 열게되므로, 전체 루틴에 영향을 미치는 옵션들은 보이면 안된다.
+     */
+    const isRoutineExist = routine !== null;
+
+    /**
+     * ROUTINE INFO
+     */
     m.addItem(i => {
+      i.setTitle(`${!isRoutineExist ? "(deleted) " : ""}Routine: ${task.name}`);
+      i.setIcon("info");
+      i.setDisabled(!isRoutineExist);
+    })
+    m.addSeparator();
+
+    isRoutineExist && m.addItem(i => {
       i.setTitle("Edit");
       i.setIcon("pencil");
       i.onClick(async () => {
-        const routine = await routineRepository.load(task.name);
         RoutineOptionModal.open({ routine });
       })
     })
+
     m.addItem(i => {
       i.setTitle("Check task as failed");
       i.setIcon("cross");
@@ -66,18 +85,21 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
         setNote(newNote);
       });
     })
+
     m.addItem(i => {
-      i.setTitle("Disable");
-      i.setIcon("alarm-clock-off");
-      i.onClick(disableRoutine);
+      i.setTitle("Remove from this note only");
+      i.setIcon("list-x");
+      i.onClick(removeRoutineFromNoteOnly);
     })
-    m.addItem(i => {
+
+    isRoutineExist && m.addItem(i => {
       i.setTitle("Delete");
       i.setIcon("trash");
       i.onClick(deleteRoutine);
     })
-  }, [RoutineOptionModal, deleteRoutine, disableRoutine, note, setNote, task.name])
+  }, [RoutineOptionModal, deleteRoutine, note, removeRoutineFromNoteOnly, setNote, task.name])
   
+
   return (
     <>
       <BaseTaskFeature

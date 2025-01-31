@@ -83,6 +83,15 @@ const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> =
  * 새로운 order로 routine, routine-group의 order를 업데이트한다.
  */
 const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
+  if(isTaskGroup(parent)){
+    /**
+     * 현재는 존재하지 않는 Group 안으로 task가 드롭된 경우, 존재하지 않는 group으로 task가 할당될 수 있다. 
+     * 이 경우는 updateRoutineAndRoutineGroups을 처리해선 안된다.
+     */
+    const isGroupExist = groupRepository.isExist(parent.name);
+    if(!isGroupExist) return;
+  }
+
   const list = await resolveChangeList(parent);
   for(const el of list){
     if(isRoutine(el)){
@@ -116,6 +125,9 @@ const addTask = ({
   }
 }
 
+/***************************************************
+ ******** task, group dnd에서 가능한 4가지 케이스 ********
+ ***************************************************/
 
 type TaskOnTask = {
   dropped: Task;

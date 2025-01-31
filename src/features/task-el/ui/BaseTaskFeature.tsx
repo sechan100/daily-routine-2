@@ -31,7 +31,7 @@ type TaskMode = "idle" | "pressed" | "drag-ready" | "dragging";
 interface TaskProps<T extends Task> {
   task: T;
   parent: TaskGroup | null;
-  onOptionMenu: (m: Menu, task: T) => void;
+  onOptionMenu: (m: Menu, task: T) => void | Promise<void>;
 
   className?: string;
   onTaskReorder?: (note: RoutineNote, task: T) => void;
@@ -49,6 +49,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
   const [taskMode, setTaskMode] = useState<TaskMode>("idle");
   const { setNote, note } = useRoutineNote();
 
+
   const onElDrop = useCallback((newNote: RoutineNote, dropped: T) => {
     onTaskReorder?.(newNote, dropped);
   }, [onTaskReorder])
@@ -56,6 +57,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
   const onElDragEnd = useCallback(() => {
     setTaskMode("idle");
   }, [])
+
 
   const { isDragging: _isDragging, indicator } = useTaskDnd({ 
     task,
@@ -66,6 +68,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
     onElDrop,
   });
 
+
   // isDragging sync
   useEffect(() => {
     if(_isDragging){
@@ -75,6 +78,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
     }
   }, [_isDragging])
 
+  
   const onPressChange = useCallback((isPressed: boolean) => {
     if(isPressed && taskMode !== "pressed"){
       setTaskMode("pressed");
@@ -118,6 +122,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
       disableTouch.current = false;
     }, 500);
   }, [note, onStateChange, setNote, task])
+
 
   return (
     <div

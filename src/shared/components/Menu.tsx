@@ -9,7 +9,7 @@ import { Icon } from "./Icon";
 
 
 interface MenuComponentProps {
-  onMenuShow: (menu: Menu) => void;
+  onMenuShow?: (menu: Menu) => void | Promise<void>;
   className?: string;
   icon?: string;
   size?: string;
@@ -23,9 +23,9 @@ export const MenuComponent = ({
   iconAccent = false,
 }: MenuComponentProps) => {
 
-  const openMenu = useCallback((e: React.MouseEvent) => {
+  const openMenu = useCallback(async (e: React.MouseEvent) => {
     const m = new Menu();
-    onMenuShow(m);
+    onMenuShow && await onMenuShow(m);
     m.showAtMouseEvent(e.nativeEvent);
   }, [onMenuShow]);
 
