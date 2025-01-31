@@ -28,32 +28,39 @@ type UseRoutineMutationMerge = () => {
 export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
   const { note: currentNote, setNote } = useRoutineNote();
 
-  const mergeMutationToNote = useCallback(async (manuallyMutatedNote?: RoutineNote) => {
-    if(manuallyMutatedNote){
-      if(!manuallyMutatedNote.day.isSameDay(currentNote.day)) throw new Error("note day is not same as current note day");
-      // note 저장
-      setNote(manuallyMutatedNote);
-      await noteRepository.updateIfExist(manuallyMutatedNote);
-      // merge
+
+  /**
+   * @param manuallyProviderTodayNote 현재 보고있는 노트에 대한 변경사항을 직접 제공한다. 
+   * 이 경우 currentNote는 merge되지 않고 제공된 데이터로 업데이트된다.
+   * 또한 수동으로 제공된 currentNote는 file로 실제 존재하지 않아도 괜찮다.
+   * 
+   */
+  const mergeMutationToNote = useCallback(async (manuallyMergedCurrentNote?: RoutineNote) => {
+    if(manuallyMergedCurrentNote){
+      if(!manuallyMergedCurrentNote.day.isSameDay(currentNote.day)) throw new Error("manuallyMergedCurrentNote must be same day with currentNote.");
+      
+      // currentNote 저장
+      setNote(manuallyMergedCurrentNote);
+      await noteRepository.updateIfExist(manuallyMergedCurrentNote);
+
+      // currentNote를 제외한 나머지 notes merge
       let notes = await noteRepository.loadBetween(Day.today(), Day.max());
       notes = notes.filter(n => !n.day.isSameDay(currentNote.day));
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for(const note of notes){
         const merged = mergeNote(note, noteCreator);
-        await noteRepository.delete(note.day);
-        await noteRepository.persist(merged);
+        await noteRepository.update(merged);
       }
-    } else {
+    } 
+    else {
       const notes = await noteRepository.loadBetween(Day.today(), Day.max());
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for(const note of notes){
         const merged = mergeNote(note, noteCreator);
         if(merged.day.isSameDay(currentNote.day)){
           setNote(merged);
-          await noteRepository.updateIfExist(merged);
         }
-        await noteRepository.delete(merged.day);
-        await noteRepository.persist(merged);
+        await noteRepository.update(merged);
       }
     }
   }, [currentNote.day, setNote]);

@@ -11,18 +11,19 @@ const ORDER_OFFSET = 1000;
 const loadRoutineElementRegistry = async () => {
   const routineMap = new Map<string, Routine>([...await routineRepository.loadAll()].map(r => [r.name, r]));
   const groupMap = new Map<string, RoutineElement>([...await groupRepository.loadAll()].map(g => [g.name, g]));
-  return (name: string, type: "routine" | "routine-group"): RoutineElement => {
+
+  return (name: string, type: "routine" | "routine-group"): RoutineElement | null => {
     if(type === "routine"){
       const r = routineMap.get(name);
-      if(!r) throw new Error("Routine not found");
-      return r;
+      return r??null;
     } else {
       const g = groupMap.get(name);
-      if(!g) throw new Error("Group not found");
-      return g;
+      return g??null;
     }
   }
 }
+
+
 /**
  * parent의 자식의 순서들을 반영하여 order, group등이 적절하게 변경된 Routine, RoutineGroup의 배열을 반환한다.
  * @param parent 
@@ -36,11 +37,20 @@ const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> =
   }
   return parent.children
   .filter(c => isTaskGroup(c) || isRoutineTask(c))
-  .map(c => {
+  .flatMap(c => {
     const routineElementType = isTaskGroup(c) ? "routine-group" : "routine";
     const rOrG = get(c.name, routineElementType);
-    if(!rOrG) throw new Error("Routine or Group not found");
-    return rOrG;
+
+    /**
+     * 과거의 노트를 편집할 때, 현재는 존재하지 않는 routine이나 group이 존재할 수 있다.
+     * 즉, registry에서 rOrG를 찾지 못할 수 있다.
+     */
+    if(rOrG){
+      return [rOrG];
+    } else {
+      console.info(`Routine, or RoutineGroup not exist currently. (name: '${c.name})'`);
+      return [];
+    }
   })
   .reduce((acc, el) => {
     // order
@@ -68,6 +78,7 @@ const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> =
   .changeList;
 }
 
+
 /**
  * 새로운 order로 routine, routine-group의 order를 업데이트한다.
  */
@@ -83,6 +94,7 @@ const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
     }
   }
 }
+
 
 type AddTaskArgs = {
   parent: TaskParent;
@@ -103,6 +115,7 @@ const addTask = ({
     parent.children.splice(idx + 1, 0, task);
   }
 }
+
 
 type TaskOnTask = {
   dropped: Task;
@@ -129,6 +142,7 @@ const taskDropOnTask = async (args: TaskOnTask) => {
   return note;
 }
 
+
 type GroupOnTask = {
   dropped: TaskGroup;
   on: Task;
@@ -151,6 +165,7 @@ const groupDropOnTask = async (args: GroupOnTask) => {
   await updateRoutineAndRoutineGroups(note);
   return note;
 }
+
 
 type TaskOnGroup = {
   dropped: Task;
@@ -181,6 +196,7 @@ const taskDropOnGroup = async (args: TaskOnGroup) => {
   return note;
 }
 
+
 type GroupOnGroup = {
   dropped: TaskGroup;
   on: TaskGroup;
@@ -203,7 +219,6 @@ const groupDropOnGroup = async (args: GroupOnGroup)=> {
   await updateRoutineAndRoutineGroups(note);
   return note;
 }
-
 
 
 export const DroppedElReplacer = {
