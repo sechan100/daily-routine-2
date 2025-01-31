@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, TaskEntity, TaskGroup } from '@entities/note';
+import { noteRepository, RoutineNote, TaskEntity, TaskGroup, TaskGroupEntity } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
@@ -14,6 +14,7 @@ import { CancelLineName } from './CancelLineName';
 import { renderTask } from './render-task-widget';
 import { Menu } from 'obsidian';
 import { isMobile } from '@shared/utils/plugin-service-locator';
+import { useRoutineNote } from '@features/note';
 
 
 
@@ -38,14 +39,22 @@ export const BaseTaskGroupFeature = React.memo(({
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
   const bgColor = useLeaf(s=>s.leafBgColor);
+  const { note } = useRoutineNote();
   const isAllSubTasksChecked = group.children.every(t => t.state !== "un-checked")
-  const [open, setOpen] = useState(isAllSubTasksChecked ? false : true);
+
+  const [open, _setOpen] = useState(group.isOpen);
+
+  const changeOpen = useCallback(async (isOpen: boolean) => {
+    _setOpen(isOpen);
+    const newNote = TaskGroupEntity.openGroup(note, group.name, isOpen);
+    await noteRepository.save(newNote);
+  }, [group.name, note])
   
   useEffect(() => {
     if(isAllSubTasksChecked){
-      setOpen(false);
+      changeOpen(false);
     }
-  }, [isAllSubTasksChecked])
+  }, [changeOpen, isAllSubTasksChecked])
 
   const onElDrop = useCallback((newNote: RoutineNote, dropped: TaskGroup) => {
     onGroupReorder?.(newNote, dropped);
@@ -81,8 +90,8 @@ export const BaseTaskGroupFeature = React.memo(({
       case "drag-ready": 
       case "dragging": {
         if(open){
-          setOpen(false);
-          dragEndCallbacksRef.current.push(() => setOpen(true));
+          _setOpen(false);
+          dragEndCallbacksRef.current.push(() => _setOpen(true));
         }
       }
     }
@@ -113,7 +122,7 @@ export const BaseTaskGroupFeature = React.memo(({
         disableGutters
         elevation={0}
         expanded={open}
-        onChange={() => setOpen(!open)}
+        onChange={() => changeOpen(!open)}
         css={{
           backgroundColor: bgColor,
           "&::before": {

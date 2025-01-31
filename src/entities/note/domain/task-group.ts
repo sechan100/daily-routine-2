@@ -35,9 +35,22 @@ const deleteTaskGroup = (note: RoutineNote, groupName: string, deleteOrphanTasks
 }
 
 
+const openGroup = (note: RoutineNote, groupName: string, open: boolean): RoutineNote => {
+  const newNote = {...note};
+  newNote.children = newNote.children.map(el => {
+    if(isTaskGroup(el) && el.name === groupName){
+      return {...el, isOpen: open};
+    } else {
+      return el;
+    }
+  });
+  return newNote;
+}
+
 
 export const TaskGroupEntity = {
   validateName,
+  openGroup,
   flatten,
   deleteTaskGroup
 }

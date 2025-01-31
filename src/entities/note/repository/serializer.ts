@@ -1,10 +1,13 @@
-import { switchTo } from "@shared/utils/switch-utils";
+import { switchTo } from "@shared/utils/switch-utils";
 import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TaskState, TodoTask } from "../domain/note.type";
 import { Day } from "@shared/period/day";
 import dedent from "dedent";
 import { checkboxChars } from "./serialize-constants";
 
 
+/*****************************************
+ *********** String -> Entity ************
+ *****************************************/
 
 /**
  * 
@@ -17,14 +20,19 @@ import { checkboxChars } from "./serialize-constants";
 const parseTaskGroup = (block: string): TaskGroup => {
   const regex = /##\s*(.+?)\s*(?:\n([\s\S]*?))?(?=\n##|$)/;
   const match = block.match(regex);
-  if(!match) throw new Error('invalid-task-group-format');
+  if (!match) throw new Error('invalid-task-group-format');
   const taskLines = match[2]?.trim().split("\n") ?? [];
+  
+  const rawName = match[1].trim();
+  const isOpen = !/^\(.*\)$/.test(rawName); // 괄호로 감싸져 있으면 false, 아니면 true
+  const name = rawName.replace(/^\((.*)\)$/, '$1').trim(); // 괄호 제거
   
   return {
     elementType: 'group',
-    name: match[1].trim(),
-    children: taskLines.map(l => parseTask(l))
-  }
+    name,
+    children: taskLines.map(l => parseTask(l)),
+    isOpen
+  };
 }
 
 const parseTask = (line: string): Task => {
@@ -87,7 +95,9 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
   }
 }
 
-/////////////////////////////////////////////////////////////////////
+/*****************************************
+ *********** Entity -> String ************
+ *****************************************/
 
 const switchStateToChar = (state: TaskState) => {
   return switchTo<TaskState, string>(state, {
@@ -125,10 +135,15 @@ const serializeTask = (task: Task) => {
   }
 }
 
-const serializeTaskGroup = (taskGroup: TaskGroup) => dedent`
-  ## ${taskGroup.name}
-  ${taskGroup.children.map(t => serializeTask(t)).join('\n')}
-`;
+const serializeTaskGroup = (taskGroup: TaskGroup) => {
+  const serializeNameWithIsOpen = (name: string, isOpen: boolean) => {
+    return isOpen ? name : `(${name})`;
+  }
+  return dedent`
+    ## ${serializeNameWithIsOpen(taskGroup.name, taskGroup.isOpen)}
+    ${taskGroup.children.map(t => serializeTask(t)).join('\n')}
+  `;
+}
 
 export const serializeRoutineNote = (note: RoutineNote) => {
   type ElBlock = {

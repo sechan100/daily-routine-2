@@ -25,6 +25,7 @@ export const isNoteElement = (noteElement: any): noteElement is NoteElement => {
 export type TaskGroup = NoteElement & {
   elementType: "group";
   children: Task[];
+  isOpen: boolean;
 }
 export const isTaskGroup = (taskGroup: any): taskGroup is TaskGroup => {
   const elementType = taskGroup.elementType === "group";
