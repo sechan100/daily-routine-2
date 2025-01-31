@@ -1,6 +1,7 @@
 import { ReactView } from "@shared/view/react-view";
-import { WorkspaceLeaf } from "obsidian";
+import { IconName, WorkspaceLeaf } from "obsidian";
 import { DailyRoutineView } from "./ui/DailyRoutineView";
+import { DAILY_ROUTINE_ICON_NAME } from "./ui/daily-routine-icon";
 
 
 
@@ -16,5 +17,9 @@ export class DailyRoutineObsidianView extends ReactView {
 
   render() {
     return <DailyRoutineView />
+  }
+
+  getIcon(): IconName {
+    return DAILY_ROUTINE_ICON_NAME;
   }
 }
