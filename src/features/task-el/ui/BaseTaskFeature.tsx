@@ -16,6 +16,8 @@ import { Menu } from 'obsidian';
 import { isMobile } from '@shared/utils/plugin-service-locator';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { DR_SETTING } from '@app/settings/setting-provider';
+import { ButtonBase, ToggleButton } from '@mui/material';
+import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 
 
 const indentStyle = css({
@@ -136,32 +138,44 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
         parent !== null && indentStyle
       ]}
     >
-      <Touchable
-        onClick={onClick}
-        longPressDelay={DELAY_TOUCH_START}
-        onPressChange={onPressChange}
-        onAfterLongPressDelay={onAfterLongPressDelay}
+      <ButtonBase
+        LinkComponent={"div"}
+        href='#'
+        color='primary'
         css={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "start",
+          ".MuiTouchRipple-child": {
+            backgroundColor: "var(--color-accent-1) !important",
+          },
           width: "100%",
-          height: elementHeight,
-          padding: "0 0 0 0.5em",
-          margin: "0 0",
-          cursor: "pointer",
-          lineHeight: 1
         }}
       >
-        <TaskCheckbox 
-          state={task.state}
-          size={13}
+        <Touchable
+          onClick={onClick}
+          longPressDelay={DELAY_TOUCH_START}
+          onPressChange={onPressChange}
+          onAfterLongPressDelay={onAfterLongPressDelay}
           css={{
-            marginRight: "0.5em",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+            width: "100%",
+            height: elementHeight,
+            padding: "0 0 0 0.5em",
+            margin: "0 0",
+            cursor: "pointer",
+            lineHeight: 1
           }}
-        />
-        <CancelLineName name={task.name} cancel={task.state !== "un-checked"} />
-      </Touchable>
+        >
+          <TaskCheckbox 
+            state={task.state}
+            size={13}
+            css={{
+              marginRight: "0.5em",
+            }}
+          />
+          <CancelLineName name={task.name} cancel={task.state !== "un-checked"} />
+        </Touchable>
+      </ButtonBase>
       <OptionIcon onOptionMenu={(m) => onOptionMenu(m, task)} />
       {indicator}
     </div>
