@@ -66,7 +66,7 @@ export const BaseTaskGroupFeature = React.memo(({
     }
     isAllSubTasksCheckedBeforeRef.current = isAllSubTasksChecked;
   }, [changeOpen, isAllSubTasksChecked])
-
+  
 
   const onElDrop = useCallback((newNote: RoutineNote, dropped: TaskGroup) => {
     onGroupReorder?.(newNote, dropped);

@@ -59,7 +59,8 @@ export class RoutineNoteCreator {
         return {
           elementType: "group",
           name: el.name,
-          children: tasks
+          children: tasks,
+          isOpen: true
         } as TaskGroup;
       }
     });
