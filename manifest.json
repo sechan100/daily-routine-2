@@ -1,9 +1,9 @@
 {
 	"id": "daily-routine",
 	"name": "Daily Routine",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Transforms daily todos into 'routines' to support your daily productivity.",
+	"description": "Manage your daily tasks as 'ROUTINES' and organize your everyday life more effectively.",
 	"author": "sechan100",
   "authorEmail": "100sechan.dev@gmail.com",
   "repo": "sechan100/daily-routine-2",
