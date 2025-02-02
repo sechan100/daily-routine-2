@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { noteRepository, RoutineNote, TaskEntity, TaskGroup, TaskGroupEntity } from '@entities/note';
+import { NoteEntity, noteRepository, RoutineNote, TaskEntity, TaskGroup, TaskGroupEntity } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
@@ -39,22 +39,34 @@ export const BaseTaskGroupFeature = React.memo(({
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
   const bgColor = useLeaf(s=>s.leafBgColor);
-  const { note } = useRoutineNote();
-  const isAllSubTasksChecked = group.children.length !== 0 && group.children.every(t => t.state !== "un-checked")
+  const { note, setNote } = useRoutineNote();
 
+
+  // dnd 시에 발생하는 일시적인 open/close를 위해서 따로 상태로 저장
   const [open, _setOpen] = useState(group.isOpen);
-
+  
+  // open 상태를 변경하는 함수. _setOpen은 일시적 상태변경이므로, 데이터 일관성을 위해서는 아래 함수를 사용할 것.
   const changeOpen = useCallback(async (isOpen: boolean) => {
     _setOpen(isOpen);
     const newNote = TaskGroupEntity.openGroup(note, group.name, isOpen);
+    setNote(newNote);
     await noteRepository.save(newNote);
-  }, [group.name, note])
-  
+  }, [group.name, note, setNote])
+
+
+  /**
+   * 모든 서브태스크가 체크되었을 때 그룹을 자동으로 닫아주는 기능을 구현
+   */
+  const isAllSubTasksChecked = group.children.length !== 0 && group.children.every(t => t.state !== "un-checked")
+  const isAllSubTasksCheckedBeforeRef = useRef(isAllSubTasksChecked);
   useEffect(() => {
-    if(isAllSubTasksChecked){
+    if(!isAllSubTasksCheckedBeforeRef.current && isAllSubTasksChecked){
+      console.log(!isAllSubTasksCheckedBeforeRef.current, isAllSubTasksChecked)
       changeOpen(false);
     }
+    isAllSubTasksCheckedBeforeRef.current = isAllSubTasksChecked;
   }, [changeOpen, isAllSubTasksChecked])
+
 
   const onElDrop = useCallback((newNote: RoutineNote, dropped: TaskGroup) => {
     onGroupReorder?.(newNote, dropped);

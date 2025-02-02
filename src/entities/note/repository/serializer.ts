@@ -142,11 +142,8 @@ const serializeTask = (task: Task) => {
 }
 
 const serializeTaskGroup = (taskGroup: TaskGroup) => {
-  const serializeNameWithIsOpen = (name: string, isOpen: boolean) => {
-    return isOpen ? name : `(${name})`;
-  }
   return dedent`
-    ## ${serializeNameWithIsOpen(taskGroup.name, taskGroup.isOpen)}
+    ## ${taskGroup.isOpen ? taskGroup.name : `(${taskGroup.name})`}
     ${taskGroup.children.map(t => serializeTask(t)).join('\n')}
   `;
 }
