@@ -178,7 +178,7 @@ export const SaveBtn = ({
   }, [disabled, onSaveBtnClick]);
 
   useEffect(() => {
-    document.addEventListener('keydown', handleEnterKeyDown, true);
+    document.addEventListener('keydown', handleEnterKeyDown);
     return () => document.removeEventListener('keydown', handleEnterKeyDown);
   }, [handleEnterKeyDown]);
   
