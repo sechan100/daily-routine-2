@@ -25,9 +25,8 @@ export interface AchivementPageProps {
   month: Month;
 }
 export const AchivementPage = ({ month }: AchivementPageProps) => {
-  // FIXME: routine -> note로
   const [type, setType] = useState<AchivementType>("note");
-  const { view, leafBgColor } = useLeaf();
+  const { leafBgColor } = useLeaf();
 
   return (
     <>

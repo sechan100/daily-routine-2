@@ -51,9 +51,6 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
 
   
   const onOptionMenu = useCallback((m: Menu) => {
-    /**
-     * TODO INFO
-     */
     m.addItem(i => {
       i.setTitle(`Todo: ${task.name}`);
       i.setIcon("info");
