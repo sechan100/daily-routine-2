@@ -38,9 +38,15 @@ export default class DailyRoutinePlugin extends Plugin {
         activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
       }
     });
-    // this.app.emulateMobile(!this.app.isMobile);
+
+    process.env.NODE_ENV === "development" && this.addRibbonIcon(
+      "toggle-left",
+      "Toggle Mobile View",
+      // @ts-ignore
+      () => this.app.emulateMobile(!this.app.isMobile)
+    );
     
-    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 0);
+    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
   }
   
   onunload() {

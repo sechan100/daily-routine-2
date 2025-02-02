@@ -13,9 +13,9 @@ if you want to view the source, please visit the github repository of this plugi
 */
 `;
 
-const development = process.argv[2] === "development";
-const local = process.argv[2] === "local";
-const prod = process.argv[2] === "production";
+const isDevelopment = process.argv.includes("dev");
+const isLocal = process.argv.includes("local");
+const isProd = process.argv.includes("production");
 
 // CSS를 하나로 합치기 위한 rename 플러그인
 const renamePlugin = {
@@ -60,18 +60,18 @@ const context = await esbuild.context({
     ...builtins,
   ],
   define: {
-    'process.env.NODE_ENV': JSON.stringify(development || local || prod)
+    'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
   },
   format: "cjs",  // CommonJS 포맷
   target: "es2018",
   logLevel: "warning",
-  sourcemap: prod ? false : "inline",
+  sourcemap: isProd ? false : "inline",
   treeShaking: true,
   outfile: "main.js",  // JavaScript 번들 파일
   plugins: [
     renamePlugin,  // CSS 파일 이름 변경 플러그인
   ],
-  minify: prod,
+  minify: isProd,
   loader: {
     ".tsx": "tsx",  // TypeScript와 TSX 파일을 처리
     ".ts": "ts",
@@ -81,10 +81,11 @@ const context = await esbuild.context({
   write: true,
 });
 
-if(prod) {
+
+if(isProd) {
   await context.rebuild();
   process.exit(0);
-} else if(local) {
+} else if(isLocal) {
   await context.rebuild();
   console.log("\n === 클라우드로 플러그인 복사 시작 ===");
   await copyPluginFilesTo_iCloud();
