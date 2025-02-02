@@ -151,6 +151,7 @@ const useBaseCalendarStyles = ({
         height: '100%',
         backgroundColor: leafBgColor,
         opacity: 0.8,
+        zIndex: 100,
       },
       ...neighboringMonthTileStyle,
     }

@@ -23,7 +23,7 @@ const DateBadge = ({ day }: { day: Day }) => {
     <div css={[{
       position: 'relative',
       width: "100%",
-      margin: '2px 0 0 0',
+      margin: '1px 0',
     }, TEXT_CSS.description]}>
       <span css={{
         display: 'inline-block',
@@ -44,8 +44,8 @@ const DateBadge = ({ day }: { day: Day }) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           display: 'block',
-          width: '130%',
-          height: '130%',
+          width: '100%',
+          height: '100%',
           borderRadius: '50%',
           backgroundColor: 'var(--color-accent-1)',
           zIndex: -10,
