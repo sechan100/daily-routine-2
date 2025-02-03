@@ -1,7 +1,7 @@
 import { fileAccessor } from "@shared/file/file-accessor";
 import { GROUP_PATH, GROUP_PREFIX } from "./utils";
 import { parseFrontmatter } from "@shared/file/parse-frontmatter";
-import { RoutineGroup, RoutineGroupProperties } from "../domain/routine.type";
+import { RoutineGroup, RoutineGroupProperties } from "../domain/routine-type";
 import { stringifyYaml, TFile } from "obsidian";
 import { ensureArchive } from "@entities/archives";
 import dedent from "dedent";

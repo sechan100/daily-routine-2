@@ -7,7 +7,7 @@ export type { GroupRepository, GroupQuery } from "./repository/group-repository"
 export { groupRepository } from "./repository/group-repository";
 
 // types
-export * from "./domain/routine.type";
+export * from "./domain/routine-type";
 
 // domain
 export { RoutineEntity } from "./domain/routine";

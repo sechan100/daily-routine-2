@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { Err, err, ok, Result } from "neverthrow";
-import { RoutineGroupProperties } from "./routine.type";
+import { RoutineGroupProperties } from "./routine-type";
 
 
 const UNGROUPED_NAME = "UNGROUPED";

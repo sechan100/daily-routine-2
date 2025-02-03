@@ -6,7 +6,7 @@ import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";
 import { parseFrontmatter } from "@shared/file/parse-frontmatter";
 import { RoutineEntity } from "../domain/routine";
 import dedent from "dedent";
-import { Routine } from "../domain/routine.type";
+import { Routine } from "../domain/routine-type";
 
 
 const parse = async (file: TFile): Promise<Routine> => {

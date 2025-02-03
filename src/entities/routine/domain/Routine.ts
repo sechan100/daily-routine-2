@@ -3,7 +3,7 @@ import { Day, DayOfWeek } from "@shared/period/day";
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { keys } from "lodash";
 import { err, Err, ok, Result } from "neverthrow";
-import { Routine, RoutineProperties } from "./routine.type";
+import { Routine, RoutineProperties } from "./routine-type";
 
 
 type NameValidationArgs = {
