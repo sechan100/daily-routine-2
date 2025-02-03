@@ -1,4 +1,4 @@
-import { moment } from "obsidian";
+import { moment as obsidianMoment } from "obsidian";
 import _ from "lodash";
 import { DR_SETTING } from "@app/settings/setting-provider";
 
@@ -13,6 +13,9 @@ export enum DayOfWeek {
   FRI = "FRI",
   SAT = "SAT"
 }
+
+// HACK: obsidian.d.ts에서 typeof 로 선언된 Moment가 호출될 수 없다고 에러가 발생함.
+const moment = obsidianMoment as unknown as (inp?: moment.MomentInput) => moment.Moment;
 
 export type DayFormat = ReturnType<Day['format']>;
 
