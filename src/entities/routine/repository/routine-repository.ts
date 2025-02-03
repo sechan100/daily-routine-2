@@ -46,7 +46,7 @@ export const routineRepository: RoutineRepository = {
     const routinePromises: Promise<Routine>[] = (await ensureArchive("routines")).children
     .filter(file => file instanceof TFile)
     .filter(file => !file.name.startsWith(GROUP_PREFIX))
-    .map(file => parse(file as TFile));
+    .map(file => parse(file));
     
     return await Promise.all(routinePromises);
   },

@@ -32,7 +32,7 @@ export const DailyRoutineView = () => {
   const { view, leafBgColor } = useLeaf();
 
   useEffect(() => {
-    view.contentEl.style.padding = "0";
+    view.contentEl.classList.add("no-padding");
   }, [view]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
