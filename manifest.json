@@ -5,7 +5,8 @@
 	"minAppVersion": "0.15.0",
 	"description": "Manage your daily tasks as 'ROUTINES' and organize your everyday life more effectively.",
 	"author": "sechan100",
-  "authorEmail": "100sechan.dev@gmail.com",
+  "authorEmail": "sechan100@gmail.com",
   "repo": "sechan100/daily-routine-2",
+  "fundingUrl": "https://buymeacoffee.com/sechan100",
 	"isDesktopOnly": false
 }

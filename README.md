@@ -1,39 +1,36 @@
-<<<<<<< HEAD
-# daily-routine-2
-new version of daily-routine obsidian plugin
-=======
-### Daily Routine
+# Daily Routine
 
-<img src="https://github.com/user-attachments/assets/4437d94c-bf5c-4269-83ee-b77ee3f4838a">
+## Introduction
+![Image|300](https://github.com/user-attachments/assets/7dd6ba71-7c4a-489a-856a-17df9dc74522)
+Daily Routine helps you track and manage recurring tasks—whether they are daily, scheduled on specific weekdays, or important tasks in your routine.
 
-**Daily Routine** overcomes the limitations of checkboxes and todos that provide only one-time checks by introducing a new unit called **routine** for todos that need to be achieved daily. With routines, you can help complete todos that need to be repeated at specific intervals.
+## Key Features
+- Manage **daily, weekly, or scheduled** tasks through **routines**
+- Use **todos** to track **one-time** tasks for specific dates
+- View tasks on a **calendar**, categorized by date
+- Gain insights through **visual statistics** of your notes and routines.
+- Full **mobile support** for seamless task management on the go
 
-### Features
+## Features
 
-1. Create routines.
-2. Provides the progress of all routines as a percentage.
-3. Offers commands to check or uncheck all routines.
-4. (Coming soon) Track records of desired routines and provide statistics.
+### Routine Note
+Routine Notes are Markdown files automatically generated daily, similar to Obsidian’s Daily Notes. All tasks are recorded within these notes, allowing you to manage them even without the Daily Routine plugin.
 
-## Creating a Routine
+> Notes are stored in the `{custom-daily-routines}/notes` directory.
 
-A routine is essentially no different from the existing checkboxes offered by Markdown. Unlike checkboxes that required clicking the exact box icon in preview mode, you can mark routines complete by clicking anywhere on the routine line. 
+### Routine
+![Image|300](https://github.com/user-attachments/assets/189d640e-2fec-47c0-8163-abcb2937744a)
+Routines are recurring tasks that can be scheduled for specific dates, weekdays, or daily execution.
 
-Routines can be written with the following syntax: `> - [ ]`
+### Todo
+Todos function as standard one-time tasks, helping you keep track of specific tasks that don’t repeat.
 
-This is identical to writing a 'quoted checkbox.'
+### Calendar
+![Image|300](https://github.com/user-attachments/assets/2a59f917-f82b-4802-bdd2-173066362868)
+The calendar displays tasks that include the `showOnCalendar` attribute, ensuring they appear on the designated dates. Both routines and todos can be displayed on the calendar.
 
-> Since using an entirely different syntax would prevent using the default checkbox features provided by Obsidian, a syntax identical to the quoted checkbox has been temporarily chosen. However, if problems arise in the long term, there is a willingness to change the syntax for writing routines.
+### Achievement
+![Image|300](https://github.com/user-attachments/assets/ef1a8cb7-97ec-4a18-b7d2-c02f6483aa19)
+Track your overall task completion rate and visualize your routine consistency over time with detailed statistics.
 
-## Displaying Routine Progress
-
-You can see the progress of routines with an icon. This can be turned on/off in the settings.
-
-## Check-All, Uncheck-All
-
-Provides commands to check or uncheck all routines. This is useful for simple routine files not used in conjunction with the daily note.
-
-## (Coming Soon) Routine Record Tracking and Statistics
-
-This will be added later.
->>>>>>> 65e807f (feat: 루틴 뷰 만들기)
+Stay on top of your daily routines and optimize your workflow with Daily Routine!
