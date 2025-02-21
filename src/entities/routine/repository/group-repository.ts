@@ -1,7 +1,6 @@
 import { fileAccessor } from "@shared/file/file-accessor";
 import { GROUP_PATH, GROUP_PREFIX } from "./utils";
-import { parseFrontmatterFromContent } from "@shared/file/parse-frontmatter";
-import { RoutineGroup, RoutineGroupProperties } from "../domain/routine-type";
+import { RoutineGroup } from "../domain/routine-type";
 import { stringifyYaml, TFile } from "obsidian";
 import { ensureArchive } from "@entities/archives";
 import dedent from "dedent";
@@ -9,9 +8,8 @@ import { RoutineGroupEntity } from "../domain/routine-group";
 
 
 const parse = async (file: TFile): Promise<RoutineGroup> => {
-  const content = await fileAccessor.readFileAsReadonly(file);
   const name = file.basename.startsWith(GROUP_PREFIX) ? file.basename.slice(GROUP_PREFIX.length) : file.basename;
-  const properties = RoutineGroupEntity.validateGroupProperties(parseFrontmatterFromContent(content));
+  const properties = RoutineGroupEntity.validateGroupProperties(fileAccessor.loadFrontMatter(file));
   if(properties.isErr()) throw new Error(`[RoutineGroup '${name}' Parse Error] ${properties.error}`);
 
   return {
