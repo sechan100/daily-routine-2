@@ -3,7 +3,7 @@ import { compose } from "@shared/utils/compose";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { Notice, stringifyYaml, TFile } from "obsidian";
 import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";
-import { parseFrontmatter } from "@shared/file/parse-frontmatter";
+import { parseFrontmatterFromContent } from "@shared/file/parse-frontmatter";
 import { RoutineEntity } from "../domain/routine";
 import dedent from "dedent";
 import { Routine } from "../domain/routine-type";
@@ -11,7 +11,7 @@ import { Routine } from "../domain/routine-type";
 
 const parse = async (file: TFile): Promise<Routine> => {
   const content = await fileAccessor.readFileAsReadonly(file);
-  const result = RoutineEntity.validateRoutineProperties(parseFrontmatter(content));
+  const result = RoutineEntity.validateRoutineProperties(parseFrontmatterFromContent(content));
   if(result.isErr()){
     new Notice(`Routine '${file.basename}' frontmatter error: ${result.error}`);
     throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
