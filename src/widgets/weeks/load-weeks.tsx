@@ -10,7 +10,6 @@ export type LoadWeekNodes = (week: Week, option?: { prev: number; next: number; 
 export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev: 0, next: 0 }) => {
   const startWeek = week.subtract_cpy(prev);
   const startDay = startWeek.startDay;
-  console.log(startDay.dow)
   const endWeek = week.add_cpy(next);
   const endDay = endWeek.endDay;
   const realNotes = await noteRepository.loadBetween(startDay, endDay);

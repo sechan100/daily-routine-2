@@ -83,7 +83,7 @@ export const CalendarSlide = ({
 
 
   const onTileClick = useCallback((day: Day) => {
-    console.log(day);
+    // console.log(day);
   }, []);
 
 

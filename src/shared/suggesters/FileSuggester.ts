@@ -1,15 +1,14 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { TAbstractFile, TFile, TFolder } from "obsidian";
-import { TextInputSuggest } from "./suggest";
+import { AbstractInputSuggest, TAbstractFile, TFile, TFolder } from "obsidian";
 import { plugin } from "@shared/utils/plugin-service-locator";
 
 
-export class FileSuggest extends TextInputSuggest<TAbstractFile> {
+export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
   #isTypeRight: (file: TAbstractFile) => boolean;
 
-  constructor(inputEl: HTMLInputElement, type: "file" | "folder") {
-    super(inputEl);
+  constructor(private inputEl: HTMLInputElement, type: "file" | "folder") {
+    super(plugin().app, inputEl);
     this.#isTypeRight = 
     type === "file" 
       ?
@@ -40,13 +39,11 @@ export class FileSuggest extends TextInputSuggest<TAbstractFile> {
     return files.slice(0, 1000);
   }
 
-  renderSuggestion(file: TAbstractFile, el: HTMLElement): void {
-    el.setText(file.path);
+  override selectSuggestion(value: TAbstractFile, evt: MouseEvent | KeyboardEvent): void {
+    this.setValue(value.path);
   }
-
-  selectSuggestion(file: TAbstractFile): void {
-    this.inputEl.value = file.path;
-    this.inputEl.trigger("input");
-    this.close();
+  
+  override renderSuggestion(file: TAbstractFile, el: HTMLElement): void {
+    el.setText(file.path);
   }
 }

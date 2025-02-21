@@ -4,7 +4,6 @@ import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
 import { activateView } from '@shared/view/activate-view';
-import { updateMomentConfig } from '@app/settings/moment-config';
 import { DAILY_ROUTINE_ICON_NAME } from '@app/ui/daily-routine-icon';
 
 
@@ -19,11 +18,6 @@ export default class DailyRoutinePlugin extends Plugin {
 
     // setting tab
     this.addSettingTab(new DailyRoutineSettingTab(this.app, this));
-
-    // moment config
-    updateMomentConfig({
-      isMondayStartOfWeek: this.settings.isMondayStartOfWeek
-    });
 
     this.registerView(
       DailyRoutineObsidianView.VIEW_TYPE,

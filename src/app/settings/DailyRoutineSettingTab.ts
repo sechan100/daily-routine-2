@@ -38,9 +38,9 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       text
       .setPlaceholder("DAILY_ROUTINE")
       .setValue(this.plugin.settings.dailyRoutineFolderPath??"")
-      .onChange(async (value) => {
-        this.save({ dailyRoutineFolderPath: normalizePath(value)});
-      })
+      // .onChange(async (value) => {
+      //   this.save({ dailyRoutineFolderPath: normalizePath(value)});
+      // })
     })
 
     // Start of Week
@@ -72,7 +72,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       })
     })
   }
-
 
   async save(partial: Partial<DailyRoutinePluginSettings>) {
     const settings = {...this.plugin.settings, ...partial};
