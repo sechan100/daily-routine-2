@@ -1,7 +1,6 @@
 import DailyRoutinePlugin from "src/main";
 import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "@shared/suggesters/FileSuggester";
-import { updateMomentConfig } from "./moment-config";
 import { useLeaf } from "@shared/view/use-leaf";
 
 
@@ -47,7 +46,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     // Start of Week
     new Setting(containerEl)
     .setName("Start of week")
-    .setDesc("Set the start of the week.")
+    .setDesc("Set the start of the week on the top of note view.")
     .addDropdown(dropdown => {
       dropdown
       .addOptions({
@@ -58,7 +57,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       .onChange(async (value) => {
         const isMondayStartOfWeek = value === "monday";
         this.save({ isMondayStartOfWeek });
-        updateMomentConfig({ isMondayStartOfWeek })
       })
     })
 

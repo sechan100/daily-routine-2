@@ -4,7 +4,7 @@ import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Day } from "@shared/period/day";
 import { Week } from "@shared/period/week";
 import { useLeaf } from "@shared/view/use-leaf";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import 'swiper/swiper-bundle.css';
 import { DayNodeComponent } from "./DayNodeComponent";
 import { loadWeekNodes } from "./load-weeks";

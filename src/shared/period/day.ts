@@ -112,34 +112,21 @@ export class Day {
   }
 
   get dow(): DayOfWeek {  
-    const dayOfWeekNum = Number(this.#moment.format('d'));
+    const dayOfWeekNum = this.#moment.format('ddd');
     switch(dayOfWeekNum) {
-      case 0: return DayOfWeek.SUN;
-      case 1: return DayOfWeek.MON;
-      case 2: return DayOfWeek.TUE;
-      case 3: return DayOfWeek.WED;
-      case 4: return DayOfWeek.THU;
-      case 5: return DayOfWeek.FRI;
-      case 6: return DayOfWeek.SAT;
+      case "Sun": return DayOfWeek.SUN;
+      case "Mon": return DayOfWeek.MON;
+      case "Tue": return DayOfWeek.TUE;
+      case "Wed": return DayOfWeek.WED;
+      case "Thu": return DayOfWeek.THU;
+      case "Fri": return DayOfWeek.FRI;
+      case "Sat": return DayOfWeek.SAT;
       default: throw new Error('Invalid day of week number.');
     }
   }
 
   getJsDate(){
     return this.#moment.toDate();
-  }
-
-  /**
-   * 이번주 배열을 반환
-   */
-  getCurrentWeek(){
-    const week = [];
-    const m = moment(this.#moment);
-    for(let i = 0; i < 7; i++) {
-      const day = new Day(m.startOf('week').add(i, 'd'));
-      week.push(day);
-    }
-    return week;
   }
   
   isSameDay(day: Day){
