@@ -33,7 +33,7 @@ export const RoutineNoteContent = () => {
     // Start New Routine
     m.addItem(item => {
       item.setIcon(startRoutineIcon);
-      item.setTitle("Start New Routine");
+      item.setTitle("Start new routine");
       item.onClick(() => {
         StartRoutineModal.open({});
       });
@@ -43,7 +43,7 @@ export const RoutineNoteContent = () => {
     m.addSeparator();
     m.addItem(item => {
       item.setIcon(addTodoIcon);
-      item.setTitle("Add Todo");
+      item.setTitle("Add todo");
       item.onClick(() => {
         AddTodoModal.open({});
       });
@@ -53,7 +53,7 @@ export const RoutineNoteContent = () => {
     m.addSeparator();
     m.addItem(item => {
       item.setIcon("folder");
-      item.setTitle("Add Group");
+      item.setTitle("Add group");
       item.onClick(() => {
         CreateGroupModal.open({});
       });
@@ -63,7 +63,7 @@ export const RoutineNoteContent = () => {
     m.addSeparator();
     m.addItem(item => {
       item.setIcon("merge");
-      item.setTitle("Merge Notes");
+      item.setTitle("Merge notes");
       item.onClick(() => {
         mergeNotes();
         new Notice("All Notes Merged!");
@@ -127,7 +127,7 @@ export const RoutineNoteContent = () => {
                 color: "var(--text-muted)",
                 fontSize: "1.2em",
               }}>
-                No Tasks.. Add some todos or routines 🤗
+                No tasks.. Add some todos or routines 🤗
               </div>
             )
           }

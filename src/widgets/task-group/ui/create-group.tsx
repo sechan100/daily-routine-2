@@ -35,7 +35,7 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
   }, [group, mergeNotes, modal]);
 
   return (
-    <Modal header="Create Group" className={bem()} modal={modal}>
+    <Modal header="Create group" className={bem()} modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}

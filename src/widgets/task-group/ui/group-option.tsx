@@ -28,7 +28,7 @@ export const useGroupOptionModal = createModal(({ modal, group: originalGroup}: 
 
 
   return (
-    <Modal header='Group Option' modal={modal}>
+    <Modal header='Group option' modal={modal}>
       <Modal.Separator edgeWithtransparent />
       
       {/* name */}

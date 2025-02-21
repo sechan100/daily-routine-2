@@ -28,7 +28,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
   }, [mergeNotes, modal, routine]);
 
   return (
-    <Modal header="Start New Routine" className={bem()} modal={modal}>
+    <Modal header="Start new Routine" className={bem()} modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}
@@ -36,7 +36,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
         focus
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
-        placeholder="New Routine"
+        placeholder="New routine"
       />
       <Modal.Separator />
 
@@ -49,7 +49,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
 
       {/* show on calendar */}
       <Modal.ToggleSection
-        name="Show On Calendar"
+        name="Show on calendar"
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />

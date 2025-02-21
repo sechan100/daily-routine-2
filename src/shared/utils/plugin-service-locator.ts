@@ -1,3 +1,4 @@
+import { Platform } from "obsidian";
 import DailyRoutinePlugin from "src/main";
 
 let pluginThisRef: DailyRoutinePlugin | null = null;
@@ -16,4 +17,4 @@ export const setPlugin = (plugin: DailyRoutinePlugin) => {
 }
 
 // @ts-ignore
-export const isMobile = () => plugin().app.isMobile;
+export const isMobile = () => Platform.isMobile;

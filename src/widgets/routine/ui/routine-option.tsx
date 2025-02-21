@@ -27,7 +27,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
 
 
   return (
-    <Modal header='Routine Option' modal={modal}>
+    <Modal header='Routine option' modal={modal}>
       <Modal.Separator edgeWithtransparent />
       
       {/* name */}
@@ -46,7 +46,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
 
       {/* show on calendar */}
       <Modal.ToggleSection
-        name='Show On Calendar'
+        name='Show on calendar'
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />

@@ -32,7 +32,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     // DAILY ROUTINE FOLDER PATH
     new Setting(containerEl)
-    .setName("Daily Routine Folder Path") 
+    .setName("Daily routine folder path") 
     .setDesc("This is the path to the folder where the Daily Routine Plugin saves notes, routines, and other data.")
     .addText(text => {
       new FileSuggest(text.inputEl, "folder");
@@ -46,7 +46,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     // Start of Week
     new Setting(containerEl)
-    .setName("Start of Week")
+    .setName("Start of week")
     .setDesc("Set the start of the week.")
     .addDropdown(dropdown => {
       dropdown
@@ -64,7 +64,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
     // Confirm Uncheck Task
     new Setting(containerEl)
-    .setName("Do Confirmation when Unchecking Task")
+    .setName("Do confirmation when unchecking task")
     .setDesc("When you uncheck a task, a confirmation dialog will appear.")
     .addToggle(toggle => {
       toggle

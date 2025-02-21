@@ -21,7 +21,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
 
   const rescheduleTask = useCallback(async (destDay: Day) => {
     const rescheduleConfirm = await doConfirm({
-      title: "Res schedule Todo",
+      title: "Reschedule todo",
       confirmText: "Reschedule",
       description: `Are you sure you want to reschedule '${task.name}' to ${destDay.format()}?`,
       confirmBtnVariant: "accent",
@@ -36,7 +36,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
 
   const deleteTask = useCallback(async () => {
     const deleteConfirm = await doConfirm({
-      title: "Delete Todo",
+      title: "Delete todo",
       confirmText: "Delete",
       description: `Are you sure you want to delete '${task.name}'?`,
       confirmBtnVariant: "destructive",
@@ -74,7 +74,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
     })
 
     m.addItem(i => {
-      i.setTitle("Reschedule Todo To Tomorrow");
+      i.setTitle("Reschedule todo to tomorrow");
       i.setIcon("calendar");
       i.onClick(() => rescheduleTask(note.day.clone(m=>m.add(1, "day"))));
     })

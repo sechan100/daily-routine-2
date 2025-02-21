@@ -112,7 +112,7 @@ export const noteRepository: NoteRepository = {
     } else {
       // 사용자 확인 대기
       const isUserConfirmed = await doConfirm({
-        title: "Create Routine Note",
+        title: "Create routine note",
         description: `Create note for ${routineNote.day.format()}?`,
         confirmText: "Create",
         confirmBtnVariant: "accent",

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Plugin, moment } from 'obsidian';
+import { Plugin, Platform } from 'obsidian';
 import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
@@ -33,7 +33,7 @@ export default class DailyRoutinePlugin extends Plugin {
     this.addCommand({
       id: "daily-routine-open-routine-view",
       icon: DAILY_ROUTINE_ICON_NAME,
-      name: "Open Routine View",
+      name: "Open routine view",
       callback: () => {
         activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
       }
@@ -41,9 +41,9 @@ export default class DailyRoutinePlugin extends Plugin {
 
     process.env.NODE_ENV === "development" && this.addRibbonIcon(
       "toggle-left",
-      "Toggle Mobile View",
+      "Toggle mobile view",
       // @ts-ignore
-      () => this.app.emulateMobile(!this.app.isMobile)
+      () => this.app.emulateMobile(!Platform.isMobile)
     );
     
     setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);

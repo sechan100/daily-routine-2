@@ -188,7 +188,7 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
         }
       `}
     >
-      Last Day of Month
+      Last day of month
     </Button>,
     element
   )

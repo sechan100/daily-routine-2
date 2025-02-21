@@ -44,6 +44,10 @@ export const BaseTaskGroupFeature = React.memo(({
 
   // dnd 시에 발생하는 일시적인 open/close를 위해서 따로 상태로 저장
   const [open, _setOpen] = useState(group.isOpen);
+
+  useEffect(() => {
+    _setOpen(group.isOpen);
+  }, [group])
   
   // open 상태를 변경하는 함수. _setOpen은 일시적 상태변경이므로, 데이터 일관성을 위해서는 아래 함수를 사용할 것.
   const changeOpen = useCallback(async (isOpen: boolean) => {
@@ -170,6 +174,7 @@ export const BaseTaskGroupFeature = React.memo(({
             }}
           >
             <AccordionSummary
+              component={'div'}
               expandIcon={<Icon icon='chevron-right' />}
               css={{
                 padding: "0",

@@ -1,5 +1,5 @@
 import { DailyRoutineObsidianView } from "@app/obsidian-view";
-import { plugin } from "@shared/utils/plugin-service-locator";
+import { isMobile } from "@shared/utils/plugin-service-locator";
 import { createStoreContext } from "@shared/zustand/create-store-context";
 import { WorkspaceLeaf } from "obsidian";
 
@@ -16,9 +16,7 @@ interface UseLeaf {
 }
 export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => {
   // @ts-ignore
-  const isMobile = plugin().app.isMobile;
-  // @ts-ignore
-  const leafBgColor = isMobile ? "#ffffff" : getComputedStyle(data.leaf.containerEl).backgroundColor;
+  const leafBgColor = isMobile() ? "#ffffff" : getComputedStyle(data.leaf.containerEl).backgroundColor;
 
   return {
     leaf: data.leaf,

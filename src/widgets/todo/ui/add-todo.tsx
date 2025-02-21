@@ -26,21 +26,21 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
 
   const bem = useMemo(() => dr("add-todo-modal"), []);
   return (
-    <Modal className={bem()} header="Add New Todo" modal={modal}>
+    <Modal className={bem()} header="Add new todo" modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}
       <Modal.NameSection
         value={todo.name}
         onChange={name => setTodo(todo => ({...todo, name}))}
-        placeholder="New Todo"
+        placeholder="New todo"
         focus
       />
       <Modal.Separator />
 
       {/* show on calendar */}
       <Modal.ToggleSection
-        name="Show On Calendar"
+        name="Show on calendar"
         value={todo.showOnCalendar}
         onChange={showOnCalendar => setTodo(todo => ({...todo, showOnCalendar}))}
       />

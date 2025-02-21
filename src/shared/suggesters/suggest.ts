@@ -1,6 +1,6 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { ISuggestOwner, Scope } from "obsidian";
+import { ISuggestOwner, Scope, AbstractInputSuggest } from "obsidian";
 import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 import { plugin } from "@shared/utils/plugin-service-locator";
 

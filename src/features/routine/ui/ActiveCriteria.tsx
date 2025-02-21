@@ -32,7 +32,7 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
         }}
         className={bem("header")}
       >
-        <div css={TEXT_CSS.medium}>Active Criteria</div>
+        <div css={TEXT_CSS.medium}>Active criteria</div>
         <nav className={bem("nav")}>
           <Button
             css={{marginRight: "0.5em"}}

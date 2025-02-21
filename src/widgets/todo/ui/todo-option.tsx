@@ -28,7 +28,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
 
 
   return (
-    <Modal header='Todo Option' modal={modal}>
+    <Modal header='Todo option' modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}
@@ -40,7 +40,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
 
       {/* show on calendar */}
       <Modal.ToggleSection
-        name="Show On Calendar"
+        name="Show on calendar"
         value={todo.showOnCalendar}
         onChange={(showOnCalendar) => setTodo(todo => ({...todo, showOnCalendar}))}
       />

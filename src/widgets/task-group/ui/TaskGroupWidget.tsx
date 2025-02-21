@@ -28,7 +28,7 @@ export const TaskGroupWidget = ({
 
   const doDeleteGroup = useCallback(async () => {
     const deleteConfirm = await doFlagConfirm({
-      title: "Delete Group",
+      title: "Delete group",
       confirmText: "Delete",
       description: `Are you sure you want to delete '${group.name}'?`,
       confirmBtnVariant: "destructive",
@@ -46,7 +46,7 @@ export const TaskGroupWidget = ({
 
   const removeRoutineFromNoteOnly = useCallback(async () => {
     const removeConfirm = await doFlagConfirm({
-      title: "Remove Group from this note",
+      title: "Remove group from this note",
       confirmText: "Remove",
       description: `Are you sure you want to remove '${group.name}'? This will only remove 'group task' in this note not the 'group' itself.`,
       confirmBtnVariant: "destructive",

@@ -37,7 +37,7 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
 
   const deleteRoutine = useCallback(async () => {
     const deleteConfirm = await doConfirm({
-      title: "Delete Routine",
+      title: "Delete routine",
       confirmText: "Delete",
       description: `Are you sure you want to delete the routine ${task.name}?`,
       confirmBtnVariant: "destructive"
