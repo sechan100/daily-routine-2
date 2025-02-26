@@ -1,14 +1,21 @@
-// Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
-
-import { AbstractInputSuggest, TAbstractFile, TFile, TFolder } from "obsidian";
+import { AbstractInputSuggest, TAbstractFile, TextComponent, TFile, TFolder } from "obsidian";
 import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
   #isTypeRight: (file: TAbstractFile) => boolean;
 
-  constructor(private inputEl: HTMLInputElement, type: "file" | "folder") {
-    super(plugin().app, inputEl);
+  /**
+   * TextComponent.setValue()로 변경한 데이터는 onChange 이벤트가 발생하지 않음.
+   * FilSuggest.selectSuggestion()가 호출되고 나서 onChange를 발생시켜줘야함
+   */
+  #onSelectCbs: ((path: string) => void)[];
+
+
+  constructor(private textComponent: TextComponent, type: "file" | "folder") {
+    super(plugin().app, textComponent.inputEl);
+
+    // File인지 Folder인지 검사하는 함수 초기화
     this.#isTypeRight = 
     type === "file" 
       ?
@@ -19,6 +26,10 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
     function (file: TAbstractFile): file is TFolder {
       return file instanceof TFolder;
     };
+    
+    this.#onSelectCbs = [];
+
+    textComponent.inputEl.blur();
   }
 
   getSuggestions(inputStr: string): TAbstractFile[] {
@@ -41,9 +52,27 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
 
   override selectSuggestion(value: TAbstractFile, evt: MouseEvent | KeyboardEvent): void {
     this.setValue(value.path);
+    this.#onSelectCbs.forEach(cb => cb(value.path));
+    this.close();
+  }
+
+  onChange(callback: (value: string) => void): FileSuggest {
+    this.textComponent.onChange(callback);
+    this.#onSelectCbs.push(callback);
+    return this;
   }
   
   override renderSuggestion(file: TAbstractFile, el: HTMLElement): void {
     el.setText(file.path);
+  }
+
+  setPlaceholder(placeholder: string): FileSuggest {
+    this.textComponent.setPlaceholder(placeholder);
+    return this;
+  }
+
+  setDefaultValue(value: string): FileSuggest {
+    this.textComponent.setValue(value);
+    return this;
   }
 }

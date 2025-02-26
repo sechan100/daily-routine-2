@@ -11,7 +11,7 @@ export interface DailyRoutinePluginSettings {
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
-  dailyRoutineFolderPath: "DAILY_ROUTINE",
+  dailyRoutineFolderPath: "daily_routine",
   isMondayStartOfWeek: true,
   confirmUncheckTask: true
 }
@@ -33,14 +33,13 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     new Setting(containerEl)
     .setName("Daily routine folder path") 
     .setDesc("This is the path to the folder where the Daily Routine Plugin saves notes, routines, and other data.")
-    .addText(text => {
-      new FileSuggest(text.inputEl, "folder");
-      text
-      .setPlaceholder("DAILY_ROUTINE")
-      .setValue(this.plugin.settings.dailyRoutineFolderPath??"")
-      // .onChange(async (value) => {
-      //   this.save({ dailyRoutineFolderPath: normalizePath(value)});
-      // })
+    .addText(textComponent => {
+      new FileSuggest(textComponent, "folder")
+      .setPlaceholder("daily_routine")
+      .setDefaultValue(this.plugin.settings.dailyRoutineFolderPath??"")
+      .onChange((value) => {
+        this.updateSettings({ dailyRoutineFolderPath: normalizePath(value)});
+      })
     })
 
     // Start of Week
@@ -54,9 +53,9 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
         "sunday": "Sunday"
       })
       .setValue(this.plugin.settings.isMondayStartOfWeek ? "monday" : "sunday")
-      .onChange(async (value) => {
+      .onChange((value) => {
         const isMondayStartOfWeek = value === "monday";
-        this.save({ isMondayStartOfWeek });
+        this.updateSettings({ isMondayStartOfWeek });
       })
     })
 
@@ -67,16 +66,23 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     .addToggle(toggle => {
       toggle
       .setValue(this.plugin.settings.confirmUncheckTask)
-      .onChange(async (value) => {
-        this.save({ confirmUncheckTask: value });
+      .onChange((value) => {
+        this.updateSettings({ confirmUncheckTask: value });
       })
     })
   }
 
-  async save(partial: Partial<DailyRoutinePluginSettings>) {
+  // 닫을 때 저장하기 위해서 override
+  override hide(): void {
+    super.hide();
+
+    // 저장하고 view를 새로고침
+    this.plugin.saveSettings()
+    .then(() => useLeaf.getState().refresh());
+  }
+
+  updateSettings(partial: Partial<DailyRoutinePluginSettings>) {
     const settings = {...this.plugin.settings, ...partial};
     this.plugin.settings = {...this.plugin.settings, ...partial};
-    await this.plugin.saveSettings();
-    useLeaf.getState().refresh();
   }
 }
