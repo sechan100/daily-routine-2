@@ -112,15 +112,19 @@ export class Day {
   }
 
   get dow(): DayOfWeek {  
-    const dayOfWeekNum = this.#moment.format('ddd');
+    let dayOfWeekNum = parseInt(this.#moment.format('d'), 10);
+    // ISO 8601 (Monday = 1) 체계를 사용하는 경우 조정
+    if (this.#moment.localeData().firstDayOfWeek() === 1) {
+      dayOfWeekNum = dayOfWeekNum === 0 ? 6 : dayOfWeekNum - 1; // Sunday(0)으로 맞춤
+    }
     switch(dayOfWeekNum) {
-      case "Sun": return DayOfWeek.SUN;
-      case "Mon": return DayOfWeek.MON;
-      case "Tue": return DayOfWeek.TUE;
-      case "Wed": return DayOfWeek.WED;
-      case "Thu": return DayOfWeek.THU;
-      case "Fri": return DayOfWeek.FRI;
-      case "Sat": return DayOfWeek.SAT;
+      case 0: return DayOfWeek.SUN;
+      case 1: return DayOfWeek.MON;
+      case 2: return DayOfWeek.TUE;
+      case 3: return DayOfWeek.WED;
+      case 4: return DayOfWeek.THU;
+      case 5: return DayOfWeek.FRI;
+      case 6: return DayOfWeek.SAT;
       default: throw new Error('Invalid day of week number.');
     }
   }
