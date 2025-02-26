@@ -1,9 +1,9 @@
 {
 	"id": "daily-routine",
 	"name": "Daily Routine",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "1.8.0",
-	"description": "Manage your daily tasks as 'ROUTINES' and organize your everyday life more effectively.",
+	"description": "Manage your daily tasks as 'Routine' and organize your everyday life more effectively.",
 	"author": "sechan100",
   "repo": "sechan100/daily-routine-2",
   "authorUrl": "https://www.linkedin.com/in/sechan-beak-80b3462b0",
