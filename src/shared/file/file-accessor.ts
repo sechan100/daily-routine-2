@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { plugin } from "@shared/utils/plugin-service-locator";
-import { TFile, TFolder } from "obsidian";
-
+import { TFile, TFolder, getFrontMatterInfo, parseYaml } from "obsidian";
 
 
 export interface FileAccessor {
@@ -58,7 +57,7 @@ export interface FileAccessor {
    */
   writeFrontMatter: (file: TFile, frontMatterModifier: (frontmatter: any) => any) => Promise<void>;
 
-  loadFrontMatter: (file: TFile) => object | null;
+  loadFrontMatter: (file: TFile) => Promise<object>;
 }
 
 export const fileAccessor: FileAccessor = {
@@ -116,8 +115,30 @@ export const fileAccessor: FileAccessor = {
     });
   },
 
-  loadFrontMatter: (file: TFile) => {
+  /**
+   * 1차 시도는 metadataCache에서 frontmatter를 가져오고,
+   * 실패하면 파일을 직접 읽어서 frontmatter를 파싱한다.
+   * 그래도 안되면 에러를 발생시킨다.
+   * @param file 
+   * @returns 
+   */
+  loadFrontMatter: async (file: TFile): Promise<object> => {
     const metadataCache = plugin().app.metadataCache.getFileCache(file);
-    return metadataCache?.frontmatter ?? null;
+    if(metadataCache && metadataCache.frontmatter){
+      return metadataCache.frontmatter;
+    } else {
+      const content = await fileAccessor.readFileAsReadonly(file);
+      return parseFrontmatterFromContent(content);
+    }
   }
+}
+
+
+export const parseFrontmatterFromContent = (fileContent: string): object => {
+  const fmInfo = getFrontMatterInfo(fileContent);
+  if(!fmInfo.exists){
+    return {};
+  }
+  const yaml = fmInfo.frontmatter.replace('---', '').trim()
+  return parseYaml(yaml);
 }

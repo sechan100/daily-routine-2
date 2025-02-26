@@ -21,7 +21,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {
-    await routineRepository.persist(routine);
+    await routineRepository.create(routine);
     mergeNotes();
     modal.close();
     new Notice(`Routine '${routine.name}' started! 🎉`);

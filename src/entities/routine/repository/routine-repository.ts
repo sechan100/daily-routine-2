@@ -8,8 +8,16 @@ import dedent from "dedent";
 import { Routine } from "../domain/routine-type";
 
 
+/**
+ * File을 받아서 Routine 객체로 변환한다.
+ * 
+ * 루틴을 저장소에서 읽어와 변환하는 로직은 모두 해당 함수를 사용한다.
+ * @param file 
+ * @returns 
+ */
 const parse = async (file: TFile): Promise<Routine> => {
-  const result = RoutineEntity.validateRoutineProperties(fileAccessor.loadFrontMatter(file));
+  const fm = await fileAccessor.loadFrontMatter(file);
+  const result = RoutineEntity.validateRoutineProperties(fm);
   if(result.isErr()){
     new Notice(`Routine '${file.basename}' frontmatter error: ${result.error}`);
     throw new Error(`[Routine '${file.basename}' Parse Error] ${result.error}`);
@@ -32,7 +40,7 @@ export interface RoutineQuery {
   load(routineName: string): Promise<Routine>;
 }
 export interface RoutineRepository extends RoutineQuery {
-  persist(entity: Routine): Promise<boolean>;
+  create(entity: Routine): Promise<boolean>;
   delete(routineName: string): Promise<void>;
   changeName(originalName: string, newName: string): Promise<void>;
   update(routine: Routine): Promise<Routine>;
@@ -62,7 +70,7 @@ export const routineRepository: RoutineRepository = {
     return await parse(file);
   },
 
-  async persist(routine: Routine){
+  async create(routine: Routine){
     const path = ROUTINE_PATH(routine.name);
     const file = fileAccessor.loadFile(path);
     if(!file){

@@ -8,8 +8,9 @@ import { RoutineGroupEntity } from "../domain/routine-group";
 
 
 const parse = async (file: TFile): Promise<RoutineGroup> => {
+  const fm = await fileAccessor.loadFrontMatter(file);
   const name = file.basename.startsWith(GROUP_PREFIX) ? file.basename.slice(GROUP_PREFIX.length) : file.basename;
-  const properties = RoutineGroupEntity.validateGroupProperties(fileAccessor.loadFrontMatter(file));
+  const properties = RoutineGroupEntity.validateGroupProperties(fm);
   if(properties.isErr()) throw new Error(`[RoutineGroup '${name}' Parse Error] ${properties.error}`);
 
   return {

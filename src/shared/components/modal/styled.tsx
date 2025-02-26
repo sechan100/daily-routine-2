@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 import { TextEditComponent } from "@shared/components/TextEditComponent"
 import { Button } from "@shared/components/Button"
+import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 type ModalProps = {
@@ -173,14 +174,22 @@ export const SaveBtn = ({
   name,
 }: SaveBtnProps) => {
 
-  const handleEnterKeyDown = useCallback((e: KeyboardEvent) => {
-    if(e.key === "Enter" && !disabled) onSaveBtnClick?.();
-  }, [disabled, onSaveBtnClick]);
-
+  /**
+   * Enter Key로 Save Button을 트리거하는 이벤트를 등록
+   */
   useEffect(() => {
+
+    const handleEnterKeyDown = ({ key, isComposing}: KeyboardEvent) => {
+      if(isComposing) return;
+      
+      if(key === "Enter" && !disabled){
+        onSaveBtnClick?.();
+      }
+    }
+
     document.addEventListener('keydown', handleEnterKeyDown);
     return () => document.removeEventListener('keydown', handleEnterKeyDown);
-  }, [handleEnterKeyDown]);
+  }, [disabled, onSaveBtnClick]);
   
   return (
     <div css={{
