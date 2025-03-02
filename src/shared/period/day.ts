@@ -114,7 +114,7 @@ export class Day {
   get dow(): DayOfWeek {  
     let dayOfWeekNum = parseInt(this.#moment.format('d'), 10);
     // ISO 8601 (Monday = 1) 체계를 사용하는 경우 조정
-    if (this.#moment.localeData().firstDayOfWeek() === 1) {
+    if(this.#moment.localeData().firstDayOfWeek() === 1) {
       dayOfWeekNum = dayOfWeekNum === 0 ? 6 : dayOfWeekNum - 1; // Sunday(0)으로 맞춤
     }
     switch(dayOfWeekNum) {

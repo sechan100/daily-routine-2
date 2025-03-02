@@ -1,5 +1,5 @@
 import { DR_SETTING } from "@app/settings/setting-provider";
-import { Day } from "./day";
+import { Day, DayOfWeek } from "./day";
 
 
 export class Week {
@@ -11,25 +11,30 @@ export class Week {
    * DR_SETTING.isMondayStartOfWeek()를 통해 월요일부터 시작하는지를 확인하고,
    * 그에 따라서 startDay와 endDay를 적절히 조정한다.
    */
-  constructor(day: Day) {
+  private constructor(startOfDay: Day) {
+    this.#startDay = startOfDay;
+    this.#endDay = startOfDay.clone(m => m.add(6, "day"));
+  }
+
+  static of(day: Day): Week {
     const isMondayStart = DR_SETTING.isMondayStartOfWeek();
     const s = day.clone(m => m.startOf("week"));
 
-    // 월요일 시작인데 일요일인 경우(하루 뒤로)
-    if(isMondayStart && s.format("ddd") === "Sun") {
-      this.#startDay = s.clone(m => m.add(1, "day"));
+    let startDay: Day;
+
+    // 월요일 시작인데 일요일인 경우
+    if(isMondayStart && s.dow === DayOfWeek.SUN) {
+      startDay = s.clone(m => m.subtract(6, "day"));
     }
     // 일요일 시작인데 월요일인 경우(하루 앞으로)
-    else if(!isMondayStart && s.format("ddd") === "Mon") {
-      this.#startDay = s.clone(m => m.subtract(1, "day"));
+    else if(!isMondayStart && s.dow === DayOfWeek.MON) {
+      startDay = s.clone(m => m.subtract(1, "day"));
     }
     // 잘 부합하는 경우
     else {
-      this.#startDay = s;
+      startDay = s;
     }
-
-    // endDay는 startDay로부터 6일 뒤로 설정한다.
-    this.#endDay = this.#startDay.clone(m => m.add(6, "day"));
+    return new Week(startDay);
   }
 
   get startDay() {
@@ -40,19 +45,17 @@ export class Week {
     return this.#endDay;
   }
 
-  get weekNum(){
+  get weekNum() {
     return this.#startDay.week;
   }
 
   add_cpy(amount: number) {
-    return new Week(
-      this.#startDay.clone(m => m.add(amount * 7, "day"))
-    );
+    const newStartOfweek = this.#startDay.clone(m => m.add(amount * 7, "day"));
+    return new Week(newStartOfweek);
   }
 
   subtract_cpy(amount: number) {
-    return new Week(
-      this.#startDay.clone(m => m.subtract(amount * 7, "day"))
-    );
+    const newStartOfweek = this.#startDay.clone(m => m.subtract(amount * 7, "day"))
+    return new Week(newStartOfweek);
   }
 }

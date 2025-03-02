@@ -12,6 +12,7 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
   const startDay = startWeek.startDay;
   const endWeek = week.add_cpy(next);
   const endDay = endWeek.endDay;
+
   const realNotes = await noteRepository.loadBetween(startDay, endDay);
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
   const dayNodes: DayNode[] = realNotes.map(note => ({
@@ -54,7 +55,7 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
   for(const node of dayNodes) {
     const week = weeks[weekIdx];
 
-    if(week.week === null) week.week = new Week(node.day);
+    if(week.week === null) week.week = Week.of(node.day);
     week.days.push(node);
     
     if(week.days.length === 7){

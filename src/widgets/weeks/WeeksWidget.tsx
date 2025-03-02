@@ -20,7 +20,7 @@ interface WeeksProps {
 export const WeeksWidget = ({ className }: WeeksProps) => {
   const { note, setNote } = useRoutineNote();
   const activeDay = useMemo(() => note.day, [note]);
-  const activeWeek = useMemo(() => new Week(activeDay), [activeDay]);
+  const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
   const currentNotePerformance = useMemo(() => NoteEntity.getPerformance(note), [note]);
   const [ weeks, setWeeks ] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
@@ -40,12 +40,12 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
     const loadWeekNum = 1;
     let loadTarget: Week;
     if(edge === "start"){
-      const currentEdgeWeek = new Week(week.days[0].day);
+      const currentEdgeWeek = Week.of(week.days[0].day);
       loadTarget = currentEdgeWeek.subtract_cpy(loadWeekNum);
       return await loadWeekNodes(loadTarget);
     } 
     else { // edge === "end"
-      const currentEdgeWeek = new Week(week.days[week.days.length-1].day);
+      const currentEdgeWeek = Week.of(week.days[week.days.length-1].day);
       loadTarget = currentEdgeWeek.add_cpy(loadWeekNum);
       return await loadWeekNodes(loadTarget);
     }
