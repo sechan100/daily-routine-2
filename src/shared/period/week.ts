@@ -18,22 +18,25 @@ export class Week {
 
   static of(day: Day): Week {
     const isMondayStart = DR_SETTING.isMondayStartOfWeek();
-    const s = day.clone(m => m.startOf("week"));
-
+    
+    // 현재 날짜의 요일 확인
+    const dowNum = parseInt(day.format("d"), 10);
+    const dow = day.dow;
     let startDay: Day;
-
-    // 월요일 시작인데 일요일인 경우
-    if(isMondayStart && s.dow === DayOfWeek.SUN) {
-      startDay = s.clone(m => m.subtract(6, "day"));
+    
+    // dow가 0(일요일)부터 6(토요일)까지라고 가정
+    if (isMondayStart) {
+      // 월요일 시작 원하는 경우
+      // 현재 요일이 일요일(0)이면 6일 빼기, 아니면 (현재요일 - 1)일 빼기
+      const daysToSubtract = dow === DayOfWeek.SUN ? 6 : dowNum - 1;
+      startDay = day.clone(m => m.subtract(daysToSubtract, "day"));
+    } else {
+      // 일요일 시작 원하는 경우
+      // 현재 요일에서 그만큼 빼기
+      const daysToSubtract = dowNum;
+      startDay = day.clone(m => m.subtract(daysToSubtract, "day"));
     }
-    // 일요일 시작인데 월요일인 경우(하루 앞으로)
-    else if(!isMondayStart && s.dow === DayOfWeek.MON) {
-      startDay = s.clone(m => m.subtract(1, "day"));
-    }
-    // 잘 부합하는 경우
-    else {
-      startDay = s;
-    }
+    
     return new Week(startDay);
   }
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Plugin, Platform } from 'obsidian';
+import { Plugin, Platform, moment } from 'obsidian';
 import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
 import { DailyRoutineObsidianView } from './app';
