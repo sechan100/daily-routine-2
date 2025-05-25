@@ -1,4 +1,4 @@
-import { CalendarPage } from "@pages/calendar";
+import { TaskCalendar } from "@pages/calendar";
 import { Month } from "@shared/period/month";
 import { useTabRoute } from "@shared/tab/use-tab-route";
 import { useMemo } from "react";
@@ -14,9 +14,9 @@ export const CalendarTab = () => {
   const { tab, routeParams } = useTabRoute();
 
   const params = useMemo<CalendarTabRouteParams>(() => {
-    if(tab === "calendar" && routeParams){
+    if (tab === "calendar" && routeParams) {
       const params = routeParams as CalendarTabRouteParams;
-      if(!params.month){
+      if (!params.month) {
         throw new Error("Invalid CalendarTab tab routeParams.");
       }
       return params;
@@ -25,10 +25,10 @@ export const CalendarTab = () => {
     }
   }, [routeParams, tab]);
 
-  if(tab !== "calendar") return null;
+  if (tab !== "calendar") return null;
   return (
     <>
-      <CalendarPage month={params.month} />
+      <TaskCalendar month={params.month} />
     </>
   )
 }

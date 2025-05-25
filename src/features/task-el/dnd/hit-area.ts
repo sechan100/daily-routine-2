@@ -28,15 +28,15 @@ export const HitAreaEvaluator = {
     const dropTargetHeight = rect.height;
     const hitBoundary = 0.40;
     const hixbox = dropTargetHeight * hitBoundary;
-  
+
     // TOP HIT
-    if(y < rect.top + hixbox){
+    if (y < rect.top + hixbox) {
       return "top";
 
-    // BOTTOM HIT
-    } else if(y > rect.bottom - hixbox){
+      // BOTTOM HIT
+    } else if (y > rect.bottom - hixbox) {
       return "bottom";
-    // MIDDLE HIT
+      // MIDDLE HIT
     } else {
       return null;
     }
@@ -50,21 +50,21 @@ export const HitAreaEvaluator = {
     const dropTargetHeight = rect.height;
     const hitBoundary = 0.30;
     const hixbox = dropTargetHeight * hitBoundary;
-  
+
     // TOP HIT
-    if(y < rect.top + hixbox){
+    if (y < rect.top + hixbox) {
       return "top";
 
-    // BOTTOM HIT
-    } else if(y > rect.bottom - hixbox){
-      if(!in_hit){
+      // BOTTOM HIT
+    } else if (y > rect.bottom - hixbox) {
+      if (!in_hit) {
         return null;
       } else {
         return "bottom";
       }
-    // MIDDLE HIT
+      // MIDDLE HIT
     } else {
-      if(in_hit){
+      if (in_hit) {
         return "in";
       } else {
         return null;

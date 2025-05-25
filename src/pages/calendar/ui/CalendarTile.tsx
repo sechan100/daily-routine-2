@@ -1,12 +1,10 @@
 /** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
+import { Task } from "@entities/note";
+import { TEXT_CSS } from "@shared/components/text-style";
 import { Day, DayOfWeek } from "@shared/period/day";
 import { Tile } from "../model/types";
-import { TEXT_CSS } from "@shared/components/text-style";
-import { Task } from "@entities/note";
-import { css } from "@emotion/react";
-import { useContext, useEffect } from "react";
-import { useTileHeightInfo } from "./tile-height-info-context";
-import { last } from "lodash";
+import { useTileConfig } from "./tile-config-context";
 
 
 const defaultTextStyle = css({
@@ -59,7 +57,7 @@ const DateBadge = ({ day }: { day: Day }) => {
 
 
 const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
-  const { limitedTaskPer } = useTileHeightInfo();
+  const { limitedTaskPer } = useTileConfig();
 
 
   const taskListStyle = css({
@@ -68,11 +66,11 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
     "li:last-child": lastTaskLineStyle,
   });
 
-  if(tasks.length <= limitedTaskPer){
+  if (tasks.length <= limitedTaskPer) {
     return (
       <div className="dr-calendar-tasks" css={taskListStyle}>
         {tasks.map(task => (
-          <TaskLine 
+          <TaskLine
             key={task.name}
             task={task}
           />
@@ -134,8 +132,8 @@ type Props = {
   tile: Tile;
 }
 export const CalendarTile = ({ tile }: Props) => {
-  const { tileHeight } = useTileHeightInfo();
-  
+  const { tileHeight } = useTileConfig();
+
   return (
     <div css={{
       height: tileHeight,

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Plugin, Platform, moment } from 'obsidian';
-import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
-import { DailyRoutineObsidianView } from './app';
-import { activateView } from '@shared/view/activate-view';
 import { DAILY_ROUTINE_ICON_NAME } from '@app/ui/daily-routine-icon';
+import { setPlugin } from '@shared/utils/plugin-service-locator';
+import { activateView } from '@shared/view/activate-view';
+import { Platform, Plugin } from 'obsidian';
+import { DailyRoutineObsidianView } from './app';
 
 
 export default class DailyRoutinePlugin extends Plugin {
-	settings: DailyRoutinePluginSettings;
+  settings: DailyRoutinePluginSettings;
 
-	async onload() {
-		await this.loadSettings();
+  async onload() {
+    await this.loadSettings();
 
-    // plugin locator 설정
+    // 전역 플러그인 locator 설정
     setPlugin(this);
 
     // setting tab
@@ -23,7 +23,7 @@ export default class DailyRoutinePlugin extends Plugin {
       DailyRoutineObsidianView.VIEW_TYPE,
       (leaf) => new DailyRoutineObsidianView(leaf)
     );
-    
+
     this.addCommand({
       id: "daily-routine-open-routine-view",
       icon: DAILY_ROUTINE_ICON_NAME,
@@ -39,16 +39,17 @@ export default class DailyRoutinePlugin extends Plugin {
       // @ts-ignore
       () => this.app.emulateMobile(!Platform.isMobile)
     );
-    
+
+    // 앱이 로드되면 뷰를 활성화한다.
     setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
   }
-  
+
   onunload() {
   }
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
+  async loadSettings() {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+  }
 
   async saveSettings() {
     await this.saveData(this.settings);
