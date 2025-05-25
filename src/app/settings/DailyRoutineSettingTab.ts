@@ -1,20 +1,8 @@
+import { DailyRoutineSettings } from "@/shared/settings";
 import { FileSuggest } from "@/shared/suggesters/FileSuggester";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import DailyRoutinePlugin from "src/main";
-
-
-export interface DailyRoutinePluginSettings {
-  dailyRoutineFolderPath: string;
-  isMondayStartOfWeek: boolean;
-  confirmUncheckTask: boolean;
-}
-
-export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
-  dailyRoutineFolderPath: "daily_routine",
-  isMondayStartOfWeek: true,
-  confirmUncheckTask: true
-}
 
 
 export class DailyRoutineSettingTab extends PluginSettingTab {
@@ -81,7 +69,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       .then(() => useLeaf.getState().refresh());
   }
 
-  updateSettings(partial: Partial<DailyRoutinePluginSettings>) {
+  updateSettings(partial: Partial<DailyRoutineSettings>) {
     const settings = { ...this.plugin.settings, ...partial };
     this.plugin.settings = { ...this.plugin.settings, ...partial };
   }

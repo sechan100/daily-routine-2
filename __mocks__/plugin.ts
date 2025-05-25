@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS } from "@/app/settings/DailyRoutineSettingTab";
+import { DEFAULT_SETTINGS } from "@/shared/settings";
 
 
 export const plugin = () => ({
