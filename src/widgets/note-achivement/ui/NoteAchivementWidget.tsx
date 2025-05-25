@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { SwipeableCalendar } from '@shared/components/swipeable-calender/SwipeableCalendar';
-import { Month } from '@shared/period/month';
+import { SwipeableCalendar } from '@/shared/components/swipeable-calender/SwipeableCalendar';
+import { Month } from '@/shared/period/month';
 import { CalendarSlide } from './CalendarSlide';
 
 
@@ -18,7 +18,7 @@ export const NoteAchivementWidget = ({ month, height, maxWidth }: NoteAchivement
       verticalHeight={height}
       maxWidth={maxWidth}
     >
-      {month => <CalendarSlide month={month}/>}
+      {month => <CalendarSlide month={month} />}
     </SwipeableCalendar>
   )
 }

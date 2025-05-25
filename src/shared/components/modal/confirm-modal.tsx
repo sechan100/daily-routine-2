@@ -1,9 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useRef } from "react";
-import { Button } from "../Button";
+import { plugin } from "@/shared/utils/plugin-service-locator";
 import { Modal } from "obsidian";
-import { plugin } from "@shared/utils/plugin-service-locator";
 import { createRoot } from "react-dom/client";
+import { Button } from "../Button";
 
 
 
@@ -11,12 +10,12 @@ interface ConfirmModalOptions {
   confirmText: string;
   title: string;
   description: string;
-  
+
   confirmBtnVariant?: "primary" | "destructive" | "accent";
   className?: string;
 }
 
-type ButtonsProps = Omit<ConfirmModalOptions, "title" & "description"> & { 
+type ButtonsProps = Omit<ConfirmModalOptions, "title" & "description"> & {
   modal: Modal;
   resolve: ConfirmResolve;
 }
@@ -32,7 +31,7 @@ const ConfirmModalButtons = ({
 }: ButtonsProps) => {
 
   return (
-    <div 
+    <div
       css={{
         display: "flex",
         fontSize: "0.9em",
@@ -48,10 +47,10 @@ const ConfirmModalButtons = ({
       }}
     >
       <Button
-        variant={confirmBtnVariant} 
+        variant={confirmBtnVariant}
         onClick={() => {
           resolve(true);
-          modal.onClose = () => {};
+          modal.onClose = () => { };
           modal.close();
         }}
       >
@@ -66,13 +65,13 @@ const ConfirmModalButtons = ({
 
 const createConfirmModal = (options: ConfirmModalOptions, resolve: ConfirmResolve) => {
   const modal = new Modal(plugin().app);
-  
+
   // modal container
   modal.containerEl.addClass("mod-confirmation");
 
   // modal
   modal.setTitle(options.title);
-  if(options.className) modal.modalEl.addClass(options.className);
+  if (options.className) modal.modalEl.addClass(options.className);
   modal.modalEl.setCssStyles({
     width: "calc(var(--dialog-width))"
   })
@@ -91,7 +90,7 @@ const createConfirmModal = (options: ConfirmModalOptions, resolve: ConfirmResolv
     p.setText(options.description);
     return p;
   })());
-  
+
   modal.onClose = () => resolve(false);
 
   return modal;

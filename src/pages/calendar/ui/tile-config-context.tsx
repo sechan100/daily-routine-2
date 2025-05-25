@@ -1,4 +1,4 @@
-import { useTabHeight } from "@app/ui/use-tab-height";
+import { useTabHeight } from "@/shared/use-tab-height";
 import { createContext, useContext, useMemo } from "react";
 
 

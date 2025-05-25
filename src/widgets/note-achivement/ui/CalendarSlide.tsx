@@ -1,28 +1,28 @@
 /** @jsxImportSource @emotion/react */
-import { NoteEntity, noteRepository, Task } from "@entities/note";
-import { BaseCalendar } from "@shared/components/BaseCalendar";
-import { Day } from "@shared/period/day";
-import { Month } from "@shared/period/month";
-import { useAsync } from "@shared/utils/use-async";
-import { useCallback, useMemo } from "react";
-import { useTabRoute } from "@shared/tab/use-tab-route";
-import { PerformanceCircle } from "@features/performance";
+import { NoteEntity, NoteRepository } from "@/entities/note";
+import { NotePerformanceCircle } from "@/features/note";
+import { BaseCalendar } from "@/shared/components/BaseCalendar";
+import { Day } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
+import { useTabRoute } from "@/shared/tab/use-tab-route";
+import { useAsync } from "@/shared/utils/use-async";
 import { Badge } from "@mui/material";
+import { useCallback } from "react";
 
 
 interface CalendarSlideProps {
   month: Month;
 }
 export const CalendarSlide = ({ month }: CalendarSlideProps) => {
-  const notesAsync = useAsync(async () => await noteRepository.loadBetween(month.startDay, month.endDay), [month]);
-  const route = useTabRoute(s=>s.route);
+  const notesAsync = useAsync(async () => await NoteRepository.loadBetween(month.startDay, month.endDay), [month]);
+  const route = useTabRoute(s => s.route);
 
   const tile = useCallback((day: Day) => {
-    if(day.month !== month.monthNum) return <></>;
+    if (day.month !== month.monthNum) return <></>;
     let performance = NoteEntity.getEmptyNotePerformance();
-    if(notesAsync.value){
+    if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
-      if(note){
+      if (note) {
         performance = NoteEntity.getPerformance(note);
       }
     }
@@ -39,28 +39,28 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
             clipPath: "inset(-50px)"
           }
         }}>
-          <PerformanceCircle performance={performance} text={day.date.toString()} />
+          <NotePerformanceCircle performance={performance} text={day.date.toString()} />
         </Badge>
       </div>
     )
   }, [month.monthNum, notesAsync.value]);
-  
+
 
   const onTileClick = useCallback((day: Day) => {
     route("note", { day });
   }, [route]);
 
-  
+
   const tileDisabled = useCallback((day: Day) => {
     return day.month !== month.monthNum;
   }, [month]);
 
-    
-  if(notesAsync.loading) return <div>Loading...</div>;
+
+  if (notesAsync.loading) return <div>Loading...</div>;
   return (
     <BaseCalendar
       month={month}
-      setMonth={() => {}}
+      setMonth={() => { }}
       onTileClick={onTileClick}
       tile={tile}
       showNavigation={false}

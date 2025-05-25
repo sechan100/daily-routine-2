@@ -1,7 +1,7 @@
-import { DailyRoutineObsidianView } from "@app/obsidian-view";
-import { isMobile } from "@shared/utils/plugin-service-locator";
-import { createStoreContext } from "@shared/zustand/create-store-context";
+import { isMobile } from "@/shared/utils/plugin-service-locator";
+import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { WorkspaceLeaf } from "obsidian";
+import { ReactView } from "./react-view";
 
 
 interface UseDrLeafData {
@@ -10,7 +10,7 @@ interface UseDrLeafData {
 }
 interface UseLeaf {
   leaf: WorkspaceLeaf;
-  view: DailyRoutineObsidianView;
+  view: ReactView;
   leafBgColor: string;
   refresh: () => void;
 }
@@ -20,7 +20,7 @@ export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseL
 
   return {
     leaf: data.leaf,
-    view: data.leaf.view as DailyRoutineObsidianView,
+    view: data.leaf.view as ReactView,
     leafBgColor,
     refresh: () => {
       data.setShow(false);

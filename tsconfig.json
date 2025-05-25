@@ -20,14 +20,30 @@
       "ES6",
       "ES7"
     ],
-    "paths" : {
-      "@app/*": ["src/app/*"],
-      "@pages/*": ["src/pages/*"],
-      "@widgets/*": ["src/widgets/*"],
-      "@features/*": ["src/features/*"],
-      "@entities/*": ["src/entities/*"],
-      "@shared/*": ["src/shared/*"],
+    "paths": {
+      "@/app/*": [
+        "src/app/*"
+      ],
+      "@/pages/*": [
+        "src/pages/*"
+      ],
+      "@/widgets/*": [
+        "src/widgets/*"
+      ],
+      "@/features/*": [
+        "src/features/*"
+      ],
+      "@/entities/*": [
+        "src/entities/*"
+      ],
+      "@/shared/*": [
+        "src/shared/*"
+      ],
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/index.d.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/index.d.ts"
+  ],
 }

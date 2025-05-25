@@ -8,7 +8,7 @@ import { UseLeafProvider } from "./use-leaf";
 const AdapterComponent = ({ view }: { view: ReactView }) => {
   const [show, setShow] = useState(true);
 
-  if(!show) return null;
+  if (!show) return null;
   return (
     <StrictMode>
       <UseLeafProvider data={{
@@ -26,24 +26,24 @@ const AdapterComponent = ({ view }: { view: ReactView }) => {
  * React를 사용하는 뷰를 만들 때 사용하는 추상 클래스
  */
 export abstract class ReactView extends ItemView {
-	root: Root | null = null;
+  root: Root | null = null;
   viewTypeName: string;
   displayText: string;
 
-	constructor(leaf: WorkspaceLeaf, info: {
+  constructor(leaf: WorkspaceLeaf, info: {
     viewTypeName: string,
     displayText: string
   }) {
-		super(leaf);
+    super(leaf);
     this.viewTypeName = info.viewTypeName;
     this.displayText = info.displayText;
-	}
+  }
 
-	getViewType() {
+  getViewType() {
     return this.viewTypeName;
-	}
+  }
 
-	getDisplayText() {
+  getDisplayText() {
     return this.displayText;
   }
 
@@ -52,12 +52,12 @@ export abstract class ReactView extends ItemView {
    */
   abstract render(): JSX.Element;
 
-	async onOpen() {
-		this.root = createRoot(this.containerEl.children[1]);
-		this.root.render(<AdapterComponent view={this} />);
-	}
+  async onOpen() {
+    this.root = createRoot(this.containerEl.children[1]);
+    this.root.render(<AdapterComponent view={this} />);
+  }
 
-	async onClose() {
-		this.root?.unmount();
-	}
+  async onClose() {
+    this.root?.unmount();
+  }
 }

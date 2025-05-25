@@ -1,5 +1,5 @@
+import { plugin } from "@/shared/utils/plugin-service-locator";
 import { AbstractInputSuggest, TAbstractFile, TextComponent, TFile, TFolder } from "obsidian";
-import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
@@ -16,17 +16,17 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
     super(plugin().app, textComponent.inputEl);
 
     // File인지 Folder인지 검사하는 함수 초기화
-    this.#isTypeRight = 
-    type === "file" 
-      ?
-    function (file: TAbstractFile): file is TFile {
-      return file instanceof TFile;
-    }
-      : 
-    function (file: TAbstractFile): file is TFolder {
-      return file instanceof TFolder;
-    };
-    
+    this.#isTypeRight =
+      type === "file"
+        ?
+        function (file: TAbstractFile): file is TFile {
+          return file instanceof TFile;
+        }
+        :
+        function (file: TAbstractFile): file is TFolder {
+          return file instanceof TFolder;
+        };
+
     this.#onSelectCbs = [];
 
     textComponent.inputEl.blur();
@@ -61,7 +61,7 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
     this.#onSelectCbs.push(callback);
     return this;
   }
-  
+
   override renderSuggestion(file: TAbstractFile, el: HTMLElement): void {
     el.setText(file.path);
   }

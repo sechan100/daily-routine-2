@@ -1,18 +1,18 @@
-import { Month } from "@shared/period/month";
+import { NoteEntity, NoteRepository, TaskEntity } from "@/entities/note";
+import { RoutineEntity, RoutineRepository } from "@/entities/routine-like";
+import { Day, DayFormat } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
 import { Calendar, Tile } from "./types";
-import { RoutineEntity, routineRepository } from "@entities/routine";
-import { NoteEntity, noteRepository, TaskEntity } from "@entities/note";
-import { Day, DayFormat } from "@shared/period/day";
 
 
 
 export const loadCalendar = async (month: Month): Promise<Calendar> => {
-  const routines = await routineRepository.loadAll();
+  const routines = await RoutineRepository.loadAll();
   const showOnCalendarRoutines = routines.filter((r) => r.properties.showOnCalendar);
   const createTile = (day: Day): Tile => {
     const tileTasks = showOnCalendarRoutines
-    .filter(r => RoutineEntity.isDueTo(r, day))
-    .map(r => TaskEntity.createRoutineTask(r));
+      .filter(r => RoutineEntity.isDueTo(r, day))
+      .map(r => TaskEntity.createRoutineTask(r));
 
     return {
       day,
@@ -28,12 +28,12 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
   const nextNeighboringMonthTilesNum = 6 - Day.getDaysOfWeek().indexOf(month.endDay.dow);
   const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
 
-	const loadedNotes = await noteRepository.loadBetween(startDay, endDay);
-	const tiles: Map<DayFormat, Tile> = new Map();
+  const loadedNotes = await NoteRepository.loadBetween(startDay, endDay);
+  const tiles: Map<DayFormat, Tile> = new Map();
   let d = startDay;
-  while(d.isSameOrBefore(endDay)){
+  while (d.isSameOrBefore(endDay)) {
     const loaded = loadedNotes.find(n => n.day.isSameDay(d));
-    if(loaded){
+    if (loaded) {
       const loadedDay = loaded.day;
       tiles.set(loadedDay.format(), {
         day: loadedDay,
@@ -46,8 +46,8 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
   }
 
 
-	return {
-		month,
-		tiles,
-	}
+  return {
+    month,
+    tiles,
+  }
 }

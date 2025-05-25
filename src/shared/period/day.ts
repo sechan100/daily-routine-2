@@ -1,6 +1,5 @@
+import { SETTINGS } from "@/shared/settings";
 import { moment as obsidianMoment } from "obsidian";
-import _ from "lodash";
-import { DR_SETTING } from "@app/settings/setting-provider";
 
 
 
@@ -25,17 +24,17 @@ export class Day {
   /**
    * 
    * @param day "YYYY-MM-DD" 형식의 문자열
-   */ 
+   */
   constructor(_moment: moment.Moment) {
     const m = _moment.clone();
-    if(m.isValid()) {
+    if (m.isValid()) {
       this.#moment = m;
     } else {
       throw new Error(`Invalid date format. ${_moment.toString()}`);
     }
   }
 
-  static today(): Day{
+  static today(): Day {
     return new Day(moment());
   }
 
@@ -43,81 +42,81 @@ export class Day {
     return new Day(moment().add(1, 'day'));
   }
 
-  static max(): Day{
+  static max(): Day {
     return new Day(moment('9999-12-31T23:59:59.999Z'));
   }
 
-  static fromString(str: string){
+  static fromString(str: string) {
     return new Day(moment(str));
   }
 
-  static fromJsDate(date: Date){
+  static fromJsDate(date: Date) {
     return new Day(moment(date));
   }
 
   static getDaysOfWeek(): DayOfWeek[] {
     const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-    const isMondayStart = DR_SETTING.isMondayStartOfWeek();
+    const isMondayStart = SETTINGS.isMondayStartOfWeek();
     return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
   }
 
-  format(format?: string){
+  format(format?: string) {
     return this.#moment.format(format ? format : 'YYYY-MM-DD');
   }
 
-  isToday(){
+  isToday() {
     return this.#moment.isSame(moment(), 'day');
   }
 
-  isBefore(day: Day){
+  isBefore(day: Day) {
     return this.#moment.isBefore(day.#moment);
   }
 
-  isSameOrBefore(day: Day){
+  isSameOrBefore(day: Day) {
     return this.#moment.isSameOrBefore(day.#moment);
   }
 
-  isAfter(day: Day){
+  isAfter(day: Day) {
     return this.#moment.isAfter(day.#moment);
   }
 
-  isSameOrAfter(day: Day){
+  isSameOrAfter(day: Day) {
     return this.#moment.isSameOrAfter(day.#moment);
   }
 
-  isBetween(start: Day, end: Day, unit?: moment.unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]"){
+  isBetween(start: Day, end: Day, unit?: moment.unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]") {
     return this.#moment.isBetween(start.#moment, end.#moment, unit, inclusivity);
   }
 
-  clone(cb?: (cloneMoment: moment.Moment) => void){
+  clone(cb?: (cloneMoment: moment.Moment) => void) {
     const cloneMoment = this.#moment.clone();
-    if(cb) cb(cloneMoment);
+    if (cb) cb(cloneMoment);
     return new Day(cloneMoment);
   }
 
-  get year(){
+  get year() {
     return this.#moment.year();
   }
 
-  get month(){
+  get month() {
     return this.#moment.month() + 1;
   }
 
-  get week(){
+  get week() {
     return this.#moment.week();
   }
 
-  get date(){
+  get date() {
     return this.#moment.date();
   }
 
-  get dow(): DayOfWeek {  
+  get dow(): DayOfWeek {
     let dayOfWeekNum = parseInt(this.#moment.format('d'), 10);
     // ISO 8601 (Monday = 1) 체계를 사용하는 경우 조정
-    if(this.#moment.localeData().firstDayOfWeek() === 1) {
+    if (this.#moment.localeData().firstDayOfWeek() === 1) {
       dayOfWeekNum = dayOfWeekNum === 0 ? 6 : dayOfWeekNum - 1; // Sunday(0)으로 맞춤
     }
-    switch(dayOfWeekNum) {
+    switch (dayOfWeekNum) {
       case 0: return DayOfWeek.SUN;
       case 1: return DayOfWeek.MON;
       case 2: return DayOfWeek.TUE;
@@ -129,24 +128,24 @@ export class Day {
     }
   }
 
-  getJsDate(){
+  getJsDate() {
     return this.#moment.toDate();
   }
-  
-  isSameDay(day: Day){
+
+  isSameDay(day: Day) {
     return this.#moment.isSame(day.#moment, 'day');
   }
 
-  isSameMonth(day: Day){
+  isSameMonth(day: Day) {
     return this.#moment.isSame(day.#moment, 'month');
   }
 
-  isSameWeek(day: Day){
+  isSameWeek(day: Day) {
     return this.#moment.isSame(day.#moment, 'week');
   }
 
-  isSameDow(day: Day | DayOfWeek){
-    if(day instanceof Day) {
+  isSameDow(day: Day | DayOfWeek) {
+    if (day instanceof Day) {
       return this.dow === day.dow;
     } else {
       return this.dow === day;
@@ -154,7 +153,7 @@ export class Day {
   }
 
   // FIXME: 이건 Month에 있어야 맞지않냐
-  daysInMonth(){
+  daysInMonth() {
     return this.#moment.daysInMonth();
   }
 }

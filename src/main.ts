@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
-import { DAILY_ROUTINE_ICON_NAME } from '@app/ui/daily-routine-icon';
-import { setPlugin } from '@shared/utils/plugin-service-locator';
-import { activateView } from '@shared/view/activate-view';
+import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@/app/settings/DailyRoutineSettingTab';
+import { DAILY_ROUTINE_ICON_NAME } from '@/app/ui/daily-routine-icon';
+import { setPlugin } from '@/shared/utils/plugin-service-locator';
+import { activateView } from '@/shared/view/activate-view';
 import { Platform, Plugin } from 'obsidian';
 import { DailyRoutineObsidianView } from './app';
 

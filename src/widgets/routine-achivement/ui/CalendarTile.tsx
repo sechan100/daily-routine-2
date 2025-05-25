@@ -1,9 +1,12 @@
+/* eslint-disable fsd-import/layer-imports */
 /** @jsxImportSource @emotion/react */
-import { TaskCheckbox } from "@features/task-el";
-import { Tile } from "../model/types"
-import { Circle } from "@shared/components/Circle";
-import { Day } from "@shared/period/day";
+import { Circle } from "@/shared/components/Circle";
+import { Day } from "@/shared/period/day";
 import { Badge } from "@mui/material";
+import { Tile } from "../model/types";
+// FIXME: 이거 나중에 ui고칠 때 바꾸기
+// eslint-disable-next-line fsd-import/public-api-imports
+import { TaskCheckbox } from "@/pages/routine-note/ui/task-base/ui/TaskCheckbox";
 
 
 
@@ -17,7 +20,7 @@ export const CalendarTile = ({
   const isTodayOrBefore = tile.day.isSameOrBefore(Day.today());
   const color = isActive && isTodayOrBefore ? "var(--color-accent)" : "#ececec";
   const opacity = isActive && isTodayOrBefore ? 1 : 0.5;
-  
+
   return (
     <div css={{
       position: "relative",
@@ -30,7 +33,7 @@ export const CalendarTile = ({
       }}>
         <Circle
           color={color}
-          css={{opacity}}
+          css={{ opacity }}
           percentage={100}
           rotate={-90}
           strokeWidth={10}
@@ -49,7 +52,7 @@ export const CalendarTile = ({
           textAlign: "center",
 
         }}>
-          { tile.state === "inactive" || !isTodayOrBefore
+          {tile.state === "inactive" || !isTodayOrBefore
             ?
             <TaskCheckbox
               state={"un-checked"}

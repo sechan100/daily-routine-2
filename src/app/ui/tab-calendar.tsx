@@ -1,7 +1,7 @@
-import { TaskCalendar } from "@pages/calendar";
-import { Month } from "@shared/period/month";
-import { useTabRoute } from "@shared/tab/use-tab-route";
+import { TaskCalendar } from "@/pages/calendar";
+import { Month } from "@/shared/period/month";
 import { useMemo } from "react";
+import { useTabRoute } from "@/shared/tab/use-tab-route";
 
 
 

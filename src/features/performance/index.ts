@@ -1,1 +1,0 @@
-export { PerformanceCircle } from "./PerformanceCircle";

@@ -1,10 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
+import { dr } from "@/shared/utils/daily-routine-bem";
 import { TextComponent } from "obsidian";
-import { useRef, useState, useEffect, memo } from "react";
-import { dr } from "@shared/utils/daily-routine-bem";
-import { Button } from "./Button";
-import clsx from "clsx";
+import { memo, useEffect, useRef } from "react";
 
 
 
@@ -31,29 +28,29 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
 
   // Obsidian Component
   useEffect(() => {
-    if(!obsidianTextComponentRef.current) return;
-    if(textComponentCreated.current) return;
+    if (!obsidianTextComponentRef.current) return;
+    if (textComponentCreated.current) return;
     const textComp = new TextComponent(obsidianTextComponentRef.current)
-    .setValue(props.value)
-    .onChange(props.onChange)
-    .setPlaceholder(props.placeholder??"")
+      .setValue(props.value)
+      .onChange(props.onChange)
+      .setPlaceholder(props.placeholder ?? "")
 
-    if(props.focus) textComp.inputEl.focus();
+    if (props.focus) textComp.inputEl.focus();
     textComp.inputEl.onblur = () => {
-      if(props.onBlur) props.onBlur(textComp.getValue());
+      if (props.onBlur) props.onBlur(textComp.getValue());
     }
-    
+
     textComponentCreated.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  
+
   const bem = dr("text-edit");
   return (
-    <div 
+    <div
       className={bem("", "", props.className)}
       css={{
-        width: props.width??"auto"
+        width: props.width ?? "auto"
       }}
       ref={obsidianTextComponentRef}
     />

@@ -1,4 +1,4 @@
-import { DR_SETTING } from "@app/settings/setting-provider";
+import { SETTINGS } from "@/shared/settings";
 import { Day, DayOfWeek } from "./day";
 
 
@@ -17,13 +17,13 @@ export class Week {
   }
 
   static of(day: Day): Week {
-    const isMondayStart = DR_SETTING.isMondayStartOfWeek();
-    
+    const isMondayStart = SETTINGS.isMondayStartOfWeek();
+
     // 현재 날짜의 요일 확인
     const dowNum = parseInt(day.format("d"), 10);
     const dow = day.dow;
     let startDay: Day;
-    
+
     // dow가 0(일요일)부터 6(토요일)까지라고 가정
     if (isMondayStart) {
       // 월요일 시작 원하는 경우
@@ -36,7 +36,7 @@ export class Week {
       const daysToSubtract = dowNum;
       startDay = day.clone(m => m.subtract(daysToSubtract, "day"));
     }
-    
+
     return new Week(startDay);
   }
 

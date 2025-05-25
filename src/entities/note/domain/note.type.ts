@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Day } from "@shared/period/day";
+import { Day } from "@/shared/period/day";
 
 
 export type RoutineNote = {

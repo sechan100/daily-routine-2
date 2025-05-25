@@ -1,12 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import 'swiper/swiper-bundle.css';
+import React, { Key, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Mousewheel } from 'swiper/modules';
-import React, { useCallback, useEffect, useMemo, useRef, useState, Key, useLayoutEffect } from "react";
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
-import { Month } from '@shared/period/month';
+import 'swiper/swiper-bundle.css';
 
 
-export interface VirtualSlideData {}
+export interface VirtualSlideData { }
 
 
 interface SlideComponentProps<T extends VirtualSlideData> {
@@ -29,7 +28,7 @@ const SlideComponent = React.memo(<T extends VirtualSlideData,>({ data, index, r
 
 const getCenterIndex = (datas: unknown[]) => {
   const len = datas.length;
-  return len%2 === 0 ? len/2 : (len-1)/2;
+  return len % 2 === 0 ? len / 2 : (len - 1) / 2;
 }
 
 
@@ -49,7 +48,7 @@ interface VirtualSwiperProps<T extends VirtualSlideData> {
   */
   loadEdgeData: (edge: "start" | "end", data: T) => T | Promise<T> | T[] | Promise<T[]>;
   children: (data: T, index?: number) => React.ReactNode;
-  
+
   className?: string;
   // 값을 할당하면 자동으로 Swiper가 vertical로 설정된다.
   verticalHeight?: number;
@@ -59,7 +58,7 @@ interface VirtualSwiperProps<T extends VirtualSlideData> {
   nextNav?: HTMLElement;
 }
 
-const VirtualSwiperComponent = <T extends VirtualSlideData,>({ 
+const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   datas: propsDatas,
   getKey,
   children,
@@ -79,9 +78,9 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
    */
   const preventSlideEvent = useRef(false);
   const slideTo = useCallback((index: number) => {
-    if(!swiperRef.current) return;
+    if (!swiperRef.current) return;
     const swiper = swiperRef.current.swiper;
-    if(swiper.activeIndex === index) return;
+    if (swiper.activeIndex === index) return;
     preventSlideEvent.current = true;
     swiper.slideTo(index, 0);
   }, []);
@@ -90,7 +89,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   const newIndexForNewDatasRef = useRef<number>(-1);
   useLayoutEffect(() => {
     const idx = newIndexForNewDatasRef.current;
-    if(idx !== -1){
+    if (idx !== -1) {
       slideTo(idx);
       newIndexForNewDatasRef.current = -1;
     }
@@ -104,14 +103,14 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   // propsDatas가 변경되면 datas를 업데이트하고 slideIndex를 중앙으로 이동시킨다.
   useEffect(() => {
     setDatas(propsDatas, getCenterIndex(propsDatas));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propsDatas]);
 
 
   // nextNav, prevNav에 이벤트 등록
   useEffect(() => {
-    if(!nextNav || !prevNav) return;
-    if(!swiperRef.current) return;
+    if (!nextNav || !prevNav) return;
+    if (!swiperRef.current) return;
 
     const swiper = swiperRef.current.swiper;
     const movePrev = () => swiper.slidePrev();
@@ -135,11 +134,11 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
     const currentData = datas[swiper.activeIndex];
     onSlideChange && onSlideChange(currentData);
 
-    if(swiper.isEnd || swiper.isBeginning){
-      const edge = swiper.isBeginning  ? "start" : "end";
+    if (swiper.isEnd || swiper.isBeginning) {
+      const edge = swiper.isBeginning ? "start" : "end";
       const currentEdgeData = currentData;
-      const newEdgeData = [await loadEdgeData(edge, currentEdgeData)].flatMap(data=>data);
-      if(edge === "start"){
+      const newEdgeData = [await loadEdgeData(edge, currentEdgeData)].flatMap(data => data);
+      if (edge === "start") {
         setDatas([...newEdgeData, ...datas], 1);
       } else {
         setDatas([...datas, ...newEdgeData]);
@@ -147,18 +146,18 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
     }
   }, [datas, loadEdgeData, onSlideChange, setDatas]);
 
-  
+
   return (
     <div
       className={className}
       onTouchStart={(e) => {
         // 횡 swipe인 경우 경우, 모바일에서 swipe했을 때, leaf가 닫혀버리는 것을 방지
-        if(!verticalHeight){
+        if (!verticalHeight) {
           e.stopPropagation();
         }
       }}
     >
-      <Swiper 
+      <Swiper
         ref={swiperRef}
         mousewheel={{
           enabled: wheelSlide,
@@ -171,7 +170,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
         preventInteractionOnTransition={false} // transition 중에는 interaction을 막는다.
         onTransitionEnd={(swiper: SwiperClass) => {
-          if(preventSlideEvent.current){
+          if (preventSlideEvent.current) {
             preventSlideEvent.current = false;
             return;
           } else {
@@ -183,14 +182,14 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
         initialSlide={getCenterIndex(propsDatas)}
       >
         {datas.map((data, index) => (
-        <SwiperSlide key={getKey(data)}>
-          <SlideComponent
-            id={getKey(data)}
-            data={data}
-            index={index}
-            renderChildren={children} 
-          />
-        </SwiperSlide>
+          <SwiperSlide key={getKey(data)}>
+            <SlideComponent
+              id={getKey(data)}
+              data={data}
+              index={index}
+              renderChildren={children}
+            />
+          </SwiperSlide>
         ))}
       </Swiper>
     </div>

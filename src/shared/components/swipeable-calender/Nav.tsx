@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
+import { Month } from "@/shared/period/month";
+import { useLeaf } from "@/shared/view/use-leaf";
 import { css } from '@emotion/react';
-import { Month } from "@shared/period/month";
-import { useLeaf } from "@shared/view/use-leaf";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Calendar from "react-calendar";
 import { OnArgs } from "react-calendar/dist/cjs/shared/types";
@@ -14,8 +14,8 @@ export interface CalendarNavigationProps {
   setMonth: (month: Month) => void;
   className?: string;
 }
-export const CalendarNavigation = ({ 
-  month, 
+export const CalendarNavigation = ({
+  month,
   setMonth,
   className,
 }: CalendarNavigationProps) => {
@@ -23,14 +23,14 @@ export const CalendarNavigation = ({
   const calendarRef = useRef(null);
 
   useEffect(() => {
-    if(!calendarRef.current) return;
+    if (!calendarRef.current) return;
     // @ts-ignore
     calendarRef.current.setActiveStartDate(month.startDay.getJsDate());
   }, [month]);
 
   const lastChangedMonthRef = useRef<Month>(month);
   const monthChangeHandler = useCallback((month: Month) => {
-    if(lastChangedMonthRef.current.isSameMonth(month)) return;
+    if (lastChangedMonthRef.current.isSameMonth(month)) return;
     setMonth?.(month);
     lastChangedMonthRef.current = month;
   }, [setMonth]);
@@ -48,7 +48,7 @@ export const CalendarNavigation = ({
     ".react-calendar__viewContainer": {
       position: "relative",
       zIndex: 10,
-      
+
       "div": {
         position: "absolute",
         left: 0,
@@ -92,7 +92,7 @@ export const CalendarNavigation = ({
             borderTopRightRadius: "5px",
             borderTop: "0.5px solird var(--color-base-40)",
           },
-  
+
           "button:nth-last-child(1)": {
             borderBottomLeftRadius: "5px",
             borderBottomRightRadius: "5px",
@@ -100,14 +100,14 @@ export const CalendarNavigation = ({
         },
       },
     },
-  
+
     // 캘린더
     ".react-calendar__month-view": {
       display: 'none',
     },
   }), [leafBgColor]);
 
-  
+
   return (
     <>
       <Calendar
@@ -117,7 +117,7 @@ export const CalendarNavigation = ({
         defaultValue={month.startDay.getJsDate()}
         allowPartialRange={false}
         onActiveStartDateChange={({ activeStartDate, view }: OnArgs) => {
-          if(!activeStartDate || view !== "month") return;
+          if (!activeStartDate || view !== "month") return;
           const newMonth = Month.fromJsDate(activeStartDate);
           monthChangeHandler(newMonth);
         }}

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { plugin } from "@shared/utils/plugin-service-locator";
+import { plugin } from "@/shared/utils/plugin-service-locator";
 import { TFile, TFolder, getFrontMatterInfo, parseYaml } from "obsidian";
 
 
@@ -24,7 +24,7 @@ export interface FileAccessor {
    * 파일을 읽기전용으로 읽어온다.
    */
   readFileAsReadonly: (file: TFile) => Promise<string>;
-    
+
   /**
    * 파일을 디스크에서 직접 읽어온다.
    * 파일을 수정할 때 사용한다.
@@ -64,7 +64,7 @@ export const fileAccessor: FileAccessor = {
 
   loadFile: (path) => {
     const file = plugin().app.vault.getAbstractFileByPath(path);
-    if(file && file instanceof TFile) {
+    if (file && file instanceof TFile) {
       return file;
     } else {
       return null;
@@ -73,7 +73,7 @@ export const fileAccessor: FileAccessor = {
 
   loadFolder: (path: string) => {
     const file = plugin().app.vault.getAbstractFileByPath(path);
-    if(file && file instanceof TFolder) {
+    if (file && file instanceof TFolder) {
       return file;
     } else {
       return null;
@@ -124,7 +124,7 @@ export const fileAccessor: FileAccessor = {
    */
   loadFrontMatter: async (file: TFile): Promise<object> => {
     const metadataCache = plugin().app.metadataCache.getFileCache(file);
-    if(metadataCache && metadataCache.frontmatter){
+    if (metadataCache && metadataCache.frontmatter) {
       return metadataCache.frontmatter;
     } else {
       const content = await fileAccessor.readFileAsReadonly(file);
@@ -136,7 +136,7 @@ export const fileAccessor: FileAccessor = {
 
 export const parseFrontmatterFromContent = (fileContent: string): object => {
   const fmInfo = getFrontMatterInfo(fileContent);
-  if(!fmInfo.exists){
+  if (!fmInfo.exists) {
     return {};
   }
   const yaml = fmInfo.frontmatter.replace('---', '').trim()

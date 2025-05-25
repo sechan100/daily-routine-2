@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
-import { isRoutineTask, NoteEntity, noteRepository } from "@entities/note";
-import { BaseCalendar } from "@shared/components/BaseCalendar";
-import { Day, DayFormat } from "@shared/period/day";
-import { Month } from "@shared/period/month";
-import { useAsync } from "@shared/utils/use-async";
+import { isRoutineTask, NoteEntity, NoteRepository } from "@/entities/note";
+import { BaseCalendar } from "@/shared/components/BaseCalendar";
+import { Day, DayFormat } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
+import { useAsync } from "@/shared/utils/use-async";
 import { useCallback, useEffect, useMemo } from "react";
 import { Tile } from "../model/types";
 import { useRoutineSelector } from "../model/use-routine-selector";
@@ -17,34 +17,34 @@ interface Props {
 export const CalendarSlide = ({
   month,
 }: Props) => {
-  const notesAsync = useAsync(() => noteRepository.loadBetween(month.startDay, month.endDay), [month]);
+  const notesAsync = useAsync(() => NoteRepository.loadBetween(month.startDay, month.endDay), [month]);
   const { currentRoutine, addRoutineOptionsPerMonth, routineOptionsPerMonth } = useRoutineSelector();
 
 
   const tileMap = useMemo<Map<DayFormat, Tile> | null>(() => {
-    if(notesAsync.loading || !notesAsync.value) return null;
+    if (notesAsync.loading || !notesAsync.value) return null;
 
     const notes = notesAsync.value;
     const map = new Map<DayFormat, Tile>();
-    
+
     const end = month.startDay.daysInMonth();
-    for(let d = 1; d <= end; d++) {
-      const day = month.startDay.clone(m => m.add(d-1, "day"));
+    for (let d = 1; d <= end; d++) {
+      const day = month.startDay.clone(m => m.add(d - 1, "day"));
       const note = notes.find(note => note.day.isSameDay(day));
-  
+
       let tile: Tile | null = null;
       // 노트가 존재
-      if(note){
+      if (note) {
         const routineTask = NoteEntity.findTask(note, currentRoutine);
         // 노트에 routine이 존재
-        if(routineTask){
+        if (routineTask) {
           tile = {
             day,
             state: routineTask.state
           }
         }
       }
-      if(!tile){
+      if (!tile) {
         tile = {
           day,
           state: "inactive"
@@ -58,8 +58,8 @@ export const CalendarSlide = ({
 
   // routineOptions를 최초 계산하여 routineOptionsPerMonth에 추가한다.
   useEffect(() => {
-    if(notesAsync.loading || !notesAsync.value) return;
-    if(routineOptionsPerMonth.has(month.format())) return;
+    if (notesAsync.loading || !notesAsync.value) return;
+    if (routineOptionsPerMonth.has(month.format())) return;
 
     const notes = notesAsync.value;
     const existingRoutineNames = notes.flatMap(note => NoteEntity
@@ -73,11 +73,11 @@ export const CalendarSlide = ({
 
 
   const tile = useCallback((day: Day) => {
-    if(day.month !== month.monthNum) return <></>;
-    if(!tileMap) return <></>;
+    if (day.month !== month.monthNum) return <></>;
+    if (!tileMap) return <></>;
 
     const tile = tileMap.get(day.format());
-    if(!tile) throw new Error(`tile not found for ${day.format()}`);
+    if (!tile) throw new Error(`tile not found for ${day.format()}`);
     return <CalendarTile tile={tile} />;
   }, [month.monthNum, tileMap]);
 
@@ -92,13 +92,13 @@ export const CalendarSlide = ({
   }, [month]);
 
 
-  if(!tileMap) return <></>;
+  if (!tileMap) return <></>;
 
   return (
     <>
       <BaseCalendar
         month={month}
-        setMonth={() => {}}
+        setMonth={() => { }}
         onTileClick={onTileClick}
         tile={tile}
         showNavigation={false}

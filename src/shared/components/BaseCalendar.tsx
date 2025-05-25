@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { css, CSSObject, Interpolation } from '@emotion/react';
-import { Day } from "@shared/period/day";
-import { Month } from "@shared/period/month";
-import { useLeaf } from "@shared/view/use-leaf";
+import { Day } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
+import { useLeaf } from "@/shared/view/use-leaf";
+import { css, CSSObject } from '@emotion/react';
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import Calendar from "react-calendar";
 import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
@@ -20,20 +20,20 @@ export interface BaseCalendarProps {
   tileDisabled?: (day: Day) => boolean;
   styleOptions?: CalendarStyleOptions;
 }
-export const BaseCalendar = ({ 
-  month, 
+export const BaseCalendar = ({
+  month,
   setMonth,
   className,
-  tile, 
+  tile,
   onTileClick,
   showNavigation,
   tileDisabled: propsTileDisabled,
   styleOptions: styleOptions,
 }: BaseCalendarProps) => {
-  const calendarStyles = useBaseCalendarStyles(styleOptions??{});
+  const calendarStyles = useBaseCalendarStyles(styleOptions ?? {});
 
   const onChangeMonth = useCallback(({ activeStartDate }: OnArgs) => {
-    if(!activeStartDate) return;
+    if (!activeStartDate) return;
     setMonth(Month.fromJsDate(activeStartDate));
   }, [setMonth]);
 
@@ -80,7 +80,7 @@ export type CalendarStyleOptions = {
   tile?: CSSObject;
   neighboringMonthTile?: CSSObject;
 }
-const useBaseCalendarStyles = ({ 
+const useBaseCalendarStyles = ({
   nav: navStyle = {},
   weekdays: weekdaysStyle = {},
   weekdayEach: weekdayEachStyle = {},
@@ -98,13 +98,13 @@ const useBaseCalendarStyles = ({
       },
       ...navStyle,
     },
-  
+
     // 월화수목금토일 표시
     '.react-calendar__month-view__weekdays': {
       textAlign: 'center',
       padding: '10px 0',
       ...weekdaysStyle,
-  
+
       // 개별 요일 글자 컨테이너
       div: {
         // 실제 글자
@@ -114,12 +114,12 @@ const useBaseCalendarStyles = ({
         ...weekdayEachStyle,
       },
     },
-  
+
     // 월뷰의 날짜 타일 컨테이너
     '.react-calendar__month-view__days': {
       gap: '5px 0',
       ...tileContainerStyle,
-  
+
       // 타일
       '.react-calendar__tile': {
         padding: '0 !important',
@@ -127,20 +127,20 @@ const useBaseCalendarStyles = ({
         height: 'auto',
         width: '100%',
         background: 'none',
-  
+
         '&:hover': {
           backgroundColor: 'var(--color-base-20)',
         },
 
         ...tileStyle,
       },
-  
+
       // 내부 원래 글씨
       abbr: {
         display: 'none',
       },
     },
-  
+
     // 이웃한 달의 날짜
     '.react-calendar__month-view__days__day--neighboringMonth': {
       position: 'relative',

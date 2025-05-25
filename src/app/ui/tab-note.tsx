@@ -1,6 +1,6 @@
-import { useTabRoute } from "@shared/tab/use-tab-route";
-import { RoutineNotePage } from "@pages/routine-note";
-import { Day } from "@shared/period/day";
+import { RoutineNotePage } from "@/pages/routine-note";
+import { Day } from "@/shared/period/day";
+import { useTabRoute } from "@/shared/tab/use-tab-route";
 import { useMemo } from "react";
 
 
@@ -13,9 +13,9 @@ export const RouitneNoteTab = () => {
   const { tab, routeParams } = useTabRoute();
 
   const params = useMemo<RoutineNoteRouteParams>(() => {
-    if(tab === "note" && routeParams){
+    if (tab === "note" && routeParams) {
       const params = routeParams as RoutineNoteRouteParams;
-      if(!params.day){
+      if (!params.day) {
         throw new Error("Invalid routine note tab routeParams.");
       }
       return params;
@@ -23,8 +23,8 @@ export const RouitneNoteTab = () => {
       return { day: Day.today() };
     }
   }, [routeParams, tab]);
-  
-  if(tab !== "note") return null;
+
+  if (tab !== "note") return null;
   return (
     <>
       <RoutineNotePage day={params.day} />

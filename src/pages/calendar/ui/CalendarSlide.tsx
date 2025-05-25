@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import { Task } from "@entities/note";
-import { BaseCalendar } from "@shared/components/BaseCalendar";
-import { Day } from "@shared/period/day";
-import { Month } from "@shared/period/month";
-import { useAsync } from "@shared/utils/use-async";
+import { Task } from "@/entities/note";
+import { BaseCalendar } from "@/shared/components/BaseCalendar";
+import { Day } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
+import { useTabRoute } from "@/shared/tab/use-tab-route";
+import { useAsync } from "@/shared/utils/use-async";
 import { useCallback, useMemo } from "react";
-import { CalendarTile } from "./CalendarTile";
 import { loadCalendar } from "../model/load-calendar";
 import { Tile } from "../model/types";
-import { useTabRoute } from "@shared/tab/use-tab-route";
+import { CalendarTile } from "./CalendarTile";
 
 
 interface CalendarSlideProps {
@@ -16,10 +16,10 @@ interface CalendarSlideProps {
 }
 export const CalendarSlide = ({ month }: CalendarSlideProps) => {
   const calendarAsync = useAsync(async () => await loadCalendar(month), [month]);
-  const route = useTabRoute(s=>s.route);
+  const route = useTabRoute(s => s.route);
 
   const tiles = useMemo<Map<string, Tile>>(() => {
-    if(calendarAsync.value) {
+    if (calendarAsync.value) {
       return calendarAsync.value.tiles;
     } else {
       return new Map();
@@ -50,7 +50,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
   return (
     <BaseCalendar
       month={month}
-      setMonth={() => {}}
+      setMonth={() => { }}
       onTileClick={onTileClick}
       tile={tile}
       showNavigation={false}

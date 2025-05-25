@@ -2,13 +2,12 @@
  * 모달에서 사용가능한 styled-components들을 제공
  */
 /** @jsxImportSource @emotion/react */
-import { ToggleComponent } from "@shared/components/ToggleComponent";
+import { useEffect, useMemo } from 'react';
+import { Button } from '../Button';
 import { TEXT_CSS } from '../text-style';
-import { useCallback, useEffect, useMemo } from 'react';
+import { TextEditComponent } from '../TextEditComponent';
+import { ToggleComponent } from '../ToggleComponent';
 import { ModalApi } from './create-modal';
-import { TextEditComponent } from "@shared/components/TextEditComponent"
-import { Button } from "@shared/components/Button"
-import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 type ModalProps = {
@@ -24,7 +23,7 @@ const M = ({ header, className, children, modal }: ModalProps) => {
   }, [modal, header]);
 
   return (
-    <div 
+    <div
       className={className}
       css={{
         padding: "2em !important",
@@ -32,13 +31,13 @@ const M = ({ header, className, children, modal }: ModalProps) => {
         overflow: "scroll",
         margin: "0 auto",
         ".is-phone &": {
-          position: "static !important" as "static", 
+          position: "static !important" as "static",
           // padding: "0 !important",
           padding: "0 1em !important",
         }
       }}
     >
-      <header 
+      <header
         css={[{
           padding: "1em 0",
           ".is-phone &": {
@@ -56,7 +55,7 @@ const M = ({ header, className, children, modal }: ModalProps) => {
 type SeparatorProps = {
   edgeWithtransparent?: boolean;
 }
-const Separator = ({ edgeWithtransparent: edge = false}: SeparatorProps) => {
+const Separator = ({ edgeWithtransparent: edge = false }: SeparatorProps) => {
   return <div
     css={{
       height: edge ? 0 : "1px",
@@ -103,7 +102,7 @@ export const ToggleSection = ({
 }: ToggleSectionProps) => {
   return (
     <Section
-      name={name??"Toggle Value"}
+      name={name ?? "Toggle Value"}
       className={className}
     >
       <ToggleComponent
@@ -139,7 +138,7 @@ export const NameSection = ({
 
   return (
     <Section
-      name={name??"Name"}
+      name={name ?? "Name"}
       className={className}
     >
       <div css={{
@@ -179,10 +178,10 @@ export const SaveBtn = ({
    */
   useEffect(() => {
 
-    const handleEnterKeyDown = ({ key, isComposing}: KeyboardEvent) => {
-      if(isComposing) return;
-      
-      if(key === "Enter" && !disabled){
+    const handleEnterKeyDown = ({ key, isComposing }: KeyboardEvent) => {
+      if (isComposing) return;
+
+      if (key === "Enter" && !disabled) {
         onSaveBtnClick?.();
       }
     }
@@ -190,7 +189,7 @@ export const SaveBtn = ({
     document.addEventListener('keydown', handleEnterKeyDown);
     return () => document.removeEventListener('keydown', handleEnterKeyDown);
   }, [disabled, onSaveBtnClick]);
-  
+
   return (
     <div css={{
       position: "absolute",

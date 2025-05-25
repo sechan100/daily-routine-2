@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { dr } from "@shared/utils/daily-routine-bem";
+import { dr } from "@/shared/utils/daily-routine-bem";
 import clsx from "clsx";
 import { ToggleComponent as ObsidianToggleComponent } from "obsidian";
 import { memo, useEffect, useRef } from "react";
@@ -20,21 +20,21 @@ export const ToggleComponent = memo(({
 
   // Obsidian Component Creation And Linking With React
   useEffect(() => {
-    if(!obsidianToggleComponentRef.current) return;
-    if(isComponentCreated.current) return;
+    if (!obsidianToggleComponentRef.current) return;
+    if (isComponentCreated.current) return;
 
     new ObsidianToggleComponent(obsidianToggleComponentRef.current)
-    .setValue(value)
-    .onChange(onChange)
-    
+      .setValue(value)
+      .onChange(onChange)
+
     isComponentCreated.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  
+
   const bem = dr("toggle");
   return (
-    <div 
+    <div
       className={clsx(className, bem(""))}
       ref={obsidianToggleComponentRef}
     />

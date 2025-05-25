@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../Button";
+import { plugin } from "@/shared/utils/plugin-service-locator";
 import { Modal } from "obsidian";
-import { plugin } from "@shared/utils/plugin-service-locator";
+import { useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Button } from "../Button";
 
 
 
@@ -11,7 +11,7 @@ type FlagConfirmModalOptions = {
   confirmText: string;
   title: string;
   description: string;
-  
+
   flagOption: {
     defaultValue: boolean;
     text: string;
@@ -25,7 +25,7 @@ type FlagConfirm = {
   flag: boolean;
 }
 
-type ButtonsProps = Omit<FlagConfirmModalOptions, "title" & "description"> & { 
+type ButtonsProps = Omit<FlagConfirmModalOptions, "title" & "description"> & {
   modal: Modal;
   resolve: ConfirmResolve;
   flag: {
@@ -47,7 +47,7 @@ const ConfirmModalButtons = ({
   const [flag, setFlag] = useState(defaultValue);
 
   return (
-    <div 
+    <div
       css={{
         display: "flex",
         fontSize: "0.9em",
@@ -63,18 +63,18 @@ const ConfirmModalButtons = ({
       }}
     >
       <label className="mod-checkbox">
-        <input 
-          type="checkbox" 
+        <input
+          type="checkbox"
           checked={flag}
           onChange={e => setFlag(e.target.checked)}
         />
         {text}
       </label>
       <Button
-        variant={confirmBtnVariant} 
+        variant={confirmBtnVariant}
         onClick={() => {
           resolve({ confirm: true, flag });
-          modal.onClose = () => {};
+          modal.onClose = () => { };
           modal.close();
         }}
       >
@@ -89,13 +89,13 @@ const ConfirmModalButtons = ({
 
 const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: ConfirmResolve) => {
   const modal = new Modal(plugin().app);
-  
+
   // modal container
   modal.containerEl.addClass("mod-confirmation");
 
   // modal
   modal.setTitle(options.title);
-  if(options.className) modal.modalEl.addClass(options.className);
+  if (options.className) modal.modalEl.addClass(options.className);
   modal.modalEl.setCssStyles({
     width: "calc(var(--dialog-width))"
   })
@@ -114,7 +114,7 @@ const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: Confi
     p.setText(options.description);
     return p;
   })());
-  
+
   modal.onClose = () => resolve({
     confirm: false,
     flag: false,

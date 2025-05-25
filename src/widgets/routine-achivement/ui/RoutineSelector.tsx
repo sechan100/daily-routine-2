@@ -1,13 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
-import { Button } from '@shared/components/Button';
+import { Button } from '@/shared/components/Button';
+import { Month } from '@/shared/period/month';
+import { useLeaf } from '@/shared/view/use-leaf';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useCallback, useState } from "react";
 import { useRoutineSelector } from "../model/use-routine-selector";
-import { useCallback, useMemo, useState } from "react";
-import { useLeaf } from '@shared/view/use-leaf';
-import { maxWidth } from '@mui/system';
-import { Month } from '@shared/period/month';
 
 
 
@@ -39,7 +38,7 @@ export const RoutineSelector = ({
     setAnchorEl(null);
   }, [setCurrentRoutine]);
 
-  
+
   return (
     <div>
       <Button
@@ -61,13 +60,13 @@ export const RoutineSelector = ({
         open={open}
         onClose={() => setAnchorEl(null)}
         css={{
-          ".MuiPaper-root":{
+          ".MuiPaper-root": {
             width: view.contentEl.clientWidth,
             transform: "translateX(16px) !important",
             maxHeight: "500px",
           },
           "ul": {
-            "li":{
+            "li": {
               minHeight: "20px !important",
               borderTop: "1px solid var(--color-base-30)",
             },
@@ -79,7 +78,7 @@ export const RoutineSelector = ({
       >
         {(() => {
           const options = routineOptionsPerMonth.get(month.format());
-          if(!options || options.length === 0) return <MenuItem>no routines...</MenuItem>;
+          if (!options || options.length === 0) return <MenuItem>no routines...</MenuItem>;
 
           return options.map(routine => (
             <MenuItem

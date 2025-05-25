@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
+import { Icon } from "@/shared/components/Icon";
+import { Day } from "@/shared/period/day";
+import { Month } from "@/shared/period/month";
+import { DrTabType, useTabRoute } from "@/shared/tab/use-tab-route";
+import { num_tabsBottomGap, num_tabsHeight } from "@/shared/use-tab-height";
+import { useLeaf } from "@/shared/view/use-leaf";
 import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
-import { Icon } from "@shared/components/Icon";
-import { Day } from "@shared/period/day";
-import { Month } from "@shared/period/month";
-import { DrTabType, useTabRoute } from "@shared/tab/use-tab-route";
-import { useLeaf } from "@shared/view/use-leaf";
 import { useCallback, useEffect } from "react";
 import { MUIThemeProvider } from './MUIThemProvider';
 import "./style.css";
@@ -14,8 +15,6 @@ import { AchivementTab } from "./tab-achivement";
 import { CalendarTab } from "./tab-calendar";
 import { RouitneNoteTab } from "./tab-note";
 
-export const num_tabsHeight = 50;
-export const num_tabsBottomGap = 25;
 export const tabsHeight = `${num_tabsHeight}px`;
 export const tabsBottomGap = `${num_tabsBottomGap}px`;
 
@@ -37,8 +36,8 @@ export const DailyRoutineView = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onTabChange = useCallback((e: React.SyntheticEvent, tab: DrTabType) => {
-    switch(tab){
-      case "note": 
+    switch (tab) {
+      case "note":
         route(tab, { day: Day.today() });
         break;
       case "achivement":
@@ -82,24 +81,24 @@ export const DailyRoutineView = () => {
       >
         <TabNavItem
           label="Note"
-          value={"note"} 
-          icon={<Icon icon="notebook-pen" />} 
+          value={"note"}
+          icon={<Icon icon="notebook-pen" />}
           iconPosition="start"
           css={tabCss}
         />
-        <TabNavItem 
-          label="Calendar" 
+        <TabNavItem
+          label="Calendar"
           value={"calendar"}
-          icon={<Icon icon="calendar-check-2" />} 
-          iconPosition="start" 
-          css={tabCss} 
+          icon={<Icon icon="calendar-check-2" />}
+          iconPosition="start"
+          css={tabCss}
         />
-        <TabNavItem 
-          label="Achivement" 
+        <TabNavItem
+          label="Achivement"
           value={"achivement"}
-          icon={<Icon icon="book-check" />} 
-          iconPosition="start" 
-          css={tabCss} 
+          icon={<Icon icon="book-check" />}
+          iconPosition="start"
+          css={tabCss}
         />
       </TabNav>
       <div css={{

@@ -1,7 +1,9 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "env": { "node": true },
+  "env": {
+    "node": true
+  },
   "plugins": [
     "@typescript-eslint",
     "react",
@@ -12,22 +14,129 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
-  ], 
+  ],
   "parserOptions": {
     "sourceType": "module"
   },
   "rules": {
-    "no-warning-comments": ["warn", { "terms": ["TODO", "FIXME"], "location": "start" }],
+    "no-warning-comments": [
+      "warn",
+      {
+        "terms": [
+          "TODO",
+          "FIXME"
+        ],
+        "location": "start"
+      }
+    ],
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["off", {}],
+    "@typescript-eslint/no-unused-vars": [
+      "off",
+      {}
+    ],
     "@typescript-eslint/ban-ts-comment": "off",
     "no-prototype-builtins": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "off",
     "react-hooks/rules-of-hooks": "error", // Hooks의 규칙을 강제
-    "react-hooks/exhaustive-deps": "warn",  // 의존성 배열 검사
-    "fsd-import/fsd-relative-path": "error",
-    "fsd-import/public-api-imports": "error",
-    "fsd-import/layer-imports": "error"
-  } 
+    "react-hooks/exhaustive-deps": "warn", // 의존성 배열 검사
+    "fsd-import/fsd-relative-path": [
+      "error",
+      {
+        "alias": "@"
+      }
+    ],
+    "fsd-import/layer-imports": [
+      "error",
+      {
+        "alias": "@",
+        "ignoreImportPatterns": []
+      }
+    ],
+    "fsd-import/public-api-imports": [
+      "error",
+      {
+        "alias": "@"
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "../entities/**",
+              "../../entities/**",
+              "../../../entities/**",
+              "../../../../entities/**",
+              "../../../../../entities/**",
+              "../../../../../../entities/**",
+              "../../../../../../../entities/**"
+            ],
+            "message": "상대 경로 대신 @/entities/* 별칭을 사용하세요."
+          },
+          {
+            "group": [
+              "../features/**",
+              "../../features/**",
+              "../../../features/**",
+              "../../../../features/**",
+              "../../../../../features/**",
+              "../../../../../../features/**",
+              "../../../../../../../features/**"
+            ],
+            "message": "상대 경로 대신 @/features/* 별칭을 사용하세요."
+          },
+          {
+            "group": [
+              "../widgets/**",
+              "../../widgets/**",
+              "../../../widgets/**",
+              "../../../../widgets/**",
+              "../../../../../widgets/**",
+              "../../../../../../widgets/**",
+              "../../../../../../../widgets/**"
+            ],
+            "message": "상대 경로 대신 @/widgets/* 별칭을 사용하세요."
+          },
+          {
+            "group": [
+              "../app/**",
+              "../../app/**",
+              "../../../app/**",
+              "../../../../app/**",
+              "../../../../../app/**",
+              "../../../../../../app/**",
+              "../../../../../../../app/**"
+            ],
+            "message": "상대 경로 대신 @/app/* 별칭을 사용하세요."
+          },
+          {
+            "group": [
+              "../_pages/**",
+              "../../_pages/**",
+              "../../../_pages/**",
+              "../../../../_pages/**",
+              "../../../../../_pages/**",
+              "../../../../../../_pages/**",
+              "../../../../../../../_pages/**"
+            ],
+            "message": "상대 경로 대신 @/pages/* 별칭을 사용하세요."
+          },
+          {
+            "group": [
+              "../shared/**",
+              "../../shared/**",
+              "../../../shared/**",
+              "../../../../shared/**",
+              "../../../../../shared/**",
+              "../../../../../../shared/**",
+              "../../../../../../../shared/**"
+            ],
+            "message": "상대 경로 대신 @/shared/* 별칭을 사용하세요."
+          }
+        ]
+      }
+    ]
+  }
 }

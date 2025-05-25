@@ -1,7 +1,7 @@
+import { plugin } from '@/shared/utils/plugin-service-locator';
+import { Modal } from 'obsidian';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { Modal } from 'obsidian';
-import { plugin } from '@shared/utils/plugin-service-locator';
 import { create } from 'zustand';
 
 
@@ -39,7 +39,7 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
   const modalStore = useRef(create<ModalStore<P>>((set) => ({
     modal: null,
     props: null,
-    setModal: (modal: Modal) => set({modal}),
+    setModal: (modal: Modal) => set({ modal }),
     clearModal: () => {
       set({
         modal: null,
@@ -50,11 +50,11 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
 
   // Modal 오픈 함수
   const openModal = useCallback((props: P) => {
-    if(modalStore.current.getState().modal) return;
-    
+    if (modalStore.current.getState().modal) return;
+
     const modal = new Modal(plugin().app);
     // sidebar layout
-    if(options?.sidebarLayout) modal.modalEl.addClass("mod-sidebar-layout");
+    if (options?.sidebarLayout) modal.modalEl.addClass("mod-sidebar-layout");
     // 기본값은 flex
     modal.contentEl.setCssStyles({
       display: "block",
@@ -72,22 +72,22 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
   // Modal 컴포넌트
   const ModalComponent = useCallback<React.FC<OmitModalProps<P>>>(() => {
     const { modal, props, clearModal } = modalStore.current();
-    const container = useMemo<HTMLElement | null>(() => modal?.contentEl??null, [modal]);
+    const container = useMemo<HTMLElement | null>(() => modal?.contentEl ?? null, [modal]);
     const customOnClose = useRef<(() => void) | null>();
 
     useEffect(() => {
-      if(!modal) return;
+      if (!modal) return;
       modal.onClose = () => {
-        if(customOnClose.current) {
+        if (customOnClose.current) {
           customOnClose.current();
           customOnClose.current = null;
         }
         clearModal();
       }
     }, [clearModal, modal]);
-    
+
     const modalProps = useMemo(() => {
-      if(!modal || !props) return null;
+      if (!modal || !props) return null;
 
       const modalApi: ModalApi = {
         onClose: (cb) => {
@@ -119,6 +119,6 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
       container
     );
   }, [modalStore]);
-  
+
   return useMemo(() => Object.assign(ModalComponent, { open: openModal }), [ModalComponent, openModal]);
 }

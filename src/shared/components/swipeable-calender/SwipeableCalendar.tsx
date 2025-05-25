@@ -1,9 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { VirtualSwiper } from "@shared/components/VirtualSwiper";
-import { Month } from "@shared/period/month";
-import { useCallback, useEffect, useState } from "react";
+import { Month } from "@/shared/period/month";
+import { useCallback, useState } from "react";
+import { VirtualSwiper } from '../VirtualSwiper';
 import { CalendarNavigation } from "./Nav";
-import { useLeaf } from "@shared/view/use-leaf";
 
 
 
@@ -16,7 +15,7 @@ const loadMonths = (month: Month) => {
 }
 
 const loadEdgeMonth = (edge: "start" | "end", month: Month) => {
-  if(edge === "start"){
+  if (edge === "start") {
     return month.subtract_cpy(1);
   } else {
     return month.add_cpy(1);
@@ -54,10 +53,10 @@ export const SwipeableCalendar = ({
     setMonths(loadMonths(month));
     onSlideChange(month);
   }, [onSlideChange]);
-  
-  
+
+
   return (
-    <div 
+    <div
       className="dr-swipeable-calendar"
       css={{
         position: 'relative',

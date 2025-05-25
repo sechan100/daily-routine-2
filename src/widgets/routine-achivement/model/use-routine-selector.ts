@@ -1,4 +1,4 @@
-import { MonthFormat } from "@shared/period/month";
+import { MonthFormat } from "@/shared/period/month";
 import { create } from "zustand";
 
 
@@ -15,7 +15,7 @@ export const useRoutineSelector = create<UseRoutineSelector>((set, get) => ({
   routineOptionsPerMonth: new Map(),
   addRoutineOptionsPerMonth: (monthFormat: MonthFormat, routineOptions: string[]) => {
     const map = get().routineOptionsPerMonth as Map<MonthFormat, string[]>;
-    if(!map.has(monthFormat)){
+    if (!map.has(monthFormat)) {
       map.set(monthFormat, routineOptions);
       set({ routineOptionsPerMonth: new Map(map) });
     }

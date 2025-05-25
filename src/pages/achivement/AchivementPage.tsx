@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { Month } from "@shared/period/month";
-import { NoteAchivementWidget } from "@widgets/note-achivement";
+import { Icon } from "@/shared/components/Icon";
+import { Month } from "@/shared/period/month";
+import { useLeaf } from "@/shared/view/use-leaf";
+import { NoteAchivementWidget } from "@/widgets/note-achivement";
+import { RoutineAchivementWidget } from "@/widgets/routine-achivement";
+import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
 import { useState } from "react";
-import { useLeaf } from "@shared/view/use-leaf";
-import { css } from "@emotion/react";
-import { Icon } from "@shared/components/Icon";
-import { RoutineAchivementWidget } from "@widgets/routine-achivement";
 
 
 type AchivementType = "note" | "routine";
@@ -46,17 +46,17 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
       >
         <TabNavItem
           label="Note"
-          value={"note"} 
-          icon={<Icon icon="notebook-pen" />} 
+          value={"note"}
+          icon={<Icon icon="notebook-pen" />}
           iconPosition="start"
           css={tabCss}
         />
-        <TabNavItem 
-          label="Routine" 
+        <TabNavItem
+          label="Routine"
           value={"routine"}
           icon={<Icon icon="alarm-clock-check" />}
           iconPosition="start"
-          css={tabCss} 
+          css={tabCss}
         />
       </TabNav>
       <div css={{
@@ -64,11 +64,11 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
         justifyContent: "center"
       }}>
         <div>
-        {type === "note" ?
-          <NoteAchivementWidget month={month} height={400} maxWidth={420} />
-          :
-          <RoutineAchivementWidget month={month} height={400} maxWidth={420} />
-        }
+          {type === "note" ?
+            <NoteAchivementWidget month={month} height={400} maxWidth={420} />
+            :
+            <RoutineAchivementWidget month={month} height={400} maxWidth={420} />
+          }
         </div>
       </div>
     </>

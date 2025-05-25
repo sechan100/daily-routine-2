@@ -1,6 +1,6 @@
-import { AchivementPage } from "@pages/achivement/AchivementPage";
-import { Month } from "@shared/period/month";
-import { useTabRoute } from "@shared/tab/use-tab-route";
+import { AchivementPage } from '@/pages/achivement';
+import { Month } from "@/shared/period/month";
+import { useTabRoute } from "@/shared/tab/use-tab-route";
 import { useMemo } from "react";
 
 
@@ -13,9 +13,9 @@ export const AchivementTab = () => {
   const { tab, routeParams } = useTabRoute();
 
   const params = useMemo<AchivementTabRouteParams>(() => {
-    if(tab === "achivement" && routeParams){
+    if (tab === "achivement" && routeParams) {
       const params = routeParams as AchivementTabRouteParams;
-      if(!params.month){
+      if (!params.month) {
         throw new Error("Invalid AchivementTab tab routeParams.");
       }
       return params;
@@ -24,7 +24,7 @@ export const AchivementTab = () => {
     }
   }, [routeParams, tab]);
 
-  if(tab !== "achivement") return null;
+  if (tab !== "achivement") return null;
   return (
     <>
       <AchivementPage month={params.month} />

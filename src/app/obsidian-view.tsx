@@ -1,4 +1,4 @@
-import { ReactView } from "@shared/view/react-view";
+import { ReactView } from '@/shared/view/react-view';
 import { IconName, WorkspaceLeaf } from "obsidian";
 import { DailyRoutineView } from "./ui/DailyRoutineView";
 import { DAILY_ROUTINE_ICON_NAME } from "./ui/daily-routine-icon";

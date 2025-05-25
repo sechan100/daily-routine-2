@@ -1,1 +1,1 @@
-export { WeeksWidget } from "./WeeksWidget";
+export { WeeksWidget } from "./ui/WeeksWidget";
