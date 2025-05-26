@@ -1,4 +1,4 @@
-import { plugin } from '@/shared/utils/plugin-service-locator';
+import { getPlugin } from '@/shared/utils/plugin-service-locator';
 import { Modal } from 'obsidian';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
@@ -52,7 +52,7 @@ export const createModal = <P,>(ContentComponent: React.FC<P>, options: ModalCre
   const openModal = useCallback((props: P) => {
     if (modalStore.current.getState().modal) return;
 
-    const modal = new Modal(plugin().app);
+    const modal = new Modal(getPlugin().app);
     // sidebar layout
     if (options?.sidebarLayout) modal.modalEl.addClass("mod-sidebar-layout");
     // 기본값은 flex

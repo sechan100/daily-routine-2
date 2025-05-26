@@ -1,4 +1,4 @@
-import { plugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { AbstractInputSuggest, TAbstractFile, TextComponent, TFile, TFolder } from "obsidian";
 
 
@@ -13,7 +13,7 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
 
 
   constructor(private textComponent: TextComponent, type: "file" | "folder") {
-    super(plugin().app, textComponent.inputEl);
+    super(getPlugin().app, textComponent.inputEl);
 
     // File인지 Folder인지 검사하는 함수 초기화
     this.#isTypeRight =
@@ -33,7 +33,7 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
   }
 
   getSuggestions(inputStr: string): TAbstractFile[] {
-    const abstractFiles = plugin().app.vault.getAllLoadedFiles();
+    const abstractFiles = getPlugin().app.vault.getAllLoadedFiles();
     const files: TAbstractFile[] = [];
     const lowerCaseInputStr = inputStr.toLowerCase();
 

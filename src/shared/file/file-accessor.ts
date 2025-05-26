@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { plugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { TFile, TFolder, getFrontMatterInfo, parseYaml } from "obsidian";
 
 
@@ -63,7 +63,7 @@ export interface FileAccessor {
 export const fileAccessor: FileAccessor = {
 
   loadFile: (path) => {
-    const file = plugin().app.vault.getAbstractFileByPath(path);
+    const file = getPlugin().app.vault.getAbstractFileByPath(path);
     if (file && file instanceof TFile) {
       return file;
     } else {
@@ -72,7 +72,7 @@ export const fileAccessor: FileAccessor = {
   },
 
   loadFolder: (path: string) => {
-    const file = plugin().app.vault.getAbstractFileByPath(path);
+    const file = getPlugin().app.vault.getAbstractFileByPath(path);
     if (file && file instanceof TFolder) {
       return file;
     } else {
@@ -81,35 +81,35 @@ export const fileAccessor: FileAccessor = {
   },
 
   createFolder: (path: string) => {
-    return plugin().app.vault.createFolder(path);
+    return getPlugin().app.vault.createFolder(path);
   },
 
   readFileAsReadonly: async (file: TFile) => {
-    return await plugin().app.vault.cachedRead(file);
+    return await getPlugin().app.vault.cachedRead(file);
   },
 
   readFileFromDisk: async (file: TFile) => {
-    return await plugin().app.vault.read(file);
+    return await getPlugin().app.vault.read(file);
   },
 
   renameFileWithLinks: async (file: TFile, newName: string) => {
-    return await plugin().app.fileManager.renameFile(file, newName);
+    return await getPlugin().app.fileManager.renameFile(file, newName);
   },
 
   writeFile: async (file: TFile, contentSupplier: (data: string) => string) => {
-    return await plugin().app.vault.process(file, contentSupplier);
+    return await getPlugin().app.vault.process(file, contentSupplier);
   },
 
   createFile: async (path: string, content: string) => {
-    return await plugin().app.vault.create(path, content);
+    return await getPlugin().app.vault.create(path, content);
   },
 
   deleteFile: async (file: TFile) => {
-    return await plugin().app.vault.delete(file);
+    return await getPlugin().app.vault.delete(file);
   },
 
   writeFrontMatter: async (file: TFile, frontMatterModifier) => {
-    return await plugin().app.fileManager.processFrontMatter(file, (fm: any) => {
+    return await getPlugin().app.fileManager.processFrontMatter(file, (fm: any) => {
       const newFm = frontMatterModifier(fm);
       Object.assign(fm, newFm);
     });
@@ -123,7 +123,7 @@ export const fileAccessor: FileAccessor = {
    * @returns 
    */
   loadFrontMatter: async (file: TFile): Promise<object> => {
-    const metadataCache = plugin().app.metadataCache.getFileCache(file);
+    const metadataCache = getPlugin().app.metadataCache.getFileCache(file);
     if (metadataCache && metadataCache.frontmatter) {
       return metadataCache.frontmatter;
     } else {

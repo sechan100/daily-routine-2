@@ -1,4 +1,4 @@
-import { plugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/shared/utils/plugin-service-locator";
 
 /**
  * data.json 파일을 불러와서 메모리에 올렸을 때의 타입.
@@ -19,18 +19,18 @@ export const DEFAULT_SETTINGS: DailyRoutineSettings = {
 
 export const SETTINGS = {
   routineFolderPath() {
-    return `${plugin().settings.dailyRoutineFolderPath}/routines`;
+    return `${getPlugin().settings.dailyRoutineFolderPath}/routines`;
   },
 
   noteFolderPath() {
-    return `${plugin().settings.dailyRoutineFolderPath}/notes`;
+    return `${getPlugin().settings.dailyRoutineFolderPath}/notes`;
   },
 
   isMondayStartOfWeek() {
-    return plugin().settings.isMondayStartOfWeek;
+    return getPlugin().settings.isMondayStartOfWeek;
   },
 
   confirmUncheckTask() {
-    return plugin().settings.confirmUncheckTask;
+    return getPlugin().settings.confirmUncheckTask;
   }
 }

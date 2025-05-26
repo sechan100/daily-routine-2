@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { plugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { Modal } from "obsidian";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -88,7 +88,7 @@ const ConfirmModalButtons = ({
 }
 
 const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: ConfirmResolve) => {
-  const modal = new Modal(plugin().app);
+  const modal = new Modal(getPlugin().app);
 
   // modal container
   modal.containerEl.addClass("mod-confirmation");

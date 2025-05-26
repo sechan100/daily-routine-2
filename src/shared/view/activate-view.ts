@@ -1,4 +1,4 @@
-import { plugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { WorkspaceLeaf } from "obsidian";
 
 /**
@@ -7,7 +7,7 @@ import { WorkspaceLeaf } from "obsidian";
   * @param pos -1: left, 0: center(default), 1: right
   */
 export const activateView = async (viewTypeName: string, pos = 0) => {
-  const app = plugin().app;
+  const app = getPlugin().app;
   let leaf = app.workspace.getLeavesOfType(viewTypeName)[0];
 
   let getLeaf;
