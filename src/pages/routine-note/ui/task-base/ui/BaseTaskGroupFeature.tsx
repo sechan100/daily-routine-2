@@ -65,7 +65,7 @@ export const BaseTaskGroupFeature = React.memo(({
   const isAllSubTasksCheckedBeforeRef = useRef(isAllSubTasksChecked);
   useEffect(() => {
     if (!isAllSubTasksCheckedBeforeRef.current && isAllSubTasksChecked) {
-      console.log(!isAllSubTasksCheckedBeforeRef.current, isAllSubTasksChecked)
+      // console.log(!isAllSubTasksCheckedBeforeRef.current, isAllSubTasksChecked)
       changeOpen(false);
     }
     isAllSubTasksCheckedBeforeRef.current = isAllSubTasksChecked;

@@ -38,9 +38,9 @@ export const WeeksWidget = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    console.log(weeks.map(w => w.week.startDay.format()));
-  }, [weeks]);
+  // useEffect(() => {
+  //   console.log(weeks.map(w => w.week.startDay.format()));
+  // }, [weeks]);
 
 
   const loadEdgeWeek = useCallback(async (edge: "start" | "end", week: WeekNode) => {
