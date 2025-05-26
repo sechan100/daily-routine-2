@@ -18,6 +18,10 @@ export const DEFAULT_SETTINGS: DailyRoutineSettings = {
 }
 
 export const SETTINGS = {
+  dailyRoutineFolderPath() {
+    return getPlugin().settings.dailyRoutineFolderPath;
+  },
+
   routineFolderPath() {
     return `${getPlugin().settings.dailyRoutineFolderPath}/routines`;
   },

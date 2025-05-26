@@ -1,8 +1,7 @@
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { Modal, Notice } from "obsidian";
-import { checkRequireMigration } from "./migration-to-2xx/check-required-migration";
-import { migrateTo2xx } from "./migration-to-2xx/migrate";
+import { isRequireMigration, migrateTo2xx } from "./migration-to-2xx/migrate";
 
 
 export type UpdateMigrationPercentage = (percentage: number) => void;
@@ -10,7 +9,7 @@ export type UpdateMigrationPercentage = (percentage: number) => void;
 
 
 export const schemaMigrationEntrypoint = async () => {
-  const needMigration = await checkRequireMigration();
+  const needMigration = await isRequireMigration();
   if (!needMigration) {
     return;
   }

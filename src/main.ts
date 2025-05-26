@@ -42,11 +42,11 @@ export default class DailyRoutinePlugin extends Plugin {
       }
     });
 
-    // migration entrypoint
-    schemaMigrationEntrypoint();
-
-    // 앱이 로드되면 뷰를 활성화한다.
-    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
+    // 앱이 로드되면 실행
+    this.app.workspace.onLayoutReady(() => {
+      schemaMigrationEntrypoint();
+      activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
+    });
   }
 
   onunload() {
