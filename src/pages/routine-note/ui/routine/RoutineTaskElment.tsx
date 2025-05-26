@@ -1,6 +1,6 @@
 import { useRoutineMutationMerge } from "@/entities/merge-note";
 import { NoteRepository, RoutineTask, TaskEntity, TaskGroup } from "@/entities/note";
-import { RoutineRepository } from "@/entities/routine-like";
+import { RoutineService } from "@/entities/routine-like";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { ResultAsync } from "neverthrow";
 import { Menu, Notice } from "obsidian";
@@ -44,14 +44,14 @@ export const RoutineTaskElment = React.memo(({ task, parent }: RoutineTaskProps)
     })
     if (!deleteConfirm) return;
 
-    await RoutineRepository.delete(task.name);
+    await RoutineService.delete(task.name);
     mergeNotes();
     new Notice(`Routine '${task.name}' deleted.`);
   }, [mergeNotes, task.name])
 
 
   const onOptionMenu = useCallback(async (m: Menu) => {
-    const routineResult = await (ResultAsync.fromThrowable(async () => await RoutineRepository.load(task.name)))();
+    const routineResult = await (ResultAsync.fromThrowable(async () => await RoutineService.load(task.name)))();
     const routine = routineResult.isOk() ? routineResult.value : null;
     /**
      * 과거에 수행했던 routine을 오늘날에 와서 삭제했을 때, 그 routine을 수행했던 과거노트에서 routine option을 열 수 있다.

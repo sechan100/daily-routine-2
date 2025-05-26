@@ -1,17 +1,17 @@
 import { useRoutineMutationMerge } from "@/entities/merge-note";
 import { NoteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from "@/entities/note";
-import { GroupRepository } from "@/entities/routine-like";
+import { GroupService } from "@/entities/routine-like";
 import { doFlagConfirm } from "@/shared/components/modal/flag-confirm-modal";
 import { ResultAsync } from "neverthrow";
 import { Menu, Notice } from "obsidian";
 import { useCallback } from "react";
 import { useRoutineNoteStore } from "../../model/use-routine-note";
-import { useGroupOptionModal } from "./group-option";
 import { BaseTaskGroupFeature } from "../task-base/ui/BaseTaskGroupFeature";
+import { useGroupOptionModal } from "./group-option";
 
 const deleteGroup = async (note: RoutineNote, groupName: string, deleteSubTasks: boolean) => {
   // 그룹 삭제
-  await GroupRepository.delete(groupName, deleteSubTasks);
+  await GroupService.delete(groupName, deleteSubTasks);
 
   // note에서 그룹 삭제
   const newNote = TaskGroupEntity.deleteTaskGroup(note, groupName, deleteSubTasks);
@@ -66,7 +66,7 @@ export const TaskGroupElement = ({
 
 
   const onOptionMenu = useCallback(async (m: Menu) => {
-    const groupResult = await (ResultAsync.fromThrowable(async () => await GroupRepository.load(group.name)))();
+    const groupResult = await (ResultAsync.fromThrowable(async () => await GroupService.load(group.name)))();
     const loadedGroup = groupResult.isOk() ? groupResult.value : null;
     /**
      * 과거에 존재했던 group을 오늘날에 와서 삭제했을 때, 그 group이 존재하는 과거노트에서 groupOption을 열 수 있다.

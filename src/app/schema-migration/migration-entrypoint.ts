@@ -10,7 +10,7 @@ export type UpdateMigrationPercentage = (percentage: number) => void;
 
 
 export const schemaMigrationEntrypoint = async () => {
-  const needMigration = checkRequireMigration();
+  const needMigration = await checkRequireMigration();
   if (!needMigration) {
     return;
   }
@@ -43,7 +43,7 @@ export const schemaMigrationEntrypoint = async () => {
   })
   const content = document.createElement("p");
   const updatePercentage = (percentage: number) => {
-    content.setHTMLUnsafe("도중에 애플리케이션을 종료하지 마세요. 이 작업은 시간이 걸릴 수 있습니다.<br>" + `Migration Percentage: ${percentage}%`);
+    content.innerHTML = "도중에 애플리케이션을 종료하지 마세요. 이 작업은 시간이 걸릴 수 있습니다.<br>" + `Migration Percentage: ${percentage}%`;
   }
   modal.contentEl.appendChild(content);
   updatePercentage(0);

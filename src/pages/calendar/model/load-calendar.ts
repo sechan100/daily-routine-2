@@ -1,5 +1,5 @@
 import { NoteEntity, NoteRepository, TaskEntity } from "@/entities/note";
-import { RoutineEntity, RoutineRepository } from "@/entities/routine-like";
+import { RoutineEntity, RoutineService } from "@/entities/routine-like";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 import { Calendar, Tile } from "./types";
@@ -7,7 +7,7 @@ import { Calendar, Tile } from "./types";
 
 
 export const loadCalendar = async (month: Month): Promise<Calendar> => {
-  const routines = await RoutineRepository.loadAll();
+  const routines = await RoutineService.loadAll();
   const showOnCalendarRoutines = routines.filter((r) => r.properties.showOnCalendar);
   const createTile = (day: Day): Tile => {
     const tileTasks = showOnCalendarRoutines

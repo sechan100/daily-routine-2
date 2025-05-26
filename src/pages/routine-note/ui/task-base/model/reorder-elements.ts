@@ -1,5 +1,5 @@
 import { isRoutineNote, isRoutineTask, isTaskGroup, NoteElement, NoteEntity, Task, TaskEntity, TaskGroup, TaskParent } from "@/entities/note";
-import { GroupRepository, isRoutine, isRoutineGroup, Routine, RoutineElement, RoutineGroupEntity, RoutineRepository } from "@/entities/routine-like";
+import { GroupService, isRoutine, isRoutineGroup, Routine, RoutineElement, RoutineGroupEntity, RoutineService } from "@/entities/routine-like";
 import { useRoutineNoteStore } from '../../../model/use-routine-note';
 
 
@@ -9,8 +9,8 @@ type OrderChangeList = RoutineElement[];
 const ORDER_OFFSET = 1000;
 
 const loadRoutineElementRegistry = async () => {
-  const routineMap = new Map<string, Routine>([...await RoutineRepository.loadAll()].map(r => [r.name, r]));
-  const groupMap = new Map<string, RoutineElement>([...await GroupRepository.loadAll()].map(g => [g.name, g]));
+  const routineMap = new Map<string, Routine>([...await RoutineService.loadAll()].map(r => [r.name, r]));
+  const groupMap = new Map<string, RoutineElement>([...await GroupService.loadAll()].map(g => [g.name, g]));
 
   return (name: string, type: "routine" | "routine-group"): RoutineElement | null => {
     if (type === "routine") {
@@ -88,16 +88,16 @@ const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
      * 현재는 존재하지 않는 Group 안으로 task가 드롭된 경우, 존재하지 않는 group으로 task가 할당될 수 있다. 
      * 이 경우는 updateRoutineAndRoutineGroups을 처리해선 안된다.
      */
-    const isGroupExist = GroupRepository.isExist(parent.name);
+    const isGroupExist = GroupService.isExist(parent.name);
     if (!isGroupExist) return;
   }
 
   const list = await resolveChangeList(parent);
   for (const el of list) {
     if (isRoutine(el)) {
-      await RoutineRepository.update(el);
+      await RoutineService.update(el);
     } else if (isRoutineGroup(el)) {
-      await GroupRepository.update(el);
+      await GroupService.update(el);
     } else {
       throw new Error("Invalid RoutineElement");
     }

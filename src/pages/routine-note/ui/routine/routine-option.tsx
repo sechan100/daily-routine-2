@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useRoutineMutationMerge } from '@/entities/merge-note';
-import { Routine, RoutineRepository } from '@/entities/routine-like';
+import { Routine, RoutineService } from '@/entities/routine-like';
 import { createModal, ModalApi } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled';
 import { useCallback, useMemo, useReducer } from "react";
@@ -19,9 +19,9 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
 
   const onSaveBtnClick = useCallback(async () => {
     if (routine.name.trim() !== "" && originalName !== routine.name) {
-      await RoutineRepository.changeName(originalName, routine.name);
+      await RoutineService.changeName(originalName, routine.name);
     }
-    await RoutineRepository.update(routine);
+    await RoutineService.update(routine);
     mergeNotes();
     modal.close();
   }, [mergeNotes, modal, originalName, routine]);

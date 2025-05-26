@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useRoutineMutationMerge } from "@/entities/merge-note";
-import { GroupRepository, RoutineGroup } from "@/entities/routine-like";
+import { GroupService, RoutineGroup } from "@/entities/routine-like";
 import { createModal, ModalApi } from "@/shared/components/modal/create-modal";
 import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
@@ -28,7 +28,7 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
   const [group, dispatch] = useReducer<GroupReducer>(groupReducer, createDefaultGroup());
 
   const onSaveBtnClick = useCallback(async () => {
-    await GroupRepository.persist(group);
+    await GroupService.persist(group);
     mergeNotes();
     modal.close();
     new Notice(`Group '${group.name}' created.`);

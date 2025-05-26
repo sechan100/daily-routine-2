@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NoteElement, RoutineNote, TaskEntity, TaskGroup } from "@/entities/note";
-import { GroupRepository, isRoutine, Routine, RoutineEntity, RoutineGroup, RoutineGroupEntity, RoutineRepository } from "@/entities/routine-like";
+import { GroupService, isRoutine, Routine, RoutineEntity, RoutineGroup, RoutineGroupEntity, RoutineService } from "@/entities/routine-like";
 import { Day } from "@/shared/period/day";
 
 
@@ -20,8 +20,8 @@ export class RoutineNoteCreator {
 
   static async withLoadFromRepositoryAsync(): Promise<RoutineNoteCreator> {
     return new RoutineNoteCreator(
-      await RoutineRepository.loadAll(),
-      await GroupRepository.loadAll()
+      await RoutineService.loadAll(),
+      await GroupService.loadAll()
     );
   }
 

@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { useRoutineMutationMerge } from "@/entities/merge-note";
-import { RoutineRepository } from "@/entities/routine-like";
+import { RoutineService } from "@/entities/routine-like";
 import { createModal, ModalApi } from "@/shared/components/modal/create-modal";
 import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
+import { ActiveCriteria } from "./ActiveCriteria";
 import { createNewRoutine } from "./create-routine";
 import { RoutineReducer, routineReducer } from "./routine-reducer";
-import { ActiveCriteria } from "./ActiveCriteria";
 
 
 const bem = dr("start-new-routine");
@@ -22,7 +22,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {
-    await RoutineRepository.create(routine);
+    await RoutineService.create(routine);
     mergeNotes();
     modal.close();
     new Notice(`Routine '${routine.name}' started! 🎉`);

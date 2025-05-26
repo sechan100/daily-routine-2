@@ -1,8 +1,8 @@
 // routine repository
-export { RoutineRepository } from "./routine/routine-repository";
+export { RoutineService } from "./routine/routine-service";
 
 // group repository
-export { GroupRepository } from "./routine-group/group-repository";
+export { GroupService } from "./routine-group/group-service";
 
 // types
 export * from "./routine/routine-type";
