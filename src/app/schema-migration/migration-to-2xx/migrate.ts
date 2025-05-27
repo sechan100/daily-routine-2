@@ -1,6 +1,5 @@
 /* eslint-disable fsd-import/public-api-imports */
-import { ensureArchive } from "@/entities/archives";
-import { GROUP_PREFIX } from "@/entities/routine-like/utils";
+import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
 import { SETTINGS } from "@/shared/settings";
 import { getPlugin } from "@/shared/utils/plugin-service-locator";
@@ -10,9 +9,11 @@ import { migrateGroup } from "./migrate-group";
 import { migrateNote } from "./migrate-note";
 import { migrateRoutine } from "./migrate-routine";
 
+const GROUP_PREFIX = "_g_";
+
 
 export const isRequireMigration = async (): Promise<boolean> => {
-  const anyRoutineFile = (await ensureArchive("routines"))
+  const anyRoutineFile = (await ensureFolder(SETTINGS.getDailyRoutineFolderPath()))
     .children
     .find(file => file instanceof TFile && !file.name.startsWith(GROUP_PREFIX));
 
@@ -31,7 +32,7 @@ export const isRequireMigration = async (): Promise<boolean> => {
 
 export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) => {
   // 기존 폴더 복제
-  const dailyRoutineFolder = fileAccessor.loadFolder(SETTINGS.dailyRoutineFolderPath());
+  const dailyRoutineFolder = fileAccessor.loadFolder(SETTINGS.getDailyRoutineFolderPath());
   if (!dailyRoutineFolder) {
     return;
   }
@@ -61,7 +62,7 @@ export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) 
 
   const routines: TFile[] = [];
   const groups: TFile[] = [];
-  const notes: TFile[] = getNoteFolder().children.filter(file => file instanceof TFile);
+  const notes: TFile[] = getNoteFolder().children.filter(file => file instanceof TFile) as TFile[];
 
   const allRoutineOrGroupFiles = getRoutineFolder();
   for (const file of allRoutineOrGroupFiles.children) {

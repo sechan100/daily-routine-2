@@ -18,23 +18,27 @@ export const DEFAULT_SETTINGS: DailyRoutineSettings = {
 }
 
 export const SETTINGS = {
-  dailyRoutineFolderPath() {
+  getDailyRoutineFolderPath() {
     return getPlugin().settings.dailyRoutineFolderPath;
   },
 
-  routineFolderPath() {
+  getRoutineFolderPath() {
     return `${getPlugin().settings.dailyRoutineFolderPath}/routines`;
   },
 
-  noteFolderPath() {
+  getRoutineGroupFolderPath() {
+    return `${getPlugin().settings.dailyRoutineFolderPath}/routines/groups`;
+  },
+
+  getNoteFolderPath() {
     return `${getPlugin().settings.dailyRoutineFolderPath}/notes`;
   },
 
-  isMondayStartOfWeek() {
+  getIsMondayStartOfWeek() {
     return getPlugin().settings.isMondayStartOfWeek;
   },
 
-  confirmUncheckTask() {
+  getConfirmUncheckTask() {
     return getPlugin().settings.confirmUncheckTask;
   }
 }

@@ -1,11 +1,14 @@
-export type { Checkable } from "./checkable";
-export type { RoutineNote } from "./note";
-export type { NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./note-routine-like";
-export type { NotePerformance } from "./performance";
-export type { Task, TaskProperties, TaskPropertiesArray } from "./task";
 
-export { noteService } from "./note";
-export { noteRepository } from "./note-repository";
-export { noteRoutineLikeTypeGuards } from "./note-routine-like";
-export { notePerformanceService } from "./performance";
+// Model
+export type { Checkable, CheckableState } from "./model/checkable";
+export type { RoutineNote } from "./model/note";
+export type { isNoteRoutine, isNoteRoutineGroup, NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./model/note-routine-like";
+export type { NotePerformance } from "./model/performance";
+export type { Task, TaskProperties, TaskPropertiesArray } from "./model/task";
+
+
+// Logic
+export { notePerformanceService } from "./logic/note-performance-service";
+export { noteService } from "./logic/note-service";
+export { taskService } from "./logic/task-service";
 

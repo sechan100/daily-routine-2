@@ -1,13 +1,10 @@
-// routine repository
-export { RoutineService } from "./routine/routine-service";
+// Model
+export type { isRoutine, Routine, RoutineProperties } from "./model/routine";
+export { UNGROUPED_GROUP_NAME } from "./model/routine-group";
+export type { RoutineGroup, RoutineGroupProperties } from "./model/routine-group";
+export type { RoutineLike, RoutineLikeType } from "./model/routine-like";
 
-// group repository
-export { GroupService } from "./routine-group/group-service";
-
-// types
-export * from "./routine/routine-type";
-
-// domain
-export { RoutineGroupEntity } from "./routine-group/routine-group";
-export { RoutineEntity } from "./routine/routine";
+// Logic
+export { routineService } from "./logic/routine";
+export { routineGroupService } from "./logic/routine-group";
 

@@ -56,7 +56,7 @@ export class Day {
 
   static getDaysOfWeek(): DayOfWeek[] {
     const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-    const isMondayStart = SETTINGS.isMondayStartOfWeek();
+    const isMondayStart = SETTINGS.getIsMondayStartOfWeek();
     return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
   }
 

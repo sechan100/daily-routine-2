@@ -104,7 +104,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
 
     const destState: TaskState = task.state === "un-checked" ? "accomplished" : "un-checked";
     let doUncheck = true;
-    if (SETTINGS.confirmUncheckTask() && task.state !== "un-checked") {
+    if (SETTINGS.getConfirmUncheckTask() && task.state !== "un-checked") {
       doUncheck = await doConfirm({
         title: "UnCheck Task",
         description: "Are you sure you want to uncheck this task?",
