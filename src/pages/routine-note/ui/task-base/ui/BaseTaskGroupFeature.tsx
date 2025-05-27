@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from '@/entities/note';
+import { noteRepository, NoteRoutineGroupService, RoutineNote, TaskGroup } from '@/entities/note';
 import { Icon } from '@/shared/components/Icon';
 import { Touchable } from '@/shared/components/Touchable';
 import { dr } from '@/shared/utils/daily-routine-bem';
@@ -52,9 +52,9 @@ export const BaseTaskGroupFeature = React.memo(({
   // open 상태를 변경하는 함수. _setOpen은 일시적 상태변경이므로, 데이터 일관성을 위해서는 아래 함수를 사용할 것.
   const changeOpen = useCallback(async (isOpen: boolean) => {
     _setOpen(isOpen);
-    const newNote = TaskGroupEntity.openGroup(note, group.name, isOpen);
+    const newNote = NoteRoutineGroupService.setGroupOpen(note, group.name, isOpen);
     setNote(newNote);
-    await NoteRepository.save(newNote);
+    await noteRepository.save(newNote);
   }, [group.name, note, setNote])
 
 

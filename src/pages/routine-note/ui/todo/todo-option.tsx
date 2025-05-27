@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, TaskEntity, TodoTask } from '@/entities/note';
+import { noteRepository, TaskEntity, TodoTask } from '@/entities/note';
 import { createModal, ModalApi } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled';
 import { dr } from '@/shared/utils/daily-routine-bem';
@@ -21,7 +21,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
     if (todo.name.trim() === "") return;
     const newNote = TaskEntity.updateTask(note, originalName, todo);
     setNote(newNote);
-    await NoteRepository.update(newNote);
+    await noteRepository.update(newNote);
     modal.close();
   }, [modal, note, originalName, setNote, todo]);
 

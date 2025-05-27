@@ -1,5 +1,5 @@
 import { useRoutineMutationMerge } from "@/entities/merge-note";
-import { NoteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from "@/entities/note";
+import { noteRepository, NoteRoutineGroupService, RoutineNote, TaskGroup } from "@/entities/note";
 import { GroupService } from "@/entities/routine-like";
 import { doFlagConfirm } from "@/shared/components/modal/flag-confirm-modal";
 import { ResultAsync } from "neverthrow";
@@ -14,7 +14,7 @@ const deleteGroup = async (note: RoutineNote, groupName: string, deleteSubTasks:
   await GroupService.delete(groupName, deleteSubTasks);
 
   // note에서 그룹 삭제
-  const newNote = TaskGroupEntity.deleteTaskGroup(note, groupName, deleteSubTasks);
+  const newNote = NoteRoutineGroupService.deleteNoteRoutineGroup(note, groupName, deleteSubTasks);
   return newNote;
 }
 
@@ -59,9 +59,9 @@ export const TaskGroupElement = ({
     })
     if (!removeConfirm.confirm) return;
 
-    const newNote = TaskGroupEntity.deleteTaskGroup(note, group.name, removeConfirm.flag);
+    const newNote = NoteRoutineGroupService.deleteNoteRoutineGroup(note, group.name, removeConfirm.flag);
     setNote(newNote);
-    await NoteRepository.save(newNote);
+    await noteRepository.save(newNote);
   }, [group.name, note, setNote])
 
 

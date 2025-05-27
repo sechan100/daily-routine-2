@@ -1,10 +1,11 @@
-// REPOSITORY
-export { NoteRepository } from "./repository/note-repository";
+export type { Checkable } from "./checkable";
+export type { RoutineNote } from "./note";
+export type { NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./note-routine-like";
+export type { NotePerformance } from "./performance";
+export type { Task, TaskProperties, TaskPropertiesArray } from "./task";
 
-// DOMAIN
-export { NoteEntity } from "./domain/note";
-export { TaskEntity } from "./domain/task";
-export { TaskGroupEntity } from "./domain/task-group";
+export { noteService } from "./note";
+export { noteRepository } from "./note-repository";
+export { noteRoutineLikeTypeGuards } from "./note-routine-like";
+export { notePerformanceService } from "./performance";
 
-// TYPES
-export * from "./domain/note.type";

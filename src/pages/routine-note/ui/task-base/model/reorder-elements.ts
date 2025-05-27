@@ -1,4 +1,4 @@
-import { isRoutineNote, isRoutineTask, isTaskGroup, NoteElement, NoteEntity, Task, TaskEntity, TaskGroup, TaskParent } from "@/entities/note";
+import { isRoutineNote, isRoutineTask, isTaskGroup, NoteElement, NoteService, Task, TaskEntity, TaskGroup, TaskParent } from "@/entities/note";
 import { GroupService, isRoutine, isRoutineGroup, Routine, RoutineElement, RoutineGroupEntity, RoutineService } from "@/entities/routine-like";
 import { useRoutineNoteStore } from '../../../model/use-routine-note';
 
@@ -138,12 +138,12 @@ const taskDropOnTask = async (args: TaskOnTask) => {
   if (args.dropped.name === args.on.name) throw new Error("Cannot drop on itself");
   const note = { ...useRoutineNoteStore.getState().note };
 
-  const on = NoteEntity.findTask(note, args.on.name);
-  const dropped = NoteEntity.findTask(note, args.dropped.name);
+  const on = NoteService.findTask(note, args.on.name);
+  const dropped = NoteService.findTask(note, args.dropped.name);
   if (!on || !dropped) throw new Error("Dest Task or Dropped Task not found");
 
   TaskEntity.removeTask(note, dropped.name);
-  const parent = NoteEntity.findParent(note, on.name);
+  const parent = NoteService.findParent(note, on.name);
   addTask({
     parent,
     base: on,
@@ -186,8 +186,8 @@ type TaskOnGroup = {
 }
 const taskDropOnGroup = async (args: TaskOnGroup) => {
   const note = { ...useRoutineNoteStore.getState().note };
-  const on = NoteEntity.findGroup(note, args.on.name);
-  const dropped = NoteEntity.findTask(note, args.dropped.name);
+  const on = NoteService.findGroup(note, args.on.name);
+  const dropped = NoteService.findTask(note, args.dropped.name);
   if (!on || !dropped) throw new Error("Dest Group or Dropped Task not found.");
 
   TaskEntity.removeTask(note, dropped.name);

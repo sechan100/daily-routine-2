@@ -1,4 +1,4 @@
-import { NoteEntity, NoteRepository, RoutineNote, TaskEntity, TodoTask } from "@/entities/note";
+import { noteRepository, NoteService, RoutineNote, TaskEntity, TodoTask } from "@/entities/note";
 import { RoutineNoteCreator } from '@/entities/routine-to-note';
 import { Day } from "@/shared/period/day";
 
@@ -10,15 +10,15 @@ import { Day } from "@/shared/period/day";
  * @returns 재조정된 루틴 노트 
  */
 export const rescheduleTodo = async (routineNote: RoutineNote, taskName: string, newDay: Day): Promise<RoutineNote> => {
-  const _t = NoteEntity.findTask(routineNote, taskName);
+  const _t = NoteService.findTask(routineNote, taskName);
   if (!_t || _t.taskType !== "todo") throw new Error(`Task not found: ${taskName}`);
   const todoTask = _t as TodoTask;
 
   const todoDeletedNote = TaskEntity.removeTask(routineNote, todoTask.name);
-  await NoteRepository.update(todoDeletedNote);
+  await noteRepository.update(todoDeletedNote);
 
   const destinationNote = (
-    await NoteRepository.load(newDay)
+    await noteRepository.load(newDay)
     ??
     (await RoutineNoteCreator.withLoadFromRepositoryAsync()).create(newDay)
   )
@@ -29,6 +29,6 @@ export const rescheduleTodo = async (routineNote: RoutineNote, taskName: string,
       ...destinationNote.children,
     ]
   }
-  await NoteRepository.save(todoAddedNote);
+  await noteRepository.save(todoAddedNote);
   return todoDeletedNote;
 }

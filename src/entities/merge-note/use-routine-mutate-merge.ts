@@ -1,5 +1,5 @@
 /* eslint-disable fsd-import/layer-imports */
-import { NoteRepository, RoutineNote } from "@/entities/note";
+import { noteRepository, RoutineNote } from "@/entities/note";
 import { RoutineNoteCreator } from '@/entities/routine-to-note';
 // FIXME: todo task를 구조적으로 분리하면, 해당 hack을 제거할 수 있음. mergeNote에서 TodoTaskNoteDep를 제거하여 구태여 manuallyMergedCurrentNote를 제공하지 않아도 되도록 변경 예정
 // eslint-disable-next-line fsd-import/public-api-imports
@@ -44,26 +44,26 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
 
       // currentNote 저장
       setNote(manuallyMergedCurrentNote);
-      await NoteRepository.updateIfExist(manuallyMergedCurrentNote);
+      await noteRepository.updateIfExist(manuallyMergedCurrentNote);
 
       // currentNote를 제외한 나머지 notes merge
-      let notes = await NoteRepository.loadBetween(Day.today(), Day.max());
+      let notes = await noteRepository.loadBetween(Day.today(), Day.max());
       notes = notes.filter(n => !n.day.isSameDay(currentNote.day));
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for (const note of notes) {
         const merged = mergeNote(note, noteCreator);
-        await NoteRepository.update(merged);
+        await noteRepository.update(merged);
       }
     }
     else {
-      const notes = await NoteRepository.loadBetween(Day.today(), Day.max());
+      const notes = await noteRepository.loadBetween(Day.today(), Day.max());
       const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
       for (const note of notes) {
         const merged = mergeNote(note, noteCreator);
         if (merged.day.isSameDay(currentNote.day)) {
           setNote(merged);
         }
-        await NoteRepository.update(merged);
+        await noteRepository.update(merged);
       }
     }
   }, [currentNote.day, setNote]);

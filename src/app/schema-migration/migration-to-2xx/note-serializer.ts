@@ -1,5 +1,4 @@
 import { Day } from "@/shared/period/day";
-import { switchTo } from "@/shared/utils/switch-utils";
 import dedent from "dedent";
 import { isRoutineTask, isTask, isTaskGroup, isTodoTask, NoteElement, RoutineNote, RoutineTask, Task, TaskGroup, TaskState, TodoTask } from "./note-types";
 
@@ -111,11 +110,15 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
  *****************************************/
 
 const switchStateToChar = (state: TaskState) => {
-  return switchTo<TaskState, string>(state, {
-    'accomplished': checkboxChars.accomplished[0],
-    'failed': checkboxChars.failed[0],
-    'un-checked': ' '
-  });
+  if (state === 'accomplished') {
+    return checkboxChars.accomplished[0];
+  } else if (state === 'failed') {
+    return checkboxChars.failed[0];
+  } else if (state === 'un-checked') {
+    return ' ';
+  } else {
+    throw new Error(`Invalid TaskState: ${state}. Valid states are 'un-checked', 'accomplished', 'failed'.`);
+  }
 }
 
 const serializeRoutineTask = (routineTask: RoutineTask) => {

@@ -1,5 +1,5 @@
 import { useRoutineMutationMerge } from "@/entities/merge-note";
-import { NoteRepository, RoutineTask, TaskEntity, TaskGroup } from "@/entities/note";
+import { noteRepository, RoutineTask, TaskEntity, TaskGroup } from "@/entities/note";
 import { RoutineService } from "@/entities/routine-like";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { ResultAsync } from "neverthrow";
@@ -31,7 +31,7 @@ export const RoutineTaskElment = React.memo(({ task, parent }: RoutineTaskProps)
 
     const newNote = TaskEntity.removeTask(note, task.name);
     setNote(newNote);
-    await NoteRepository.save(newNote);
+    await noteRepository.save(newNote);
   }, [note, setNote, task.name])
 
 

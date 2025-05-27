@@ -4,15 +4,15 @@ import { fileAccessor } from "@/shared/file/file-accessor";
 import { Day } from "@/shared/period/day";
 import { SETTINGS } from "@/shared/settings";
 import { Notice, TAbstractFile, TFile } from "obsidian";
-import { RoutineNote } from "../domain/note.type";
-import { parseRoutineNote, serializeRoutineNote } from "./serializer";
+import { RoutineNote } from "./note";
+import { deserializeRoutineNote, serializeRoutineNote } from "./serialize/note";
 
 
 
 const parseNote = async (day: Day, file: TFile): Promise<RoutineNote> => {
   const content = await fileAccessor.readFileAsReadonly(file);
-  return parseRoutineNote(day, content);
-};
+  return deserializeRoutineNote(day, content);
+}
 
 export const ROUTINE_NOTE_FILE = (day: Day): TFile | null => {
   const path = ROUTINE_ARCHIVE_PATH(day);
@@ -28,7 +28,19 @@ export const ROUTINE_ARCHIVE_PATH = (day: Day) => {
   return `${SETTINGS.noteFolderPath()}/${day.format()}.md`;
 };
 
-export const NoteRepository = {
+
+interface NoteRepository {
+  load(day: Day): Promise<RoutineNote | null>;
+  loadBetween(start: Day, end: Day): Promise<RoutineNote[]>;
+  isExist(day: Day): boolean;
+  persist(routineNote: RoutineNote): Promise<boolean>;
+  saveOnUserConfirm(routineNote: RoutineNote): Promise<boolean>;
+  save(routineNote: RoutineNote): Promise<void>;
+  update(routineNote: RoutineNote): Promise<void>;
+  updateIfExist(routineNote: RoutineNote): Promise<boolean>;
+  delete(day: Day): Promise<void>;
+}
+export const noteRepository: NoteRepository = {
 
   /**
    * day에 해당하는 RoutineNote를 archive에서 가져온다. 
@@ -95,7 +107,7 @@ export const NoteRepository = {
     const file = ROUTINE_NOTE_FILE(routineNote.day);
 
     if (file) {
-      await NoteRepository.update(routineNote);
+      await noteRepository.update(routineNote);
       return true;
     } else {
       // 사용자 확인 대기
@@ -108,17 +120,17 @@ export const NoteRepository = {
 
       // 사용자의 응답에 따라 처리
       if (isUserConfirmed) {
-        await NoteRepository.persist(routineNote);
+        await noteRepository.persist(routineNote);
       }
       return isUserConfirmed;
     }
   },
 
   async save(routineNote: RoutineNote) {
-    if (NoteRepository.isExist(routineNote.day)) {
-      await NoteRepository.update(routineNote);
+    if (noteRepository.isExist(routineNote.day)) {
+      await noteRepository.update(routineNote);
     } else {
-      await NoteRepository.persist(routineNote);
+      await noteRepository.persist(routineNote);
     }
   },
 
@@ -133,8 +145,8 @@ export const NoteRepository = {
   },
 
   async updateIfExist(routineNote: RoutineNote) {
-    if (NoteRepository.isExist(routineNote.day)) {
-      await NoteRepository.update(routineNote);
+    if (noteRepository.isExist(routineNote.day)) {
+      await noteRepository.update(routineNote);
       return true;
     } else {
       return false;

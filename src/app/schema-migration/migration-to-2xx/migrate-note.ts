@@ -58,6 +58,7 @@ export const migrateNote = async (file: TFile) => {
   \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
   ---
   %% Please do not modify the content below. It may damage your Routine Note data. %%
+  %% daily-routine %%
   ${serializedTodos.length > 0 ? `# Tasks\n${serializedTodos}` : '# Tasks'}
   # Routines
   ${serializedRoutines}

@@ -1,4 +1,4 @@
-import { NoteRepository, TaskEntity, TaskGroup, TodoTask } from "@/entities/note";
+import { noteRepository, TaskEntity, TaskGroup, TodoTask } from "@/entities/note";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { Day } from "@/shared/period/day";
 import { Menu, Notice } from "obsidian";
@@ -45,7 +45,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
 
     const newNote = TaskEntity.removeTask(note, task.name);
     setNote(newNote);
-    await NoteRepository.update(newNote);
+    await noteRepository.update(newNote);
     new Notice(`Todo ${task.name} deleted.`);
   }, [note, setNote, task.name])
 

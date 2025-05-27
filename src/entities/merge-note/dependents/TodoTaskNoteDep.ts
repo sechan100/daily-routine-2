@@ -1,4 +1,4 @@
-import { isTaskGroup, isTodoTask, NoteElement, NoteEntity, RoutineNote, TaskGroup, TaskParent, TodoTask } from "@/entities/note";
+import { isTaskGroup, isTodoTask, NoteElement, NoteService, RoutineNote, TaskGroup, TaskParent, TodoTask } from "@/entities/note";
 import { RoutineGroupEntity } from "@/entities/routine-like";
 import { NoteDependent } from "./NoteDependent";
 
@@ -53,7 +53,7 @@ export class TodoTaskNoteDep extends NoteDependent {
     for (const { parentName, prev, task, next, originalIndex } of this.#sandwitches) {
       let parent: TaskParent;
       if (parentName !== RoutineGroupEntity.UNGROUPED_NAME) {
-        const parentOrNull = NoteEntity.findGroup(note, parentName);
+        const parentOrNull = NoteService.findGroup(note, parentName);
         // 고아가 된 경우
         if (parentOrNull === null) {
           note.children.unshift(task);

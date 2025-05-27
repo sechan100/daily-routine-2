@@ -1,4 +1,4 @@
-import { NoteRepository, RoutineNote } from "@/entities/note";
+import { noteRepository, RoutineNote } from "@/entities/note";
 import { RoutineNoteCreator } from '@/entities/routine-to-note';
 import { Day } from "@/shared/period/day";
 
@@ -8,12 +8,12 @@ import { Day } from "@/shared/period/day";
  * @param day 
  */
 export const ensureRoutineNote = async (day: Day): Promise<RoutineNote> => {
-  let routineNote = await NoteRepository.load(day);
+  let routineNote = await noteRepository.load(day);
   if (!routineNote) {
     const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
     routineNote = noteCreator.create(day);
     if (day.isToday()) {
-      await NoteRepository.persist(routineNote);
+      await noteRepository.persist(routineNote);
     }
   }
   return routineNote;

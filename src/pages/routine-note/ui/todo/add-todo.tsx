@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRepository, TaskEntity, TodoTask } from "@/entities/note";
+import { noteRepository, TaskEntity, TodoTask } from "@/entities/note";
 import { createModal, ModalApi } from "@/shared/components/modal/create-modal";
 import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
@@ -17,7 +17,7 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi }) => {
       children: [todo, ...note.children]
     }
     // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
-    NoteRepository.save(newNote);
+    noteRepository.save(newNote);
     setNote(newNote);
     modal.close();
   }, [modal, note, setNote, todo]);

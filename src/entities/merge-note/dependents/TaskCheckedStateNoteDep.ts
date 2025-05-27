@@ -3,7 +3,7 @@
  * 때문에 이를 복원할 필요가 있다.
  */
 
-import { NoteEntity, RoutineNote, TaskState } from "@/entities/note";
+import { NoteService, RoutineNote, TaskState } from "@/entities/note";
 import { NoteDependent } from "./NoteDependent";
 
 
@@ -14,13 +14,13 @@ export class TaskCheckedStateNoteDep extends NoteDependent {
 
   constructor(note: RoutineNote) {
     super();
-    this.#checkedTasks = NoteEntity.flatten(note)
+    this.#checkedTasks = NoteService.flatten(note)
       .filter(t => t.state !== 'un-checked')
       .map(t => [t.name, t.state]);
   }
 
   restoreData(note: RoutineNote) {
-    for (const task of NoteEntity.flatten(note)) {
+    for (const task of NoteService.flatten(note)) {
       let originalTaskIndex: number;
       if ((originalTaskIndex = this.#checkedTasks.findIndex(([name]) => name === task.name)) !== -1) {
         const [_, state] = this.#checkedTasks[originalTaskIndex];
