@@ -33,8 +33,8 @@ export const NotePerformanceCircle = React.memo(({
   text,
   transition = true
 }: PercentageCircleProps) => {
-  const accomplishment = cleanPercentage(performance.accomplishment);
-  const completion = cleanPercentage(performance.completion);
+  const accomplishment = cleanPercentage(performance.accomplishmentPercentage);
+  const completion = cleanPercentage(performance.completionPercentage);
   return (
     <svg width={width ?? "100%"} viewBox="0 0 200 200" className={className}>
       <g transform="rotate(-90 100 100)" >

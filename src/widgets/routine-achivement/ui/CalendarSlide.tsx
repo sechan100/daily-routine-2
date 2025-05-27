@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { isRoutineTask, noteRepository, NoteService } from "@/entities/note";
+import { noteService } from "@/entities/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
@@ -17,7 +17,7 @@ interface Props {
 export const CalendarSlide = ({
   month,
 }: Props) => {
-  const notesAsync = useAsync(() => noteRepository.loadBetween(month.startDay, month.endDay), [month]);
+  const notesAsync = useAsync(() => noteService.loadBetween(month.startDay, month.endDay), [month]);
   const { currentRoutine, addRoutineOptionsPerMonth, routineOptionsPerMonth } = useRoutineSelector();
 
 
@@ -35,7 +35,7 @@ export const CalendarSlide = ({
       let tile: Tile | null = null;
       // 노트가 존재
       if (note) {
-        const routineTask = NoteService.findTask(note, currentRoutine);
+        const routineTask = noteService.findTask(note, currentRoutine);
         // 노트에 routine이 존재
         if (routineTask) {
           tile = {
@@ -62,9 +62,8 @@ export const CalendarSlide = ({
     if (routineOptionsPerMonth.has(month.format())) return;
 
     const notes = notesAsync.value;
-    const existingRoutineNames = notes.flatMap(note => NoteService
-      .flatten(note)
-      .filter(isRoutineTask)
+    const existingRoutineNames = notes.flatMap(note => noteService
+      .getAllRoutines(note)
       .map(routine => routine.name)
     );
     const routineOptions = Array.from(new Set(existingRoutineNames));

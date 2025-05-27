@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { noteRepository, NoteService } from "@/entities/note";
+import { notePerformanceService, noteService } from "@/entities/note";
 import { NotePerformanceCircle } from "@/features/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day } from "@/shared/period/day";
@@ -14,16 +14,16 @@ interface CalendarSlideProps {
   month: Month;
 }
 export const CalendarSlide = ({ month }: CalendarSlideProps) => {
-  const notesAsync = useAsync(async () => await noteRepository.loadBetween(month.startDay, month.endDay), [month]);
+  const notesAsync = useAsync(async () => await noteService.loadBetween(month.startDay, month.endDay), [month]);
   const route = useTabRoute(s => s.route);
 
   const tile = useCallback((day: Day) => {
     if (day.month !== month.monthNum) return <></>;
-    let performance = NoteService.getEmptyNotePerformance();
+    let performance = notePerformanceService.getZeroNotePerformance();
     if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
       if (note) {
-        performance = NoteService.getPerformance(note);
+        performance = notePerformanceService.getPerformance(note);
       }
     }
     return (

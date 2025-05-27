@@ -1,9 +1,9 @@
-import { TaskState } from "@/entities/note";
+import { CheckableState } from "@/entities/note";
 import { Day, DayFormat } from "@/shared/period/day";
 
 
 export type TileMap = Map<DayFormat, Tile>;
 export type Tile = {
   day: Day;
-  state: TaskState | "inactive";
+  state: CheckableState | "inactive";
 }
