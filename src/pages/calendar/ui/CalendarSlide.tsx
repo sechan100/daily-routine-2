@@ -1,13 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { Task } from "@/entities/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 import { useTabRoute } from "@/shared/tab/use-tab-route";
 import { useAsync } from "@/shared/utils/use-async";
 import { useCallback, useMemo } from "react";
+import { Tile } from "../model/calendar";
 import { loadCalendar } from "../model/load-calendar";
-import { Tile } from "../model/types";
 import { CalendarTile } from "./CalendarTile";
 
 
@@ -28,9 +27,9 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
 
 
   const tile = useCallback((day: Day) => {
-    let tile = {
+    let tile: Tile = {
       day,
-      tasks: [] as Task[]
+      checkables: [],
     };
     tile = tiles.get(day.format()) || tile;
     return <CalendarTile tile={tile} />;

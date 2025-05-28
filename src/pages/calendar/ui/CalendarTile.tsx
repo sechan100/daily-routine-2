@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { Task } from "@/entities/note";
+import { Checkable } from "@/entities/note";
 import { TEXT_CSS } from "@/shared/components/text-style";
 import { Day, DayOfWeek } from "@/shared/period/day";
 import { css } from "@emotion/react";
-import { Tile } from "../model/types";
+import { Tile } from "../model/calendar";
 import { useTileConfig } from "./tile-config-context";
 
 
@@ -56,7 +56,7 @@ const DateBadge = ({ day }: { day: Day }) => {
 }
 
 
-const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
+const TaskLineContainer = ({ checkables }: { checkables: Checkable[] }) => {
   const { limitedTaskPer } = useTileConfig();
 
 
@@ -66,13 +66,13 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
     "li:last-child": lastTaskLineStyle,
   });
 
-  if (tasks.length <= limitedTaskPer) {
+  if (checkables.length <= limitedTaskPer) {
     return (
       <div className="dr-calendar-tasks" css={taskListStyle}>
-        {tasks.map(task => (
+        {checkables.map(task => (
           <TaskLine
             key={task.name}
-            task={task}
+            checkable={task}
           />
         ))}
       </div>
@@ -82,10 +82,10 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
   return (
     <>
       <div className="dr-calendar-tasks" css={taskListStyle}>
-        {tasks.slice(0, limitedTaskPer - 1).map(task => (
+        {checkables.slice(0, limitedTaskPer - 1).map(task => (
           <TaskLine
             key={task.name}
-            task={task}
+            checkable={task}
           />
         ))}
       </div>
@@ -94,7 +94,7 @@ const TaskLineContainer = ({ tasks }: { tasks: Task[] }) => {
         textAlign: 'center',
       }]}>
         <span>
-          + {tasks.length - (limitedTaskPer - 1)}
+          + {checkables.length - (limitedTaskPer - 1)}
         </span>
       </div>
     </>
@@ -111,7 +111,7 @@ const lastTaskLineStyle = css({
   borderBottom: taskLineBorderStyle
 });
 
-const TaskLine = ({ task }: { task: Task }) => {
+const TaskLine = ({ checkable }: { checkable: Checkable }) => {
   return (
     <li css={[defaultTextStyle, {
       margin: '0px',
@@ -122,7 +122,7 @@ const TaskLine = ({ task }: { task: Task }) => {
       whiteSpace: "nowrap",
       borderTop: taskLineBorderStyle,
     }]}>
-      {task.name}
+      {checkable.name}
     </li>
   )
 }
@@ -140,7 +140,7 @@ export const CalendarTile = ({ tile }: Props) => {
       width: '100%',
     }}>
       <DateBadge day={tile.day} />
-      <TaskLineContainer tasks={tile.tasks} />
+      <TaskLineContainer checkables={tile.checkables} />
     </div>
   )
 }

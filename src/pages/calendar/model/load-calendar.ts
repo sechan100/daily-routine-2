@@ -1,24 +1,39 @@
-import { noteRepository, NoteService, TaskEntity } from "@/entities/note";
-import { RoutineEntity, RoutineService } from "@/entities/routine-like";
+import { Checkable, noteService, Task } from "@/entities/note";
+import { Routine, routineService } from "@/entities/routine-like";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
-import { Calendar, Tile } from "./types";
+import { Calendar, Tile } from "./calendar";
+
+
+/**
+ * @param routines 
+ * @param day
+ * @param tasks 빈 배열도 가능하다(해당 날짜에 routineNote가 아직 없는 경우)
+ * @returns 
+ */
+const createTileCurried = (routines: Routine[]) => (day: Day, tasks: Task[]): Tile => {
+  const dayRoutines = routines
+    .filter((r) => r.properties.showOnCalendar)
+    .filter(r => routineService.isDueTo(r, day))
+    .map(r => ({
+      name: r.name,
+      state: "un-checked",
+    } as Checkable));
+
+
+  const dayTasks = tasks.filter(t => t.properties.showOnCalendar);
+
+  return {
+    day,
+    checkables: [...dayRoutines, ...dayTasks],
+  };
+}
 
 
 
 export const loadCalendar = async (month: Month): Promise<Calendar> => {
-  const routines = await RoutineService.loadAll();
-  const showOnCalendarRoutines = routines.filter((r) => r.properties.showOnCalendar);
-  const createTile = (day: Day): Tile => {
-    const tileTasks = showOnCalendarRoutines
-      .filter(r => RoutineEntity.isDueTo(r, day))
-      .map(r => TaskEntity.createRoutineTask(r));
-
-    return {
-      day,
-      tasks: tileTasks,
-    } as Tile;
-  }
+  const routines = await routineService.loadAll();
+  const createTile = createTileCurried(routines);
 
   // 추가로 로드해야하는 앞달의 tile들 개수
   const prevNeighboringMonthTilesNum = Day.getDaysOfWeek().indexOf(month.startDay.dow)
@@ -28,19 +43,16 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
   const nextNeighboringMonthTilesNum = 6 - Day.getDaysOfWeek().indexOf(month.endDay.dow);
   const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
 
-  const loadedNotes = await noteRepository.loadBetween(startDay, endDay);
+  const loadedNotes = await noteService.loadBetween(startDay, endDay);
   const tiles: Map<DayFormat, Tile> = new Map();
   let d = startDay;
   while (d.isSameOrBefore(endDay)) {
-    const loaded = loadedNotes.find(n => n.day.isSameDay(d));
-    if (loaded) {
-      const loadedDay = loaded.day;
-      tiles.set(loadedDay.format(), {
-        day: loadedDay,
-        tasks: NoteService.flatten(loaded).filter(t => t.showOnCalendar)
-      })
+    const loadedNote = loadedNotes.find(n => n.day.isSameDay(d));
+    if (loadedNote) {
+      const loadedDay = loadedNote.day;
+      tiles.set(loadedDay.format(), createTile(loadedDay, loadedNote.tasks));
     } else {
-      tiles.set(d.format(), createTile(d));
+      tiles.set(d.format(), createTile(d, []));
     }
     d = d.clone(m => m.add(1, "day"));
   }

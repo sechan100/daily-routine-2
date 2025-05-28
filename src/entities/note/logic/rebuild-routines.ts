@@ -1,6 +1,9 @@
 import { Day } from '@/shared/period/day';
-import { CheckableState, noteRepository, noteService, RoutineNote } from '..';
+import { CheckableState } from '../model/checkable';
+import { RoutineNote } from '../model/note';
 import { RoutineTree } from '../model/routine-tree';
+import { noteRepository } from '../repository/note-repository';
+import { noteService } from './note-service';
 import { RoutineBuilder } from './RoutineBuilder';
 
 
