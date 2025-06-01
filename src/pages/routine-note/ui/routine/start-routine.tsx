@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineMutationMerge } from "@/entities/merge-note";
-import { RoutineService } from "@/entities/routine-like";
+import { routineService } from "@/entities/routine-like";
 import { createModal, ModalApi } from "@/shared/components/modal/create-modal";
 import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
-import { ActiveCriteria } from "./ActiveCriteria";
+import { useRoutineNoteStoreActions } from "../../model/use-routine-note";
+import { RecurrenceUnit } from "./RecurrenceUnit";
 import { createNewRoutine } from "./create-routine";
 import { RoutineReducer, routineReducer } from "./routine-reducer";
 
@@ -18,15 +18,15 @@ interface StartRoutineModalProps {
   modal: ModalApi;
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
-  const { mergeNotes } = useRoutineMutationMerge();
+  const { merge } = useRoutineNoteStoreActions();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {
-    await RoutineService.create(routine);
-    mergeNotes();
+    await routineService.create(routine);
+    merge();
     modal.close();
     new Notice(`Routine '${routine.name}' started! 🎉`);
-  }, [mergeNotes, modal, routine]);
+  }, [merge, modal, routine]);
 
   return (
     <Modal header="Start new Routine" className={bem()} modal={modal}>
@@ -42,7 +42,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
       <Modal.Separator />
 
       {/* active criteria */}
-      <ActiveCriteria
+      <RecurrenceUnit
         routine={routine}
         setProperties={properties => dispatch({ type: "SET_PROPERTIES", payload: properties })}
       />

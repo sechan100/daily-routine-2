@@ -56,13 +56,13 @@ export const serializeRoutineNote = (note: RoutineNote): string => {
 }
 
 export const deserializeRoutineNote = async (file: TFile): Promise<RoutineNote> => {
-  const day = Day.fromString(file.name);
+  const day = Day.fromString(file.basename);
   const fileContent = await fileAccessor.readFileAsReadonly(file);
 
   // '%% daily-routine %%'를 기준으로 앞에는 사용자 'content' 아래부터 역직렬화해야하는 note data이다.
   const contentAndNoteDataPart = fileContent.split(/%%\s*daily-routine\s*%%/);
   if (contentAndNoteDataPart.length < 2) {
-    throw deserializeError('invalid note format: missing %% daily-routine %% marker');
+    throw deserializeError('missing %% daily-routine %% marker in ' + file.path);
   }
   const content = contentAndNoteDataPart[0].trim();
   const noteData = contentAndNoteDataPart[1].trim();
@@ -77,7 +77,11 @@ export const deserializeRoutineNote = async (file: TFile): Promise<RoutineNote> 
   const routinesBlock = h1Blocks[1].trim();
 
   // '#Tasks' 블록 파싱
-  const taskLines = tasksBlock.split('\n').map(line => line.trim()).filter(line => line !== '');
+  const taskLines = tasksBlock
+    .replace("# Tasks", '')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line !== '');
   const tasks: Task[] = taskLines.map(line => deserializeTask(line));
 
   // '#Routines' 블록 파싱

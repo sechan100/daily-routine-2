@@ -82,7 +82,7 @@ export const noteRepository: NoteRepository = {
       try {
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       } catch (e) {
-        await fileAccessor.createFolder(SETTINGS.getNoteFolderPath());
+        await ensureFolder(SETTINGS.getNoteFolderPath());
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       }
       return true;

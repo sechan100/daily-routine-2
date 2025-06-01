@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineMutationMerge } from '@/entities/merge-note';
-import { GroupService, RoutineGroup } from '@/entities/routine-like';
+import { RoutineGroup, routineGroupService } from '@/entities/routine-like';
 import { createModal, ModalApi } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled';
 import { useCallback, useMemo, useReducer } from "react";
+import { useRoutineNoteStoreActions } from '../../model/use-routine-note';
 import { GroupReducer, groupReducer } from './group-reducer';
 
 
@@ -12,17 +12,17 @@ interface Props {
   modal: ModalApi;
 }
 export const useGroupOptionModal = createModal(({ modal, group: originalGroup }: Props) => {
-  const { mergeNotes } = useRoutineMutationMerge();
+  const { merge } = useRoutineNoteStoreActions();
   const [group, dispatch] = useReducer<GroupReducer>(groupReducer, originalGroup);
   const originalName = useMemo(() => originalGroup.name, [originalGroup.name]);
 
   const onSaveBtnClick = useCallback(async () => {
     if (group.name.trim() !== "" && originalName !== group.name) {
-      await GroupService.changeName(originalName, group.name);
+      await routineGroupService.changeName(originalName, group.name);
     }
-    await mergeNotes();
+    merge();
     modal.close();
-  }, [group.name, originalName, mergeNotes, modal]);
+  }, [group.name, originalName, merge, modal]);
 
 
   return (

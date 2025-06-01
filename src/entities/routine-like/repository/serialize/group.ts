@@ -7,7 +7,7 @@ import { RoutineGroup, RoutineGroupProperties } from "../../model/routine-group"
 
 
 /**
- * @param p frontmatter를 해석한 js object
+ * @param p properties를 해석한 js object
  */
 const validateRoutineGroupProperties = (p: any): Result<RoutineGroupProperties, string> => {
   if (typeof p !== 'object') {
@@ -66,7 +66,7 @@ export const deserializeRoutineGroup = async (file: TFile): Promise<RoutineGroup
     throw new Error(`[RoutineGroup '${file.basename}' Parse Error] Invalid file format.`);
   }
   const name = file.basename;
-  const properties = validateRoutineGroupProperties(jsonMatch[1].trim());
+  const properties = validateRoutineGroupProperties(JSON.parse(jsonMatch[1].trim()));
   if (properties.isErr()) throw new Error(`[RoutineGroup '${name}' Parse Error] ${properties.error} `);
   return {
     name,

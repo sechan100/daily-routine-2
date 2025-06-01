@@ -1,5 +1,5 @@
 import { Day } from "@/shared/period/day";
-import { Checkable } from "../model/checkable";
+import { Checkable, CheckableState } from "../model/checkable";
 import { RoutineNote } from "../model/note";
 import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, isNoteRoutine, isNoteRoutineGroup } from "../model/note-routine-like";
 import { RoutineTree } from "../model/routine-tree";
@@ -27,13 +27,14 @@ interface NoteService extends NoteRepository {
 
   // Tasks
   findTask: (note: RoutineNote, name: string) => Task | null;
-  updateTask: (note: RoutineNote, taskName: string, replacer: (task: Task) => Task) => RoutineNote;
   removeTask: (note: RoutineNote, name: string) => RoutineNote;
+  checkTask: (note: RoutineNote, taskName: string, state: CheckableState) => Promise<RoutineNote>;
 
   // Routines
   findRoutine: (note: RoutineNote, name: string) => NoteRoutine | null;
   findRoutineGroup: (note: RoutineNote, name: string) => NoteRoutineLike | null;
   setGroupOpen: (note: RoutineNote, groupName: string, open: boolean) => RoutineNote;
+  checkRoutine: (note: RoutineNote, routineName: string, state: CheckableState) => Promise<RoutineNote>;
   findRoutineParent: (note: RoutineNote, routineName: string) => NoteRoutineGroup | null;
   getAllRoutines: (noteOrTree: RoutineNote | RoutineTree) => NoteRoutine[];
 }
@@ -63,20 +64,18 @@ export const noteService: NoteService = {
     }
     return null;
   },
-  updateTask: (note: RoutineNote, taskName: string, replacer: (task: Task) => Task): RoutineNote => {
-    const newNote = { ...note };
-    newNote.tasks = newNote.tasks.map(task => {
-      if (task.name === taskName) {
-        return replacer(task);
-      } else {
-        return task;
-      }
-    });
-    return newNote;
-  },
   removeTask: (note: RoutineNote, name: string): RoutineNote => {
     const newNote = { ...note };
     newNote.tasks = newNote.tasks.filter(task => task.name !== name);
+    return newNote;
+  },
+  checkTask: async (note: RoutineNote, taskName: string, state: CheckableState): Promise<RoutineNote> => {
+    const newNote = { ...note };
+    const task = noteService.findTask(newNote, taskName);
+    if (!task) throw new Error("Check state change target task not found");
+
+    task.state = state;
+    await noteService.saveOnUserConfirm(newNote);
     return newNote;
   },
 
@@ -112,6 +111,15 @@ export const noteService: NoteService = {
         return routineLike;
       }
     });
+    return newNote;
+  },
+  checkRoutine: async (note: RoutineNote, routineName: string, state: CheckableState): Promise<RoutineNote> => {
+    const newNote = { ...note };
+    const routine = noteService.findRoutine(newNote, routineName);
+    if (!routine) throw new Error("Check state change target routine not found");
+
+    routine.state = state;
+    await noteService.saveOnUserConfirm(newNote);
     return newNote;
   },
   /**

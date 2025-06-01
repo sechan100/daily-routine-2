@@ -42,6 +42,6 @@ export const deserializeCheckableState = (checkboxChar: string): CheckableState 
   } else if (checkboxChar === ' ') {
     return 'un-checked';
   } else {
-    throw deserializeError(`invalid task state char '${checkboxChar}'. valid chars are ${[...checkboxChars.accomplished, ...checkboxChars.failed, ' '].join(', ')}`);
+    throw deserializeError(`invalid task state char '${checkboxChar}'. valid chars are ${[...checkboxChars.accomplished, ...checkboxChars.failed, '\' \''].join(', ')}`);
   }
 }

@@ -6,7 +6,7 @@ import { Badge } from "@mui/material";
 import { Tile } from "../model/types";
 // FIXME: 이거 나중에 ui고칠 때 바꾸기
 // eslint-disable-next-line fsd-import/public-api-imports
-import { TaskCheckbox } from "@/pages/routine-note/ui/task-base/ui/TaskCheckbox";
+import { TaskCheckbox } from "@/pages/routine-note/ui/TaskCheckbox";
 
 
 

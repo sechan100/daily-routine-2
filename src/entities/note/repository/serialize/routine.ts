@@ -1,7 +1,7 @@
 import dedent from "dedent";
 import { CheckableState } from "../../model/checkable";
 import { NoteRoutine, NoteRoutineGroup } from "../../model/note-routine-like";
-import { checkboxChars, deserializeCheckableState } from "./checkable";
+import { checkboxChars, deserializeCheckableState, serializeCheckableState } from "./checkable";
 import { deserializeError } from "./utils";
 
 // Routine =============================================================
@@ -9,7 +9,7 @@ import { deserializeError } from "./utils";
  * @returns '- [ ] [[name]]'
  */
 export const serializeNoteRoutine = (routine: NoteRoutine): string => {
-  const s = deserializeCheckableState(routine.state);
+  const s = serializeCheckableState(routine.state);
   return `- [${s}] [[${routine.name}]]`;
 }
 

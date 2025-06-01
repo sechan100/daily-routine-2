@@ -1,16 +1,17 @@
-import { Routine, RoutineGroupEntity } from "@/entities/routine-like"
+import { Routine, UNGROUPED_GROUP_NAME } from "@/entities/routine-like"
 import { Day } from "@/shared/period/day"
 
 
 export const createNewRoutine = (): Routine => {
   return {
     name: "",
-    routineElementType: "routine",
+    link: "",
+    routineLikeType: "routine",
     properties: {
       order: 0,
-      group: RoutineGroupEntity.UNGROUPED_NAME,
+      group: UNGROUPED_GROUP_NAME,
       showOnCalendar: false,
-      activeCriteria: "week",
+      recurrenceUnit: "week",
       daysOfWeek: Day.getDaysOfWeek(),
       daysOfMonth: [Day.today().date],
       enabled: true

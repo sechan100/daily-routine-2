@@ -1,6 +1,6 @@
 import { NotePerformance } from "@/entities/note";
 import { Circle } from "@/shared/components/Circle";
-import { getCustomAccentHSL } from "@/shared/components/obsidian-accent-color";
+import { getAccent } from "@/shared/components/obsidian-accent-color";
 import React from "react";
 
 const cleanPercentage = (percentage: number) => {
@@ -10,7 +10,7 @@ const cleanPercentage = (percentage: number) => {
 };
 
 
-const completionCircleColor = getCustomAccentHSL({
+const completionCircleColor = getAccent({
   h: 1,
   s: 1,
   l: 1.2,

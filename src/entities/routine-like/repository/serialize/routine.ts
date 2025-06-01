@@ -8,11 +8,11 @@ import { TFile } from "obsidian";
 import { Routine, RoutineProperties } from "../../model/routine";
 
 /**
- * @param p frontmatter를 해석한 js object
+ * @param p properties를 해석한 js object
  */
 const validateRoutineProperties = (p: any): Result<RoutineProperties, string> => {
   if (typeof p !== 'object') {
-    return err('Internal error: Invalid frontmatter format');
+    return err('RoutineProperties validation target is not object.');
   }
 
   if (
@@ -130,7 +130,7 @@ export const deserializeRoutine = async (file: TFile): Promise<Routine> => {
     throw new Error(`[Routine '${file.basename}' Parse Error] Invalid file format.`);
   }
   const name = file.basename;
-  const properties = validateRoutineProperties(jsonMatch[1].trim());
+  const properties = validateRoutineProperties(JSON.parse(jsonMatch[1].trim()));
   if (properties.isErr()) throw new Error(`[Routine '${name}' Parse Error] ${properties.error} `);
   return {
     name,

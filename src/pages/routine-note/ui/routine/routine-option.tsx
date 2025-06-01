@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineMutationMerge } from '@/entities/merge-note';
-import { Routine, RoutineService } from '@/entities/routine-like';
+import { Routine, routineService } from '@/entities/routine-like';
 import { createModal, ModalApi } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled';
 import { useCallback, useMemo, useReducer } from "react";
-import { ActiveCriteria } from './ActiveCriteria';
+import { useRoutineNoteStoreActions } from '../../model/use-routine-note';
+import { RecurrenceUnit } from './RecurrenceUnit';
 import { RoutineReducer, routineReducer } from './routine-reducer';
 
 
@@ -13,18 +13,18 @@ interface Props {
   modal: ModalApi;
 }
 export const useRoutineOptionModal = createModal(({ modal, routine: originalRoutine }: Props) => {
-  const { mergeNotes } = useRoutineMutationMerge();
+  const { merge } = useRoutineNoteStoreActions();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, originalRoutine);
   const originalName = useMemo(() => originalRoutine.name, [originalRoutine.name]);
 
   const onSaveBtnClick = useCallback(async () => {
     if (routine.name.trim() !== "" && originalName !== routine.name) {
-      await RoutineService.changeName(originalName, routine.name);
+      await routineService.changeName(originalName, routine.name);
     }
-    await RoutineService.update(routine);
-    mergeNotes();
+    await routineService.update(routine);
+    merge();
     modal.close();
-  }, [mergeNotes, modal, originalName, routine]);
+  }, [merge, modal, originalName, routine]);
 
 
   return (
@@ -38,8 +38,8 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       />
       <Modal.Separator />
 
-      {/* active criteria */}
-      <ActiveCriteria
+      {/* Recurrence Unit */}
+      <RecurrenceUnit
         routine={routine}
         setProperties={properties => dispatch({ type: "SET_PROPERTIES", payload: properties })}
       />

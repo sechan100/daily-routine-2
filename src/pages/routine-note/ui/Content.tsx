@@ -1,19 +1,15 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineMutationMerge } from '@/entities/merge-note';
-import { isTask, isTaskGroup } from '@/entities/note';
 import { Icon } from '@/shared/components/Icon';
 import { MenuComponent } from "@/shared/components/Menu";
 import { dr } from "@/shared/utils/daily-routine-bem";
+import { NoteTasksWidget } from '@/widgets/note-tasks';
 import { WeeksWidget } from "@/widgets/weeks";
 import { Menu, Notice } from "obsidian";
 import { useCallback } from "react";
-import { useRoutineNoteStore } from "../model/use-routine-note";
+import { useRoutineNoteStore, useRoutineNoteStoreActions } from "../model/use-routine-note";
 import { useCreateGroupModal } from './group/create-group';
-import { TaskGroupElement } from './group/TaskGroupElement';
 import { useStartRoutineModal } from './routine/start-routine';
-import { TaskDndContext } from './task-base/dnd/dnd-context';
-import { renderTask } from './task-base/ui/render-task-widget';
-import { useAddTodoModal } from './todo/add-todo';
+import { useAddTodoModal } from './task/add-todo';
 
 
 const startRoutineIcon = "alarm-clock-plus";
@@ -24,8 +20,7 @@ const bem = dr("note");
 
 export const Content = () => {
   const note = useRoutineNoteStore(n => n.note);
-  const setNote = useRoutineNoteStore(n => n.setNote);
-  const { mergeNotes } = useRoutineMutationMerge();
+  const { setNote, merge } = useRoutineNoteStoreActions();
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -67,12 +62,12 @@ export const Content = () => {
       item.setIcon("merge");
       item.setTitle("Merge notes");
       item.onClick(() => {
-        mergeNotes();
+        merge();
         new Notice("All Notes Merged!");
       });
     });
 
-  }, [AddTodoModal, CreateGroupModal, StartRoutineModal, mergeNotes]);
+  }, [AddTodoModal, CreateGroupModal, StartRoutineModal, merge]);
 
   return (
     <div
@@ -110,46 +105,7 @@ export const Content = () => {
           <MenuComponent size='21px' onMenuShow={onNoteMenuShow} icon="menu" />
         </div>
       </header>
-      <div
-        className={bem("tasks")}
-        css={{
-          flexGrow: 1,
-          overflowY: "auto",
-        }}
-      >
-        <TaskDndContext>
-          {(() => {
-            if (note.children.length === 0) {
-              return (
-                <div css={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                  color: "var(--text-muted)",
-                  fontSize: "1.2em",
-                }}>
-                  No tasks.. Add some todos or routines 🤗
-                </div>
-              )
-            }
-
-            return note.children.map(el => {
-              if (isTaskGroup(el)) {
-                return (
-                  <TaskGroupElement
-                    key={`${el.elementType}-${el.name}`}
-                    group={el}
-                  />)
-              } else if (isTask(el)) {
-                return renderTask(el, null);
-              } else {
-                return null;
-              }
-            })
-          })()}
-        </TaskDndContext>
-      </div>
+      <NoteTasksWidget tasks={note.tasks} />
       <AddTodoModal />
       <StartRoutineModal />
       <CreateGroupModal />

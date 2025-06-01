@@ -13,7 +13,7 @@ const GROUP_PREFIX = "_g_";
 
 
 export const isRequireMigration = async (): Promise<boolean> => {
-  const anyRoutineFile = (await ensureFolder(SETTINGS.getDailyRoutineFolderPath()))
+  const anyRoutineFile = (await ensureFolder(SETTINGS.getRoutineFolderPath()))
     .children
     .find(file => file instanceof TFile && !file.name.startsWith(GROUP_PREFIX));
 
