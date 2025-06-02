@@ -4,12 +4,12 @@ import { createModal, ModalApi } from "@/shared/components/modal/create-modal";
 import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { useCallback, useMemo, useState } from "react";
-import { useRoutineNoteStore, useRoutineNoteStoreActions } from "../../model/use-routine-note";
+import { useRoutineNoteStore } from "../../model/use-routine-note";
 
 
 export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi }) => {
   const note = useRoutineNoteStore(s => s.note);
-  const { setNote } = useRoutineNoteStoreActions();
+  const { setNote } = useRoutineNoteStore(s => s.actions);
   const [task, setTask] = useState<Task>({
     name: "",
     properties: {

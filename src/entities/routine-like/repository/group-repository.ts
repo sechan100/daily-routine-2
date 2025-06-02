@@ -2,8 +2,9 @@ import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
 import { SETTINGS } from "@/shared/settings";
 import { TFile } from "obsidian";
+import { routineGroupInitialContent } from "../config/initial-content";
 import { RoutineGroup } from "../model/routine-group";
-import { createNewSerializedRoutineGroup, deserializeRoutineGroup, serializeRoutineGroup } from "./serialize/group";
+import { deserializeRoutineGroup, serializeRoutineGroup } from "../serialize/group";
 
 
 const getGroupPath = (groupName: string) => {
@@ -42,7 +43,7 @@ export const routineGroupRepository: RoutineGroupRepository = {
     const path = getGroupPath(group.name);
     const file = fileAccessor.loadFile(path);
     if (file !== null) {
-      await fileAccessor.createFile(path, createNewSerializedRoutineGroup(group));
+      await fileAccessor.createFile(path, serializeRoutineGroup(routineGroupInitialContent, group));
       return group;
     } else {
       throw new Error(`Group with name '${group.name}' already exists.`);

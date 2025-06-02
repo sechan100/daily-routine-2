@@ -1,6 +1,6 @@
 /**@jsxImportSource @emotion/react */
 
-import { getAccent } from "@/shared/components/obsidian-accent-color";
+import { getAccent } from "@/shared/colors/obsidian-accent-color";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { memo } from "react";

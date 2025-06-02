@@ -3,8 +3,8 @@
  */
 /** @jsxImportSource @emotion/react */
 import { useEffect, useMemo } from 'react';
+import { TEXT_CSS } from '../../colors/text-style';
 import { Button } from '../Button';
-import { TEXT_CSS } from '../text-style';
 import { TextEditComponent } from '../TextEditComponent';
 import { ToggleComponent } from '../ToggleComponent';
 import { ModalApi } from './create-modal';

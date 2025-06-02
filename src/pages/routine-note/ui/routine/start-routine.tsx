@@ -5,7 +5,7 @@ import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
-import { useRoutineNoteStoreActions } from "../../model/use-routine-note";
+import { useRoutineNoteStore } from "../../model/use-routine-note";
 import { RecurrenceUnit } from "./RecurrenceUnit";
 import { createNewRoutine } from "./create-routine";
 import { RoutineReducer, routineReducer } from "./routine-reducer";
@@ -18,7 +18,7 @@ interface StartRoutineModalProps {
   modal: ModalApi;
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
-  const { merge } = useRoutineNoteStoreActions();
+  const { merge } = useRoutineNoteStore(s => s.actions);
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
 
   const onSaveBtnClick = useCallback(async () => {

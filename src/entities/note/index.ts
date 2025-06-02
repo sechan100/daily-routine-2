@@ -2,8 +2,10 @@
 // Model
 export type { Checkable, CheckableState } from "./model/checkable";
 export type { RoutineNote } from "./model/note";
-export type { isNoteRoutine, isNoteRoutineGroup, NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./model/note-routine-like";
+export { isNoteRoutine, isNoteRoutineGroup } from "./model/note-routine-like";
+export type { NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./model/note-routine-like";
 export type { NotePerformance } from "./model/performance";
+export type { RoutineTree } from "./model/routine-tree";
 export type { Task, TaskProperties, TaskPropertiesArray } from "./model/task";
 
 

@@ -1,9 +1,11 @@
 import { CheckableState, Task } from "@/entities/note";
+import { Day } from "@/shared/period/day";
 import { create } from "zustand";
 
 
 
 export type TasksStore = {
+  day: Day;
   tasks: Task[];
   actions: {
     addTask: (task: Task) => void;
@@ -13,6 +15,7 @@ export type TasksStore = {
   }
 }
 export const useTasksStore = create<TasksStore>()((set, get) => ({
+  day: Day.today(),
   tasks: [],
 
   ///////////////// actions ////////////////////

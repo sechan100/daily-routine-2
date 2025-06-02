@@ -4,10 +4,12 @@ import { useCallback } from "react";
 import { useIndicatorStore } from "../model/indicator-store";
 import { relocateTasks } from "../model/relocate-tasks";
 import { useTasksStore } from "../model/tasks-store";
-import { TaskComponent } from "./TaskComponent";
+import { updateNewTasks } from "../model/update-new-tasks";
+import { TaskItem } from "./TaskItem";
 
 
 export const TaskList = () => {
+  const day = useTasksStore(s => s.day);
   const tasks = useTasksStore(s => s.tasks);
   const { setTasks } = useTasksStore(s => s.actions);
 
@@ -18,26 +20,23 @@ export const TaskList = () => {
       dndCase,
     });
     setTasks(newTasks);
-  }, [setTasks, tasks]);
+    updateNewTasks(day, newTasks);
+  }, [day, setTasks, tasks]);
 
   return (
-    <div
-      css={{
-        overflowY: "auto",
-      }}
+    <DndContextProvider
+      indicatorStore={useIndicatorStore}
+      onDragEnd={handleDragEnd}
+      useCenterCollisionType={false}
     >
-      <DndContextProvider
-        indicatorStore={useIndicatorStore}
-        onDragEnd={handleDragEnd}
-        useCenterCollisionType={false}
-      >
+      <div css={{ overflowY: "auto" }}>
         {tasks.map(task => (
-          <TaskComponent
+          <TaskItem
             key={task.name}
             task={task}
           />
         ))}
-      </DndContextProvider>
-    </div>
+      </div>
+    </DndContextProvider>
   )
 }

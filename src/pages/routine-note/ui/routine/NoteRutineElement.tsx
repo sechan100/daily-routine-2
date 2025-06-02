@@ -3,9 +3,9 @@ import { routineService } from "@/entities/routine-like";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { Menu, Notice } from "obsidian";
 import React, { useCallback } from "react";
-import { checkCheckable } from "../../model/check-checkable";
+import { checkCheckable } from "../../../../features/checkable/model/check-checkable";
 import { useRoutineNoteStore, useRoutineNoteStoreActions } from "../../model/use-routine-note";
-import { BaseTaskFeature } from "../legacy-dnd/BaseTaskFeature";
+import { BaseTaskFeature } from "../legacy/BaseTaskFeature";
 import { useRoutineOptionModal } from "./routine-option";
 
 interface RoutineTaskProps {

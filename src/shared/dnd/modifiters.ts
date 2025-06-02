@@ -5,6 +5,8 @@ import { isMobile } from '../utils/plugin-service-locator';
 import { useLeaf } from '../view/use-leaf';
 
 
+const sharedXOffset = 100;
+const sharedYOffset = 0;
 
 export const desktopModifier: Modifier = ({
   activatorEvent,
@@ -29,13 +31,11 @@ export const desktopModifier: Modifier = ({
 
   const { width: draggingWidth, height: draggingHeight } = draggingNodeRect
   const { width: overlayWidth, height: overlayHeight } = overlayNodeRect;
-  const xOffset = 0;
-  const yOffset = 0;
 
   return {
     ...transform,
-    x: adjustedX + xOffset,
-    y: adjustedY + yOffset,
+    x: adjustedX + sharedXOffset,
+    y: adjustedY + sharedYOffset,
   }
 }
 
@@ -61,7 +61,7 @@ export const mobileModifier: Modifier = ({
 
   return {
     ...transform,
-    x: adjustedX,
-    y: adjustedY,
+    x: adjustedX + sharedXOffset,
+    y: adjustedY + sharedYOffset,
   }
 }

@@ -1,3 +1,4 @@
+import { Active, Over } from '@dnd-kit/core';
 import { DndCollisionType } from './dnd-rect-collision';
 
 
@@ -33,10 +34,15 @@ export type DndCollision = {
    * active가 over와 충돌(겹쳐진)한 위치에 대한 정보
    */
   collisionType: DndCollisionType;
+
+  over: Over;
+  active: Active;
 }
 
 
-export const resolveDndCase = ({ isOverFolder, isOverOpen, collisionType }: DndCollision): DndCase | null => {
+export const resolveDndCase = ({ isOverFolder, isOverOpen, collisionType, active, over }: DndCollision): DndCase | null => {
+  if (over.id === active.id) return null;
+
   if (isOverFolder) {
     if (isOverOpen) {
       // 열려있는 폴더

@@ -5,8 +5,8 @@ import { Modal } from "@/shared/components/modal/styled";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
+import { useRoutineNoteStore } from "../../model/use-routine-note";
 import { groupReducer, GroupReducer } from "./group-reducer";
-import { useRoutineNoteStoreActions } from "../../model/use-routine-note";
 
 
 const bem = dr("create-group");
@@ -24,7 +24,7 @@ interface CreateGroupModalProps {
   modal: ModalApi;
 }
 export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps) => {
-  const { merge } = useRoutineNoteStoreActions();
+  const { merge } = useRoutineNoteStore(s => s.actions);
   const [group, dispatch] = useReducer<GroupReducer>(groupReducer, createDefaultGroup());
 
   const onSaveBtnClick = useCallback(async () => {

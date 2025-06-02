@@ -1,6 +1,6 @@
 import { NotePerformance } from "@/entities/note";
+import { getAccent } from "@/shared/colors/obsidian-accent-color";
 import { Circle } from "@/shared/components/Circle";
-import { getAccent } from "@/shared/components/obsidian-accent-color";
 import React from "react";
 
 const cleanPercentage = (percentage: number) => {

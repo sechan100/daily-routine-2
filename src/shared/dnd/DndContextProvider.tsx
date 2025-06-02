@@ -41,6 +41,8 @@ export const DndContextProvider = ({ indicatorStore, children, onDragEnd, useCen
       collisionType,
       isOverFolder: dndData.isFolder,
       isOverOpen: dndData.isOpen,
+      over,
+      active
     });
     if (dndCase !== null) {
       indicatorStore.getState().setDndCase(String(over.id), dndCase);
@@ -74,7 +76,7 @@ export const DndContextProvider = ({ indicatorStore, children, onDragEnd, useCen
       autoScroll={true}
     >
       {children}
-      < OverlayProvider />
+      <OverlayProvider />
     </DndContext >
   )
 }

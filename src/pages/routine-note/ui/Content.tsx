@@ -2,11 +2,12 @@
 import { Icon } from '@/shared/components/Icon';
 import { MenuComponent } from "@/shared/components/Menu";
 import { dr } from "@/shared/utils/daily-routine-bem";
+import { NoteRoutineTreeWidget } from '@/widgets/note-routine-tree';
 import { NoteTasksWidget } from '@/widgets/note-tasks';
 import { WeeksWidget } from "@/widgets/weeks";
 import { Menu, Notice } from "obsidian";
 import { useCallback } from "react";
-import { useRoutineNoteStore, useRoutineNoteStoreActions } from "../model/use-routine-note";
+import { useRoutineNoteStore } from "../model/use-routine-note";
 import { useCreateGroupModal } from './group/create-group';
 import { useStartRoutineModal } from './routine/start-routine';
 import { useAddTodoModal } from './task/add-todo';
@@ -20,7 +21,7 @@ const bem = dr("note");
 
 export const Content = () => {
   const note = useRoutineNoteStore(n => n.note);
-  const { setNote, merge } = useRoutineNoteStoreActions();
+  const { setNote, merge } = useRoutineNoteStore(s => s.actions);
 
   const AddTodoModal = useAddTodoModal();
   const StartRoutineModal = useStartRoutineModal();
@@ -105,7 +106,8 @@ export const Content = () => {
           <MenuComponent size='21px' onMenuShow={onNoteMenuShow} icon="menu" />
         </div>
       </header>
-      <NoteTasksWidget tasks={note.tasks} />
+      <NoteTasksWidget day={note.day} tasks={note.tasks} />
+      <NoteRoutineTreeWidget routineTree={note.routienTree} />
       <AddTodoModal />
       <StartRoutineModal />
       <CreateGroupModal />

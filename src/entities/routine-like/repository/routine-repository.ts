@@ -3,8 +3,9 @@ import { fileAccessor } from "@/shared/file/file-accessor";
 import { SETTINGS } from "@/shared/settings";
 import { compose } from "@/shared/utils/compose";
 import { TFile } from "obsidian";
+import { routineGroupInitialContent } from "../config/initial-content";
 import { Routine } from "../model/routine";
-import { createNewSerializedRoutine, deserializeRoutine, serializeRoutine } from "./serialize/routine";
+import { deserializeRoutine, serializeRoutine } from "../serialize/routine";
 
 
 const getRoutinePath = (routineName: string) => {
@@ -42,7 +43,7 @@ export const routineRepository: RoutineRepository = {
     const path = getRoutinePath(routine.name);
     const file = fileAccessor.loadFile(path);
     if (!file) {
-      await fileAccessor.createFile(path, createNewSerializedRoutine(routine));
+      await fileAccessor.createFile(path, serializeRoutine(routineGroupInitialContent, routine));
       return routine;
     } else {
       throw new Error(`Routine with name '${routine.name}' already exists.`);

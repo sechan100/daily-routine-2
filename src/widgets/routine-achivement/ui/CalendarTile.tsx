@@ -6,7 +6,7 @@ import { Badge } from "@mui/material";
 import { Tile } from "../model/types";
 // FIXME: 이거 나중에 ui고칠 때 바꾸기
 // eslint-disable-next-line fsd-import/public-api-imports
-import { TaskCheckbox } from "@/pages/routine-note/ui/TaskCheckbox";
+import { Checkbox } from "@/features/checkable/ui/Checkbox";
 
 
 
@@ -54,7 +54,7 @@ export const CalendarTile = ({
         }}>
           {tile.state === "inactive" || !isTodayOrBefore
             ?
-            <TaskCheckbox
+            <Checkbox
               state={"un-checked"}
               css={{
                 visibility: "hidden",
@@ -62,7 +62,7 @@ export const CalendarTile = ({
               size={14}
             />
             :
-            <TaskCheckbox
+            <Checkbox
               state={tile.state}
               size={14}
             />

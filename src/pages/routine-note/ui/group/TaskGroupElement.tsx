@@ -5,7 +5,7 @@ import { ResultAsync } from "neverthrow";
 import { Menu, Notice } from "obsidian";
 import { useCallback } from "react";
 import { useRoutineNoteStore, useRoutineNoteStoreActions } from "../../model/use-routine-note";
-import { BaseTaskGroupFeature } from "../legacy-dnd/BaseTaskGroupFeature";
+import { BaseTaskGroupFeature } from "../legacy/BaseTaskGroupFeature";
 import { useGroupOptionModal } from "./group-option";
 
 

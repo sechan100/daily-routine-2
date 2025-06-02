@@ -1,4 +1,5 @@
 import { Day } from "@/shared/period/day";
+import { noteInitialContent } from "../config/initial-content";
 import { Checkable, CheckableState } from "../model/checkable";
 import { RoutineNote } from "../model/note";
 import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, isNoteRoutine, isNoteRoutineGroup } from "../model/note-routine-like";
@@ -46,7 +47,7 @@ export const noteService: NoteService = {
     const routienTree = routineBuilder.build(day);
     return {
       day,
-      content: '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
+      userContent: noteInitialContent,
       tasks: [],
       routienTree,
     };

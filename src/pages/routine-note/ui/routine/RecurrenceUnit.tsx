@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Routine, RoutineProperties } from "@/entities/routine-like";
+import { TEXT_CSS } from "@/shared/colors/text-style";
 import { Button } from "@/shared/components/Button";
-import { TEXT_CSS } from "@/shared/components/text-style";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { useMemo } from "react";
 import { MonthOption } from "./recurrence-unit-month";

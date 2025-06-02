@@ -5,7 +5,7 @@ import { Day } from "@/shared/period/day";
 import { SETTINGS } from "@/shared/settings";
 import { TAbstractFile, TFile } from "obsidian";
 import { RoutineNote } from "../model/note";
-import { deserializeRoutineNote, serializeRoutineNote } from "./serialize/note";
+import { deserializeRoutineNote, serializeRoutineNote } from "../serialize/note";
 
 
 export const getNoteFile = (day: Day): TFile | null => {

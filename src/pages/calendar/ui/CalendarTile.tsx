@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Checkable } from "@/entities/note";
-import { TEXT_CSS } from "@/shared/components/text-style";
+import { TEXT_CSS } from "@/shared/colors/text-style";
 import { Day, DayOfWeek } from "@/shared/period/day";
 import { css } from "@emotion/react";
 import { Tile } from "../model/calendar";
