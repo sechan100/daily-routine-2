@@ -1,4 +1,4 @@
-import { closestCenter, DndContext, DragEndEvent, DragMoveEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragMoveEvent, rectIntersection } from "@dnd-kit/core";
 import { useCallback, useRef } from "react";
 import { StoreApi } from "zustand";
 import { OverlayProvider } from "./OverlayProvider";
@@ -60,6 +60,7 @@ export const DndContextProvider = ({ indicatorStore, children, onDragEnd, useCen
       activeId: String(active.id),
       dndCase,
     });
+    indicatorStore.getState().clear();
   }, [indicatorStore, onDragEnd]);
 
   return (
@@ -73,7 +74,7 @@ export const DndContextProvider = ({ indicatorStore, children, onDragEnd, useCen
           measure: adjusteDragOverlayMeasure
         }
       }}
-      collisionDetection={closestCenter}
+      collisionDetection={rectIntersection}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
       autoScroll={true}

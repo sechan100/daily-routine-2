@@ -25,19 +25,18 @@ export class DndRectCollisionInvestigator {
     const activeRect = active.rect.current.translated;
     if (!activeRect) return null;
 
-    const splitedRect = this.useCenterCollisionType
-      ? RectUtils.splitRectToThreeHorizontally(over.rect)
-      : RectUtils.splitRectToTwoHorizontally(over.rect);
+    const splitedRect = this.useCenterCollisionType ? RectUtils.splitRectToThreeHorizontally(over.rect) : RectUtils.splitRectToTwoHorizontally(over.rect);
 
-    // console.log("over rect", over.rect.top, "active rect", activeRect.top);
+    // console.log(splitedRect.bottom.top, activeRect.top, splitedRect.bottom.bottom);
+    const baseY = activeRect.top + activeRect.height / 2;
 
-    if (RectUtils.isYInBoundary(RectUtils.getRectBaseYLine(activeRect), splitedRect.top)) {
+    if (RectUtils.isYInBoundary(baseY, splitedRect.top)) {
       return "above";
     }
-    else if (RectUtils.isYInBoundary(RectUtils.getRectBaseYLine(activeRect), splitedRect.bottom)) {
+    else if (RectUtils.isYInBoundary(baseY, splitedRect.bottom)) {
       return "below";
     }
-    else if (RectUtils.isYInBoundary(RectUtils.getRectBaseYLine(activeRect), splitedRect.center)) {
+    else if (RectUtils.isYInBoundary(baseY, splitedRect.center)) {
       return "center";
     }
     else {

@@ -34,6 +34,7 @@ export const OverlayProvider = () => {
         // left: "0",
         // top: "0",
       }}
+      dropAnimation={null}
       modifiers={[desktopModifier, mobileModifier]}
     >
       {draggingTaskName && (

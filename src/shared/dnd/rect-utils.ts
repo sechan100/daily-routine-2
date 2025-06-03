@@ -60,7 +60,4 @@ export const RectUtils = {
   isYInBoundary: (y: number, boundary: ClientRect) => {
     return boundary.top < y && boundary.bottom > y;
   },
-  getRectBaseYLine(rect: ClientRect) {
-    return rect.top;
-  }
 }
