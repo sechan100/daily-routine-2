@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+// eslint-disable-next-line fsd-import/layer-imports
 import { DragEndEvent, DragOverlay, useDndMonitor } from "@dnd-kit/core";
 import { css } from "@emotion/react";
 import { useCallback, useState } from "react";
@@ -28,6 +29,11 @@ export const OverlayProvider = () => {
   return (
     <DragOverlay
       zIndex={51}
+      // top-left를 0으로 해서, dnd-kit이 인식하는 top, left가 어디인지를 확인할 수 있고 이를 기반으로 platform별 위치 재조정이 가능하다.
+      style={{
+        // left: "0",
+        // top: "0",
+      }}
       modifiers={[desktopModifier, mobileModifier]}
     >
       {draggingTaskName && (
@@ -46,15 +52,40 @@ export const OverlayProvider = () => {
         }}>
           <div css={textStyle}>{draggingTaskName}</div>
         </div>
-        // <div
+        // <ButtonBase
+        //   LinkComponent={"div"}
+        //   href='#'
+        //   color='primary'
         //   css={{
-        //     paddingTop: "1em",
-        //     paddingBottom: "1em",
-        //     border: "1px solid var(--color-base-30)",
+        //     ".MuiTouchRipple-child": {
+        //       backgroundColor: "var(--color-accent-1) !important",
+        //     },
+        //     width: "100%",
+        //     border: "1px solid var(--color-base-100)",
+        //     backgroundColor: "var(--color-base-30)",
+        //     padding: "0",
+        //     margin: "0",
+        //     cursor: "pointer",
+        //     lineHeight: 1,
         //   }}
         // >
-        //   {draggingTaskName}
-        // </div>
+        //   <CheckableFlexContainer>
+        //     <CheckableArea checkable={{
+        //       name: draggingTaskName,
+        //       state: "un-checked",
+        //     }} />
+        //     <div
+        //       css={{
+        //         display: "flex",
+        //         alignItems: "center",
+        //         justifyContent: "end",
+        //         cursor: "grab"
+        //       }}
+        //     >
+        //       <Icon size="20px" color={STYLES.palette.textFaint} icon={"menu"} />
+        //     </div>
+        //   </CheckableFlexContainer>
+        // </ButtonBase>
       )}
     </DragOverlay>
   )

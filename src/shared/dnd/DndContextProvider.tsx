@@ -2,7 +2,7 @@ import { closestCenter, DndContext, DragEndEvent, DragMoveEvent } from "@dnd-kit
 import { useCallback, useRef } from "react";
 import { StoreApi } from "zustand";
 import { OverlayProvider } from "./OverlayProvider";
-import { adjustedMeasureFunction } from "./adjusted-measure-function";
+import { adjusteDraggableMeasure, adjusteDragOverlayMeasure } from "./adjusted-measure-function";
 import { IndicatorStore } from "./create-indicator-store";
 import { DndRectCollisionInvestigator } from "./dnd-rect-collision";
 import { getDndData } from "./drag-data";
@@ -67,7 +67,10 @@ export const DndContextProvider = ({ indicatorStore, children, onDragEnd, useCen
       sensors={sensors}
       measuring={{
         draggable: {
-          measure: adjustedMeasureFunction
+          measure: adjusteDraggableMeasure
+        },
+        dragOverlay: {
+          measure: adjusteDragOverlayMeasure
         }
       }}
       collisionDetection={closestCenter}
