@@ -1,17 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
-import { BaseDndable } from "@/shared/dnd/Dndable";
-import { DndData } from "@/shared/dnd/drag-data";
+import { STYLES } from "@/shared/colors/palette";
+import { DragState } from "@/shared/dnd/drag-state";
+import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
-import { useIndicator } from "../model/indicator-store";
+import { Platform } from "obsidian";
+import { useRef, useState } from "react";
 
-
-
-const dndData: DndData = {
-  isFolder: false,
-  isOpen: false,
-}
 
 type Props = {
   task: Task;
@@ -19,39 +15,50 @@ type Props = {
 export const TaskItem = ({
   task,
 }: Props) => {
+  const [dragState, setDragState] = useState<DragState>("idle");
+  const draggableRef = useRef<HTMLDivElement>(null);
+  const droppableRef = useRef<HTMLDivElement>(null);
+
   const {
-    dndRef,
-    dragHandleRef,
-    attributes,
-    listeners,
     isDragging,
     isOver,
     dndCase
   } = useDnd({
-    id: task.name,
-    dndData,
-    useIndicator: useIndicator,
-    useDragHandle: true,
+    dndItem: {
+      id: task.name,
+    },
+    draggable: {
+      type: "TASK",
+      canDrag: Platform.isMobile ? dragState === "ready" : true,
+      ref: draggableRef
+    },
+    droppable: {
+      accept: ["TASK"],
+      ref: droppableRef,
+      rectSplitCount: "two"
+    }
   });
 
   return (
-    <BaseDndable
-      dndRef={dndRef}
-      dndCase={dndCase}
-      isDragging={isDragging}
-      isOver={isOver}
-      depth={0}
+    <div
+      ref={droppableRef}
+      css={{
+        position: "relative",
+        touchAction: "none",
+        backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
+      }}
     >
       <CheckableRippleBase>
         <CheckableFlexContainer>
           <CheckableArea checkable={task} />
           <DragHandleMenu
-            dragHandleRef={dragHandleRef}
-            attributes={attributes}
-            listeners={listeners}
+            ref={draggableRef}
+            dragState={dragState}
+            setDragState={setDragState}
           />
         </CheckableFlexContainer>
       </CheckableRippleBase>
-    </BaseDndable >
+      <Indicator dndCase={dndCase} depth={0} />
+    </div>
   )
 }

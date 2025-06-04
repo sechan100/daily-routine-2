@@ -1,11 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRoutine } from "@/entities/note";
+import { NoteRoutine, NoteRoutineGroup } from "@/entities/note";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
-import { BaseDndable } from "@/shared/dnd/Dndable";
-import { DndData } from "@/shared/dnd/drag-data";
+import { STYLES } from "@/shared/colors/palette";
+import { DragState } from "@/shared/dnd/drag-state";
+import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { css } from "@emotion/react";
-import { useIndicator } from "../model/indicator-store";
+import { Platform } from "obsidian";
+import { useMemo, useRef, useState } from "react";
+import { RoutineDndItem } from "../model/dnd-item";
 
 
 const indentStyle = css({
@@ -13,55 +16,66 @@ const indentStyle = css({
   margin: "0 0 0 20px",
 })
 
-const dndData: DndData = {
-  isFolder: false,
-  isOpen: false,
-}
-
 type Props = {
   routine: NoteRoutine;
+  parent: NoteRoutineGroup | null;
   depth: number;
 }
 export const RoutineItem = ({
   routine,
+  parent,
   depth,
 }: Props) => {
+  const [dragState, setDragState] = useState<DragState>("idle");
+  const draggableRef = useRef<HTMLDivElement>(null);
+  const droppableRef = useRef<HTMLDivElement>(null);
+
+  const dndItem = useMemo<RoutineDndItem>(() => ({
+    id: routine.name,
+    nrlType: "routine",
+    routine,
+  }), [routine]);
 
   const {
-    dndRef,
-    dragHandleRef,
-    attributes,
-    listeners,
     isDragging,
     isOver,
     dndCase
   } = useDnd({
-    id: routine.name,
-    dndData,
-    useIndicator: useIndicator,
-    useDragHandle: true,
+    dndItem,
+    draggable: {
+      type: "ROUTINE",
+      canDrag: Platform.isMobile ? dragState === "ready" : true,
+      ref: draggableRef
+    },
+    droppable: {
+      accept: depth === 0 ? ["ROUTINE", "GROUP"] : ["ROUTINE"],
+      ref: droppableRef,
+      rectSplitCount: "two"
+    }
   });
 
   return (
-    <BaseDndable
-      dndRef={dndRef}
-      dndCase={dndCase}
-      isDragging={isDragging}
-      isOver={isOver}
-      depth={0}
-    >
-      <div css={depth !== 0 && indentStyle}>
+    <div css={depth !== 0 && indentStyle}>
+      <div
+        ref={droppableRef}
+        css={{
+          position: "relative",
+          touchAction: "none",
+          backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
+        }}
+      >
         <CheckableRippleBase>
           <CheckableFlexContainer>
             <CheckableArea checkable={routine} />
             <DragHandleMenu
-              dragHandleRef={dragHandleRef}
-              attributes={attributes}
-              listeners={listeners}
+              ref={draggableRef}
+              dragState={dragState}
+              setDragState={setDragState}
             />
           </CheckableFlexContainer>
         </CheckableRippleBase>
+        <Indicator dndCase={dndCase} depth={0} />
       </div>
-    </BaseDndable >
+    </div>
   )
 }

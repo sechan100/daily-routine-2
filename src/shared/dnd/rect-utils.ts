@@ -1,19 +1,19 @@
 import { ClientRect } from "@dnd-kit/core"
 
 
-
-
 // top + center + bottom = 1
-type SplitRatio = {
+export type SplitRatio = {
   top: number
   center: number
   bottom: number
 }
-type SplitedRect = {
+
+export type SplitedRect = {
   top: ClientRect
   center: ClientRect
   bottom: ClientRect
 }
+
 const splitRectToThreeHorizontally = (rect: ClientRect, ratio: SplitRatio): SplitedRect => {
   const top = {
     width: rect.width,
@@ -42,20 +42,15 @@ const splitRectToThreeHorizontally = (rect: ClientRect, ratio: SplitRatio): Spli
   return { top, center, bottom }
 }
 
-
 const ratio: SplitRatio = {
   top: 0.35,
   center: 0.3,
   bottom: 0.35
 }
+
 export const RectUtils = {
-  splitRectToThreeHorizontally: (rect: ClientRect) => splitRectToThreeHorizontally(rect, ratio),
-  splitRectToTwoHorizontally: (rect: ClientRect) => {
-    return splitRectToThreeHorizontally(rect, {
-      top: 0.5,
-      center: 0,
-      bottom: 0.5
-    })
+  splitRectHorizontally: (rect: ClientRect, ratio: SplitRatio): SplitedRect => {
+    return splitRectToThreeHorizontally(rect, ratio);
   },
   isYInBoundary: (y: number, boundary: ClientRect) => {
     return boundary.top < y && boundary.bottom > y;

@@ -1,9 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { Interpolation, SerializedStyles, Theme } from "@emotion/react";
-import styled from "@emotion/styled";
-import _ from "lodash";
-import { DebouncedFunc } from "lodash";
-import { useRef, useCallback, useMemo, forwardRef, memo } from "react";
+import _, { DebouncedFunc } from "lodash";
+import { forwardRef, memo, useCallback, useMemo, useRef } from "react";
 
 
 
@@ -15,7 +12,6 @@ import { useRef, useCallback, useMemo, forwardRef, memo } from "react";
 
 interface TouchableProps {
   children?: React.ReactNode;
-  style?: React.CSSProperties;
   className?: string;
 
   // long press가 인식되는 시간(default: 500ms)
@@ -43,8 +39,8 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
 
   const clickPreventRef = useRef<boolean>(false);
   const performanceRef = useRef<number>(0);
-  const startDelay = useMemo(() => props.longPressStartDelay??150, [props.longPressStartDelay]);
-  const longPressDelay = useMemo(() => props.longPressDelay??500, [props.longPressDelay]);
+  const startDelay = useMemo(() => props.longPressStartDelay ?? 150, [props.longPressStartDelay]);
+  const longPressDelay = useMemo(() => props.longPressDelay ?? 500, [props.longPressDelay]);
   const isMovedRef = useRef<boolean>(false);
   const isTouchRef = useRef<boolean>(false);
 
@@ -65,23 +61,23 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
     longPressDebounce.current(e);
     longPressStartDebounce.current(e);
   }, []);
-  
+
   const longPressCancel = useCallback(() => {
     isTouchRef.current = false;
     longPressDebounce.current.cancel();
     longPressStartDebounce.current.cancel();
     props.onPressChange?.(false);
   }, [props]);
-  
+
   const onClick = useCallback((e: React.MouseEvent) => {
-    if(clickPreventRef.current){
+    if (clickPreventRef.current) {
       clickPreventRef.current = false;
       return;
     }
     props.onClick?.(e);
   }, [props])
-  
-  
+
+
   const touchStart = useCallback((e: React.TouchEvent) => {
     performanceRef.current = performance.now();
     longPressStartCall(e);
@@ -91,12 +87,12 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
     longPressCancel();
     isMovedRef.current = true;
   }, [longPressCancel])
-  
+
   const touchEnd = useCallback((e: React.TouchEvent) => {
     longPressCancel();
     const duration = performance.now() - performanceRef.current + 50; // 50ms는 딜레이
     performanceRef.current = 0;
-    if(duration < longPressDelay && !isMovedRef.current){
+    if (duration < longPressDelay && !isMovedRef.current) {
       props.onClick?.(e);
       clickPreventRef.current = true;
     }
@@ -105,11 +101,10 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
     }
     isMovedRef.current = false;
   }, [longPressCancel, longPressDelay, props])
-  
+
   return (
     <div
       ref={ref}
-      style={props.style}
       className={props.className}
       onTouchStart={touchStart}
       onTouchMove={touchMove}
@@ -119,7 +114,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
       onContextMenu={e => {
         e.preventDefault();
         e.stopPropagation();
-        if(!isTouchRef.current){
+        if (!isTouchRef.current) {
           props.onAfterLongPressDelay?.();
         }
       }}

@@ -1,10 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { memo, useMemo } from "react";
-import { DndCase } from "./resolve-dnd-case";
+import { getAccent } from "../colors/obsidian-accent-color";
+import { DndCase } from "./dnd-case";
 
 
-const getLineStyle = (direction: "top" | "bottom", overDepth: number) => css({
+const getLineStyle = (direction: "top" | "bottom", depth: number) => css({
   width: "100%",
   height: "2px",
   backgroundColor: "hsla(var(--color-accent-1-hsl), 1)",
@@ -32,11 +33,11 @@ const boxStyle = css({
   bottom: "0",
   left: "0",
   borderRadius: "5px",
-  backgroundColor: "hsla(var(--color-accent-1-hsl), 0.5)",
+  backgroundColor: getAccent({ a: 0.5 }),
 })
 
 type IndicatorProps = {
-  dndCase: DndCase;
+  dndCase: DndCase | null;
   depth: number;
 }
 export const Indicator = memo(({ dndCase, depth }: IndicatorProps) => {
@@ -54,6 +55,10 @@ export const Indicator = memo(({ dndCase, depth }: IndicatorProps) => {
         return css({});
     }
   }, [dndCase, depth]);
+
+  if (dndCase === null) {
+    return <></>
+  }
 
   return (
     <div css={[

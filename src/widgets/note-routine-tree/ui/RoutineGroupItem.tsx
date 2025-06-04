@@ -1,23 +1,20 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutineGroup } from "@/entities/note";
 import { CancelLineName, checkableConfig, CheckableFlexContainer, DragHandleMenu } from "@/features/checkable";
+import { STYLES } from "@/shared/colors/palette";
 import { Icon } from "@/shared/components/Icon";
-import { BaseDndable } from "@/shared/dnd/Dndable";
-import { DndData } from "@/shared/dnd/drag-data";
+import { DragState } from "@/shared/dnd/drag-state";
+import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
-import { useCallback } from "react";
-import { useIndicator } from "../model/indicator-store";
+import { Platform } from "obsidian";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RoutineDndItem } from "../model/dnd-item";
 import { useRoutineTreeStore } from "../model/routine-tree-store";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
-
-const dndData: DndData = {
-  isFolder: false,
-  isOpen: false,
-}
 
 type Props = {
   group: NoteRoutineGroup;
@@ -29,20 +26,32 @@ export const RoutineGroupItem = ({
 }: Props) => {
   const bgColor = useLeaf(s => s.leafBgColor);
   const { open } = useRoutineTreeStore(s => s.actions);
+  const [dragState, setDragState] = useState<DragState>("idle");
+  const draggableRef = useRef<HTMLDivElement>(null);
+  const droppableRef = useRef<HTMLDivElement>(null);
+
+  const dndItem = useMemo<RoutineDndItem>(() => ({
+    id: group.name,
+    nrlType: "routine-group",
+    routineGroup: group,
+  }), [group]);
 
   const {
-    dndRef,
-    dragHandleRef,
-    attributes,
-    listeners,
     isDragging,
     isOver,
     dndCase
   } = useDnd({
-    id: group.name,
-    dndData,
-    useIndicator: useIndicator,
-    useDragHandle: true,
+    dndItem,
+    draggable: {
+      type: "GROUP",
+      canDrag: Platform.isMobile ? dragState === "ready" : true,
+      ref: draggableRef
+    },
+    droppable: {
+      accept: ["ROUTINE", "GROUP"],
+      ref: droppableRef,
+      rectSplitCount: group.isOpen ? "two" : "three",
+    }
   });
 
   const changeOpen = useCallback((isOpen: boolean) => {
@@ -51,24 +60,30 @@ export const RoutineGroupItem = ({
 
   const isAllSubTasksChecked = group.routines.every(r => r.state === 'accomplished');
 
+  // dragging 상태에 따라 isOpen 상태를 조정
+  useEffect(() => {
+    changeOpen(!isDragging);
+  }, [changeOpen, group.routines, isDragging]);
+
   return (
-    <BaseDndable
-      dndRef={dndRef}
-      dndCase={dndCase}
-      isDragging={isDragging}
-      isOver={isOver}
-      depth={0}
+    <Accordion
+      disableGutters
+      elevation={0}
+      expanded={group.isOpen}
+      onChange={() => changeOpen(!group.isOpen)}
+      css={{
+        backgroundColor: bgColor,
+        "&::before": {
+          display: "none",
+        },
+      }}
     >
-      <Accordion
-        disableGutters
-        elevation={0}
-        expanded={group.isOpen}
-        onChange={() => changeOpen(!group.isOpen)}
+      <div
+        ref={droppableRef}
         css={{
-          backgroundColor: bgColor,
-          "&::before": {
-            display: "none",
-          },
+          position: "relative",
+          touchAction: "none",
+          backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
         }}
       >
         <AccordionSummary
@@ -84,7 +99,6 @@ export const RoutineGroupItem = ({
             gap: "0.5em",
             flexDirection: "row-reverse",
             fontWeight: "500",
-
             // 열림상태
             [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]: {
               transform: 'rotate(90deg)',
@@ -97,17 +111,17 @@ export const RoutineGroupItem = ({
               cancel={isAllSubTasksChecked}
             />
             <DragHandleMenu
-              dragHandleRef={dragHandleRef}
-              attributes={attributes}
-              listeners={listeners}
-              onClick={e => e.stopPropagation()}
+              ref={draggableRef}
+              dragState={dragState}
+              setDragState={setDragState}
             />
           </CheckableFlexContainer>
         </AccordionSummary>
-        <AccordionDetails css={{ padding: "0" }}>
-          {group.routines.map(r => renderRoutineTree(r, depth + 1))}
-        </AccordionDetails>
-      </Accordion>
-    </BaseDndable >
+        <Indicator dndCase={dndCase} depth={0} />
+      </div>
+      <AccordionDetails css={{ padding: "0" }}>
+        {group.routines.map(r => renderRoutineTree(r, group, depth + 1))}
+      </AccordionDetails>
+    </Accordion>
   )
 }
