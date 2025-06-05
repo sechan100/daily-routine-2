@@ -5,7 +5,7 @@ export interface IUseScroll {
   isScrollAllowed: boolean;
 }
 
-const BOUND_HEIGHT = 70;
+const BOUND_HEIGHT = 30;
 
 function getScrollDirection({
   position,

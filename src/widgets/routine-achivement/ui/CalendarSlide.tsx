@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { noteService } from "@/entities/note";
+import { noteService, routineTreeService } from "@/entities/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
@@ -62,8 +62,8 @@ export const CalendarSlide = ({
     if (routineOptionsPerMonth.has(month.format())) return;
 
     const notes = notesAsync.value;
-    const existingRoutineNames = notes.flatMap(note => noteService
-      .getAllRoutines(note)
+    const existingRoutineNames = notes.flatMap(note => routineTreeService
+      .getAllRoutines(note.routienTree)
       .map(routine => routine.name)
     );
     const routineOptions = Array.from(new Set(existingRoutineNames));

@@ -8,10 +8,11 @@ export type { NotePerformance } from "./model/performance";
 export type { RoutineTree } from "./model/routine-tree";
 export type { Task, TaskProperties, TaskPropertiesArray } from "./model/task";
 
-
 // Logic
 export { mergeRoutineMutations } from "./logic/merge-routine-mutations";
 export { notePerformanceService } from "./logic/note-performance-service";
 export { noteService } from "./logic/note-service";
+export { routineTreeService } from "./logic/routine-tree-service";
+export { RoutineBuilder } from "./logic/RoutineBuilder";
 export { taskService } from "./logic/task-service";
 

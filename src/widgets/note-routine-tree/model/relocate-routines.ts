@@ -1,239 +1,260 @@
-import { useRoutineNoteStore } from '../../../pages/routine-note/model/use-routine-note';
+import { isNoteRoutineGroup, mergeRoutineMutations, NoteRoutine, NoteRoutineGroup, NoteRoutineLike, noteService, RoutineBuilder, RoutineTree, routineTreeService } from "@/entities/note";
+import { Routine, RoutineGroup, routineGroupService, RoutineLike, routineService, UNGROUPED_GROUP_NAME } from "@/entities/routine-like";
+import { DndCase } from "@/shared/dnd/dnd-case";
+import { ORDER_OFFSET } from "../config";
+import { RoutineDndItem } from "./dnd-item";
 
 
 
-type OrderChangeList = RoutineElement[];
-
-const ORDER_OFFSET = 1000;
-
-const loadRoutineElementRegistry = async () => {
-  const routineMap = new Map<string, Routine>([...await RoutineService.loadAll()].map(r => [r.name, r]));
-  const groupMap = new Map<string, RoutineElement>([...await GroupService.loadAll()].map(g => [g.name, g]));
-
-  return (name: string, type: "routine" | "routine-group"): RoutineElement | null => {
-    if (type === "routine") {
-      const r = routineMap.get(name);
-      return r ?? null;
-    } else {
-      const g = groupMap.get(name);
-      return g ?? null;
-    }
-  }
+export type RelocateRoutinesArgs = {
+  active: RoutineDndItem;
+  over: RoutineDndItem;
+  dndCase: DndCase;
 }
 
 
 /**
- * parent의 자식의 순서들을 반영하여 order, group등이 적절하게 변경된 Routine, RoutineGroup의 배열을 반환한다.
- * @param parent 
+ * routine들의 위치를 이동시키고, 저장한다.
+ * 이를 기반으로 새롭게 routineTree를 빌드하여 반환한다.
  */
-const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> => {
-  const get = await loadRoutineElementRegistry();
+export const relocateRoutines = async (tree: RoutineTree, { active, over, dndCase }: RelocateRoutinesArgs): Promise<RoutineTree> => {
+  const relocator = new RoutineOrderUpdater(tree, dndCase);
 
-  type Acc = {
-    changeList: OrderChangeList;
-    prevOrder: number;
-  }
-  return parent.children
-    .filter(c => isTaskGroup(c) || isRoutineTask(c))
-    .flatMap(c => {
-      const routineElementType = isTaskGroup(c) ? "routine-group" : "routine";
-      const rOrG = get(c.name, routineElementType);
-
-      /**
-       * 과거의 노트를 편집할 때, 현재는 존재하지 않는 routine이나 group이 존재할 수 있다.
-       * 즉, registry에서 rOrG를 찾지 못할 수 있다.
-       */
-      if (rOrG) {
-        return [rOrG];
-      } else {
-        console.info(`Routine, or RoutineGroup not exist currently. (name: '${c.name})'`);
-        return [];
-      }
-    })
-    .reduce((acc, el) => {
-      // order
-      let currentOrder = el.properties.order;
-      if (!(acc.prevOrder < currentOrder)) {
-        currentOrder = acc.prevOrder + ORDER_OFFSET;
-        el.properties.order = currentOrder;
-      }
-      acc.prevOrder = currentOrder;
-
-      // group
-      if (isRoutine(el)) {
-        const group = el.properties.group;
-        if (isRoutineNote(parent) && group !== RoutineGroupEntity.UNGROUPED_NAME) {
-          el.properties.group = RoutineGroupEntity.UNGROUPED_NAME;
-        }
-        else if (isTaskGroup(parent) && group !== parent.name) {
-          el.properties.group = parent.name;
-        }
-      }
-
-      acc.changeList.push(el);
-      return acc;
-    }, { changeList: [], prevOrder: 0 } as Acc)
-    .changeList;
-}
-
-
-/**
- * 새로운 order로 routine, routine-group의 order를 업데이트한다.
- */
-const updateRoutineAndRoutineGroups = async (parent: TaskParent) => {
-  if (isTaskGroup(parent)) {
-    /**
-     * 현재는 존재하지 않는 Group 안으로 task가 드롭된 경우, 존재하지 않는 group으로 task가 할당될 수 있다. 
-     * 이 경우는 updateRoutineAndRoutineGroups을 처리해선 안된다.
-     */
-    const isGroupExist = GroupService.isExist(parent.name);
-    if (!isGroupExist) return;
-  }
-
-  const list = await resolveChangeList(parent);
-  for (const el of list) {
-    if (isRoutine(el)) {
-      await RoutineService.update(el);
-    } else if (isRoutineGroup(el)) {
-      await GroupService.update(el);
-    } else {
-      throw new Error("Invalid RoutineElement");
+  if (active.nrlType === "routine-group") {
+    // 1. group이 다른 group 위로
+    if (over.nrlType === "routine-group") {
+      await relocator.groupOnGroup(active.routineGroup, over.routineGroup);
+    }
+    // 2. group이 routine 위로
+    else {
+      await relocator.groupOnRoutine(active.routineGroup, over.routine);
     }
   }
-}
-
-
-type AddTaskArgs = {
-  parent: TaskParent;
-  base: NoteElement;
-  target: NoteElement;
-  pos: "before" | "after";
-}
-const addTask = ({
-  parent,
-  base,
-  target: task,
-  pos
-}: AddTaskArgs) => {
-  const idx = parent.children.findIndex(t => t.name === base.name);
-  if (pos === "before") {
-    parent.children.splice(idx, 0, task);
-  } else {
-    parent.children.splice(idx + 1, 0, task);
+  else {
+    // 3. routine이 group 위로
+    if (over.nrlType === "routine-group") {
+      await relocator.routineOnGroup(active.routine, over.routineGroup);
+    }
+    // 4. routine이 다른 routine 위로
+    else {
+      await relocator.routineOnRoutine(active.routine, over.routine);
+    }
   }
-}
 
-/***************************************************
- ******** task, group dnd에서 가능한 4가지 케이스 ********
- ***************************************************/
+  // === routine 변경사항 반영 ===
+  await mergeRoutineMutations();
 
-type TaskOnTask = {
-  dropped: Task;
-  on: Task;
-  hit: "top" | "bottom";
-}
-const taskDropOnTask = async (args: TaskOnTask) => {
-  if (args.dropped.name === args.on.name) throw new Error("Cannot drop on itself");
-  const note = { ...useRoutineNoteStore.getState().note };
-
-  const on = NoteService.findTask(note, args.on.name);
-  const dropped = NoteService.findTask(note, args.dropped.name);
-  if (!on || !dropped) throw new Error("Dest Task or Dropped Task not found");
-
-  TaskEntity.removeTask(note, dropped.name);
-  const parent = NoteService.findParent(note, on.name);
-  addTask({
-    parent,
-    base: on,
-    target: dropped,
-    pos: args.hit === "top" ? "before" : "after"
-  })
-  await updateRoutineAndRoutineGroups(parent);
-  return note;
-}
-
-
-type GroupOnTask = {
-  dropped: TaskGroup;
-  on: Task;
-  hit: "top" | "bottom";
-}
-const groupDropOnTask = async (args: GroupOnTask) => {
-  const note = { ...useRoutineNoteStore.getState().note };
-  const root = note.children;
-  const on = root.find(t => t.name === args.on.name);
-  const dropped = root.find(t => t.name === args.dropped.name);
-  if (!on || !dropped) throw new Error("Dest Task or Dropped Task not found. Or group has dropped in another group.");
-
-  TaskEntity.removeTask(note, dropped.name);
-  addTask({
-    parent: note,
-    base: on,
-    target: dropped,
-    pos: args.hit === "top" ? "before" : "after"
-  })
-  await updateRoutineAndRoutineGroups(note);
-  return note;
-}
-
-
-type TaskOnGroup = {
-  dropped: Task;
-  on: TaskGroup;
-  hit: "top" | "bottom" | "in";
-}
-const taskDropOnGroup = async (args: TaskOnGroup) => {
-  const note = { ...useRoutineNoteStore.getState().note };
-  const on = NoteService.findGroup(note, args.on.name);
-  const dropped = NoteService.findTask(note, args.dropped.name);
-  if (!on || !dropped) throw new Error("Dest Group or Dropped Task not found.");
-
-  TaskEntity.removeTask(note, dropped.name);
-  let parent: TaskParent;
-  if (args.hit === "in") {
-    on.children.unshift(dropped);
-    parent = on;
+  let newTree: RoutineTree;
+  const newNote = await noteService.load(tree.day);
+  if (newNote) {
+    newTree = newNote.routienTree;
   } else {
-    addTask({
-      parent: note,
-      base: on,
-      target: dropped,
-      pos: args.hit === "top" ? "before" : "after"
-    })
-    parent = note;
+    const routineBuilder = await RoutineBuilder.withDiskAsync();
+    newTree = routineBuilder.build(tree.day);
   }
-  await updateRoutineAndRoutineGroups(parent);
-  return note;
+  return newTree;
 }
 
 
-type GroupOnGroup = {
-  dropped: TaskGroup;
-  on: TaskGroup;
-  hit: "top" | "bottom";
-}
-const groupDropOnGroup = async (args: GroupOnGroup) => {
-  const note = { ...useRoutineNoteStore.getState().note };
-  const root = note.children;
-  const on = root.find(t => t.name === args.on.name);
-  const dropped = root.find(t => t.name === args.dropped.name);
-  if (!on || !dropped) throw new Error("Dest Group or Dropped Group not found.");
+class RoutineOrderUpdater {
+  constructor(
+    private tree: RoutineTree,
+    private dndCase: DndCase,
+  ) { }
 
-  TaskEntity.removeTask(note, dropped.name);
-  addTask({
-    parent: note,
-    base: on,
-    target: dropped,
-    pos: args.hit === "top" ? "before" : "after"
-  })
-  await updateRoutineAndRoutineGroups(note);
-  return note;
-}
+  async groupOnGroup(active: NoteRoutineGroup, over: NoteRoutineGroup): Promise<RoutineTree> {
+    let beforeAndAfter: { before: RoutineLike | null, after: RoutineLike | null } = { before: null, after: null };
+    switch (this.dndCase) {
+      case "insert-before":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "before");
+        break;
+      case "insert-after":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "after");
+        break;
+      case "insert-into-first":
+      case "insert-into-last":
+        throw new Error("Cannot move group to another group.");
+    }
+    const { before, after } = beforeAndAfter;
+    const newOrder = await this.ensureNewOrder(
+      before?.properties.order ?? Number.MIN_SAFE_INTEGER,
+      after?.properties.order ?? Number.MAX_SAFE_INTEGER
+    );
+    const activeGroup = await routineGroupService.load(active.name);
+    activeGroup.properties.order = newOrder;
+    await routineGroupService.update(activeGroup);
+    return this.tree;
+  }
 
+  async groupOnRoutine(active: NoteRoutineGroup, over: NoteRoutine): Promise<RoutineTree> {
+    let beforeAndAfter: { before: RoutineLike | null, after: RoutineLike | null } = { before: null, after: null };
+    switch (this.dndCase) {
+      case "insert-before":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "before");
+        break;
+      case "insert-after":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "after");
+        break;
+      case "insert-into-first":
+      case "insert-into-last":
+        throw new Error("Cannot move group to another group.");
+    }
+    const { before, after } = beforeAndAfter;
+    const newOrder = await this.ensureNewOrder(
+      before?.properties.order ?? Number.MIN_SAFE_INTEGER,
+      after?.properties.order ?? Number.MAX_SAFE_INTEGER
+    );
+    const activeGroup = await routineGroupService.load(active.name);
+    activeGroup.properties.order = newOrder;
+    await routineGroupService.update(activeGroup);
+    return this.tree;
+  }
 
-export const DroppedElReplacer = {
-  taskDropOnTask,
-  groupDropOnTask,
-  taskDropOnGroup,
-  groupDropOnGroup,
+  async routineOnGroup(active: NoteRoutine, over: NoteRoutineGroup): Promise<RoutineTree> {
+    let beforeAndAfter: { before: RoutineLike | null, after: RoutineLike | null } = { before: null, after: null };
+    let newGroup: string;
+    switch (this.dndCase) {
+      case "insert-before":
+        newGroup = UNGROUPED_GROUP_NAME;
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "before");
+        break;
+      case "insert-after":
+        newGroup = UNGROUPED_GROUP_NAME;
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "after");
+        break;
+      case "insert-into-first": {
+        newGroup = over.name;
+        const firstChild = over.routines[0] ?? null;
+        beforeAndAfter = firstChild ? await this.getWithBeforeAndAfter(firstChild, "before") : { before: null, after: null };
+        break;
+      }
+      case "insert-into-last": {
+        newGroup = over.name;
+        const lastChild = over.routines[over.routines.length - 1] ?? null;
+        beforeAndAfter = lastChild ? await this.getWithBeforeAndAfter(lastChild, "after") : { before: null, after: null };
+        break;
+      }
+    }
+    const { before, after } = beforeAndAfter;
+    const newOrder = await this.ensureNewOrder(
+      before?.properties.order ?? Number.MIN_SAFE_INTEGER,
+      after?.properties.order ?? Number.MAX_SAFE_INTEGER
+    );
+    const activeRoutine = await routineService.load(active.name);
+    activeRoutine.properties.order = newOrder;
+    activeRoutine.properties.group = newGroup;
+    await routineService.update(activeRoutine);
+    return this.tree;
+  }
+
+  async routineOnRoutine(active: NoteRoutine, over: NoteRoutine): Promise<RoutineTree> {
+    let beforeAndAfter: { before: RoutineLike | null, after: RoutineLike | null } = { before: null, after: null };
+    switch (this.dndCase) {
+      case "insert-before":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "before");
+        break;
+      case "insert-after":
+        beforeAndAfter = await this.getWithBeforeAndAfter(over, "after");
+        break;
+      case "insert-into-first":
+      case "insert-into-last":
+        throw new Error("Cannot move routine to another routine.");
+    }
+    const { before, after } = beforeAndAfter;
+    const newOrder = await this.ensureNewOrder(
+      before?.properties.order ?? Number.MIN_SAFE_INTEGER,
+      after?.properties.order ?? Number.MAX_SAFE_INTEGER
+    );
+    const overRoutine = await routineService.load(over.name);
+    const activeRoutine = await routineService.load(active.name);
+    activeRoutine.properties.order = newOrder;
+    activeRoutine.properties.group = overRoutine.properties.group;
+    await routineService.update(activeRoutine);
+    return this.tree;
+  }
+
+  private async loadRoutineLike(noteRoutineLike: NoteRoutineLike): Promise<RoutineLike> {
+    if (isNoteRoutineGroup(noteRoutineLike)) {
+      return await routineGroupService.load(noteRoutineLike.name);
+    } else {
+      return await routineService.load(noteRoutineLike.name);
+    }
+  }
+
+  /**
+   * 제공된 noteRoutineLike와 앞, 또는 뒤를 함께 로드한다.
+   */
+  private async getWithBeforeAndAfter(nrl: NoteRoutineLike, with_: "before" | "after"): Promise<{ before: RoutineLike | null, after: RoutineLike | null }> {
+    const parent = routineTreeService.getParent(this.tree, nrl.name);
+    const parentList = parent ? parent.routines : this.tree.root;
+    const index = parentList.findIndex(r => r.name === nrl.name);
+    if (index === -1) {
+      throw new Error(`RoutineLike with name ${nrl.name} not found in the tree`);
+    }
+    let before: RoutineLike | null = null;
+    let after: RoutineLike | null = null;
+    if (with_ === "before") {
+      if (index > 0) {
+        before = await this.loadRoutineLike(parentList[index - 1]);
+      }
+      after = await this.loadRoutineLike(nrl);
+    }
+    else {
+      before = await this.loadRoutineLike(nrl);
+      if (index < parentList.length - 1) {
+        after = await this.loadRoutineLike(parentList[index + 1]);
+      }
+    }
+    return { before, after };
+  }
+
+  /**
+   * 새로운 order를 구하고, 유효하지 않은 경우 resetTreeOrders를 호출한 이후에 다시 order를 구하여 반환한다.
+   */
+  private async ensureNewOrder(before: number, after: number): Promise<number> {
+    if (!this.validateNewOrder(before, after)) {
+      await this.resetTreeOrders();
+    }
+    return this.getNewOrder(before, after);
+  }
+
+  private getNewOrder(before: number, after: number): number {
+    return before / 2 + after / 2;
+  }
+
+  /**
+   * reset이 필요한지 검증함
+   */
+  private validateNewOrder(before: number, after: number): boolean {
+    // 둘의 차가 2 이상인지
+    const isDiffOverTwo = Math.abs(before - after) >= 2;
+
+    // 두 값의 평균이 number의 범위에 있는지
+    const average = this.getNewOrder(before, after);
+    const isAverageInRange = average >= Number.MIN_SAFE_INTEGER && average <= Number.MAX_SAFE_INTEGER;
+    return isDiffOverTwo && isAverageInRange;
+  }
+
+  /**
+   * tree의 모든 routine, group의 order를 초기화한다.
+   */
+  private async resetTreeOrders(): Promise<void> {
+    const resetSiblings = async (list: NoteRoutineLike[]) => {
+      let newOrder = 0;
+      for (const nrl of list) {
+        const isGroup = isNoteRoutineGroup(nrl);
+        const routineOrGroup = isGroup ? await routineGroupService.load(nrl.name) : await routineService.load(nrl.name);
+        routineOrGroup.properties.order = newOrder;
+        newOrder += ORDER_OFFSET;
+        await (isGroup ? routineGroupService.update(routineOrGroup as RoutineGroup) : routineService.update(routineOrGroup as Routine));
+
+        // group이라면 재귀
+        if (isGroup) {
+          await resetSiblings(nrl.routines);
+        }
+      }
+    }
+    // 재귀 시작
+    await resetSiblings(this.tree.root);
+  }
 }

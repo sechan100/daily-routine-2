@@ -19,7 +19,7 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     'order' in p &&
     typeof p.order === 'number'
   ) {
-    if (p.order < 0) return err("Order must be a non-negative integer.");
+    //
   } else {
     return err("property 'order' is missing or not a number.");
   }

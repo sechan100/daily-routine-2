@@ -3,7 +3,7 @@ import { NoteRoutine, NoteRoutineGroup } from "@/entities/note";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/palette";
 import { DragState } from "@/shared/dnd/drag-state";
-import { Indicator } from "@/shared/dnd/Indicator";
+import { DRAG_ITEM_INDENT, Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { css } from "@emotion/react";
 import { Platform } from "obsidian";
@@ -13,7 +13,7 @@ import { RoutineDndItem } from "../model/dnd-item";
 
 const indentStyle = css({
   borderLeft: "1px solid var(--color-base-30)",
-  margin: "0 0 0 20px",
+  margin: `0 0 0 ${DRAG_ITEM_INDENT}px`,
 })
 
 type Props = {

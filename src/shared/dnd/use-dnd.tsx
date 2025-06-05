@@ -82,6 +82,7 @@ export const useDnd = <D extends BaseDndItem>({
   const [{ isOver }, drop] = useDrop({
     accept,
     hover(item: D, monitor) {
+      dndStore.getState().clear();
       if (item.id === dndItem.id) return null;
       const coord = monitor.getClientOffset() ?? { x: -1, y: -1 };
       const collision = investigateCollision({
@@ -97,14 +98,12 @@ export const useDnd = <D extends BaseDndItem>({
       });
       if (dndCase !== null) {
         dndStore.getState().setDndCase(String(dndItem.id), dndCase);
-      } else {
-        dndStore.getState().clear();
       }
     },
     drop: async (item, monitor) => {
       const { droppableId, dndCase } = dndStore.getState();
-      if (!droppableId || !dndCase) return null;
       dndStore.getState().clear();
+      if (!droppableId || !dndCase) return null;
       dndStore.getState().onDragEnd({
         active: item,
         over: dndItem,

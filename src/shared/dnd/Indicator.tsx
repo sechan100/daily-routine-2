@@ -5,12 +5,15 @@ import { getAccent } from "../colors/obsidian-accent-color";
 import { DndCase } from "./dnd-case";
 
 
+export const DRAG_ITEM_INDENT = 20;
+
 const getLineStyle = (direction: "top" | "bottom", depth: number) => css({
   width: "100%",
   height: "2px",
   backgroundColor: "hsla(var(--color-accent-1-hsl), 1)",
   top: direction === "top" ? "0" : "calc(100%)",
   zIndex: 10,
+  marginLeft: `${depth * DRAG_ITEM_INDENT}px`,
 
   // dot
   "&::before": {
@@ -21,7 +24,7 @@ const getLineStyle = (direction: "top" | "bottom", depth: number) => css({
     borderRadius: "100%",
     backgroundColor: "hsla(var(--color-accent-1-hsl), 1)",
     top: "-4px",
-    left: "0",
+    left: "5px",
     transform: "translateX(-50%)",
     zIndex: 10,
   }
@@ -48,7 +51,7 @@ export const Indicator = memo(({ dndCase, depth }: IndicatorProps) => {
       case "insert-after":
         return getLineStyle("bottom", depth);
       case "insert-into-first":
-        return getLineStyle("top", depth + 1);
+        return getLineStyle("bottom", depth + 1);
       case "insert-into-last":
         return boxStyle;
       default:

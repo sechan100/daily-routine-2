@@ -21,7 +21,7 @@ const validateRoutineGroupProperties = (p: any): Result<RoutineGroupProperties, 
     'order' in p &&
     typeof p.order === 'number'
   ) {
-    if (p.order < 0) return propsErr('order', p.order, "Order must be a non-negative integer.");
+    //
   } else return propsErr('order', p.order);
 
   return ok(p as RoutineGroupProperties);

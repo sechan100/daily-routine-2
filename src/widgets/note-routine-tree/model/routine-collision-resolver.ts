@@ -14,7 +14,11 @@ export const routineCollisionResolver = ({ collisionType, active, over }: Collis
         case "above":
           return "insert-before";
         case "below":
-          return "insert-into-first";
+          if (active.nrlType === "routine") {
+            return "insert-into-first";
+          } else {
+            return null;
+          }
         case "center":
           return null;
       }

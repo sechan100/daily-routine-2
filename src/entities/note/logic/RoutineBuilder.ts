@@ -44,6 +44,12 @@ export class RoutineBuilder {
   build(day: Day): RoutineTree {
     const routineMap = new Map<string, NoteRoutine | NoteRoutineGroup>();
 
+    // 일단 모든 RoutineGroup을 map에 추가한다.
+    for (const group of this.groupMap.values()) {
+      const derivedGroup = deriveNoteRoutineGroup(group);
+      routineMap.set(group.name, derivedGroup);
+    }
+
     // day에 따라서 적절한 routine들을 선택하고, routineMap에 추가한다.
     for (const routine of this.rouitneMap.values()) {
       if (!routineService.isDueTo(routine, day)) continue;
@@ -57,15 +63,8 @@ export class RoutineBuilder {
       }
       // routine에 group이 있음
       else {
-        let group = routineMap.get(groupName) as NoteRoutineGroup | undefined;
-        // 아직 map에 group이 없다면 새로 생성
-        if (group === undefined) {
-          const findGroup = this.groupMap.get(groupName);
-          invariant(findGroup, `RoutineGroup ${groupName} not found.`);
-          const newGroup = deriveNoteRoutineGroup(findGroup);
-          routineMap.set(groupName, newGroup);
-          group = newGroup;
-        }
+        const group = routineMap.get(groupName) as NoteRoutineGroup | undefined;
+        invariant(group, `RoutineGroup ${groupName} not found.`);
         group.routines.push(derivedRoutine);
       }
     }

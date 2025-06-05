@@ -18,7 +18,7 @@ const validate1xxSchemaRoutineProperties = (file: TFile, p: any): unknown => {
   }
 
   if ('order' in p && typeof p.order === 'number') {
-    if (p.order < 0) throw err('The "order" property must be a non-negative number.', file.path);
+    //
   } else {
     throw err('The "order" property is missing or is not a number. Please add a valid "order" to your routine. ', file.path);
   }

@@ -2,7 +2,6 @@
 export { checkableConfig } from "./config/checkable-config";
 
 // model
-export { checkCheckable } from "./model/check-checkable";
 
 // ui
 export { CancelLineName } from "./ui/CancelLineName";

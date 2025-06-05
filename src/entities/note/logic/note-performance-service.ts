@@ -1,7 +1,7 @@
 import { Checkable } from "../model/checkable";
 import { RoutineNote } from "../model/note";
 import { NotePerformance } from "../model/performance";
-import { noteService } from "./note-service";
+import { routineTreeService } from "./routine-tree-service";
 
 interface NotePerformanceService {
   getPerformance: (note: RoutineNote) => NotePerformance;
@@ -9,7 +9,7 @@ interface NotePerformanceService {
 }
 export const notePerformanceService: NotePerformanceService = {
   getPerformance: (note: RoutineNote): NotePerformance => {
-    const checkables: Checkable[] = [...note.tasks, ...noteService.getAllRoutines(note)];
+    const checkables: Checkable[] = [...note.tasks, ...routineTreeService.getAllRoutines(note.routienTree)];
     const totalCheckable = checkables.length;
     const completedCheckable = checkables.filter(t => t.state !== "un-checked").length;
     const uncompletedCheckable = totalCheckable - completedCheckable;

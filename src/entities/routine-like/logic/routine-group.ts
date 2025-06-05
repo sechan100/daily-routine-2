@@ -12,7 +12,7 @@ const groupCache: Map<string, RoutineGroup> = new Map<string, RoutineGroup>();
 interface RoutineGroupService {
   validateName(name0: string, groupNames: string[]): Result<string, string>;
   loadAll(): Promise<RoutineGroup[]>;
-  load(groupName: string): Promise<RoutineGroup | undefined>;
+  load(groupName: string): Promise<RoutineGroup>;
   isExist(groupName: string): boolean;
   persist(group: RoutineGroup): Promise<RoutineGroup>;
   delete(groupName: string, deleteSubTasks: boolean): Promise<void>;

@@ -1,7 +1,7 @@
 import { CheckableState } from '../model/checkable';
 import { RoutineNote } from '../model/note';
 import { RoutineTree } from '../model/routine-tree';
-import { noteService } from './note-service';
+import { routineTreeService } from './routine-tree-service';
 import { RoutineBuilder } from './RoutineBuilder';
 
 
@@ -26,13 +26,13 @@ class CheckableStateNoteDep extends NoteDependentRoutineData {
 
   constructor(tree: RoutineTree) {
     super();
-    this.#checkedTasks = noteService.getAllRoutines(tree)
+    this.#checkedTasks = routineTreeService.getAllRoutines(tree)
       .filter(t => t.state !== 'un-checked')
       .map(t => [t.name, t.state]);
   }
 
   restoreData(tree: RoutineTree) {
-    for (const routines of noteService.getAllRoutines(tree)) {
+    for (const routines of routineTreeService.getAllRoutines(tree)) {
       let originalTaskIndex: number;
       if ((originalTaskIndex = this.#checkedTasks.findIndex(([name]) => name === routines.name)) !== -1) {
         const [_, state] = this.#checkedTasks[originalTaskIndex];
