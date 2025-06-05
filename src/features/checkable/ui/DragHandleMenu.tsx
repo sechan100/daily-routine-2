@@ -3,7 +3,7 @@
 import { STYLES } from "@/shared/colors/palette";
 import { Icon } from "@/shared/components/Icon";
 import { Touchable } from "@/shared/components/Touchable";
-import { DELAY_TOUCH_START } from "@/shared/dnd/dnd-config";
+import { DELAY_TOUCH_START } from "@/shared/dnd/config";
 import { DragState } from "@/shared/dnd/drag-state";
 import { forwardRef, useCallback } from "react";
 

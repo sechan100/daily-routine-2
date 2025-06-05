@@ -69,14 +69,16 @@ const getMultiBackend = (): MultiBackendOptions => {
 
 
 export type DndContextProps<T extends BaseDndItem> = {
-  children: React.ReactNode;
+  itemTypes: string[];
   collisionResolver: CollisionResolver<T>;
   onDragEnd: (context: OnDragEndContext<T>) => void;
+  children: React.ReactNode;
 }
 export const DndContext = <T extends BaseDndItem>({
-  children,
+  itemTypes,
   collisionResolver,
-  onDragEnd
+  onDragEnd,
+  children,
 }: DndContextProps<T>) => {
   const dndStore = useMemo(() => {
     return createDndStore<T>({
@@ -90,7 +92,7 @@ export const DndContext = <T extends BaseDndItem>({
   return (
     <DndStoreContext.Provider value={dndStore}>
       <DndProvider options={multiBackend}>
-        <DndScrollContainer>
+        <DndScrollContainer itemTypes={itemTypes}>
           {children}
         </DndScrollContainer>
         <DragItemPreview />

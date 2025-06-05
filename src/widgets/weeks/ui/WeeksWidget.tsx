@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { notePerformanceService, RoutineNote } from "@/entities/note";
+import { noteProgressService, RoutineNote } from "@/entities/note";
 import { VirtualSwiper } from "@/shared/components/VirtualSwiper";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
@@ -25,7 +25,7 @@ export const WeeksWidget = ({
 }: WeeksProps) => {
   const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
-  const currentNotePerformance = useMemo(() => notePerformanceService.getPerformance(note), [note]);
+  const currentNoteProgress = useMemo(() => noteProgressService.getProgress(note), [note]);
   const [weeks, setWeeks] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
 
@@ -67,7 +67,7 @@ export const WeeksWidget = ({
 
   return (
     <WeeksActiveDayContextProvider
-      data={{ day: activeDay, performance: currentNotePerformance }}
+      data={{ day: activeDay, progress: currentNoteProgress }}
       onDataChange={(store, data) => store.setState(data)}
     >
       <VirtualSwiper

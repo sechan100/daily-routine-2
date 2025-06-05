@@ -37,7 +37,7 @@ export const useDndScroll = (ref: RefObject<HTMLElement | null>) => {
   const scrollTimer = useRef<null | NodeJS.Timeout>(null);
 
   const scrollSpeed = 2; // 스크롤 이동량 조정
-  const scrollInterval = 1; // 50ms 간격으로 스크롤 업데이트
+  const scrollInterval = 1; // 스크롤 간격 조정 (ms)
   const { position, isScrollAllowed } = config;
 
   const bounds = ref.current?.getBoundingClientRect();

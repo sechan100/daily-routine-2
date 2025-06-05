@@ -1,6 +1,6 @@
 import { Day } from "@/shared/period/day";
-import { RoutineNoteStoreProvider } from "../model/use-routine-note";
-import { Content } from "./Content";
+import { RoutineNoteStoreProvider } from "../hooks/use-routine-note";
+import { NoteContent } from "./NoteContent";
 
 
 
@@ -10,7 +10,7 @@ type Props = {
 export const RoutineNotePage = ({ day }: Props) => {
   return (
     <RoutineNoteStoreProvider day={day}>
-      <Content />
+      <NoteContent />
     </RoutineNoteStoreProvider>
   )
 }

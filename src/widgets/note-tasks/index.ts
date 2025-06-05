@@ -1,1 +1,1 @@
-export { NoteTasksWidget } from "./ui/NoteTasksWidget";
+export { NoteTaskList } from "./ui/NoteTaskList";

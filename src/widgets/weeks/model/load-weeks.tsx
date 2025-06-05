@@ -1,9 +1,9 @@
-import { notePerformanceService, noteService } from "@/entities/note";
+import { noteProgressService, noteService } from "@/entities/note";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
 import { DayNode, WeekNode } from "./types";
 
-const getFallbackNode = (day: Day): DayNode => ({ day, performance: notePerformanceService.getZeroNotePerformance() });
+const getFallbackNode = (day: Day): DayNode => ({ day, progress: noteProgressService.getZeroNoteProgress() });
 
 export type LoadWeekNodes = (week: Week, option?: { prev: number; next: number; }) => Promise<WeekNode[]>;
 
@@ -17,7 +17,7 @@ export const loadWeekNodes: LoadWeekNodes = async (week, { prev, next } = { prev
   // 일단 실제로 가져온 노트들을 기반으로 dayNodes의 기본 틀을 만든다.
   const dayNodes: DayNode[] = realNotes.map(note => ({
     day: note.day,
-    performance: notePerformanceService.getPerformance(note)
+    progress: noteProgressService.getProgress(note)
   }))
   dayNodes.sort((a, b) => a.day.isBefore(b.day) ? -1 : 1);
 

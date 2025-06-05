@@ -10,8 +10,8 @@ import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
 import { Platform } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRoutineTreeStore } from "../hooks/routine-tree-store";
 import { RoutineDndItem } from "../model/dnd-item";
-import { useRoutineTreeStore } from "../model/routine-tree-store";
 import { renderRoutineTree } from "./render-routine-tree";
 
 

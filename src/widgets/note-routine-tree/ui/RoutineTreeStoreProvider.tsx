@@ -1,6 +1,6 @@
 import { RoutineTree } from '@/entities/note';
 import { useEffect } from "react";
-import { useRoutineTreeStore } from "../model/routine-tree-store";
+import { useRoutineTreeStore } from "../hooks/routine-tree-store";
 
 
 

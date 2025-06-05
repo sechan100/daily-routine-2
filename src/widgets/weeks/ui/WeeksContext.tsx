@@ -5,5 +5,5 @@ import { DayNode } from "../model/types";
 
 export const [WeeksActiveDayContextProvider, useWeeksActiveDay] = createStoreContext<DayNode, DayNode>((data, set, get) => ({
   day: data.day,
-  performance: data.performance,
+  progress: data.progress,
 }));

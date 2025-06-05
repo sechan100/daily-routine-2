@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { NotePerformanceCircle } from "@/features/note";
+import { NoteProgressCircle } from "@/features/note";
 import { Day } from "@/shared/period/day";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { useLeaf } from "@/shared/view/use-leaf";
@@ -14,13 +14,13 @@ interface DayNodeProps {
   dayNode: DayNode;
   onClick: (day: Day, event?: React.MouseEvent) => void;
 }
-export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _performance }, onClick }: DayNodeProps) => {
+export const DayNodeComponent = React.memo(({ dayNode: { day, progress: _progress }, onClick }: DayNodeProps) => {
   const { leafBgColor } = useLeaf();
   // const isToday = useMemo(() => day.isSameDay(Day.now()), [day]);
 
   const activeNode = useWeeksActiveDay();
   const isActiveDay = useMemo(() => day.isSameDay(activeNode.day), [activeNode.day, day]);
-  const [performance, setPerformance] = useState(_performance);
+  const [progress, setProgress] = useState(_progress);
 
   /**
    * percentage를 적절하게 업데이트한다.
@@ -29,9 +29,9 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
    */
   useEffect(() => {
     if (isActiveDay) {
-      setPerformance(activeNode.performance);
+      setProgress(activeNode.progress);
     }
-  }, [isActiveDay, activeNode.performance]);
+  }, [isActiveDay, activeNode.progress]);
 
   const afterStyle = useMemo(() => {
     if (!day.isAfter(Day.today())) return css({});
@@ -84,13 +84,13 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
       >
         {day.format("M/D").toUpperCase()}
       </div>
-      <NotePerformanceCircle
+      <NoteProgressCircle
         css={{
           position: "relative",
           bottom: "0px",
         }}
         width="100%"
-        performance={performance}
+        progress={progress}
         text={day.format("ddd").toUpperCase()}
       />
     </div>

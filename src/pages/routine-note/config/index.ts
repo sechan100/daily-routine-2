@@ -1,0 +1,6 @@
+
+
+
+
+
+export const CHECKABLE_GROUP_PANEL_MIN_SIZE = 20;

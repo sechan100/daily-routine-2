@@ -1,4 +1,4 @@
-import { NotePerformance } from "@/entities/note";
+import { NoteProgress } from "@/entities/note";
 import { getAccent } from "@/shared/colors/obsidian-accent-color";
 import { Circle } from "@/shared/components/Circle";
 import React from "react";
@@ -20,21 +20,21 @@ const accomplishmentCircleColor = "hsl(var(--color-accent-hsl))";
 
 
 interface PercentageCircleProps {
-  performance: NotePerformance;
+  progress: NoteProgress;
   text: string;
   transition?: boolean;
   width?: string;
   className?: string;
 }
-export const NotePerformanceCircle = React.memo(({
-  performance,
+export const NoteProgressCircle = React.memo(({
+  progress,
   width,
   className,
   text,
   transition = true
 }: PercentageCircleProps) => {
-  const accomplishment = cleanPercentage(performance.accomplishmentPercentage);
-  const completion = cleanPercentage(performance.completionPercentage);
+  const accomplishment = cleanPercentage(progress.accomplishmentPercentage);
+  const completion = cleanPercentage(progress.completionPercentage);
   return (
     <svg width={width ?? "100%"} viewBox="0 0 200 200" className={className}>
       <g transform="rotate(-90 100 100)" >

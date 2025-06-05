@@ -8,7 +8,7 @@ import { updateNewTasks } from "../model/update-new-tasks";
 import { TaskItem } from "./TaskItem";
 
 
-export const TaskList = () => {
+export const TaskListRoot = () => {
   const day = useTasksStore(s => s.day);
   const tasks = useTasksStore(s => s.tasks);
   const { setTasks } = useTasksStore(s => s.actions);
@@ -25,17 +25,16 @@ export const TaskList = () => {
 
   return (
     <DndContext
+      itemTypes={["TASK"]}
       collisionResolver={taskCollisionResolver}
       onDragEnd={handleDragEnd}
     >
-      <div css={{ overflowY: "auto" }}>
-        {tasks.map(task => (
-          <TaskItem
-            key={task.name}
-            task={task}
-          />
-        ))}
-      </div>
+      {tasks.map(task => (
+        <TaskItem
+          key={task.name}
+          task={task}
+        />
+      ))}
     </DndContext>
   )
 }

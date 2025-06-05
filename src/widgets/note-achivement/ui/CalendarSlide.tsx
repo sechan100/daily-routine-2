@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { notePerformanceService, noteService } from "@/entities/note";
-import { NotePerformanceCircle } from "@/features/note";
+import { noteProgressService, noteService } from "@/entities/note";
+import { NoteProgressCircle } from "@/features/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
@@ -19,11 +19,11 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
 
   const tile = useCallback((day: Day) => {
     if (day.month !== month.monthNum) return <></>;
-    let performance = notePerformanceService.getZeroNotePerformance();
+    let progress = noteProgressService.getZeroNoteProgress();
     if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
       if (note) {
-        performance = notePerformanceService.getPerformance(note);
+        progress = noteProgressService.getProgress(note);
       }
     }
     return (
@@ -39,7 +39,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
             clipPath: "inset(-50px)"
           }
         }}>
-          <NotePerformanceCircle performance={performance} text={day.date.toString()} />
+          <NoteProgressCircle progress={progress} text={day.date.toString()} />
         </Badge>
       </div>
     )

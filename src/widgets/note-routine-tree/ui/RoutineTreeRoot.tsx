@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
 import { useCallback } from "react";
+import { useRoutineTreeStore } from "../hooks/routine-tree-store";
 import { RoutineDndItem } from "../model/dnd-item";
 import { relocateRoutines } from "../model/relocate-routines";
 import { routineCollisionResolver } from "../model/routine-collision-resolver";
-import { useRoutineTreeStore } from "../model/routine-tree-store";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
@@ -22,6 +22,7 @@ export const RoutineTreeRoot = () => {
 
   return (
     <DndContext
+      itemTypes={["ROUTINE", "GROUP"]}
       collisionResolver={routineCollisionResolver}
       onDragEnd={handleDragEnd}
     >

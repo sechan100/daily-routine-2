@@ -2,7 +2,7 @@ import { mergeRoutineMutations, RoutineNote } from "@/entities/note";
 import { Day } from "@/shared/period/day";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { useEffect, useState } from "react";
-import { ensureRoutineNote } from "./ensure-routine-note";
+import { ensureRoutineNote } from "../model/ensure-routine-note";
 
 
 export type RoutineNoteStore = {
