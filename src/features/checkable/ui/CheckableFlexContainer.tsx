@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { checkableConfig } from "../config/checkable-config";
+import { checkableStyle } from "./checkable-style";
 
 
 
@@ -15,12 +15,12 @@ export const CheckableFlexContainer = ({
   return (
     <div
       css={{
-        height: checkableConfig.height,
+        height: checkableStyle.height,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         width: "100%",
-        padding: excludePadding ? undefined : checkableConfig.padding,
+        padding: excludePadding ? undefined : checkableStyle.padding,
       }}
     >
       {children}

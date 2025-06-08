@@ -10,7 +10,6 @@ interface ConfirmModalOptions {
   confirmText: string;
   title: string;
   description: string;
-
   confirmBtnVariant?: "primary" | "destructive" | "accent";
   className?: string;
 }

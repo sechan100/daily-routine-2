@@ -1,22 +1,21 @@
 /** @jsxImportSource @emotion/react */
+import { RoutineNote } from "@/entities/note";
 import { openRoutineNoteFile } from "@/features/note";
-import { STYLES } from "@/shared/colors/palette";
+import { STYLES } from "@/shared/colors/styles";
 import { useCallback } from "react";
-import { useRoutineNoteStore } from "../hooks/use-routine-note";
 
 
 
 
 type Props = {
-  children?: React.ReactNode;
+  note: RoutineNote;
 }
 export const NodeHeader = ({
-  children
+  note,
 }: Props) => {
-  const note = useRoutineNoteStore(n => n.note);
 
   const handleNoteHeaderClick = useCallback(async () => {
-    await openRoutineNoteFile(note);
+    await openRoutineNoteFile(note.day);
   }, [note]);
 
   return (

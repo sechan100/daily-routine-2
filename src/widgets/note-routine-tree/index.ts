@@ -1,1 +1,1 @@
-export { NoteRoutineTreeWidget } from "./ui/NoteRoutineTreeWidget";
+export { NoteRoutineTree } from "./ui/NoteRoutineTree";

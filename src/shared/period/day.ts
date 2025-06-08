@@ -68,6 +68,14 @@ export class Day {
     return this.#moment.isSame(moment(), 'day');
   }
 
+  isTodayOrFuture() {
+    return this.#moment.isSameOrAfter(moment(), 'day');
+  }
+
+  isPast() {
+    return this.#moment.isBefore(moment(), 'day');
+  }
+
   isBefore(day: Day) {
     return this.#moment.isBefore(day.#moment);
   }

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { noteProgressService, RoutineNote } from "@/entities/note";
+import { getNoteProgress, RoutineNote, useNoteDayStore } from "@/entities/note";
 import { VirtualSwiper } from "@/shared/components/VirtualSwiper";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
@@ -15,17 +15,16 @@ import { WeeksActiveDayContextProvider } from "./WeeksContext";
 
 interface WeeksProps {
   note: RoutineNote;
-  onDayClick?: (day: Day) => void;
   className?: string;
 }
 export const WeeksWidget = ({
   note,
-  onDayClick,
   className,
 }: WeeksProps) => {
+  const setDay = useNoteDayStore(state => state.setDay);
   const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
-  const currentNoteProgress = useMemo(() => noteProgressService.getProgress(note), [note]);
+  const currentNoteProgress = useMemo(() => getNoteProgress(note), [note]);
   const [weeks, setWeeks] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
 
@@ -60,10 +59,8 @@ export const WeeksWidget = ({
   }, []);
 
   const handleDayClick = useCallback((day: Day, event?: React.MouseEvent) => {
-    if (onDayClick) {
-      onDayClick(day);
-    }
-  }, [onDayClick]);
+    setDay(day);
+  }, [setDay]);
 
   return (
     <WeeksActiveDayContextProvider

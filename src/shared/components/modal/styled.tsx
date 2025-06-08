@@ -2,21 +2,22 @@
  * 모달에서 사용가능한 styled-components들을 제공
  */
 /** @jsxImportSource @emotion/react */
-import { useEffect, useMemo } from 'react';
+import { STYLES } from '@/shared/colors/styles';
+import { Interpolation } from '@emotion/react';
+import { Theme } from '@mui/material';
+import { useEffect } from 'react';
 import { TEXT_CSS } from '../../colors/text-style';
 import { Button } from '../Button';
-import { TextEditComponent } from '../TextEditComponent';
-import { ToggleComponent } from '../ToggleComponent';
-import { ModalApi } from './create-modal';
+import { useModal } from './create-modal';
 
 
 type ModalProps = {
   header: string;
   className?: string;
   children?: React.ReactNode;
-  modal: ModalApi;
 }
-const M = ({ header, className, children, modal }: ModalProps) => {
+const M = ({ header, className, children }: ModalProps) => {
+  const modal = useModal();
 
   useEffect(() => {
     modal.setTitle(header);
@@ -52,126 +53,59 @@ const M = ({ header, className, children, modal }: ModalProps) => {
   )
 }
 
-type SeparatorProps = {
-  edgeWithtransparent?: boolean;
-}
-const Separator = ({ edgeWithtransparent: edge = false }: SeparatorProps) => {
+
+const Separator = () => {
   return <div
     css={{
-      height: edge ? 0 : "1px",
-      backgroundColor: "var(--background-modifier-border)",
-      margin: edge ? "1em 0 0 0" : "1em 0",
+      height: "1px",
+      backgroundColor: STYLES.palette.divider,
     }}
   />
 }
 
+type HeaderProps = {
+  name: string;
+}
+const Header = ({ name }: HeaderProps) => {
+  return (
+    <div css={TEXT_CSS.medium}>
+      {name}
+    </div>
+  )
+}
+
 type SectionProps = {
   children: React.ReactNode;
-  name?: string;
-  className?: string;
+  flex?: boolean;
+  css?: Interpolation<Theme>;
 }
-const Section = ({ className, name, children }: SectionProps) => {
-  const justifyContent = useMemo(() => name ? "space-between" : "end", [name]);
+const Section = ({ children, flex = true, css }: SectionProps) => {
 
   return (
     <section
-      className={className}
-      css={{
-        display: "flex",
-        justifyContent,
+      css={[{
+        display: flex ? "flex" : "block",
+        justifyContent: "space-between",
         alignItems: "center",
-      }}
+        margin: "16px 0",
+      }, css]}
     >
-      {name ? <div css={TEXT_CSS.medium}>{name}</div> : null}
       {children}
     </section>
   )
 }
 
-type ToggleSectionProps = {
-  value: boolean;
-  onChange: (value: boolean) => void;
-  name?: string;
-  className?: string;
-}
-export const ToggleSection = ({
-  value,
-  onChange,
-  name,
-  className
-}: ToggleSectionProps) => {
-  return (
-    <Section
-      name={name ?? "Toggle Value"}
-      className={className}
-    >
-      <ToggleComponent
-        value={value}
-        onChange={onChange}
-      />
-    </Section>
-  )
-}
 
-type NameSectionProps = {
-  value: string;
-  onChange: (name: string) => void;
-  name?: string;
-  focus?: boolean;
-  validation?: {
-    isValid: boolean;
-    message: string;
-  }
-  className?: string;
-  placeholder?: string;
-}
-export const NameSection = ({
-  value,
-  onChange,
-  name,
-  focus,
-  validation: p_validation,
-  className,
-  placeholder
-}: NameSectionProps) => {
-  const validation = useMemo(() => p_validation ?? { isValid: true, message: "" }, [p_validation]);
-
-  return (
-    <Section
-      name={name ?? "Name"}
-      className={className}
-    >
-      <div css={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "end",
-      }}>
-        <TextEditComponent
-          value={value}
-          onChange={name => onChange(name)}
-          placeholder={placeholder}
-          css={!validation.isValid ? TEXT_CSS.errorColor : null}
-          focus={focus}
-        />
-        {!validation.isValid && (
-          <div css={[TEXT_CSS.description, TEXT_CSS.errorColor]}>{validation.message}</div>
-        )}
-      </div>
-    </Section>
-  )
-}
-
-
-type SaveBtnProps = {
-  onSaveBtnClick?: () => void;
+type SubmitButtonProps = {
+  name: string;
+  onClick?: () => void;
   disabled?: boolean;
-  name?: string;
 }
-export const SaveBtn = ({
-  disabled,
-  onSaveBtnClick,
+export const SubmitButton = ({
   name,
-}: SaveBtnProps) => {
+  onClick,
+  disabled,
+}: SubmitButtonProps) => {
 
   /**
    * Enter Key로 Save Button을 트리거하는 이벤트를 등록
@@ -182,13 +116,13 @@ export const SaveBtn = ({
       if (isComposing) return;
 
       if (key === "Enter" && !disabled) {
-        onSaveBtnClick?.();
+        onClick?.();
       }
     }
 
     document.addEventListener('keydown', handleEnterKeyDown);
     return () => document.removeEventListener('keydown', handleEnterKeyDown);
-  }, [disabled, onSaveBtnClick]);
+  }, [disabled, onClick]);
 
   return (
     <div css={{
@@ -209,9 +143,9 @@ export const SaveBtn = ({
         }}
         disabled={disabled}
         variant={disabled ? "disabled" : "accent"}
-        onClick={onSaveBtnClick}
+        onClick={onClick}
       >
-        {name ?? "Save"}
+        {name}
       </Button>
     </div>
   )
@@ -222,8 +156,7 @@ export const SaveBtn = ({
 
 export const Modal = Object.assign(M, {
   Separator,
+  Header,
   Section,
-  ToggleSection,
-  NameSection,
-  SaveBtn,
+  SubmitButton,
 })

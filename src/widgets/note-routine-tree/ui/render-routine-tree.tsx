@@ -14,4 +14,4 @@ export const renderRoutineTree = (nrl: NoteRoutineLike, parent: NoteRoutineGroup
   else {
     throw new Error(`Unknown NoteRoutineLike type: ${nrl}`);
   }
-};
+}

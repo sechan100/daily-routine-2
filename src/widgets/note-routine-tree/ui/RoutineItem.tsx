@@ -1,14 +1,16 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRoutine, NoteRoutineGroup } from "@/entities/note";
+import { NoteRoutine, NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
+import { routineRepository } from "@/entities/routine";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
-import { STYLES } from "@/shared/colors/palette";
+import { STYLES } from "@/shared/colors/styles";
 import { DragState } from "@/shared/dnd/drag-state";
 import { DRAG_ITEM_INDENT, Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { css } from "@emotion/react";
-import { Platform } from "obsidian";
-import { useMemo, useRef, useState } from "react";
+import { Notice, Platform } from "obsidian";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { RoutineDndItem } from "../model/dnd-item";
+import { useRoutineTreeContext } from "../stores/context";
 
 
 const indentStyle = css({
@@ -26,6 +28,8 @@ export const RoutineItem = ({
   parent,
   depth,
 }: Props) => {
+  const day = useNoteDayStore(s => s.day);
+  const { openRoutineControl } = useRoutineTreeContext();
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -54,10 +58,21 @@ export const RoutineItem = ({
     }
   });
 
+  const handleContext = useCallback(async () => {
+    // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
+    if (day.isPast()) {
+      new Notice("Routine control cannot be opened for past routines.");
+      return;
+    }
+    const sourceRoutine = await routineRepository.load(routine.name);
+    openRoutineControl(sourceRoutine);
+  }, [day, openRoutineControl, routine.name]);
+
   return (
     <div css={depth !== 0 && indentStyle}>
       <div
         ref={droppableRef}
+        onContextMenu={handleContext}
         css={{
           position: "relative",
           touchAction: "none",

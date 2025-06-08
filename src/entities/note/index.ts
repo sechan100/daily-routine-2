@@ -1,18 +1,21 @@
 
-// Model
-export type { Checkable, CheckableState } from "./model/checkable";
-export type { RoutineNote } from "./model/note";
-export { isNoteRoutine, isNoteRoutineGroup } from "./model/note-routine-like";
-export type { NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./model/note-routine-like";
-export type { NoteProgress } from "./model/progress";
-export type { RoutineTree } from "./model/routine-tree";
-export type { Task, TaskProperties, TaskPropertiesArray } from "./model/task";
+// types
+export type { Checkable, CheckableState } from "../checkable/types/checkable";
+export type { Task, TaskProperties, TaskPropertiesArray } from "../task/types/task";
+export type { RoutineNote } from "./types/note";
+export { isNoteRoutine, isNoteRoutineGroup } from "./types/note-routine-like";
+export type { NoteRoutine, NoteRoutineGroup, NoteRoutineLike } from "./types/note-routine-like";
+export type { NoteProgress } from "./types/progress";
+export type { RoutineTree } from "./types/routine-tree";
 
-// Logic
-export { mergeRoutineMutations } from "./logic/merge-routine-mutations";
-export { noteProgressService } from "./logic/note-progress-service";
-export { noteService } from "./logic/note-service";
-export { routineTreeService } from "./logic/routine-tree-service";
-export { RoutineBuilder } from "./logic/RoutineBuilder";
-export { taskService } from "./logic/task-service";
+// model
+export { getNoteProgress } from "./model/get-note-progress";
+export { noteRepository } from "./model/note-repository";
+export { noteTaskService } from "./model/note-task-service";
+export { routineTreeUtils } from "./model/routine-tree-utils";
+export { ZERO_NOTE_PROGRESS } from "./model/zero-note-progress";
+
+// stores
+export { useNoteDayStore } from "./stores/note-day-store";
+export { useRoutineTreeStore } from "./stores/routine-tree-store";
 

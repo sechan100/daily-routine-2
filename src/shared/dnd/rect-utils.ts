@@ -1,5 +1,12 @@
-import { ClientRect } from "@dnd-kit/core"
 
+export type ClientRect = {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
 
 // top + center + bottom = 1
 export type SplitRatio = {
@@ -9,7 +16,7 @@ export type SplitRatio = {
 }
 
 export type SplitedRect = {
-  top: ClientRect
+  top: ClientRect;
   center: ClientRect
   bottom: ClientRect
 }

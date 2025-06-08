@@ -1,5 +1,5 @@
 // config
-export { checkableConfig } from "./config/checkable-config";
+export { checkableStyle } from "./ui/checkable-style";
 
 // model
 

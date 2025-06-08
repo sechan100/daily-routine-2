@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { noteProgressService, noteService } from "@/entities/note";
+import { getNoteProgress, noteRepository, ZERO_NOTE_PROGRESS } from "@/entities/note";
 import { NoteProgressCircle } from "@/features/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day } from "@/shared/period/day";
@@ -14,16 +14,16 @@ interface CalendarSlideProps {
   month: Month;
 }
 export const CalendarSlide = ({ month }: CalendarSlideProps) => {
-  const notesAsync = useAsync(async () => await noteService.loadBetween(month.startDay, month.endDay), [month]);
+  const notesAsync = useAsync(async () => await noteRepository.loadBetween(month.startDay, month.endDay), [month]);
   const route = useTabRoute(s => s.route);
 
   const tile = useCallback((day: Day) => {
     if (day.month !== month.monthNum) return <></>;
-    let progress = noteProgressService.getZeroNoteProgress();
+    let progress = ZERO_NOTE_PROGRESS;
     if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
       if (note) {
-        progress = noteProgressService.getProgress(note);
+        progress = getNoteProgress(note);
       }
     }
     return (

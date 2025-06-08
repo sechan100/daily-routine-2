@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutineGroup } from "@/entities/note";
-import { CancelLineName, checkableConfig, CheckableFlexContainer, DragHandleMenu } from "@/features/checkable";
-import { STYLES } from "@/shared/colors/palette";
+import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/features/checkable";
+import { STYLES } from "@/shared/colors/styles";
 import { Icon } from "@/shared/components/Icon";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
@@ -10,8 +10,8 @@ import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
 import { Platform } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRoutineTreeStore } from "../hooks/routine-tree-store";
 import { RoutineDndItem } from "../model/dnd-item";
+import { useRoutineTreeController } from "../stores/use-routine-tree-controller";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
@@ -25,7 +25,7 @@ export const RoutineGroupItem = ({
   depth,
 }: Props) => {
   const bgColor = useLeaf(s => s.leafBgColor);
-  const { open } = useRoutineTreeStore(s => s.actions);
+  const { openGroup } = useRoutineTreeController();
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -55,8 +55,8 @@ export const RoutineGroupItem = ({
   });
 
   const changeOpen = useCallback((isOpen: boolean) => {
-    open(group.name, isOpen);
-  }, [open, group.name]);
+    openGroup(group.name, isOpen);
+  }, [openGroup, group.name]);
 
   const isAllSubTasksChecked = group.routines.every(r => r.state === 'accomplished');
 
@@ -90,7 +90,7 @@ export const RoutineGroupItem = ({
           component={'div'}
           expandIcon={<Icon icon='chevron-right' />}
           css={{
-            padding: checkableConfig.padding,
+            padding: checkableStyle.padding,
             minHeight: "0 !important",
             [`& .${accordionSummaryClasses.content}`]: {
               margin: "0",

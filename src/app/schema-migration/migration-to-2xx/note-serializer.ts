@@ -154,7 +154,7 @@ const serializeTaskGroup = (taskGroup: TaskGroup) => {
 }
 
 export const serializeRoutines = (routines: NoteElement[]) => {
-  type ElBlock = {
+  interface ElBlock {
     isUngroupedTaskBlock: boolean;
     serialized: string;
   }

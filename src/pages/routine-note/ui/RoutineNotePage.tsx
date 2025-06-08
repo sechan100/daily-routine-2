@@ -1,16 +1,28 @@
-import { Day } from "@/shared/period/day";
-import { RoutineNoteStoreProvider } from "../hooks/use-routine-note";
+import { useNoteDayStore } from "@/entities/note";
+import { ensureRoutineNote } from "@/features/note";
+import useSWR from "swr";
 import { NoteContent } from "./NoteContent";
 
 
 
-type Props = {
-  day: Day;
-}
-export const RoutineNotePage = ({ day }: Props) => {
+
+export const RoutineNotePage = () => {
+  const day = useNoteDayStore(state => state.day);
+  const { data, error } = useSWR(
+    ["routine-note", day.format(), day],
+    async ([_, __, _day]) => await ensureRoutineNote(_day),
+    {
+      keepPreviousData: true
+    }
+  );
+
+  if (error) {
+    return <div>Error loading note: {error.message}</div>
+  }
+  if (!data) {
+    return <div>Loading...</div>
+  }
   return (
-    <RoutineNoteStoreProvider day={day}>
-      <NoteContent />
-    </RoutineNoteStoreProvider>
+    <NoteContent note={data} />
   )
 }

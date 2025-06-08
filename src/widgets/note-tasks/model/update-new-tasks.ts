@@ -1,10 +1,10 @@
-import { noteService, RoutineNote, Task } from "@/entities/note";
+import { noteRepository, RoutineNote, Task } from "@/entities/note";
 import { Day } from "@/shared/period/day";
 
 
 
 export const updateNewTasks = async (day: Day, newTasks: Task[]) => {
-  const note = await noteService.load(day);
+  const note = await noteRepository.load(day);
   if (!note) {
     throw new Error(`Note for ${day.format()} does not exist.`);
   }
@@ -12,5 +12,5 @@ export const updateNewTasks = async (day: Day, newTasks: Task[]) => {
     ...note,
     tasks: newTasks
   }
-  await noteService.update(newNote);
+  await noteRepository.update(newNote);
 }

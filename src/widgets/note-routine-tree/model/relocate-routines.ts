@@ -1,5 +1,8 @@
-import { isNoteRoutineGroup, mergeRoutineMutations, NoteRoutine, NoteRoutineGroup, NoteRoutineLike, noteService, RoutineBuilder, RoutineTree, routineTreeService } from "@/entities/note";
-import { Routine, RoutineGroup, routineGroupService, RoutineLike, routineService, UNGROUPED_GROUP_NAME } from "@/entities/routine-like";
+import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, RoutineTree, isNoteRoutineGroup, noteRepository, routineTreeUtils } from "@/entities/note";
+import { Routine, routineRepository } from "@/entities/routine";
+import { UNGROUPED_GROUP_NAME, routineGroupRepository } from "@/entities/routine-group";
+import { RoutineLike } from "@/entities/routine-like";
+import { RoutineTreeBuilder, rippleRoutines } from "@/features/note";
 import { DndCase } from "@/shared/dnd/dnd-case";
 import { ORDER_OFFSET } from "../config";
 import { RoutineDndItem } from "./dnd-item";
@@ -42,14 +45,14 @@ export const relocateRoutines = async (tree: RoutineTree, { active, over, dndCas
   }
 
   // === routine 변경사항 반영 ===
-  await mergeRoutineMutations();
+  await rippleRoutines();
 
   let newTree: RoutineTree;
-  const newNote = await noteService.load(tree.day);
+  const newNote = await noteRepository.load(tree.day);
   if (newNote) {
     newTree = newNote.routienTree;
   } else {
-    const routineBuilder = await RoutineBuilder.withDiskAsync();
+    const routineBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
     newTree = routineBuilder.build(tree.day);
   }
   return newTree;
@@ -80,9 +83,9 @@ class RoutineOrderUpdater {
       before?.properties.order ?? Number.MIN_SAFE_INTEGER,
       after?.properties.order ?? Number.MAX_SAFE_INTEGER
     );
-    const activeGroup = await routineGroupService.load(active.name);
+    const activeGroup = await routineGroupRepository.load(active.name);
     activeGroup.properties.order = newOrder;
-    await routineGroupService.update(activeGroup);
+    await routineGroupRepository.updateProperties(activeGroup.name, activeGroup.properties);
     return this.tree;
   }
 
@@ -104,9 +107,9 @@ class RoutineOrderUpdater {
       before?.properties.order ?? Number.MIN_SAFE_INTEGER,
       after?.properties.order ?? Number.MAX_SAFE_INTEGER
     );
-    const activeGroup = await routineGroupService.load(active.name);
+    const activeGroup = await routineGroupRepository.load(active.name);
     activeGroup.properties.order = newOrder;
-    await routineGroupService.update(activeGroup);
+    await routineGroupRepository.updateProperties(activeGroup.name, activeGroup.properties);
     return this.tree;
   }
 
@@ -140,10 +143,10 @@ class RoutineOrderUpdater {
       before?.properties.order ?? Number.MIN_SAFE_INTEGER,
       after?.properties.order ?? Number.MAX_SAFE_INTEGER
     );
-    const activeRoutine = await routineService.load(active.name);
+    const activeRoutine = await routineRepository.load(active.name);
     activeRoutine.properties.order = newOrder;
     activeRoutine.properties.group = newGroup;
-    await routineService.update(activeRoutine);
+    await routineRepository.updateProperties(activeRoutine.name, activeRoutine.properties);
     return this.tree;
   }
 
@@ -165,19 +168,19 @@ class RoutineOrderUpdater {
       before?.properties.order ?? Number.MIN_SAFE_INTEGER,
       after?.properties.order ?? Number.MAX_SAFE_INTEGER
     );
-    const overRoutine = await routineService.load(over.name);
-    const activeRoutine = await routineService.load(active.name);
+    const overRoutine = await routineRepository.load(over.name);
+    const activeRoutine = await routineRepository.load(active.name);
     activeRoutine.properties.order = newOrder;
     activeRoutine.properties.group = overRoutine.properties.group;
-    await routineService.update(activeRoutine);
+    await routineRepository.updateProperties(activeRoutine.name, activeRoutine.properties);
     return this.tree;
   }
 
   private async loadRoutineLike(noteRoutineLike: NoteRoutineLike): Promise<RoutineLike> {
     if (isNoteRoutineGroup(noteRoutineLike)) {
-      return await routineGroupService.load(noteRoutineLike.name);
+      return await routineGroupRepository.load(noteRoutineLike.name);
     } else {
-      return await routineService.load(noteRoutineLike.name);
+      return await routineRepository.load(noteRoutineLike.name);
     }
   }
 
@@ -185,7 +188,7 @@ class RoutineOrderUpdater {
    * 제공된 noteRoutineLike와 앞, 또는 뒤를 함께 로드한다.
    */
   private async getWithBeforeAndAfter(nrl: NoteRoutineLike, with_: "before" | "after"): Promise<{ before: RoutineLike | null, after: RoutineLike | null }> {
-    const parent = routineTreeService.getParent(this.tree, nrl.name);
+    const parent = routineTreeUtils.getParent(this.tree, nrl.name);
     const parentList = parent ? parent.routines : this.tree.root;
     const index = parentList.findIndex(r => r.name === nrl.name);
     if (index === -1) {
@@ -243,10 +246,15 @@ class RoutineOrderUpdater {
       let newOrder = 0;
       for (const nrl of list) {
         const isGroup = isNoteRoutineGroup(nrl);
-        const routineOrGroup = isGroup ? await routineGroupService.load(nrl.name) : await routineService.load(nrl.name);
+        const routineOrGroup = isGroup ? await routineGroupRepository.load(nrl.name) : await routineRepository.load(nrl.name);
         routineOrGroup.properties.order = newOrder;
         newOrder += ORDER_OFFSET;
-        await (isGroup ? routineGroupService.update(routineOrGroup as RoutineGroup) : routineService.update(routineOrGroup as Routine));
+        if (isGroup) {
+          await routineGroupRepository.updateProperties(routineOrGroup.name, routineOrGroup.properties);
+        } else {
+          const routine = routineOrGroup as Routine;
+          await routineRepository.updateProperties(routineOrGroup.name, routine.properties);
+        }
 
         // group이라면 재귀
         if (isGroup) {

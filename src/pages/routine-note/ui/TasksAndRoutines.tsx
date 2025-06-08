@@ -1,22 +1,22 @@
 /** @jsxImportSource @emotion/react */
-import { routineTreeService } from "@/entities/note";
-import { NoteRoutineTreeWidget } from "@/widgets/note-routine-tree";
+import { RoutineNote, routineTreeUtils } from "@/entities/note";
+import { NoteRoutineTree } from "@/widgets/note-routine-tree";
 import { NoteTaskList } from "@/widgets/note-tasks";
+import { openRoutineControlsModal } from "@/widgets/routine-controls";
 import { useMemo, useRef } from "react";
 import { ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { CHECKABLE_GROUP_PANEL_MIN_SIZE } from "../config";
-import { useRoutineNoteStore } from "../hooks/use-routine-note";
 
+
+export const CHECKABLE_GROUP_PANEL_MIN_SIZE = 20;
 
 
 type Props = {
-  children?: React.ReactNode;
+  note: RoutineNote;
 }
 export const TasksAndRoutines = ({
-  children,
+  note
 }: Props) => {
   const panelGroupHandleRef = useRef<ImperativePanelGroupHandle>(null);
-  const note = useRoutineNoteStore(n => n.note);
 
   const taskPanelMinSize = useMemo(() => {
     if (note.tasks.length === 0) {
@@ -26,7 +26,7 @@ export const TasksAndRoutines = ({
   }, [note.tasks.length]);
 
   const routinePanelMinSize = useMemo(() => {
-    if (routineTreeService.getAllRoutines(note.routienTree).length === 0) {
+    if (routineTreeUtils.getAllRoutines(note.routienTree).length === 0) {
       return 0;
     }
     return CHECKABLE_GROUP_PANEL_MIN_SIZE;
@@ -54,13 +54,16 @@ export const TasksAndRoutines = ({
           <NoteTaskList day={note.day} tasks={note.tasks} />
         </Panel>
         <PanelResizeHandle
-          hitAreaMargins={{ coarse: 30, fine: 5 }}
           css={{
+            height: "4px",
             borderTop: `1px solid var(--background-modifier-border)`,
           }}
         />
         <Panel minSize={routinePanelMinSize} order={2}>
-          <NoteRoutineTreeWidget routineTree={note.routienTree} />
+          <NoteRoutineTree
+            routineTree={note.routienTree}
+            openRoutineControl={routine => openRoutineControlsModal({ routine })}
+          />
         </Panel>
       </PanelGroup>
     </>

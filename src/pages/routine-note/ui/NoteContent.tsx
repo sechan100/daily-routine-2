@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
+import { RoutineNote } from "@/entities/note";
 import { WeeksWidget } from "@/widgets/weeks";
-import { useRoutineNoteStore } from "../hooks/use-routine-note";
 import { NodeHeader } from "./NoteHeader";
 import { TasksAndRoutines } from './TasksAndRoutines';
 
@@ -9,9 +9,12 @@ const startRoutineIcon = "alarm-clock-plus";
 const addTodoIcon = "square-check";
 
 
-export const NoteContent = () => {
-  const note = useRoutineNoteStore(n => n.note);
-  const { setNote, merge } = useRoutineNoteStore(s => s.actions);
+export type NoteContentProps = {
+  note: RoutineNote;
+}
+export const NoteContent = ({
+  note,
+}: NoteContentProps) => {
 
   // const AddTodoModal = useAddTodoModal();
   // const StartRoutineModal = useStartRoutineModal();
@@ -69,9 +72,9 @@ export const NoteContent = () => {
         overflow: "hidden",
       }}
     >
-      <WeeksWidget note={note} onDayClick={setNote} />
-      <NodeHeader />
-      <TasksAndRoutines />
+      <WeeksWidget note={note} />
+      <NodeHeader note={note} />
+      <TasksAndRoutines note={note} />
       {/* <AddTodoModal />
       <StartRoutineModal />
       <CreateGroupModal /> */}

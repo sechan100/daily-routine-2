@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { noteService, routineTreeService } from "@/entities/note";
+import { noteRepository, routineTreeUtils } from "@/entities/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
@@ -17,7 +17,7 @@ interface Props {
 export const CalendarSlide = ({
   month,
 }: Props) => {
-  const notesAsync = useAsync(() => noteService.loadBetween(month.startDay, month.endDay), [month]);
+  const notesAsync = useAsync(() => noteRepository.loadBetween(month.startDay, month.endDay), [month]);
   const { currentRoutine, addRoutineOptionsPerMonth, routineOptionsPerMonth } = useRoutineSelector();
 
 
@@ -35,12 +35,12 @@ export const CalendarSlide = ({
       let tile: Tile | null = null;
       // 노트가 존재
       if (note) {
-        const routineTask = noteService.findTask(note, currentRoutine);
+        const routine = routineTreeUtils.findRoutine(note.routienTree, currentRoutine);
         // 노트에 routine이 존재
-        if (routineTask) {
+        if (routine) {
           tile = {
             day,
-            state: routineTask.state
+            state: routine.state
           }
         }
       }
@@ -62,7 +62,7 @@ export const CalendarSlide = ({
     if (routineOptionsPerMonth.has(month.format())) return;
 
     const notes = notesAsync.value;
-    const existingRoutineNames = notes.flatMap(note => routineTreeService
+    const existingRoutineNames = notes.flatMap(note => routineTreeUtils
       .getAllRoutines(note.routienTree)
       .map(routine => routine.name)
     );

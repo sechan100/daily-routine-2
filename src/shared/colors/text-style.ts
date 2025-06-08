@@ -1,34 +1,28 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { STYLES } from "./styles";
 
 
 
 export const TEXT_CSS = {
   bold: css({
-    fontWeight: "var(--font-bold)"
+    color: STYLES.palette.textNormal,
+    fontWeight: STYLES.fontWeight.bold,
   }),
 
   medium: css({
-    color: "var(--text-normal)",
-    fontSize: "var(--font-ui-medium)",
+    color: STYLES.palette.textNormal,
+    fontSize: STYLES.fontSize.medium,
   }),
 
   large: css({
-    color: "var(--text-normal)",
-    fontSize: "var(--font-ui-large)"
+    color: STYLES.palette.textNormal,
+    fontSize: STYLES.fontSize.large,
   }),
 
   description: css({
-    color: "var(--text-muted)",
-    fontSize: "var(--font-ui-smaller)",
-    lineHeight: "var(--line-height-tight)"
-  }),
-
-  errorColor: css({
-    color: "var(--text-error)"
-  }),
-
-  onAccent: css({
-    color: "var(--text-on-accent)"
+    color: STYLES.palette.textMuted,
+    fontSize: STYLES.fontSize.smaller,
+    lineHeight: STYLES.lineHeight.tight,
   }),
 }

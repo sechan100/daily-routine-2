@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { dr } from "@/shared/utils/daily-routine-bem";
 import { TextComponent } from "obsidian";
 import { memo, useEffect, useRef } from "react";
+import { ErrorMessage } from "./ErrorMessage";
 
 
 
@@ -14,15 +14,24 @@ import { memo, useEffect, useRef } from "react";
 
 interface TextEditComponentProps {
   value: string;
-  onChange: (value: string) => void;
-
+  name?: string;
+  onChange?: (value: string) => void;
   onBlur?: (value: string) => void;
   width?: string;
+  error?: string | null | undefined;
   focus?: boolean;
-  className?: string;
   placeholder?: string;
 }
-export const TextEditComponent = memo((props: TextEditComponentProps) => {
+export const TextEditComponent = memo(({
+  value,
+  name,
+  onChange,
+  onBlur,
+  width,
+  error,
+  focus = false,
+  placeholder
+}: TextEditComponentProps) => {
   const obsidianTextComponentRef = useRef<HTMLDivElement>(null);
   const textComponentCreated = useRef(false);
 
@@ -31,13 +40,17 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
     if (!obsidianTextComponentRef.current) return;
     if (textComponentCreated.current) return;
     const textComp = new TextComponent(obsidianTextComponentRef.current)
-      .setValue(props.value)
-      .onChange(props.onChange)
-      .setPlaceholder(props.placeholder ?? "")
+      .setValue(value)
+      .onChange(value => onChange?.(value))
+      .setPlaceholder(placeholder ?? "");
 
-    if (props.focus) textComp.inputEl.focus();
+    if (name) {
+      textComp.inputEl.name = name;
+    }
+
+    if (focus) textComp.inputEl.focus();
     textComp.inputEl.onblur = () => {
-      if (props.onBlur) props.onBlur(textComp.getValue());
+      if (onBlur) onBlur(textComp.getValue());
     }
 
     textComponentCreated.current = true;
@@ -45,14 +58,18 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
   }, []);
 
 
-  const bem = dr("text-edit");
   return (
     <div
-      className={bem("", "", props.className)}
       css={{
-        width: props.width ?? "auto"
+        width: width ?? "auto",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'end',
+        gap: '4px',
       }}
-      ref={obsidianTextComponentRef}
-    />
+    >
+      <div ref={obsidianTextComponentRef} />
+      <ErrorMessage error={error} />
+    </div>
   )
 })

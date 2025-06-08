@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { STYLES } from "@/shared/colors/palette";
+import { STYLES } from "@/shared/colors/styles";
 import { Icon } from "@/shared/components/Icon";
 import { Touchable } from "@/shared/components/Touchable";
 import { DELAY_TOUCH_START } from "@/shared/dnd/config";

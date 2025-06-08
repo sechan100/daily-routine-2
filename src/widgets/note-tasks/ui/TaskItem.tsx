@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
-import { STYLES } from "@/shared/colors/palette";
+import { STYLES } from "@/shared/colors/styles";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
