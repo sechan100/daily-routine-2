@@ -17,7 +17,7 @@ export const TreeRoot = () => {
 
   const handleDragEnd = useCallback(async ({ active, over, dndCase }: OnDragEndContext<RoutineDndItem>) => {
     if (day.isPast()) {
-      new Notice("Routine Relocation is only allowed for today or future days.");
+      new Notice("Routine Relocation is not allowed for past routines.");
       return;
     }
     await relocateRoutines(tree, {

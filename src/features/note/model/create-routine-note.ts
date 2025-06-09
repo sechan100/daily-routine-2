@@ -13,11 +13,11 @@ const initialContent = dedent`
 
 export const createRoutineNote = async (day: Day): Promise<RoutineNote> => {
   const treeBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
-  const routienTree = treeBuilder.build(day);
+  const routineTree = treeBuilder.build(day);
   return {
     day,
     userContent: initialContent,
     tasks: [],
-    routineTree,
+    routineTree
   };
 }

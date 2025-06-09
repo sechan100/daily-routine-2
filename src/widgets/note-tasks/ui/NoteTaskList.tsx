@@ -1,7 +1,7 @@
-import { Task } from "@/entities/note";
+import { Task, useTasksStore } from "@/entities/note";
 import { Day } from "@/shared/period/day";
+import { useEffect } from "react";
 import { TaskListRoot } from "./TaskListRoot";
-import { TasksStoreProvider } from "./TasksStoreProvider";
 
 
 
@@ -14,10 +14,13 @@ export const NoteTaskList = ({
   day,
   tasks,
 }: Props) => {
+  const setTasks = useTasksStore(s => s.setTasks);
+
+  useEffect(() => {
+    setTasks(tasks);
+  }, [day, setTasks, tasks]);
 
   return (
-    <TasksStoreProvider day={day} tasks={tasks}>
-      <TaskListRoot />
-    </TasksStoreProvider>
+    <TaskListRoot />
   )
 }

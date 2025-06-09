@@ -1,7 +1,7 @@
 import { RoutineTree, useRoutineTreeStore } from '@/entities/note';
 import { Routine } from '@/entities/routine';
 import { useEffect, useRef } from 'react';
-import { RoutineTreeContext, RoutineTreeContextType } from '../stores/context';
+import { RoutineTreeContext, RoutineTreeContextType } from '../model/context';
 import { TreeRoot } from "./TreeRoot";
 
 

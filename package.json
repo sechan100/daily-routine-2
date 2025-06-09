@@ -43,6 +43,7 @@
     "dotenv": "^16.4.7",
     "eslint-plugin-react": "^7.37.1",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "neverthrow": "^8.1.1",

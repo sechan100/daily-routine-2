@@ -3,17 +3,16 @@ import { Routine, routineRepository } from "@/entities/routine";
 import { UNGROUPED_GROUP_NAME, routineGroupRepository } from "@/entities/routine-group";
 import { RoutineLike } from "@/entities/routine-like";
 import { DndCase } from "@/shared/dnd/dnd-case";
-import { ORDER_OFFSET } from "../config";
 import { RoutineDndItem } from "./dnd-item";
 
 
+const ORDER_OFFSET = 1000;
 
 export type RelocateRoutinesArgs = {
   active: RoutineDndItem;
   over: RoutineDndItem;
   dndCase: DndCase;
 }
-
 
 /**
  * routine들의 위치를 이동시키기 위하여 order properties를 변경하고 저장한다.

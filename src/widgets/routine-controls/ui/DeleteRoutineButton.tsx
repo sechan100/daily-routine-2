@@ -3,6 +3,7 @@ import { useRippleRoutineTree } from "@/features/note";
 import { Button } from "@/shared/components/Button";
 import { useModal } from "@/shared/components/modal";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
+import { Notice } from "obsidian";
 import { useCallback } from "react";
 
 
@@ -27,6 +28,7 @@ export const DeleteRoutineButton = ({
     if (!deletionConfirm) return;
     await routineRepository.delete(routine.name);
     await ripple();
+    new Notice(`Routine ${routine.name} has been deleted.`);
     modal.close();
   }, [modal, ripple, routine.name]);
 

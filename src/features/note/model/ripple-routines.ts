@@ -1,6 +1,8 @@
 import { CheckableState } from '@/entities/checkable';
-import { RoutineNote, RoutineTree, noteRepository, routineTreeUtils } from '@/entities/note';
+import { RoutineNote, RoutineTree, isNoteRoutineGroup, noteRepository, routineTreeUtils } from '@/entities/note';
 import { Day } from '@/shared/period/day';
+import { compose } from '@/shared/utils/compose';
+import { produce } from 'immer';
 import { RoutineTreeBuilder } from './routine-tree-builder';
 
 
@@ -21,24 +23,49 @@ abstract class NoteDependentRoutineData {
 }
 
 class CheckableStateNoteDep extends NoteDependentRoutineData {
-  #checkedTasks: [string, CheckableState][] = [];
+  private checkedTasks: [string, CheckableState][] = [];
 
   constructor(tree: RoutineTree) {
     super();
-    this.#checkedTasks = routineTreeUtils.getAllRoutines(tree)
+    this.checkedTasks = routineTreeUtils.getAllRoutines(tree)
       .filter(t => t.state !== 'unchecked')
       .map(t => [t.name, t.state]);
   }
 
   restoreData(tree: RoutineTree) {
-    for (const routines of routineTreeUtils.getAllRoutines(tree)) {
-      let originalTaskIndex: number;
-      if ((originalTaskIndex = this.#checkedTasks.findIndex(([name]) => name === routines.name)) !== -1) {
-        const [_, state] = this.#checkedTasks[originalTaskIndex];
-        routines.state = state;
+    return produce(tree, (draftTree) => {
+      for (const routines of routineTreeUtils.getAllRoutines(draftTree)) {
+        let originalTaskIndex: number;
+        if ((originalTaskIndex = this.checkedTasks.findIndex(([name]) => name === routines.name)) !== -1) {
+          const [_, state] = this.checkedTasks[originalTaskIndex];
+          routines.state = state;
+        }
+      }
+    })
+  }
+}
+
+class GroupOpenNoteDep extends NoteDependentRoutineData {
+  private closedGroups: Set<string> = new Set<string>();
+
+  constructor(tree: RoutineTree) {
+    super();
+    for (const nrl of tree.root) {
+      if (isNoteRoutineGroup(nrl) && !nrl.isOpen) {
+        this.closedGroups.add(nrl.name);
       }
     }
-    return { ...tree };
+  }
+
+  restoreData(tree: RoutineTree) {
+    return produce(tree, (draftTree) => {
+      for (const nrl of draftTree.root) {
+        if (isNoteRoutineGroup(nrl) && this.closedGroups.has(nrl.name)) {
+          nrl.isOpen = false;
+        }
+      }
+      return draftTree;
+    });
   }
 }
 
@@ -58,15 +85,15 @@ export const rippleRoutines = async (today: Day = Day.today()): Promise<void> =>
       continue; // 노트에 루틴이 없는 경우는 건너뛴다.
     }
     const dependents = [
-      new CheckableStateNoteDep(note.routineTree)
+      new CheckableStateNoteDep(note.routineTree),
+      new GroupOpenNoteDep(note.routineTree)
     ];
     const newRoutineTree = routineBuilder.build(note.day);
-    for (const dep of dependents) {
-      dep.restoreData(newRoutineTree);
-    }
+    const composedDependentRestoreFn = compose(...dependents.map(dep => dep.restoreData.bind(dep)));
+    const dependentDataRestoredTree = composedDependentRestoreFn(newRoutineTree);
     const newNote: RoutineNote = {
       ...note,
-      routineTree: newRoutineTree
+      routineTree: dependentDataRestoredTree
     };
     await noteRepository.update(newNote);
   }

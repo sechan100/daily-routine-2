@@ -1,6 +1,7 @@
-import { noteRepository, NoteRoutine, RoutineNote, routineTreeUtils, useNoteDayStore, useRoutineTreeStore } from "@/entities/note";
+import { CheckableState, noteRepository, NoteRoutine, RoutineNote, RoutineTree, routineTreeUtils, useNoteDayStore, useRoutineTreeStore } from "@/entities/note";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { SETTINGS } from "@/shared/settings";
+import { produce } from "immer";
 import { useCallback } from "react";
 
 
@@ -8,26 +9,30 @@ import { useCallback } from "react";
 
 
 type UseCheckRoutine = (noteRoutine: NoteRoutine) => {
-  handleRoutineClick: () => void;
+  handleRoutineCheck: () => void;
 }
 export const useCheckRoutine: UseCheckRoutine = (noteRoutine) => {
   const day = useNoteDayStore(s => s.day);
-  const routineName = noteRoutine.name;
   const tree = useRoutineTreeStore(s => s.tree);
   const setTree = useRoutineTreeStore(s => s.setTree);
 
-  const handleRoutineClick = useCallback(async () => {
-    const newTree = { ...tree };
-    const routine = routineTreeUtils.findRoutine(newTree, routineName);
-    if (!routine) throw new Error("Check state change target routine not found");
+  const handleRoutineCheck = useCallback(async () => {
 
+    const updateCheckableState = (state: CheckableState) => produce(tree, (draft) => {
+      const routine = routineTreeUtils.findRoutine(draft, noteRoutine.name);
+      if (!routine) throw new Error("Check state change target routine not found");
+      routine.state = state;
+      return draft;
+    });
+
+    let newTree: RoutineTree;
     // dispatch check state change
     // un-check
-    if (routine.state === "unchecked") {
-      routine.state = "accomplished";
+    if (noteRoutine.state === "unchecked") {
+      newTree = updateCheckableState("accomplished");
     }
     // accomplished & failed
-    else if (routine.state === "accomplished" || routine.state === "failed") {
+    else if (noteRoutine.state === "accomplished" || noteRoutine.state === "failed") {
       let doUncheck = true;
       if (SETTINGS.getConfirmUncheckTask()) {
         doUncheck = await doConfirm({
@@ -37,26 +42,29 @@ export const useCheckRoutine: UseCheckRoutine = (noteRoutine) => {
           confirmBtnVariant: "accent",
         })
       }
-      if (doUncheck) {
-        routine.state = "unchecked";
+      if (!doUncheck) {
+        return;
       }
+      newTree = updateCheckableState("unchecked");
     }
     else {
-      throw new Error(`Unknown routine state: ${routine.state}`);
+      throw new Error(`Unknown routine state: ${noteRoutine.state}`);
     }
-    // data 업데이트
+
+    // note update
     await noteRepository.updateWith(day, (prev) => {
       const newNote: RoutineNote = {
         ...prev,
-        routineTree: newTree
+        routineTree: newTree,
       }
       return newNote;
     });
-    // 상태 업데이트
+
+    // store update
     setTree(newTree);
-  }, [tree, routineName, day, setTree]);
+  }, [noteRoutine.state, noteRoutine.name, day, setTree, tree]);
 
   return {
-    handleRoutineClick
+    handleRoutineCheck
   }
 }

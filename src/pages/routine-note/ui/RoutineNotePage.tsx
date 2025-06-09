@@ -17,7 +17,7 @@ export const RoutineNotePage = () => {
   );
 
   if (error) {
-    return <div>Error loading note: {error.message}</div>
+    return <div>Error loading note</div>
   }
   if (!data) {
     return <div>Loading...</div>

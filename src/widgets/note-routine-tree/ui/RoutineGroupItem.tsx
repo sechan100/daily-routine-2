@@ -11,7 +11,7 @@ import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses 
 import { Platform } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RoutineDndItem } from "../model/dnd-item";
-import { useRoutineTreeController } from "../stores/use-routine-tree-controller";
+import { useOpenRoutineGroup } from "../model/use-open-routine-group";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
@@ -25,7 +25,7 @@ export const RoutineGroupItem = ({
   depth,
 }: Props) => {
   const bgColor = useLeaf(s => s.leafBgColor);
-  const { openGroup } = useRoutineTreeController();
+  const { handleRoutineGroupOpen } = useOpenRoutineGroup(group);
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -54,23 +54,23 @@ export const RoutineGroupItem = ({
     }
   });
 
-  const changeOpen = useCallback((isOpen: boolean) => {
-    openGroup(group.name, isOpen);
-  }, [openGroup, group.name]);
+  const handleOpen = useCallback(() => {
+    handleRoutineGroupOpen();
+  }, [handleRoutineGroupOpen]);
 
   const isAllSubTasksChecked = group.routines.every(r => r.state === 'accomplished');
 
   // dragging 상태에 따라 isOpen 상태를 조정
   useEffect(() => {
-    changeOpen(!isDragging);
-  }, [changeOpen, group.routines, isDragging]);
+    // handleOpen(!isDragging);
+  }, [handleOpen, group.routines, isDragging]);
 
   return (
     <Accordion
       disableGutters
       elevation={0}
       expanded={group.isOpen}
-      onChange={() => changeOpen(!group.isOpen)}
+      onChange={handleOpen}
       css={{
         backgroundColor: bgColor,
         "&::before": {

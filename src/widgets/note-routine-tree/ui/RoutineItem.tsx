@@ -9,9 +9,9 @@ import { useDnd } from "@/shared/dnd/use-dnd";
 import { css } from "@emotion/react";
 import { Notice, Platform } from "obsidian";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useRoutineTreeContext } from "../model/context";
 import { RoutineDndItem } from "../model/dnd-item";
 import { useCheckRoutine } from "../model/use-check-routine";
-import { useRoutineTreeContext } from "../stores/context";
 
 
 const indentStyle = css({
@@ -30,7 +30,7 @@ export const RoutineItem = ({
   depth,
 }: Props) => {
   const day = useNoteDayStore(s => s.day);
-  const { handleRoutineClick } = useCheckRoutine(routine);
+  const { handleRoutineCheck } = useCheckRoutine(routine);
   const { openRoutineControl } = useRoutineTreeContext();
 
   const [dragState, setDragState] = useState<DragState>("idle");
@@ -78,8 +78,8 @@ export const RoutineItem = ({
    * routine을 클릭하면 check하거나 uncheck하는 등의 동작을 수행한다.
    */
   const handleClick = useCallback(() => {
-    handleRoutineClick();
-  }, [handleRoutineClick]);
+    handleRoutineCheck();
+  }, [handleRoutineCheck]);
 
 
 

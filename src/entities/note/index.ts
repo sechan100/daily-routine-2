@@ -11,11 +11,12 @@ export type { RoutineTree } from "./types/routine-tree";
 // model
 export { getNoteProgress } from "./model/get-note-progress";
 export { noteRepository } from "./model/note-repository";
-export { noteTaskService } from "./model/note-task-service";
+export { noteTaskService } from "./model/tasks-utils";
 export { routineTreeUtils } from "./model/routine-tree-utils";
 export { ZERO_NOTE_PROGRESS } from "./model/zero-note-progress";
 
 // stores
 export { useNoteDayStore } from "./stores/note-day-store";
 export { useRoutineTreeStore } from "./stores/routine-tree-store";
+export { useTasksStore } from "./stores/tasks-store";
 

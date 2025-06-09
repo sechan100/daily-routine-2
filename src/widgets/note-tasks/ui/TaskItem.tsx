@@ -21,7 +21,6 @@ export const TaskItem = ({
 
   const {
     isDragging,
-    isOver,
     dndCase
   } = useDnd({
     dndItem: {

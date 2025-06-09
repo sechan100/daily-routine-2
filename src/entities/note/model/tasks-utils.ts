@@ -1,31 +1,22 @@
-import { Task, TaskProperties } from "@/entities/task";
+import { Task } from "@/entities/task";
 import { RoutineNote } from "../types/note";
 
 
-class NoteTaskService {
+class NoteTaskUtils {
 
-  createTask(name: string, properties: TaskProperties): Task {
-    return {
-      name,
-      state: "unchecked",
-      properties
+  findTask(note: RoutineNote, taskName: string): Task {
+    const task = note.tasks.find(t => t.name === taskName);
+    if (!task) {
+      throw new Error(`Task not found: ${taskName}`);
     }
+    return task;
   }
 
-  removeTask(note: RoutineNote, name: string): RoutineNote {
-    const newNote = { ...note };
-    newNote.tasks = newNote.tasks.filter(task => task.name !== name);
-    return newNote;
-  }
-
-  updateProperties(note: RoutineNote, taskName: string, properties: TaskProperties): RoutineNote {
+  updateTask(note: RoutineNote, taskName: string, newTask: Task): RoutineNote {
     const newNote = { ...note };
     newNote.tasks = newNote.tasks.map(t => {
       if (t.name === taskName) {
-        return {
-          ...t,
-          properties
-        };
+        return newTask;
       } else {
         return t;
       }
@@ -65,4 +56,4 @@ class NoteTaskService {
   }
 }
 
-export const noteTaskService = new NoteTaskService();
+export const noteTaskService = new NoteTaskUtils();
