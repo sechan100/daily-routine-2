@@ -2,7 +2,7 @@ import { RoutineTree, useRoutineTreeStore } from '@/entities/note';
 import { Routine } from '@/entities/routine';
 import { useEffect, useRef } from 'react';
 import { RoutineTreeContext, RoutineTreeContextType } from '../stores/context';
-import { RoutineTreeRoot } from "./RoutineTreeRoot";
+import { TreeRoot } from "./TreeRoot";
 
 
 
@@ -30,7 +30,7 @@ export const NoteRoutineTree = ({
 
   return (
     <RoutineTreeContext.Provider value={context.current}>
-      <RoutineTreeRoot />
+      <TreeRoot />
     </RoutineTreeContext.Provider>
   )
 }

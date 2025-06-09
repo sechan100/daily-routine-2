@@ -53,15 +53,11 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
   }, [routine.name]);
 
   const handleSave = useCallback(async (form: RoutineForm) => {
-    // 이름 변경 //////////
+    // 이름 변경
     const isNameDirty = getFieldState('name').isDirty;
     if (isNameDirty) {
       await routineRepository.rename(routine.name, form.name);
     }
-    resetField('name', {
-      defaultValue: form.name,
-    });
-    // getFieldState()
     // 속성 변경
     const newProperties: RoutineProperties = {
       ...routine.properties,
@@ -71,9 +67,10 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
       showOnCalendar: form.showOnCalendar,
       enabled: form.enabled,
     }
+    await routineRepository.updateProperties(routine.name, newProperties);
     await ripple();
     modal.close();
-  }, [getFieldState, modal, resetField, ripple, routine.name, routine.properties]);
+  }, [getFieldState, modal, ripple, routine.name, routine.properties]);
 
   return (
     <Modal header='Routine Controls'>

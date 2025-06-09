@@ -9,7 +9,7 @@ import { routineCollisionResolver } from "../model/routine-collision-resolver";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
-export const RoutineTreeRoot = () => {
+export const TreeRoot = () => {
   const day = useNoteDayStore(s => s.day);
   const tree = useRoutineTreeStore(s => s.tree);
 

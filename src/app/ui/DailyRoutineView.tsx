@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Icon } from "@/shared/components/Icon";
+import { AppDndProvider } from "@/shared/dnd/AppDndProvider";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 import { DrTabType, useTabRoute } from "@/shared/tab/use-tab-route";
@@ -52,64 +53,66 @@ export const DailyRoutineView = () => {
 
   return (
     <MUIThemeProvider>
-      <div
-        className="dr-tab"
-        css={{
-          height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
-        }}
-      >
-        <RouitneNoteTab />
-        <AchivementTab />
-        <CalendarTab />
-      </div>
-      <TabNav
-        value={tab}
-        className="dr-tabs"
-        scrollButtons={false}
-        centered
-        sx={{ borderTop: 1, borderColor: 'divider' }}
-        onChange={onTabChange}
-        css={{
-          zIndex: 1000,
-          backgroundColor: leafBgColor,
+      <AppDndProvider>
+        <div
+          className="dr-tab"
+          css={{
+            height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
+          }}
+        >
+          <RouitneNoteTab />
+          <AchivementTab />
+          <CalendarTab />
+        </div>
+        <TabNav
+          value={tab}
+          className="dr-tabs"
+          scrollButtons={false}
+          centered
+          sx={{ borderTop: 1, borderColor: 'divider' }}
+          onChange={onTabChange}
+          css={{
+            zIndex: 1000,
+            backgroundColor: leafBgColor,
+            position: "fixed",
+            minHeight: 0,
+            width: "100%",
+            left: "0",
+            bottom: tabsBottomGap,
+          }}
+        >
+          <TabNavItem
+            label="Note"
+            value={"note"}
+            icon={<Icon icon="notebook-pen" />}
+            iconPosition="start"
+            css={tabCss}
+          />
+          <TabNavItem
+            label="Calendar"
+            value={"calendar"}
+            icon={<Icon icon="calendar-check-2" />}
+            iconPosition="start"
+            css={tabCss}
+          />
+          <TabNavItem
+            label="Achivement"
+            value={"achivement"}
+            icon={<Icon icon="book-check" />}
+            iconPosition="start"
+            css={tabCss}
+          />
+        </TabNav>
+        <div css={{
+          display: "block",
           position: "fixed",
-          minHeight: 0,
           width: "100%",
-          left: "0",
-          bottom: tabsBottomGap,
-        }}
-      >
-        <TabNavItem
-          label="Note"
-          value={"note"}
-          icon={<Icon icon="notebook-pen" />}
-          iconPosition="start"
-          css={tabCss}
-        />
-        <TabNavItem
-          label="Calendar"
-          value={"calendar"}
-          icon={<Icon icon="calendar-check-2" />}
-          iconPosition="start"
-          css={tabCss}
-        />
-        <TabNavItem
-          label="Achivement"
-          value={"achivement"}
-          icon={<Icon icon="book-check" />}
-          iconPosition="start"
-          css={tabCss}
-        />
-      </TabNav>
-      <div css={{
-        display: "block",
-        position: "fixed",
-        width: "100%",
-        height: tabsBottomGap,
-        backgroundColor: leafBgColor,
-        bottom: 0,
-        zIndex: 1000,
-      }} />
+          height: tabsBottomGap,
+          backgroundColor: leafBgColor,
+          bottom: 0,
+          zIndex: 1000,
+        }} />
+      </AppDndProvider>
     </MUIThemeProvider>
   );
 }
