@@ -62,7 +62,7 @@ class RoutineTreeUtils {
   }
 
   getAllRoutines(noteOrTree: RoutineNote | RoutineTree): NoteRoutine[] {
-    const root = "root" in noteOrTree ? noteOrTree.root : noteOrTree.routienTree.root;
+    const root = "root" in noteOrTree ? noteOrTree.root : noteOrTree.routineTree.root;
     const routines: NoteRoutine[] = [];
     for (const el of root) {
       if (isNoteRoutine(el)) {

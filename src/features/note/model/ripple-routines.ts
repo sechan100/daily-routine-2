@@ -26,7 +26,7 @@ class CheckableStateNoteDep extends NoteDependentRoutineData {
   constructor(tree: RoutineTree) {
     super();
     this.#checkedTasks = routineTreeUtils.getAllRoutines(tree)
-      .filter(t => t.state !== 'un-checked')
+      .filter(t => t.state !== 'unchecked')
       .map(t => [t.name, t.state]);
   }
 
@@ -54,11 +54,11 @@ export const rippleRoutines = async (today: Day = Day.today()): Promise<void> =>
   const notes = await noteRepository.loadBetween(today, Day.max());
   const routineBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
   for (const note of notes) {
-    if (note.routienTree.root.length === 0) {
+    if (note.routineTree.root.length === 0) {
       continue; // 노트에 루틴이 없는 경우는 건너뛴다.
     }
     const dependents = [
-      new CheckableStateNoteDep(note.routienTree)
+      new CheckableStateNoteDep(note.routineTree)
     ];
     const newRoutineTree = routineBuilder.build(note.day);
     for (const dep of dependents) {
@@ -66,7 +66,7 @@ export const rippleRoutines = async (today: Day = Day.today()): Promise<void> =>
     }
     const newNote: RoutineNote = {
       ...note,
-      routienTree: newRoutineTree
+      routineTree: newRoutineTree
     };
     await noteRepository.update(newNote);
   }

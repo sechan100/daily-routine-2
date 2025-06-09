@@ -1,9 +1,7 @@
 import { UNGROUPED_GROUP_NAME } from '@/entities/routine-group';
 import { deserializeTask, serializeTask, Task } from '@/entities/task';
-import { fileAccessor } from '@/shared/file/file-accessor';
 import { Day } from "@/shared/period/day";
 import dedent from "dedent";
-import { TFile } from 'obsidian';
 import { RoutineNote } from '../types/note';
 import { isNoteRoutine, isNoteRoutineGroup, NoteRoutineGroup, NoteRoutineLike } from '../types/note-routine-like';
 import { deserializeNoteRoutine, deserializeNoteRoutineGroup, serializeNoteRoutineGroup } from "./serialize-note-routine-like";
@@ -15,7 +13,7 @@ export const serializeRoutineNote = (note: RoutineNote): string => {
   // group 또는 routine으로 구성된 routineRoot를 group으로 묶는다.
   // root 바로 하위에 위치한 routine은 개수에 관계없이 UNGROUPED 그룹으로 묶여서 통일성있게 처리한다.
   const routineGroups: NoteRoutineGroup[] = [];
-  for (const routienLike of note.routienTree.root) {
+  for (const routienLike of note.routineTree.root) {
     if (isNoteRoutineGroup(routienLike)) {
       routineGroups.push(routienLike);
     }
@@ -52,14 +50,12 @@ export const serializeRoutineNote = (note: RoutineNote): string => {
   `;
 }
 
-export const deserializeRoutineNote = async (file: TFile): Promise<RoutineNote> => {
-  const day = Day.fromString(file.basename);
-  const fileContent = await fileAccessor.readFileAsReadonly(file);
+export const deserializeRoutineNote = (day: Day, fileContent: string): RoutineNote => {
 
   // '%% daily-routine %%'를 기준으로 앞에는 사용자 'content' 아래부터 역직렬화해야하는 note data이다.
   const contentAndNoteDataPart = fileContent.split(/%%\s*daily-routine\s*%%/);
   if (contentAndNoteDataPart.length < 2) {
-    throw deserializeError('missing %% daily-routine %% marker in ' + file.path);
+    throw deserializeError('missing %% daily-routine %% marker in ' + day.format());
   }
   const userContent = contentAndNoteDataPart[0]; // userContent는 trim하지 않음
   const noteData = contentAndNoteDataPart[1].trim();
@@ -103,8 +99,7 @@ export const deserializeRoutineNote = async (file: TFile): Promise<RoutineNote> 
     day,
     userContent,
     tasks,
-    routienTree: {
-      day,
+    routineTree: {
       root: routineRoot
     }
   }

@@ -105,7 +105,7 @@ export const Checkbox = ({
   customFailedSVG,
   size = 15,
 }: Props) => {
-  const isChecked = useMemo(() => state !== "un-checked", [state]);
+  const isChecked = useMemo(() => state !== "unchecked", [state]);
   return (
     <div
       className={bem("cbx", "", className)}

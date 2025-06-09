@@ -17,7 +17,7 @@ export const checkboxChars = {
  * @returns 
  */
 export const serializeCheckableState = (state: CheckableState): string => {
-  if (state === 'un-checked') {
+  if (state === 'unchecked') {
     return ' ';
   }
   else if (state === 'accomplished') {
@@ -43,7 +43,7 @@ export const deserializeCheckableState = (checkboxChar: string): CheckableState 
   } else if (checkboxChars.failed.includes(checkboxChar)) {
     return 'failed';
   } else if (checkboxChar === ' ') {
-    return 'un-checked';
+    return 'unchecked';
   } else {
     throw deserializeError(`invalid task state char '${checkboxChar}'. valid chars are ${[...checkboxChars.accomplished, ...checkboxChars.failed, '\' \''].join(', ')}`);
   }

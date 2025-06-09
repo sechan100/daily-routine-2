@@ -18,6 +18,6 @@ export const createRoutineNote = async (day: Day): Promise<RoutineNote> => {
     day,
     userContent: initialContent,
     tasks: [],
-    routienTree,
+    routineTree,
   };
 }

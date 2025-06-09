@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Routine, RoutineProperties, routineRepository } from '@/entities/routine';
-import { useRippleRoutines } from '@/features/note';
+import { useRippleRoutineTree } from '@/features/note';
 import { RoutineNameValidator } from '@/features/routine';
 import { createModal, useModal } from '@/shared/components/modal';
 import { Modal } from '@/shared/components/modal/styled';
@@ -18,7 +18,7 @@ type Props = {
   routine: Routine;
 }
 export const openRoutineControlsModal = createModal(({ routine }: Props) => {
-  const { ripple } = useRippleRoutines();
+  const { ripple } = useRippleRoutineTree();
   const modal = useModal();
   const {
     register,

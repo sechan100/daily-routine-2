@@ -26,7 +26,7 @@ export const CheckableArea = ({
           marginRight: "0.5em",
         }}
       />
-      <CancelLineName name={checkable.name} cancel={checkable.state !== "un-checked"} />
+      <CancelLineName name={checkable.name} cancel={checkable.state !== "unchecked"} />
     </div>
   )
 }

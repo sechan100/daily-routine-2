@@ -6,8 +6,8 @@ import { routineTreeUtils } from "./routine-tree-utils";
 
 const getCheckableGroupProgress = (checkables: Checkable[]): CheckableGroupProgress => {
   const total = checkables.length;
-  const completed = checkables.filter(t => t.state !== "un-checked").length;
-  const uncompleted = checkables.filter(t => t.state === "un-checked").length;
+  const completed = checkables.filter(t => t.state !== "unchecked").length;
+  const uncompleted = checkables.filter(t => t.state === "unchecked").length;
   const accomplished = checkables.filter(t => t.state === "accomplished").length;
   return {
     total,
@@ -22,10 +22,10 @@ const getCheckableGroupProgress = (checkables: Checkable[]): CheckableGroupProgr
 
 export const getNoteProgress = (note: RoutineNote): NoteProgress => {
   const tasks = note.tasks;
-  const routines = routineTreeUtils.getAllRoutines(note.routienTree);
+  const routines = routineTreeUtils.getAllRoutines(note.routineTree);
   const checkables: Checkable[] = [...tasks, ...routines];
   const totalCheckable = checkables.length;
-  const completedCheckable = checkables.filter(t => t.state !== "un-checked").length;
+  const completedCheckable = checkables.filter(t => t.state !== "unchecked").length;
   const uncompletedCheckable = totalCheckable - completedCheckable;
   const completionPercentage = totalCheckable === 0 ? 0 : (completedCheckable / totalCheckable) * 100;
   const accomplishedCheckable = checkables.filter(t => t.state === "accomplished").length;

@@ -26,7 +26,9 @@ class NoteRepository {
   async load(day: Day): Promise<RoutineNote | null> {
     const file = getNoteFile(day);
     if (file) {
-      return await deserializeRoutineNote(file);
+      const day = Day.fromString(file.basename);
+      const fileContent = await fileAccessor.readFileFromDisk(file);
+      return deserializeRoutineNote(day, fileContent);
     } else {
       return Promise.resolve(null);
     }
@@ -47,7 +49,8 @@ class NoteRepository {
       if (!(file instanceof TFile)) continue;
       const day = Day.fromString(file.basename);
       if (day.isBetween(start, end, 'day', '[]')) {
-        notes.push(await deserializeRoutineNote(file));
+        const fileContent = await fileAccessor.readFileFromDisk(file);
+        notes.push(deserializeRoutineNote(day, fileContent));
       }
     }
     return notes;
@@ -90,6 +93,19 @@ class NoteRepository {
     const file = getNoteFile(day);
     if (file) {
       await fileAccessor.writeFile(file, () => serializeRoutineNote(routineNote));
+    } else {
+      throw new Error('RoutineNote file is not exist.');
+    }
+  }
+
+  async updateWith(day: Day, updateFn: (prev: RoutineNote) => RoutineNote): Promise<void> {
+    const file = getNoteFile(day);
+    if (file) {
+      await fileAccessor.writeFile(file, (prevContent) => {
+        const prevNote = deserializeRoutineNote(day, prevContent);
+        const updatedNote = updateFn(prevNote);
+        return serializeRoutineNote(updatedNote);
+      });
     } else {
       throw new Error('RoutineNote file is not exist.');
     }

@@ -7,7 +7,7 @@ class NoteTaskService {
   createTask(name: string, properties: TaskProperties): Task {
     return {
       name,
-      state: "un-checked",
+      state: "unchecked",
       properties
     }
   }

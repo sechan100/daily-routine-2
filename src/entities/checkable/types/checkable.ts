@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 
-export type CheckableState = "un-checked" | "accomplished" | "failed";
+export type CheckableState = "unchecked" | "accomplished" | "failed";
 
 export type Checkable = {
   name: string;

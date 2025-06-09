@@ -55,7 +55,7 @@ export const CalendarTile = ({
           {tile.state === "inactive" || !isTodayOrBefore
             ?
             <Checkbox
-              state={"un-checked"}
+              state={"unchecked"}
               css={{
                 visibility: "hidden",
               }}

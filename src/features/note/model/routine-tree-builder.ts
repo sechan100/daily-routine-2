@@ -8,7 +8,7 @@ import { isRoutineDueTo } from './is-routine-due-to';
 const deriveNoteRoutine = (routine: Routine): NoteRoutine => ({
   name: routine.name,
   routineLikeType: "routine",
-  state: "un-checked"
+  state: "unchecked"
 })
 
 const deriveNoteRoutineGroup = (group: RoutineGroup): NoteRoutineGroup => ({

@@ -35,7 +35,7 @@ export const CalendarSlide = ({
       let tile: Tile | null = null;
       // 노트가 존재
       if (note) {
-        const routine = routineTreeUtils.findRoutine(note.routienTree, currentRoutine);
+        const routine = routineTreeUtils.findRoutine(note.routineTree, currentRoutine);
         // 노트에 routine이 존재
         if (routine) {
           tile = {
@@ -63,7 +63,7 @@ export const CalendarSlide = ({
 
     const notes = notesAsync.value;
     const existingRoutineNames = notes.flatMap(note => routineTreeUtils
-      .getAllRoutines(note.routienTree)
+      .getAllRoutines(note.routineTree)
       .map(routine => routine.name)
     );
     const routineOptions = Array.from(new Set(existingRoutineNames));

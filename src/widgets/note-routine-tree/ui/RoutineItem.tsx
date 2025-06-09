@@ -10,6 +10,7 @@ import { css } from "@emotion/react";
 import { Notice, Platform } from "obsidian";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { RoutineDndItem } from "../model/dnd-item";
+import { useCheckRoutine } from "../model/use-check-routine";
 import { useRoutineTreeContext } from "../stores/context";
 
 
@@ -25,11 +26,13 @@ type Props = {
 }
 export const RoutineItem = ({
   routine,
-  parent,
+  // parent,
   depth,
 }: Props) => {
   const day = useNoteDayStore(s => s.day);
+  const { handleRoutineClick } = useCheckRoutine(routine);
   const { openRoutineControl } = useRoutineTreeContext();
+
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -42,7 +45,6 @@ export const RoutineItem = ({
 
   const {
     isDragging,
-    isOver,
     dndCase
   } = useDnd({
     dndItem,
@@ -58,6 +60,9 @@ export const RoutineItem = ({
     }
   });
 
+  /**
+   * Context Menu를 열면 routine control을 연다
+   */
   const handleContext = useCallback(async () => {
     // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
     if (day.isPast()) {
@@ -68,10 +73,21 @@ export const RoutineItem = ({
     openRoutineControl(sourceRoutine);
   }, [day, openRoutineControl, routine.name]);
 
+
+  /**
+   * routine을 클릭하면 check하거나 uncheck하는 등의 동작을 수행한다.
+   */
+  const handleClick = useCallback(() => {
+    handleRoutineClick();
+  }, [handleRoutineClick]);
+
+
+
   return (
     <div css={depth !== 0 && indentStyle}>
       <div
         ref={droppableRef}
+        onClick={handleClick}
         onContextMenu={handleContext}
         css={{
           position: "relative",

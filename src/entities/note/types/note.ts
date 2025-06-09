@@ -18,5 +18,5 @@ export type RoutineNote = {
   /**
    * Routine, RoutineGroup을 포함한 Root 배열
    */
-  routienTree: RoutineTree;
+  routineTree: RoutineTree;
 }

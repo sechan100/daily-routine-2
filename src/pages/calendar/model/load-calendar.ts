@@ -18,7 +18,7 @@ const createTileCurried = (routines: Routine[]) => (day: Day, tasks: Task[]): Ti
     .filter(r => isRoutineDueTo(r, day))
     .map(r => ({
       name: r.name,
-      state: "un-checked",
+      state: "unchecked",
     } as Checkable));
 
 

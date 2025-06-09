@@ -26,11 +26,11 @@ export const TasksAndRoutines = ({
   }, [note.tasks.length]);
 
   const routinePanelMinSize = useMemo(() => {
-    if (routineTreeUtils.getAllRoutines(note.routienTree).length === 0) {
+    if (routineTreeUtils.getAllRoutines(note.routineTree).length === 0) {
       return 0;
     }
     return CHECKABLE_GROUP_PANEL_MIN_SIZE;
-  }, [note.routienTree]);
+  }, [note.routineTree]);
 
   // useEffect(() => {
   //   const handler = panelGroupHandleRef.current;
@@ -61,7 +61,7 @@ export const TasksAndRoutines = ({
         />
         <Panel minSize={routinePanelMinSize} order={2}>
           <NoteRoutineTree
-            routineTree={note.routienTree}
+            routineTree={note.routineTree}
             openRoutineControl={routine => openRoutineControlsModal({ routine })}
           />
         </Panel>

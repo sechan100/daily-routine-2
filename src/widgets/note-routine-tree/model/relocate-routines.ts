@@ -1,8 +1,7 @@
-import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, RoutineTree, isNoteRoutineGroup, noteRepository, routineTreeUtils } from "@/entities/note";
+import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, RoutineTree, isNoteRoutineGroup, routineTreeUtils } from "@/entities/note";
 import { Routine, routineRepository } from "@/entities/routine";
 import { UNGROUPED_GROUP_NAME, routineGroupRepository } from "@/entities/routine-group";
 import { RoutineLike } from "@/entities/routine-like";
-import { RoutineTreeBuilder, rippleRoutines } from "@/features/note";
 import { DndCase } from "@/shared/dnd/dnd-case";
 import { ORDER_OFFSET } from "../config";
 import { RoutineDndItem } from "./dnd-item";
@@ -17,10 +16,9 @@ export type RelocateRoutinesArgs = {
 
 
 /**
- * routine들의 위치를 이동시키고, 저장한다.
- * 이를 기반으로 새롭게 routineTree를 빌드하여 반환한다.
+ * routine들의 위치를 이동시키기 위하여 order properties를 변경하고 저장한다.
  */
-export const relocateRoutines = async (tree: RoutineTree, { active, over, dndCase }: RelocateRoutinesArgs): Promise<RoutineTree> => {
+export const relocateRoutines = async (tree: RoutineTree, { active, over, dndCase }: RelocateRoutinesArgs): Promise<void> => {
   const relocator = new RoutineOrderUpdater(tree, dndCase);
 
   if (active.nrlType === "routine-group") {
@@ -43,19 +41,6 @@ export const relocateRoutines = async (tree: RoutineTree, { active, over, dndCas
       await relocator.routineOnRoutine(active.routine, over.routine);
     }
   }
-
-  // === routine 변경사항 반영 ===
-  await rippleRoutines();
-
-  let newTree: RoutineTree;
-  const newNote = await noteRepository.load(tree.day);
-  if (newNote) {
-    newTree = newNote.routienTree;
-  } else {
-    const routineBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
-    newTree = routineBuilder.build(tree.day);
-  }
-  return newTree;
 }
 
 

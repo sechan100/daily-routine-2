@@ -1,7 +1,6 @@
 import { noteRepository, RoutineTree, useNoteDayStore, useRoutineTreeStore } from "@/entities/note";
+import { rippleRoutines, RoutineTreeBuilder } from '@/features/note';
 import { useCallback } from "react";
-import { rippleRoutines } from "./ripple-routines";
-import { RoutineTreeBuilder } from "./routine-tree-builder";
 
 
 
@@ -10,7 +9,7 @@ export type RippleRoutines = () => Promise<void>;
 /**
  * 'rippleRoutine()'을 호출하고, useRoutineTreeStore의 상태를 업데이트한다.
  */
-export const useRippleRoutines = () => {
+export const useRippleRoutineTree = () => {
   const day = useNoteDayStore(s => s.day);
   const setTree = useRoutineTreeStore(s => s.setTree);
 
@@ -19,7 +18,7 @@ export const useRippleRoutines = () => {
     let newRoutineTree: RoutineTree;
     const newNote = await noteRepository.load(day);
     if (newNote) {
-      newRoutineTree = newNote.routienTree;
+      newRoutineTree = newNote.routineTree;
     } else {
       const routineBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
       newRoutineTree = routineBuilder.build(day);

@@ -6,25 +6,27 @@ import { useCallback } from "react";
 import { RoutineDndItem } from "../model/dnd-item";
 import { relocateRoutines } from "../model/relocate-routines";
 import { routineCollisionResolver } from "../model/routine-collision-resolver";
+import { useRippleRoutineTree } from "../model/use-ripple-routines";
 import { renderRoutineTree } from "./render-routine-tree";
 
 
 export const TreeRoot = () => {
   const day = useNoteDayStore(s => s.day);
   const tree = useRoutineTreeStore(s => s.tree);
+  const { ripple } = useRippleRoutineTree();
 
   const handleDragEnd = useCallback(async ({ active, over, dndCase }: OnDragEndContext<RoutineDndItem>) => {
     if (day.isPast()) {
       new Notice("Routine Relocation is only allowed for today or future days.");
       return;
     }
-    const newTree = await relocateRoutines(tree, {
+    await relocateRoutines(tree, {
       active,
       over,
       dndCase,
     });
-    useRoutineTreeStore.setState({ tree: newTree });
-  }, [day, tree]);
+    await ripple();
+  }, [day, ripple, tree]);
 
   return (
     <DndContext

@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { ButtonBase } from "@mui/material";
+import { ButtonBase, TouchRippleActions } from '@mui/material';
+import { useCallback, useRef } from 'react';
 
 
 
@@ -9,6 +10,14 @@ type Props = {
 export const CheckableRippleBase = ({
   children,
 }: Props) => {
+  const touchRippleRef = useRef<TouchRippleActions>(null);
+
+  // touch시에 ripple이 사라지지 않는 버그가 있어서 Actions ref를 사용하여 직접 처리
+  const handleTouchEnd = useCallback(() => {
+    if (touchRippleRef.current) {
+      touchRippleRef.current.stop();
+    }
+  }, []);
 
   return (
     <>
@@ -16,6 +25,8 @@ export const CheckableRippleBase = ({
         LinkComponent={"div"}
         href='#'
         color='primary'
+        onTouchEnd={handleTouchEnd}
+        touchRippleRef={touchRippleRef}
         css={{
           ".MuiTouchRipple-child": {
             backgroundColor: "var(--color-accent-1) !important",
