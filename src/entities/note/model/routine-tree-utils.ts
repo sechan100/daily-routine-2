@@ -16,20 +16,20 @@ class RoutineTreeUtils {
     return null;
   }
 
-  findRoutine(tree: RoutineTree, name: string): NoteRoutine | null {
+  findRoutine(tree: RoutineTree, name: string): NoteRoutine {
     const routineLike = this.findRoutineLike(tree, name);
     if (isNoteRoutine(routineLike)) {
       return routineLike;
     }
-    return null;
+    throw new Error(`Routine with name ${name} not found in the tree`);
   }
 
-  findRoutineGroup(tree: RoutineTree, name: string): NoteRoutineLike | null {
+  findRoutineGroup(tree: RoutineTree, name: string): NoteRoutineGroup {
     const routineLike = this.findRoutineLike(tree, name);
     if (isNoteRoutineGroup(routineLike)) {
       return routineLike;
     }
-    return null;
+    throw new Error(`RoutineGroup with name ${name} not found in the tree`);
   }
 
   /**

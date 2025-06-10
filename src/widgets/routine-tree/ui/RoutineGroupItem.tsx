@@ -36,6 +36,7 @@ export const RoutineGroupItem = ({
    * drag 할 때, 일시적으로 close하는 등의 관리를 위해서 따로 상태로 선언한다.
    */
   const [open, setOpen] = useState(group.isOpen);
+  const [isAllSubRoutineChecked, setIsAllSubRoutineChecked] = useState(group.routines.every(r => r.state === "accomplished"));
   const [mobileDragState, setMobileDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -65,10 +66,8 @@ export const RoutineGroupItem = ({
   });
 
   const handleOpen = useCallback(() => {
-    handleRoutineGroupOpen();
-  }, [handleRoutineGroupOpen]);
-
-  const isAllSubTasksChecked = group.routines.every(r => r.state === 'accomplished');
+    handleRoutineGroupOpen(!group.isOpen);
+  }, [group.isOpen, handleRoutineGroupOpen]);
 
   // dragging 상태에 따라 open 상태를 일시적으로 조정
   useEffect(() => {
@@ -91,6 +90,18 @@ export const RoutineGroupItem = ({
     const sourceRoutineGroup = await routineGroupRepository.load(group.name);
     openRoutineGroupControls(sourceRoutineGroup);
   }, [day, group.name, openRoutineGroupControls]);
+
+  // group이 변경되면 isAllSubRoutineChecked와 open/close 상태를 업데이트
+  useEffect(() => {
+    const newIsAllSubRoutineChecked = group.routines.every(r => r.state === "accomplished");
+    if (!isAllSubRoutineChecked && newIsAllSubRoutineChecked) {
+      setIsAllSubRoutineChecked(true);
+      handleRoutineGroupOpen(false);
+    }
+    else if (!newIsAllSubRoutineChecked) {
+      setIsAllSubRoutineChecked(false);
+    }
+  }, [group.name, group.isOpen, handleRoutineGroupOpen, group.routines, isAllSubRoutineChecked]);
 
   return (
     <Accordion
@@ -140,7 +151,7 @@ export const RoutineGroupItem = ({
           <CheckableFlexContainer excludePadding>
             <CancelLineName
               name={group.name}
-              cancel={isAllSubTasksChecked}
+              cancel={isAllSubRoutineChecked}
             />
             <DragHandleMenu
               ref={draggableRef}
