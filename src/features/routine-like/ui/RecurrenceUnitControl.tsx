@@ -1,32 +1,50 @@
 /** @jsxImportSource @emotion/react */
 import { RecurrenceUnit } from "@/entities/routine";
-import { Button } from "@/shared/components/Button";
+import { Modal } from "@/shared/components/modal/styled";
+import { DayOfWeek } from "@/shared/period/day";
+import { RecurrenceUnitButtons } from "./RecurrenceUnitButtons";
+import { RecurrenceUnitDaysSelector } from "./RecurrenceUnitDaysSelector";
 
 
-type RecurrenceUnitControlProps = {
+
+
+type Props = {
   recurrenceUnit: RecurrenceUnit;
   onRecurrenceUnitChange: (unit: RecurrenceUnit) => void;
+  daysOfWeek: DayOfWeek[];
+  onDaysOfWeekChange: (days: DayOfWeek[]) => void;
+  daysOfMonth: number[];
+  onDaysOfMonthChange: (days: number[]) => void;
 }
 export const RecurrenceUnitControl = ({
   recurrenceUnit,
   onRecurrenceUnitChange,
-}: RecurrenceUnitControlProps) => {
+  daysOfWeek,
+  onDaysOfWeekChange,
+  daysOfMonth,
+  onDaysOfMonthChange,
+}: Props) => {
 
   return (
-    <div>
-      <Button
-        css={{ marginRight: "0.5em" }}
-        variant={recurrenceUnit === "week" ? "accent" : "primary"}
-        onClick={() => onRecurrenceUnitChange("week")}
-      >
-        Week
-      </Button>
-      <Button
-        variant={recurrenceUnit === "month" ? "accent" : "primary"}
-        onClick={() => onRecurrenceUnitChange("month")}
-      >
-        Month
-      </Button>
-    </div>
+    <>
+      <div css={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: '8px',
+      }}>
+        <Modal.Header name='Recurrence Unit' />
+        <RecurrenceUnitButtons
+          recurrenceUnit={recurrenceUnit}
+          onRecurrenceUnitChange={onRecurrenceUnitChange}
+        />
+      </div>
+      <RecurrenceUnitDaysSelector
+        recurrenceUnit={recurrenceUnit}
+        daysOfWeek={daysOfWeek}
+        onDaysOfWeekChange={onDaysOfWeekChange}
+        daysOfMonth={daysOfMonth}
+        onDaysOfMonthChange={onDaysOfMonthChange}
+      />
+    </>
   )
 }

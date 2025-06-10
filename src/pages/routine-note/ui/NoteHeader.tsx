@@ -2,6 +2,8 @@
 import { RoutineNote } from "@/entities/note";
 import { openRoutineNoteFile } from "@/features/note";
 import { STYLES } from "@/shared/colors/styles";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
+import { openCreateRoutineModal } from "@/widgets/create-routine";
 import { useCallback } from "react";
 
 
@@ -17,6 +19,10 @@ export const NodeHeader = ({
   const handleNoteHeaderClick = useCallback(async () => {
     await openRoutineNoteFile(note.day);
   }, [note]);
+
+  const handleCreateRoutineClick = useCallback(() => {
+    openCreateRoutineModal({});
+  }, []);
 
   return (
     <header
@@ -43,8 +49,12 @@ export const NodeHeader = ({
         display: "flex",
         gap: "1.5em",
       }}>
-        {/* <Icon size='21px' icon={addTodoIcon} onClick={() => AddTodoModal.open({})} />
-          <MenuComponent size='21px' onMenuShow={onNoteMenuShow} icon="menu" /> */}
+        <ObsidianIcon
+          size='21px'
+          icon="alarm-clock-plus"
+          onClick={handleCreateRoutineClick}
+          pointer
+        />
       </div>
     </header>
   )

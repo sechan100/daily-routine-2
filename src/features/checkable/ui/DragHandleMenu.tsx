@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { STYLES } from "@/shared/colors/styles";
-import { Icon } from "@/shared/components/Icon";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Touchable } from "@/shared/components/Touchable";
 import { DELAY_TOUCH_START } from "@/shared/dnd/config";
 import { DragState } from "@/shared/dnd/drag-state";
@@ -48,7 +48,7 @@ export const DragHandleMenu = forwardRef<HTMLDivElement, Props>(({
         onPressChange={handlePressChange}
         onAfterLongPressDelay={handleAfterLongPressDelay}
       >
-        <Icon size="20px" color={STYLES.palette.textFaint} icon={"menu"} />
+        <ObsidianIcon size="20px" color={STYLES.palette.textFaint} icon={"menu"} />
       </Touchable>
     </div>
   )

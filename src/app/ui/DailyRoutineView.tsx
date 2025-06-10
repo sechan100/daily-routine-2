@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Icon } from "@/shared/components/Icon";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { AppDndProvider } from "@/shared/dnd/AppDndProvider";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
@@ -84,21 +84,21 @@ export const DailyRoutineView = () => {
           <TabNavItem
             label="Note"
             value={"note"}
-            icon={<Icon icon="notebook-pen" />}
+            icon={<ObsidianIcon icon="notebook-pen" />}
             iconPosition="start"
             css={tabCss}
           />
           <TabNavItem
             label="Calendar"
             value={"calendar"}
-            icon={<Icon icon="calendar-check-2" />}
+            icon={<ObsidianIcon icon="calendar-check-2" />}
             iconPosition="start"
             css={tabCss}
           />
           <TabNavItem
             label="Achivement"
             value={"achivement"}
-            icon={<Icon icon="book-check" />}
+            icon={<ObsidianIcon icon="book-check" />}
             iconPosition="start"
             css={tabCss}
           />

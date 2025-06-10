@@ -6,7 +6,7 @@ import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { Platform } from "obsidian";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 
 type Props = {
@@ -38,9 +38,18 @@ export const TaskItem = ({
     }
   });
 
+  const handleClick = useCallback(() => {
+  }, []);
+
+  const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  }, []);
+
   return (
     <div
       ref={droppableRef}
+      onClick={handleClick}
+      onContextMenu={handleContext}
       css={{
         position: "relative",
         touchAction: "none",

@@ -1,12 +1,12 @@
 import { RecurrenceUnitControl } from "@/features/routine-like";
 import { Control, useController } from "react-hook-form";
-import { RoutineForm } from "../model/routine-form";
+import { CreateRoutineForm } from "../model/create-routine-form";
 
 
 
 
 type Props = {
-  control: Control<RoutineForm>
+  control: Control<CreateRoutineForm>
 }
 export const ControlledRecurrenceUnitControl = ({
   control,

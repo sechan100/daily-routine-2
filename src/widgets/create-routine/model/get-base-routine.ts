@@ -9,7 +9,7 @@ const initialContent = dedent`
 %% Please do not modify the content below. It may damage your Routine data. %%
 `;
 
-export const createDefaultRoutine = (): Routine => ({
+export const getbaseRoutine = (): Routine => ({
   name: "",
   link: "",
   userContent: initialContent,

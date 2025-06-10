@@ -3,7 +3,7 @@ import { NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineGroupRepository } from "@/entities/routine-group";
 import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/styles";
-import { Icon } from "@/shared/components/Icon";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
@@ -127,7 +127,7 @@ export const RoutineGroupItem = ({
       >
         <AccordionSummary
           component={'div'}
-          expandIcon={<Icon icon='chevron-right' />}
+          expandIcon={<ObsidianIcon icon='chevron-right' />}
           css={{
             padding: checkableStyle.padding,
             minHeight: "0 !important",

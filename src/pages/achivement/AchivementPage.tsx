@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Icon } from "@/shared/components/Icon";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Month } from "@/shared/period/month";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { NoteAchivementWidget } from "@/widgets/note-achivement";
@@ -47,14 +47,14 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
         <TabNavItem
           label="Note"
           value={"note"}
-          icon={<Icon icon="notebook-pen" />}
+          icon={<ObsidianIcon icon="notebook-pen" />}
           iconPosition="start"
           css={tabCss}
         />
         <TabNavItem
           label="Routine"
           value={"routine"}
-          icon={<Icon icon="alarm-clock-check" />}
+          icon={<ObsidianIcon icon="alarm-clock-check" />}
           iconPosition="start"
           css={tabCss}
         />

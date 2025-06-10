@@ -63,7 +63,8 @@ export const RoutineItem = ({
   /**
    * Context Menu를 열면 routine control을 연다
    */
-  const handleContext = useCallback(async () => {
+  const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
     if (day.isPast()) {
       new Notice("Routine control cannot be opened for past routines.");
