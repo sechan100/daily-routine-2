@@ -23,7 +23,10 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
     if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
       if (note) {
-        progress = getNoteProgress(note);
+        progress = getNoteProgress({
+          tasks: note.tasks,
+          routineTree: note.routineTree,
+        });
       }
     }
     return (

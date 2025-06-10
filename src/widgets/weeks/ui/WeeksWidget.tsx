@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { getNoteProgress, RoutineNote, useNoteDayStore } from "@/entities/note";
+import { getNoteProgress, useNoteDayStore, useRoutineTreeStore, useTasksStore } from "@/entities/note";
 import { VirtualSwiper } from "@/shared/components/VirtualSwiper";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
@@ -14,17 +14,17 @@ import { WeeksActiveDayContextProvider } from "./WeeksContext";
 
 
 interface WeeksProps {
-  note: RoutineNote;
   className?: string;
 }
 export const WeeksWidget = ({
-  note,
   className,
 }: WeeksProps) => {
+  const activeDay = useNoteDayStore(state => state.day);
   const setDay = useNoteDayStore(state => state.setDay);
-  const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
-  const currentNoteProgress = useMemo(() => getNoteProgress(note), [note]);
+  const routineTree = useRoutineTreeStore(state => state.tree);
+  const tasks = useTasksStore(state => state.tasks);
+  const currentNoteProgress = useMemo(() => getNoteProgress({ tasks, routineTree }), [routineTree, tasks]);
   const [weeks, setWeeks] = useState<WeekNode[]>([]);
   const { leafBgColor } = useLeaf();
 

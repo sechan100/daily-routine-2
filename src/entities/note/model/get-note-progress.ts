@@ -1,6 +1,7 @@
+import { Task } from "@/entities/task";
 import { Checkable } from "../../checkable/types/checkable";
-import { RoutineNote } from "../types/note";
 import { CheckableGroupProgress, NoteProgress } from "../types/progress";
+import { RoutineTree } from "../types/routine-tree";
 import { routineTreeUtils } from "./routine-tree-utils";
 
 
@@ -17,12 +18,16 @@ const getCheckableGroupProgress = (checkables: Checkable[]): CheckableGroupProgr
     uncompletedPct: total === 0 ? 0 : (uncompleted / total) * 100,
     accomplished,
     accomplishedPct: total === 0 ? 0 : (accomplished / total) * 100,
-  };
+  }
 }
 
-export const getNoteProgress = (note: RoutineNote): NoteProgress => {
-  const tasks = note.tasks;
-  const routines = routineTreeUtils.getAllRoutines(note.routineTree);
+
+type GetNoteProgressArgs = {
+  tasks: Task[];
+  routineTree: RoutineTree;
+}
+export const getNoteProgress = ({ tasks, routineTree }: GetNoteProgressArgs): NoteProgress => {
+  const routines = routineTreeUtils.getAllRoutines(routineTree);
   const checkables: Checkable[] = [...tasks, ...routines];
   const totalCheckable = checkables.length;
   const completedCheckable = checkables.filter(t => t.state !== "unchecked").length;

@@ -33,7 +33,7 @@ export const RoutineItem = ({
   const { handleRoutineCheck } = useCheckRoutine(routine);
   const { openRoutineControls } = useRoutineTreeContext();
 
-  const [dragState, setDragState] = useState<DragState>("idle");
+  const [mobileDragState, setMobileDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +50,7 @@ export const RoutineItem = ({
     dndItem,
     draggable: {
       type: "ROUTINE",
-      canDrag: Platform.isMobile ? dragState === "ready" : true,
+      canDrag: Platform.isMobile ? mobileDragState === "ready" : true,
       ref: draggableRef
     },
     droppable: {
@@ -92,7 +92,7 @@ export const RoutineItem = ({
         css={{
           position: "relative",
           touchAction: "none",
-          backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
+          backgroundColor: isDragging || mobileDragState === "ready" ? STYLES.palette.accent : undefined,
         }}
       >
         <CheckableRippleBase>
@@ -100,8 +100,8 @@ export const RoutineItem = ({
             <CheckableArea checkable={routine} />
             <DragHandleMenu
               ref={draggableRef}
-              dragState={dragState}
-              setDragState={setDragState}
+              dragState={mobileDragState}
+              setDragState={setMobileDragState}
             />
           </CheckableFlexContainer>
         </CheckableRippleBase>

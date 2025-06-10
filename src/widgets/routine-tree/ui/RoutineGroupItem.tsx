@@ -30,7 +30,13 @@ export const RoutineGroupItem = ({
   const day = useNoteDayStore(s => s.day);
   const { openRoutineGroupControls } = useRoutineTreeContext();
   const { handleRoutineGroupOpen } = useOpenRoutineGroup(group);
-  const [dragState, setDragState] = useState<DragState>("idle");
+
+  /**
+   * open/close 상태를 관리하기 위한 상태.
+   * drag 할 때, 일시적으로 close하는 등의 관리를 위해서 따로 상태로 선언한다.
+   */
+  const [open, setOpen] = useState(group.isOpen);
+  const [mobileDragState, setMobileDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +54,7 @@ export const RoutineGroupItem = ({
     dndItem,
     draggable: {
       type: "GROUP",
-      canDrag: Platform.isMobile ? dragState === "ready" : true,
+      canDrag: Platform.isMobile ? mobileDragState === "ready" : true,
       ref: draggableRef
     },
     droppable: {
@@ -64,10 +70,14 @@ export const RoutineGroupItem = ({
 
   const isAllSubTasksChecked = group.routines.every(r => r.state === 'accomplished');
 
-  // dragging 상태에 따라 isOpen 상태를 조정
+  // dragging 상태에 따라 open 상태를 일시적으로 조정
   useEffect(() => {
-    // handleOpen(!isDragging);
-  }, [handleOpen, group.routines, isDragging]);
+    if (isDragging) {
+      setOpen(false);
+    } else {
+      setOpen(group.isOpen);
+    }
+  }, [handleOpen, group.routines, isDragging, group.isOpen]);
 
   /**
    * Context Menu를 열면 routine control을 연다
@@ -86,7 +96,7 @@ export const RoutineGroupItem = ({
     <Accordion
       disableGutters
       elevation={0}
-      expanded={group.isOpen}
+      expanded={open}
       onChange={handleOpen}
       css={{
         backgroundColor: bgColor,
@@ -101,7 +111,7 @@ export const RoutineGroupItem = ({
         css={{
           position: "relative",
           touchAction: "none",
-          backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
+          backgroundColor: isDragging || mobileDragState === "ready" ? STYLES.palette.accent : undefined,
         }}
       >
         <AccordionSummary
@@ -134,8 +144,8 @@ export const RoutineGroupItem = ({
             />
             <DragHandleMenu
               ref={draggableRef}
-              dragState={dragState}
-              setDragState={setDragState}
+              dragState={mobileDragState}
+              setDragState={setMobileDragState}
             />
           </CheckableFlexContainer>
         </AccordionSummary>
