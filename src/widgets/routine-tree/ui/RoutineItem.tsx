@@ -31,7 +31,7 @@ export const RoutineItem = ({
 }: Props) => {
   const day = useNoteDayStore(s => s.day);
   const { handleRoutineCheck } = useCheckRoutine(routine);
-  const { openRoutineControl } = useRoutineTreeContext();
+  const { openRoutineControls } = useRoutineTreeContext();
 
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
@@ -70,8 +70,8 @@ export const RoutineItem = ({
       return;
     }
     const sourceRoutine = await routineRepository.load(routine.name);
-    openRoutineControl(sourceRoutine);
-  }, [day, openRoutineControl, routine.name]);
+    openRoutineControls(sourceRoutine);
+  }, [day, openRoutineControls, routine.name]);
 
 
   /**

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RecurrenceUnitControl, RecurrenceUnitDaysSelector } from "@/features/routine";
+import { RecurrenceUnitControl, RecurrenceUnitDaysSelector } from "@/features/routine-like";
 import { Modal } from "@/shared/components/modal/styled";
 import { Control, useController } from "react-hook-form";
 import { RoutineForm } from "../model/routine-form";

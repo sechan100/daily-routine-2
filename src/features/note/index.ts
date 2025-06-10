@@ -1,7 +1,7 @@
 
 
 // model
-export { useRippleRoutineTree } from "../../widgets/note-routine-tree/model/use-ripple-routines";
+export { useRippleRoutineTree } from "../../widgets/routine-tree/model/use-ripple-routines";
 export { createRoutineNote } from "./model/create-routine-note";
 export { ensureRoutineNote } from "./model/ensure-routine-note";
 export { isRoutineDueTo } from "./model/is-routine-due-to";

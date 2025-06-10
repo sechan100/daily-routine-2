@@ -2,13 +2,13 @@ import { OBSIDIAN_FILE_TITLE_INVALID_CHARS_REGEX } from "@/shared/file/obsidian-
 
 
 
-export class RoutineNameValidator {
+export class RoutineLikeNameValidator {
   private otherNames: Set<string>;
-  private previousName: string | null;
+  private currentName: string | null;
 
-  constructor(allNames: string[], previousName: string | null) {
-    this.otherNames = previousName ? new Set(allNames.filter(name => name !== previousName)) : new Set(allNames);
-    this.previousName = previousName;
+  constructor(allNames: string[], currentName: string | null) {
+    this.otherNames = currentName ? new Set(allNames.filter(name => name !== currentName)) : new Set(allNames);
+    this.currentName = currentName;
   }
 
   validate(name: string): string | undefined {
@@ -22,7 +22,7 @@ export class RoutineNameValidator {
     }
     // other names
     if (this.otherNames.has(name)) {
-      return "Routine with this name already exists.";
+      return `Name "${name}" already exists.`;
     }
     return undefined;
   }

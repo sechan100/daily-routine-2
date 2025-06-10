@@ -1,11 +1,13 @@
 import { Routine } from "@/entities/routine";
+import { RoutineGroup } from "@/entities/routine-group";
 import { createContext, useContext } from "react";
 
 
 
 
 export type RoutineTreeContextType = {
-  openRoutineControl: (routine: Routine) => void;
+  openRoutineControls: (routine: Routine) => void;
+  openRoutineGroupControls: (group: RoutineGroup) => void;
 }
 
 export const RoutineTreeContext = createContext<RoutineTreeContextType | null>(null);

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Routine, RoutineProperties, routineRepository } from '@/entities/routine';
 import { useRippleRoutineTree } from '@/features/note';
-import { RoutineNameValidator } from '@/features/routine';
+import { RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
 import { Modal } from '@/shared/components/modal/styled';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
@@ -39,14 +39,14 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
     mode: "onChange"
   });
 
-  const routineNameValidator = useRef<RoutineNameValidator | null>(null);
+  const routineNameValidator = useRef<RoutineLikeNameValidator | null>(null);
   useEffect(() => {
     if (routineNameValidator.current) {
       return;
     }
     const initializeValidator = async () => {
       const routines = await routineRepository.loadAll();
-      const validator = new RoutineNameValidator(routines.map(r => r.name), routine.name);
+      const validator = new RoutineLikeNameValidator(routines.map(r => r.name), routine.name);
       routineNameValidator.current = validator;
     }
     initializeValidator();

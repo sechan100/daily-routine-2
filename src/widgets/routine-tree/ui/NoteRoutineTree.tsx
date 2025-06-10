@@ -1,5 +1,6 @@
 import { RoutineTree, useRoutineTreeStore } from '@/entities/note';
 import { Routine } from '@/entities/routine';
+import { RoutineGroup } from '@/entities/routine-group';
 import { useEffect, useRef } from 'react';
 import { RoutineTreeContext, RoutineTreeContextType } from '../model/context';
 import { TreeRoot } from "./TreeRoot";
@@ -12,16 +13,19 @@ type Props = {
   /**
    * 제공된 routine에 대한 routine control을 여는 함수
    */
-  openRoutineControl: (routine: Routine) => void;
+  openRoutineControls: (routine: Routine) => void;
+  openRoutineGroupControls: (group: RoutineGroup) => void;
 }
 export const NoteRoutineTree = ({
   routineTree,
-  openRoutineControl,
+  openRoutineControls,
+  openRoutineGroupControls
 }: Props) => {
   const setTree = useRoutineTreeStore(state => state.setTree);
 
   const context = useRef<RoutineTreeContextType>({
-    openRoutineControl,
+    openRoutineControls,
+    openRoutineGroupControls
   });
 
   useEffect(() => {

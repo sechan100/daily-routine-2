@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { NoteRoutineGroup } from "@/entities/note";
+import { NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
+import { routineGroupRepository } from "@/entities/routine-group";
 import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/styles";
 import { Icon } from "@/shared/components/Icon";
@@ -8,8 +9,9 @@ import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
-import { Platform } from "obsidian";
+import { Notice, Platform } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRoutineTreeContext } from "../model/context";
 import { RoutineDndItem } from "../model/dnd-item";
 import { useOpenRoutineGroup } from "../model/use-open-routine-group";
 import { renderRoutineTree } from "./render-routine-tree";
@@ -25,6 +27,8 @@ export const RoutineGroupItem = ({
   depth,
 }: Props) => {
   const bgColor = useLeaf(s => s.leafBgColor);
+  const day = useNoteDayStore(s => s.day);
+  const { openRoutineGroupControls } = useRoutineTreeContext();
   const { handleRoutineGroupOpen } = useOpenRoutineGroup(group);
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
@@ -65,6 +69,19 @@ export const RoutineGroupItem = ({
     // handleOpen(!isDragging);
   }, [handleOpen, group.routines, isDragging]);
 
+  /**
+   * Context Menu를 열면 routine control을 연다
+   */
+  const handleContext = useCallback(async () => {
+    // 과거의 RoutineGroup은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
+    if (day.isPast()) {
+      new Notice("Routine group control cannot be opened for past routines.");
+      return;
+    }
+    const sourceRoutineGroup = await routineGroupRepository.load(group.name);
+    openRoutineGroupControls(sourceRoutineGroup);
+  }, [day, group.name, openRoutineGroupControls]);
+
   return (
     <Accordion
       disableGutters
@@ -80,6 +97,7 @@ export const RoutineGroupItem = ({
     >
       <div
         ref={droppableRef}
+        onContextMenu={handleContext}
         css={{
           position: "relative",
           touchAction: "none",
@@ -103,6 +121,10 @@ export const RoutineGroupItem = ({
             [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]: {
               transform: 'rotate(90deg)',
             },
+            // ripple 남아있는 버그 해결
+            [`&.Mui-focusVisible`]: {
+              background: "unset !important",
+            }
           }}
         >
           <CheckableFlexContainer excludePadding>

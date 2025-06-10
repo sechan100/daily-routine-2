@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote, routineTreeUtils } from "@/entities/note";
-import { NoteRoutineTree } from "@/widgets/note-routine-tree";
 import { NoteTaskList } from "@/widgets/note-tasks";
 import { openRoutineControlsModal } from "@/widgets/routine-controls";
+import { openRoutineGroupControlsModal } from "@/widgets/routine-group-controls";
+import { NoteRoutineTree } from "@/widgets/routine-tree";
 import { useMemo, useRef } from "react";
 import { ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
@@ -62,7 +63,8 @@ export const TasksAndRoutines = ({
         <Panel minSize={routinePanelMinSize} order={2}>
           <NoteRoutineTree
             routineTree={note.routineTree}
-            openRoutineControl={routine => openRoutineControlsModal({ routine })}
+            openRoutineControls={routine => openRoutineControlsModal({ routine })}
+            openRoutineGroupControls={group => openRoutineGroupControlsModal({ group })}
           />
         </Panel>
       </PanelGroup>
