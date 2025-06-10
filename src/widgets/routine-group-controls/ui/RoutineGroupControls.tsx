@@ -19,10 +19,11 @@ export const openRoutineGroupControlsModal = createModal(({ group }: Props) => {
   const { ripple } = useRippleRoutineTree();
   const modal = useModal();
   const {
+    reset,
     control,
     handleSubmit,
     formState: { isValid, isDirty },
-    getFieldState
+    getFieldState,
   } = useForm<RoutineGroupForm>({
     defaultValues: {
       name: group.name,
@@ -50,8 +51,9 @@ export const openRoutineGroupControlsModal = createModal(({ group }: Props) => {
       await renameRoutineGroup(group.name, form.name);
     }
     await ripple();
+    reset();
     modal.close();
-  }, [getFieldState, group.name, modal, ripple]);
+  }, [getFieldState, group.name, modal, reset, ripple]);
 
   return (
     <Modal header='Routine Group Controls'>

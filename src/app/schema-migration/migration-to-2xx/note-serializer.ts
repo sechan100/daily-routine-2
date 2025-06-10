@@ -127,6 +127,8 @@ const serializeRoutineTask = (routineTask: RoutineTask) => {
     type: routineTask.taskType,
     soc: Number(routineTask.showOnCalendar)
   }
+  // const link = SETTINGS.getRoutineFolderPath() + '/' + routineTask.name;
+  // return `- [${s}] [[${link}|${routineTask.name}]]`;
   return `- [${s}] [[${routineTask.name}]]`;
 }
 

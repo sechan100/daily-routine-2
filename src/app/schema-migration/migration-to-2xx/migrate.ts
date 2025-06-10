@@ -31,20 +31,18 @@ export const isRequireMigration = async (): Promise<boolean> => {
 
 
 export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) => {
-  // 기존 폴더 복제
+  // 기존 routineFolder를 복사하여 백업
   const dailyRoutineFolder = fileAccessor.loadFolder(SETTINGS.getDailyRoutineFolderPath());
   if (!dailyRoutineFolder) {
     return;
   }
-  const newDailyRoutineFolderPath = `${dailyRoutineFolder.name}-backup`;
-  const existingBackupFolder = fileAccessor.loadFolder(newDailyRoutineFolderPath);
-  // DEVONLY
-  if (existingBackupFolder) {
-    getPlugin().app.fileManager.trashFile(existingBackupFolder);
-  }
-  const newDailyRoutineFolder = await getPlugin().app.vault.copy(dailyRoutineFolder, newDailyRoutineFolderPath);
+  const backupFolderPath = `${dailyRoutineFolder.name}-backup`;
+  const vault = getPlugin().app.vault;
+  const backupFolder = await vault.copy(dailyRoutineFolder, backupFolderPath);
+
+  // ===== migration을 위한 기존 폴더의 데이터들 수집 ======
   const getNoteFolder = () => {
-    const noteFolder = fileAccessor.loadFolder(newDailyRoutineFolder.path + "/notes");
+    const noteFolder = fileAccessor.loadFolder(dailyRoutineFolder.path + "/notes");
     if (!noteFolder) {
       new Notice("Daily routine note folder not found. Please check your settings.");
       throw new Error("Daily routine note folder not found.");
@@ -52,18 +50,17 @@ export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) 
     return noteFolder;
   }
   const getRoutineFolder = () => {
-    const routineFolder = fileAccessor.loadFolder(newDailyRoutineFolder.path + "/routines");
+    const routineFolder = fileAccessor.loadFolder(dailyRoutineFolder.path + "/routines");
     if (!routineFolder) {
       new Notice("Daily routine routine folder not found. Please check your settings.");
       throw new Error("Daily routine routine folder not found.");
     }
     return routineFolder;
   }
-
+  // 데이터 준비
   const routines: TFile[] = [];
   const groups: TFile[] = [];
   const notes: TFile[] = getNoteFolder().children.filter(file => file instanceof TFile) as TFile[];
-
   const allRoutineOrGroupFiles = getRoutineFolder();
   for (const file of allRoutineOrGroupFiles.children) {
     if (file instanceof TFile) {
@@ -78,7 +75,7 @@ export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) 
       throw new Error(error);
     }
   }
-
+  // 진행률 표시를 위한 함수
   const totalFiles = routines.length + groups.length + notes.length;
   let processedFiles = 0;
   const updateProgress = () => {
@@ -86,7 +83,7 @@ export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) 
     const percentage = Math.floor((processedFiles / totalFiles) * 100);
     updatePercentage(percentage);
   }
-
+  // START MIGRATION!
   for (const r of routines) {
     await migrateRoutine(r);
     updateProgress();

@@ -21,10 +21,9 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
   const { ripple } = useRippleRoutineTree();
   const modal = useModal();
   const {
-    register,
+    reset,
     control,
     handleSubmit,
-    resetField,
     formState: { isValid, isDirty },
     getFieldState
   } = useForm<RoutineForm>({
@@ -53,11 +52,6 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
   }, [routine.name]);
 
   const handleSave = useCallback(async (form: RoutineForm) => {
-    // 이름 변경
-    const isNameDirty = getFieldState('name').isDirty;
-    if (isNameDirty) {
-      await routineRepository.rename(routine.name, form.name);
-    }
     // 속성 변경
     const newProperties: RoutineProperties = {
       ...routine.properties,
@@ -68,9 +62,15 @@ export const openRoutineControlsModal = createModal(({ routine }: Props) => {
       enabled: form.enabled,
     }
     await routineRepository.updateProperties(routine.name, newProperties);
+    // 이름 변경
+    const isNameDirty = getFieldState('name').isDirty;
+    if (isNameDirty) {
+      await routineRepository.rename(routine.name, form.name);
+    }
     await ripple();
+    reset();
     modal.close();
-  }, [getFieldState, modal, ripple, routine.name, routine.properties]);
+  }, [getFieldState, modal, reset, ripple, routine.name, routine.properties]);
 
   return (
     <Modal header='Routine Controls'>

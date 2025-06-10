@@ -23,11 +23,12 @@ export const deserializeNoteRoutine = (routineLine: string): NoteRoutine => {
   routineLine = routineLine.trim();
   if (routineLine === '') throw deserializeError("routine line is empty");
   // 체크박스인 [] 안에 들어갈 수 있는 문자들 (' ', 'x', 'X', 'f', 'F' 등)
-  const avaliableCheckMarkChars = [' ', ...checkboxChars.accomplished, ...checkboxChars.failed];
-  const regex = new RegExp(`-\\s*\\[(${avaliableCheckMarkChars.join('|')})\\]\\s*(\\[\\[(.*?)\\]\\]|(.*?))`);
+  const availableCheckMarkChars = [' ', ...checkboxChars.accomplished, ...checkboxChars.failed];
+  const regex = new RegExp(`-\\s*\\[(${availableCheckMarkChars.join('|')})\\]\\s*(?:\\[\\[(.*?)\\]\\]|.*?)`);
   const match = routineLine.match(regex);
   if (!match) throw deserializeError('invalid routine line format');
-  const name = match[3] || match[4];
+  // match[2]의 맨 뒤의 '/'뒤에 오는 이름을 추출한다.
+  const name = match[2].includes('/') ? (match[2].split('/').pop()?.trim() || '') : match[2].trim();
   const state: CheckableState = deserializeCheckableState(match[1]);
   return {
     name,
