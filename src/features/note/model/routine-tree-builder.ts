@@ -88,7 +88,6 @@ export class RoutineTreeBuilder {
     });
 
     return {
-      day,
       root
     }
   }

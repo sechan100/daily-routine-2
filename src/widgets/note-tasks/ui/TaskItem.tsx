@@ -7,6 +7,8 @@ import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { Platform } from "obsidian";
 import { useCallback, useRef, useState } from "react";
+import { useNoteTasksContext } from "../model/context";
+import { useCheckTask } from "../model/use-check-routine";
 
 
 type Props = {
@@ -15,6 +17,9 @@ type Props = {
 export const TaskItem = ({
   task,
 }: Props) => {
+  const { handleTaskCheck } = useCheckTask(task);
+  const { openTaskControls } = useNoteTasksContext();
+
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -38,12 +43,14 @@ export const TaskItem = ({
     }
   });
 
-  const handleClick = useCallback(() => {
-  }, []);
+  const handleClick = useCallback(async () => {
+    await handleTaskCheck();
+  }, [handleTaskCheck]);
 
   const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-  }, []);
+    openTaskControls(task);
+  }, [openTaskControls, task]);
 
   return (
     <div

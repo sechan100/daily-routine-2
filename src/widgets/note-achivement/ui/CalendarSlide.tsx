@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { getNoteProgress, noteRepository, ZERO_NOTE_PROGRESS } from "@/entities/note";
+import { getNoteProgress, noteRepository, useNoteDayStore, ZERO_NOTE_PROGRESS } from "@/entities/note";
 import { NoteProgressCircle } from "@/features/note";
 import { BaseCalendar } from "@/shared/components/BaseCalendar";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
-import { useTabRoute } from "@/shared/tab/use-tab-route";
+import { useRouter } from "@/shared/route/use-router";
 import { useAsync } from "@/shared/utils/use-async";
 import { Badge } from "@mui/material";
 import { useCallback } from "react";
@@ -15,7 +15,7 @@ interface CalendarSlideProps {
 }
 export const CalendarSlide = ({ month }: CalendarSlideProps) => {
   const notesAsync = useAsync(async () => await noteRepository.loadBetween(month.startDay, month.endDay), [month]);
-  const route = useTabRoute(s => s.route);
+  const { route } = useRouter();
 
   const tile = useCallback((day: Day) => {
     if (day.month !== month.monthNum) return <></>;
@@ -23,10 +23,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
     if (notesAsync.value) {
       const note = notesAsync.value.find(note => note.day.isSameDay(day));
       if (note) {
-        progress = getNoteProgress({
-          tasks: note.tasks,
-          routineTree: note.routineTree,
-        });
+        progress = getNoteProgress(note);
       }
     }
     return (
@@ -50,7 +47,8 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
 
 
   const onTileClick = useCallback((day: Day) => {
-    route("note", { day });
+    useNoteDayStore.getState().setDay(day);
+    route("note");
   }, [route]);
 
 

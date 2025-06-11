@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
+import { useAchivementMonthStore } from "@/features/achivement";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
-import { Month } from "@/shared/period/month";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { NoteAchivementWidget } from "@/widgets/note-achivement";
 import { RoutineAchivementWidget } from "@/widgets/routine-achivement";
@@ -20,11 +20,8 @@ const tabCss = css({
   height: "50px",
   width: "50%",
 })
-
-export interface AchivementPageProps {
-  month: Month;
-}
-export const AchivementPage = ({ month }: AchivementPageProps) => {
+export const AchivementPage = () => {
+  const { month } = useAchivementMonthStore();
   const [type, setType] = useState<AchivementType>("note");
   const { leafBgColor } = useLeaf();
 

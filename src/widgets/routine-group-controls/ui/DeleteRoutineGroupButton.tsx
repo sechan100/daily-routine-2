@@ -1,5 +1,5 @@
 import { RoutineGroup } from "@/entities/routine-group";
-import { useRippleRoutineTree } from "@/features/note";
+import { useRoutineTree } from "@/features/note";
 import { deleteRoutineGroup } from "@/features/routine-like";
 import { Button } from "@/shared/components/Button";
 import { useModal } from "@/shared/components/modal";
@@ -16,7 +16,7 @@ type Props = {
 export const DeleteRoutineGroupButton = ({
   group,
 }: Props) => {
-  const { ripple } = useRippleRoutineTree();
+  const { ripple } = useRoutineTree();
   const modal = useModal();
 
   const handleDelete = useCallback(async () => {

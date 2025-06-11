@@ -1,1 +1,1 @@
-export { DailyRoutineObsidianView } from "./obsidian-view";
+export { DailyRoutineObsidianView } from "./ui/obsidian-view";

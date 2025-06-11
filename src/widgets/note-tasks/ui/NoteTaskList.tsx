@@ -1,26 +1,24 @@
-import { Task, useTasksStore } from "@/entities/note";
-import { Day } from "@/shared/period/day";
-import { useEffect } from "react";
+import { Task } from "@/entities/task";
+import { useMemo } from "react";
+import { NoteTasksContext, NoteTasksContextType } from "../model/context";
 import { TaskListRoot } from "./TaskListRoot";
 
 
 
 
-type Props = {
-  day: Day;
-  tasks: Task[];
+type NoteTaskListProps = {
+  openTaskControls: (task: Task) => void;
 }
 export const NoteTaskList = ({
-  day,
-  tasks,
-}: Props) => {
-  const setTasks = useTasksStore(s => s.setTasks);
-
-  useEffect(() => {
-    setTasks(tasks);
-  }, [day, setTasks, tasks]);
+  openTaskControls
+}: NoteTaskListProps) => {
+  const context = useMemo<NoteTasksContextType>(() => ({
+    openTaskControls
+  }), [openTaskControls]);
 
   return (
-    <TaskListRoot />
+    <NoteTasksContext.Provider value={context}>
+      <TaskListRoot />
+    </NoteTasksContext.Provider>
   )
 }

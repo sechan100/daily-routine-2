@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Routine, routineRepository } from '@/entities/routine';
-import { useRippleRoutineTree } from '@/features/note';
+import { useRoutineTree } from '@/features/note';
 import { RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
 import { Modal } from '@/shared/components/modal/styled';
@@ -14,7 +14,7 @@ import { ControlledRecurrenceUnitControl } from './ControlledRecurrenceUnitContr
 
 
 export const openCreateRoutineModal = createModal(() => {
-  const { ripple } = useRippleRoutineTree();
+  const { ripple } = useRoutineTree();
   const modal = useModal();
   const baseRoutineRef = useRef(getbaseRoutine());
   const baseRoutine = baseRoutineRef.current;

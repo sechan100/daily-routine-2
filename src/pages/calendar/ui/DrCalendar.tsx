@@ -1,5 +1,5 @@
+import { useCalendarMonthStore } from '@/features/calendar';
 import { SwipeableCalendar } from "@/shared/components/swipeable-calender/SwipeableCalendar";
-import { Month } from "@/shared/period/month";
 import { useTabHeight } from "@/shared/use-tab-height";
 import { CalendarSlide } from "./CalendarSlide";
 import { TileConfigProvider } from "./tile-config-context";
@@ -7,10 +7,8 @@ import { TileConfigProvider } from "./tile-config-context";
 
 
 
-export interface CalendarPageProps {
-  month: Month;
-}
-export const TaskCalendar = ({ month }: CalendarPageProps) => {
+export const DrCalendar = () => {
+  const month = useCalendarMonthStore(s => s.month);
   const tabHeight = useTabHeight();
 
   return (
@@ -19,11 +17,7 @@ export const TaskCalendar = ({ month }: CalendarPageProps) => {
         month={month}
         verticalHeight={tabHeight}
       >
-        {month => (
-          <CalendarSlide
-            month={month}
-          />
-        )}
+        {m => <CalendarSlide month={m} />}
       </SwipeableCalendar>
     </TileConfigProvider>
   )

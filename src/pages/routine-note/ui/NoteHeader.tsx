@@ -1,28 +1,22 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote } from "@/entities/note";
-import { openRoutineNoteFile } from "@/features/note";
+import { useNoteDayStore } from "@/entities/note";
+import { openRoutineNoteFile, useRoutineNoteQuery } from "@/features/note";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { openCreateRoutineModal } from "@/widgets/create-routine";
+import { openCreateRoutineGroupModal } from "@/widgets/create-routine-group";
 import { useCallback } from "react";
 
 
 
 
-type Props = {
-  note: RoutineNote;
-}
-export const NodeHeader = ({
-  note,
-}: Props) => {
+export const NodeHeader = () => {
+  const day = useNoteDayStore(state => state.day);
+  const { note } = useRoutineNoteQuery(day);
 
   const handleNoteHeaderClick = useCallback(async () => {
     await openRoutineNoteFile(note.day);
   }, [note]);
-
-  const handleCreateRoutineClick = useCallback(() => {
-    openCreateRoutineModal({});
-  }, []);
 
   return (
     <header
@@ -52,7 +46,13 @@ export const NodeHeader = ({
         <ObsidianIcon
           size='21px'
           icon="alarm-clock-plus"
-          onClick={handleCreateRoutineClick}
+          onClick={() => openCreateRoutineModal({})}
+          pointer
+        />
+        <ObsidianIcon
+          size='21px'
+          icon="folder"
+          onClick={() => openCreateRoutineGroupModal({})}
           pointer
         />
       </div>

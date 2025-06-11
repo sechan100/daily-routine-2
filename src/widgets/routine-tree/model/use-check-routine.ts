@@ -1,4 +1,5 @@
-import { CheckableState, noteRepository, NoteRoutine, RoutineNote, RoutineTree, routineTreeUtils, useNoteDayStore, useRoutineTreeStore } from "@/entities/note";
+import { CheckableState, NoteRoutine, RoutineTree, routineTreeUtils } from "@/entities/note";
+import { useRoutineTree } from '@/features/note';
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { SETTINGS } from "@/shared/settings";
 import { produce } from "immer";
@@ -12,9 +13,7 @@ type UseCheckRoutine = (noteRoutine: NoteRoutine) => {
   handleRoutineCheck: () => void;
 }
 export const useCheckRoutine: UseCheckRoutine = (noteRoutine) => {
-  const day = useNoteDayStore(s => s.day);
-  const tree = useRoutineTreeStore(s => s.tree);
-  const setTree = useRoutineTreeStore(s => s.setTree);
+  const { updateTree, tree } = useRoutineTree();
 
   const handleRoutineCheck = useCallback(async () => {
 
@@ -50,19 +49,9 @@ export const useCheckRoutine: UseCheckRoutine = (noteRoutine) => {
     else {
       throw new Error(`Unknown routine state: ${noteRoutine.state}`);
     }
-
-    // note update
-    await noteRepository.updateWith(day, (prev) => {
-      const newNote: RoutineNote = {
-        ...prev,
-        routineTree: newTree,
-      }
-      return newNote;
-    });
-
-    // store update
-    setTree(newTree);
-  }, [noteRoutine.state, noteRoutine.name, day, setTree, tree]);
+    // update
+    await updateTree(newTree);
+  }, [noteRoutine.state, noteRoutine.name, updateTree, tree]);
 
   return {
     handleRoutineCheck

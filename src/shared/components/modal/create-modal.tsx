@@ -1,7 +1,10 @@
+import { queryClient } from '@/shared/react-query/query-client';
 import { getPlugin } from '@/shared/utils/plugin-service-locator';
+import { QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Modal } from 'obsidian';
-import { ComponentType, createContext, PropsWithChildren, useContext } from 'react';
+import { ComponentType, createContext, PropsWithChildren, Suspense, useContext } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary } from 'react-error-boundary';
 
 
 type CreateModalOptions = {
@@ -33,9 +36,29 @@ export const createModal = <P,>(ModalContent: ComponentType<P>, options: CreateM
       throw new Error("ModalComponent must be used within a modal context. Use openModal to create and open the modal.");
     }
     return (
-      <ModalContext.Provider value={modal}>
-        <ModalContent {...props as PropsWithChildren<P>} />
-      </ModalContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ error, resetErrorBoundary }) => (
+                <div>
+                  <h2>문제가 발생했습니다!</h2>
+                  <button onClick={resetErrorBoundary}>
+                    다시 시도
+                  </button>
+                </div>
+              )}
+            >
+              <Suspense fallback={<div>Loading...</div>}>
+                <ModalContext.Provider value={modal}>
+                  <ModalContent {...props as PropsWithChildren<P>} />
+                </ModalContext.Provider>
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
+      </QueryClientProvider>
     );
   }
 

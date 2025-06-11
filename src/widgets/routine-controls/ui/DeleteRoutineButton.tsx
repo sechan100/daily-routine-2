@@ -1,5 +1,5 @@
 import { Routine, routineRepository } from "@/entities/routine";
-import { useRippleRoutineTree } from "@/features/note";
+import { useRoutineTree } from "@/features/note";
 import { Button } from "@/shared/components/Button";
 import { useModal } from "@/shared/components/modal";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
@@ -15,7 +15,7 @@ type Props = {
 export const DeleteRoutineButton = ({
   routine,
 }: Props) => {
-  const { ripple } = useRippleRoutineTree();
+  const { ripple } = useRoutineTree();
   const modal = useModal();
 
   const handleDelete = useCallback(async () => {

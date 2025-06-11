@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineGroup, routineGroupRepository } from '@/entities/routine-group';
-import { useRippleRoutineTree } from '@/features/note';
+import { useRoutineTree } from '@/features/note';
 import { renameRoutineGroup, RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
 import { Modal } from '@/shared/components/modal/styled';
@@ -16,7 +16,7 @@ type Props = {
   group: RoutineGroup;
 }
 export const openRoutineGroupControlsModal = createModal(({ group }: Props) => {
-  const { ripple } = useRippleRoutineTree();
+  const { ripple } = useRoutineTree();
   const modal = useModal();
   const {
     reset,

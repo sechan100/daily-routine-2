@@ -1,22 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, routineTreeUtils } from "@/entities/note";
+import { routineTreeUtils, useNoteDayStore } from "@/entities/note";
+import { useRoutineNoteQuery } from "@/features/note";
 import { NoteTaskList } from "@/widgets/note-tasks";
 import { openRoutineControlsModal } from "@/widgets/routine-controls";
 import { openRoutineGroupControlsModal } from "@/widgets/routine-group-controls";
 import { NoteRoutineTree } from "@/widgets/routine-tree";
+import { openTaskControlsModal } from "@/widgets/task-control";
 import { useMemo, useRef } from "react";
 import { ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 
 export const CHECKABLE_GROUP_PANEL_MIN_SIZE = 20;
 
-
-type Props = {
-  note: RoutineNote;
-}
-export const TasksAndRoutines = ({
-  note
-}: Props) => {
+export const TasksAndRoutines = () => {
+  const day = useNoteDayStore(state => state.day);
+  const { note } = useRoutineNoteQuery(day);
   const panelGroupHandleRef = useRef<ImperativePanelGroupHandle>(null);
 
   const taskPanelMinSize = useMemo(() => {
@@ -52,7 +50,9 @@ export const TasksAndRoutines = ({
         direction="vertical"
       >
         <Panel minSize={taskPanelMinSize} order={1}>
-          <NoteTaskList day={note.day} tasks={note.tasks} />
+          <NoteTaskList
+            openTaskControls={task => openTaskControlsModal({ task })}
+          />
         </Panel>
         <PanelResizeHandle
           css={{
@@ -62,7 +62,6 @@ export const TasksAndRoutines = ({
         />
         <Panel minSize={routinePanelMinSize} order={2}>
           <NoteRoutineTree
-            routineTree={note.routineTree}
             openRoutineControls={routine => openRoutineControlsModal({ routine })}
             openRoutineGroupControls={group => openRoutineGroupControlsModal({ group })}
           />

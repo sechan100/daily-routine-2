@@ -1,1 +1,1 @@
-export { TaskCalendar } from "./ui/TaskCalendar";
+export { DrCalendar } from "./ui/DrCalendar";

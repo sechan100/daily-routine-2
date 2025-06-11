@@ -7,7 +7,7 @@ const initialContent = dedent`
 %% Please do not modify the content below. It may damage your Group data. %%
 `;
 
-export const createDefaultRoutineGroup = (): RoutineGroup => ({
+export const getBaseRoutineGroup = (): RoutineGroup => ({
   name: "",
   userContent: initialContent,
   routineLikeType: "routine-group",

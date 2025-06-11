@@ -3,6 +3,7 @@ import { Checkable } from "../../checkable/types/checkable";
 import { CheckableGroupProgress, NoteProgress } from "../types/progress";
 import { RoutineTree } from "../types/routine-tree";
 import { routineTreeUtils } from "./routine-tree-utils";
+import { RoutineNote } from "../types/note";
 
 
 const getCheckableGroupProgress = (checkables: Checkable[]): CheckableGroupProgress => {
@@ -22,11 +23,7 @@ const getCheckableGroupProgress = (checkables: Checkable[]): CheckableGroupProgr
 }
 
 
-type GetNoteProgressArgs = {
-  tasks: Task[];
-  routineTree: RoutineTree;
-}
-export const getNoteProgress = ({ tasks, routineTree }: GetNoteProgressArgs): NoteProgress => {
+export const getNoteProgress = ({ tasks, routineTree }: RoutineNote): NoteProgress => {
   const routines = routineTreeUtils.getAllRoutines(routineTree);
   const checkables: Checkable[] = [...tasks, ...routines];
   const totalCheckable = checkables.length;
