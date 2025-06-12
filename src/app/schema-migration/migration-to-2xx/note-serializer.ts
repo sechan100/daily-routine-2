@@ -132,8 +132,10 @@ const serializeRoutineTask = (routineTask: RoutineTask) => {
 
 export const serializeTodoTask = (todo: TodoTask) => {
   const s = switchStateToChar(todo.state);
-  const properties = [Number(todo.showOnCalendar)]
-  return `- [${s}] ${todo.name}%%{${properties.toString()}}%%`;
+  const serializedTaskProperties = {
+    c: Number(todo.showOnCalendar)
+  };
+  return `- [${s}] ${todo.name}%%${JSON.stringify(serializedTaskProperties)}%%`;
 }
 
 const serializeTask = (task: Task) => {

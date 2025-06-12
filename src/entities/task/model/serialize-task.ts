@@ -1,6 +1,11 @@
 import { CheckableState, checkboxChars, deserializeCheckableState, serializeCheckableState } from '@/entities/checkable';
 import { Task, TaskProperties } from "../types/task";
 
+
+type SerializedTaskProperties = {
+  c: number; // showOnCalendar
+}
+
 const deserializeError = (message: string) => new Error(`[Task Deserialize Error]: ${message}`);
 
 /**
@@ -10,26 +15,26 @@ const deserializeError = (message: string) => new Error(`[Task Deserialize Error
  */
 export const serializeTask = (task: Task) => {
   const state = serializeCheckableState(task.state);
-  const { showOnCalendar } = task.properties;
-  const propertiesArray = [Number(showOnCalendar)]
-  return `- [${state}] ${task.name}%%{${propertiesArray.toString()}}%%`;
+  const serializedTaskProperties: SerializedTaskProperties = {
+    c: Number(task.properties.showOnCalendar) // showOnCalendar
+  };
+  return `- [${state}] ${task.name}%%${JSON.stringify(serializedTaskProperties)}%%`;
 }
 
 /**
  * 
- * @param propertiesArray {1, 3}과 같은 형식의 문자열
+ * @param serializedPropertiesStr 직렬화된 SerializedTaskProperties 타입
  */
-const deserializeTaskProperties = (propertiesArray: string): TaskProperties => {
-  propertiesArray = propertiesArray.trim();
-  if (propertiesArray === '') throw deserializeError('task properties array is empty');
-  // 현재 TaskPropertiesArray에 따라 변경이 필요하다.
-  // 현재는 '{showOnCalendar(0 또는 1)}' 이다.
-  const regex = /\{(\d+)\}/g;
-  const match = propertiesArray.match(regex);
-  if (!match) throw deserializeError('invalid task properties format');
-  const showOnCalendar = Boolean(match[0]);
+const deserializeTaskProperties = (serializedPropertiesStr: string): TaskProperties => {
+  serializedPropertiesStr = serializedPropertiesStr.trim();
+  if (serializedPropertiesStr === '') throw deserializeError('task properties array is empty');
+  const serializedProperties: SerializedTaskProperties = JSON.parse(serializedPropertiesStr);
+  // properties 타입 검증
+  if (typeof serializedProperties.c !== 'number') {
+    throw deserializeError('invalid task properties format: expected a number for showOnCalendar');
+  }
   return {
-    showOnCalendar
+    showOnCalendar: Boolean(serializedProperties.c)
   };
 }
 
