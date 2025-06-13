@@ -2,6 +2,7 @@
 import { NoteRoutine, NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineRepository } from "@/entities/routine";
 import { STYLES } from "@/shared/colors/styles";
+import { Touchable } from "@/shared/components/Touchable";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { DRAG_ITEM_INDENT, Indicator } from "@/shared/dnd/Indicator";
@@ -23,11 +24,13 @@ type Props = {
   routine: NoteRoutine;
   parent: NoteRoutineGroup | null;
   depth: number;
+  optionIcons?: React.ReactNode[];
 }
 export const RoutineItem = ({
   routine,
   // parent,
   depth,
+  optionIcons = [],
 }: Props) => {
   const day = useNoteDayStore(s => s.day);
   const { handleRoutineCheck } = useCheckRoutine(routine);
@@ -63,10 +66,7 @@ export const RoutineItem = ({
   /**
    * Context Menu를 열면 routine control을 연다
    */
-  const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-    // 이렇게 2개를 다 해줘야 mobile에서 contextMenu가 2번 호출되는 문제를 방지할 수 있다.
-    e.preventDefault();
-    e.stopPropagation();
+  const handleContextMenu = useCallback(async () => {
     // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
     if (day.isPast()) {
       new Notice("Routine control cannot be opened for past routines.");
@@ -85,30 +85,50 @@ export const RoutineItem = ({
   }, [handleRoutineCheck]);
 
 
-
   return (
-    <div css={depth !== 0 && indentStyle}>
-      <div
-        ref={droppableRef}
-        onClick={handleClick}
-        onContextMenu={handleContext}
-        css={{
+    <div
+      ref={droppableRef}
+      css={[
+        {
           position: "relative",
           backgroundColor: isDragging || mobileDragState === "ready" ? STYLES.palette.accent : undefined,
-        }}
-      >
-        <CheckableRippleBase>
-          <CheckableFlexContainer>
+        },
+        depth !== 0 && indentStyle
+      ]}
+    >
+      <CheckableRippleBase>
+        <CheckableFlexContainer>
+          <Touchable
+            onClick={handleClick}
+            onContextMenu={handleContextMenu}
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <CheckableArea checkable={routine} />
+          </Touchable>
+          <div css={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            height: "100%",
+            cursor: "pointer",
+          }}>
+            {optionIcons.map((option, index) => (
+              <div key={index}>{option}</div>
+            ))}
             <DragHandleMenu
               ref={draggableRef}
               dragState={mobileDragState}
               setDragState={setMobileDragState}
             />
-          </CheckableFlexContainer>
-        </CheckableRippleBase>
-        <Indicator dndCase={dndCase} depth={0} />
-      </div>
-    </div>
+          </div>
+        </CheckableFlexContainer>
+      </CheckableRippleBase>
+      <Indicator dndCase={dndCase} depth={0} />
+    </div >
   )
 }

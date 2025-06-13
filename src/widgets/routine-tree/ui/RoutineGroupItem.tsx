@@ -3,6 +3,7 @@ import { NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineGroupRepository } from "@/entities/routine-group";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
+import { Touchable } from "@/shared/components/Touchable";
 import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
@@ -81,10 +82,7 @@ export const RoutineGroupItem = ({
   /**
    * Context Menu를 열면 routine control을 연다
    */
-  const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-    // 이렇게 2개를 다 해줘야 mobile에서 contextMenu가 2번 호출되는 문제를 방지할 수 있다.
-    e.preventDefault();
-    e.stopPropagation();
+  const handleContextMenu = useCallback(async () => {
     // 과거의 RoutineGroup은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
     if (day.isPast()) {
       new Notice("Routine group control cannot be opened for past routines.");
@@ -121,7 +119,6 @@ export const RoutineGroupItem = ({
     >
       <div
         ref={droppableRef}
-        onContextMenu={handleContext}
         css={{
           position: "relative",
           backgroundColor: isDragging || mobileDragState === "ready" ? STYLES.palette.accent : undefined,
@@ -151,10 +148,20 @@ export const RoutineGroupItem = ({
           }}
         >
           <CheckableFlexContainer excludePadding>
-            <CancelLineName
-              name={group.name}
-              cancel={isAllSubRoutineChecked}
-            />
+            <Touchable
+              onContextMenu={handleContextMenu}
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <CancelLineName
+                name={group.name}
+                cancel={isAllSubRoutineChecked}
+              />
+            </Touchable>
             <DragHandleMenu
               ref={draggableRef}
               dragState={mobileDragState}

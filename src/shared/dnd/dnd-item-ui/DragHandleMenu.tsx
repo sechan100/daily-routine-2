@@ -28,28 +28,28 @@ export const DragHandleMenu = forwardRef<HTMLDivElement, Props>(({
     }
   }, [dragState, setDragState])
 
-  const handleAfterLongPressDelay = useCallback(() => {
+  const handleContextMenu = useCallback(() => {
     setDragState("ready");
   }, [setDragState])
 
   return (
-    <div
+    <Touchable
       ref={ref}
-      css={{
+      onClick={onClick}
+      longPressDelay={DELAY_TOUCH_START}
+      onPressChange={handlePressChange}
+      onContextMenu={handleContextMenu}
+      sx={{
+        // border: `1px solid blue`,
         display: "flex",
         alignItems: "center",
         justifyContent: "end",
-        cursor: "grab"
+        height: "100%",
+        cursor: "grab",
+        paddingRight: "16px",
       }}
     >
-      <Touchable
-        onClick={onClick}
-        longPressDelay={DELAY_TOUCH_START}
-        onPressChange={handlePressChange}
-        onAfterLongPressDelay={handleAfterLongPressDelay}
-      >
-        <ObsidianIcon size="20px" color={STYLES.palette.textFaint} icon={"menu"} />
-      </Touchable>
-    </div>
+      <ObsidianIcon color={STYLES.palette.textFaint} icon={"menu"} />
+    </Touchable>
   )
 })

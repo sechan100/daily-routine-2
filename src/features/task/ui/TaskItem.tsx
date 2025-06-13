@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
 import { STYLES } from "@/shared/colors/styles";
+import { Touchable } from "@/shared/components/Touchable";
 import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
@@ -52,31 +53,37 @@ export const TaskItem = ({
     onClick?.(task);
   }, [onClick, task]);
 
-  const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-    // 이렇게 2개를 다 해줘야 mobile에서 contextMenu가 2번 호출되는 문제를 방지할 수 있다.
-    e.preventDefault();
-    e.stopPropagation();
+  const handleContextMenu = useCallback(async () => {
     onContextMenu?.(task);
   }, [onContextMenu, task]);
 
   return (
     <div
       ref={droppableRef}
-      onClick={handleClick}
-      onContextMenu={handleContext}
       css={{
         position: "relative",
-        userSelect: "none",
         backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
       }}
     >
       <CheckableRippleBase>
         <CheckableFlexContainer>
-          <CheckableArea checkable={task} />
+          <Touchable
+            onClick={handleClick}
+            onContextMenu={handleContextMenu}
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <CheckableArea checkable={task} />
+          </Touchable>
           <div css={{
             display: "flex",
             alignItems: "center",
-            gap: "0.5rem",
+            gap: "8px",
+            height: "100%",
             cursor: "pointer",
           }}>
             {optionIcons.map((option, index) => (

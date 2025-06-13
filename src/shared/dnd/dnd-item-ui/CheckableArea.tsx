@@ -28,6 +28,6 @@ export const CheckableArea = ({
         }}
       />
       <CancelLineName name={checkable.name} cancel={checkable.state !== "unchecked"} />
-    </div>
+    </div >
   )
 }
