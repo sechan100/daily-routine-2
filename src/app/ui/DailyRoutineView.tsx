@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
+import { useNoteDayStore } from "@/entities/note";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { AppDndProvider } from "@/shared/dnd/AppDndProvider";
+import { Day } from "@/shared/period/day";
 import { ReactQueryProvider } from "@/shared/react-query/ReactQueryProvider";
 import { PageType } from "@/shared/route/page-type";
 import { useRouter } from "@/shared/route/use-router";
@@ -29,6 +31,7 @@ const calendarPage: PageType = "calendar";
 const taskQueuePage: PageType = "queue";
 
 export const DailyRoutineView = () => {
+  const setDay = useNoteDayStore(state => state.setDay);
   const { current, pages, route } = useRouter();
   const { view } = useLeaf();
 
@@ -45,11 +48,16 @@ export const DailyRoutineView = () => {
     return p;
   }, [current, pages]);
 
-  const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: PageType) => {
-    if (current && newValue !== current.name) {
-      route(newValue);
+  const handleTabChange = useCallback((event: React.SyntheticEvent, newpage: PageType) => {
+    if (current && newpage !== current.name) {
+      route(newpage);
     }
   }, [current, route]);
+
+  const handleNoteTabClick = useCallback(() => {
+    // note tab을 클릭하면 현재 day로 설정
+    setDay(Day.today());
+  }, [setDay]);
 
 
   if (!current || !pages) {
@@ -87,6 +95,7 @@ export const DailyRoutineView = () => {
             <TabNavItem
               label="Note"
               value={notePage}
+              onClick={handleNoteTabClick}
               icon={<ObsidianIcon icon="notebook-pen" />}
               iconPosition="start"
               css={tabCss}
