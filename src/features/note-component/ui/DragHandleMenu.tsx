@@ -3,10 +3,9 @@
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Touchable } from "@/shared/components/Touchable";
+import { DELAY_TOUCH_START } from "@/shared/dnd/config";
+import { DragState } from "@/shared/dnd/drag-state";
 import { forwardRef, useCallback } from "react";
-import { DELAY_TOUCH_START } from '../config';
-import { DragState } from '../drag-state';
-
 
 
 type Props = {

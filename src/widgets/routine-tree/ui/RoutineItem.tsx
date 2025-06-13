@@ -1,15 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutine, NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineRepository } from "@/entities/routine";
+import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu, NOTE_EL_CLICK_DEBOUNCE_WAIT } from "@/features/note-component";
 import { STYLES } from "@/shared/colors/styles";
 import { Touchable } from "@/shared/components/Touchable";
-import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { DRAG_ITEM_INDENT, Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { css } from "@emotion/react";
 import { Notice, Platform } from "obsidian";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { useRoutineTreeContext } from "../model/context";
 import { RoutineDndItem } from "../model/dnd-item";
 import { useCheckRoutine } from "../model/use-check-routine";
@@ -76,14 +77,17 @@ export const RoutineItem = ({
     openRoutineControls(sourceRoutine);
   }, [day, openRoutineControls, routine.name]);
 
-
   /**
-   * routine을 클릭하면 check하거나 uncheck하는 등의 동작을 수행한다.
+   * 모바일에서 touch할 때, 엘리먼트들의 height가 너무 작아서 위아래 다른 엘리먼트가 같이 눌리는 일이 빈번함.
+   * 하지만 크기를 더 키우면 못생겨져서 debounce로 해결
    */
+  const debouncedHandleRoutineCheck = useDebouncedCallback(handleRoutineCheck, NOTE_EL_CLICK_DEBOUNCE_WAIT, {
+    leading: true,
+    trailing: false,
+  });
   const handleClick = useCallback(() => {
-    handleRoutineCheck();
-  }, [handleRoutineCheck]);
-
+    debouncedHandleRoutineCheck();
+  }, [debouncedHandleRoutineCheck]);
 
   return (
     <div

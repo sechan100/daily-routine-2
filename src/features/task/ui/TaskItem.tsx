@@ -1,13 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
+// eslint-disable-next-line fsd-import/layer-imports
+import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu, NOTE_EL_CLICK_DEBOUNCE_WAIT } from "@/features/note-component";
 import { STYLES } from "@/shared/colors/styles";
 import { Touchable } from "@/shared/components/Touchable";
-import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { Platform } from "obsidian";
 import { useCallback, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 
 type Props = {
@@ -52,6 +54,14 @@ export const TaskItem = ({
   const handleClick = useCallback(async () => {
     onClick?.(task);
   }, [onClick, task]);
+  /**
+   * 모바일에서 touch할 때, 엘리먼트들의 height가 너무 작아서 위아래 다른 엘리먼트가 같이 눌리는 일이 빈번함.
+   * 하지만 크기를 더 키우면 못생겨져서 debounce로 해결
+   */
+  const debouncedhandleClick = useDebouncedCallback(handleClick, NOTE_EL_CLICK_DEBOUNCE_WAIT, {
+    leading: true,
+    trailing: false,
+  });
 
   const handleContextMenu = useCallback(async () => {
     onContextMenu?.(task);
@@ -68,11 +78,10 @@ export const TaskItem = ({
       <CheckableRippleBase>
         <CheckableFlexContainer>
           <Touchable
-            onClick={handleClick}
+            onClick={debouncedhandleClick}
             onContextMenu={handleContextMenu}
             sx={{
               width: "100%",
-              height: "100%",
               display: "flex",
               alignItems: "center",
             }}
@@ -83,7 +92,6 @@ export const TaskItem = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            height: "100%",
             cursor: "pointer",
           }}>
             {optionIcons.map((option, index) => (

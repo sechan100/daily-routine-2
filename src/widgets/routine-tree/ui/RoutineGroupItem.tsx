@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineGroupRepository } from "@/entities/routine-group";
+import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu, NOTE_EL_CLICK_DEBOUNCE_WAIT } from "@/features/note-component";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Touchable } from "@/shared/components/Touchable";
-import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
@@ -12,6 +12,7 @@ import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
 import { Notice, Platform } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { useRoutineTreeContext } from "../model/context";
 import { RoutineDndItem } from "../model/dnd-item";
 import { useOpenRoutineGroup } from "../model/use-open-routine-group";
@@ -69,6 +70,15 @@ export const RoutineGroupItem = ({
   const handleOpen = useCallback(() => {
     handleRoutineGroupOpen(!group.isOpen);
   }, [group.isOpen, handleRoutineGroupOpen]);
+  /**
+   * 모바일에서 touch할 때, 엘리먼트들의 height가 너무 작아서 위아래 다른 엘리먼트가 같이 눌리는 일이 빈번함.
+   * 하지만 크기를 더 키우면 못생겨져서 debounce로 해결
+   */
+  const debouncedhandleOpen = useDebouncedCallback(handleOpen, NOTE_EL_CLICK_DEBOUNCE_WAIT, {
+    leading: true,
+    trailing: false,
+  });
+
 
   // dragging 상태에 따라 open 상태를 일시적으로 조정
   useEffect(() => {
@@ -109,7 +119,7 @@ export const RoutineGroupItem = ({
       disableGutters
       elevation={0}
       expanded={open}
-      onChange={handleOpen}
+      onChange={debouncedhandleOpen}
       css={{
         backgroundColor: bgColor,
         "&::before": {
