@@ -1,5 +1,5 @@
 import { fileAccessor } from "@/shared/file/file-accessor";
-import { SETTINGS } from "@/shared/settings";
+import { getSettings } from "@/shared/settings";
 import { TFile } from "obsidian";
 import { deserializeTaskQueue, serializeTaskQueue } from "./serialize-queue";
 import { TaskQueue } from "./task-queue";
@@ -7,7 +7,7 @@ import { TaskQueue } from "./task-queue";
 const initialQueueFileContent = `# Tasks`;
 
 const ensureTaskQueueFile = async (): Promise<TFile> => {
-  const path = SETTINGS.getTaksQueueFilePath();
+  const path = getSettings().taksQueueFilePath;
   let file = fileAccessor.loadFile(path);
   if (!file) {
     file = await fileAccessor.createFile(path, initialQueueFileContent);

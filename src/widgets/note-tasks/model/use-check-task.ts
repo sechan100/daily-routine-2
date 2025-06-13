@@ -1,7 +1,7 @@
 import { CheckableState, Task } from "@/entities/note";
 import { useNoteTasks } from '@/features/note';
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
-import { SETTINGS } from "@/shared/settings";
+import { getSettings } from "@/shared/settings";
 import { produce } from "immer";
 import { useCallback } from "react";
 
@@ -33,7 +33,7 @@ export const useCheckTask: UseCheckTask = (task) => {
     // accomplished & failed
     else if (task.state === "accomplished" || task.state === "failed") {
       let doUncheck = true;
-      if (SETTINGS.getConfirmUncheckTask()) {
+      if (getSettings().confirmUncheckTask) {
         doUncheck = await doConfirm({
           title: "Uncheck Task",
           description: "Are you sure you want to uncheck this task?",

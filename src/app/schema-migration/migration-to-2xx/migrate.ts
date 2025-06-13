@@ -1,7 +1,7 @@
 /* eslint-disable fsd-import/public-api-imports */
 import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
-import { SETTINGS } from "@/shared/settings";
+import { getSettings } from "@/shared/settings";
 import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { Notice, TFile } from "obsidian";
 import { UpdateMigrationPercentage } from "../migration-entrypoint";
@@ -13,7 +13,7 @@ const GROUP_PREFIX = "_g_";
 
 
 export const isRequireMigration = async (): Promise<boolean> => {
-  const anyRoutineFile = (await ensureFolder(SETTINGS.getRoutineFolderPath()))
+  const anyRoutineFile = (await ensureFolder(getSettings().routineFolderPath))
     .children
     .find(file => file instanceof TFile && !file.name.startsWith(GROUP_PREFIX));
 
@@ -32,7 +32,7 @@ export const isRequireMigration = async (): Promise<boolean> => {
 
 export const migrateTo2xx = async (updatePercentage: UpdateMigrationPercentage) => {
   // 기존 routineFolder를 복사하여 백업
-  const dailyRoutineFolder = fileAccessor.loadFolder(SETTINGS.getDailyRoutineFolderPath());
+  const dailyRoutineFolder = fileAccessor.loadFolder(getSettings().dailyRoutineFolderPath);
   if (!dailyRoutineFolder) {
     return;
   }
