@@ -1,4 +1,5 @@
 import { getPlugin } from "@/shared/utils/plugin-service-locator";
+import { create } from "zustand";
 
 /**
  * data.json 파일을 불러와서 메모리에 올렸을 때의 타입.
@@ -25,30 +26,54 @@ export type DailyRoutineSettings = {
   /**
    * 완료된 할 일을 안 보이도록 설정할지 여부
    */
-  hideCompletedTasks: boolean;
-
-  /**
-   * 완료된 루틴을 안 보이도록 설정할지 여부
-   */
-  hideCompletedRoutines: boolean;
+  hideCompletedTasksAndRoutines: boolean;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutineSettings = {
   dailyRoutineFolderPath: "daily-routine",
   isMondayStartOfWeek: true,
   confirmUncheckTask: true,
-  hideCompletedTasks: false,
-  hideCompletedRoutines: false,
+  hideCompletedTasksAndRoutines: false,
 }
 
-export const getSettings = () => ({
-  dailyRoutineFolderPath: getPlugin().settings.dailyRoutineFolderPath,
-  routineFolderPath: `${getPlugin().settings.dailyRoutineFolderPath}/routines`,
-  routineGroupFolderPath: `${getPlugin().settings.dailyRoutineFolderPath}/routines/groups`,
-  noteFolderPath: `${getPlugin().settings.dailyRoutineFolderPath}/notes`,
-  taksQueueFilePath: `${getPlugin().settings.dailyRoutineFolderPath}/task-queue.md`,
-  isMondayStartOfWeek: getPlugin().settings.isMondayStartOfWeek,
-  confirmUncheckTask: getPlugin().settings.confirmUncheckTask,
-  hideCompletedTasks: getPlugin().settings.hideCompletedTasks,
-  hideCompletedRoutines: getPlugin().settings.hideCompletedRoutines,
-})
+type SettingsStores = {
+  dailyRoutineFolderPath: string;
+  routineFolderPath: string;
+  routineGroupFolderPath: string;
+  noteFolderPath: string;
+  taksQueueFilePath: string;
+  isMondayStartOfWeek: boolean;
+  confirmUncheckTask: boolean;
+  hideCompletedTasksAndRoutines: boolean;
+}
+export const useSettingsStores = create<SettingsStores>(() => ({
+  dailyRoutineFolderPath: null as unknown as string,
+  routineFolderPath: null as unknown as string,
+  routineGroupFolderPath: null as unknown as string,
+  noteFolderPath: null as unknown as string,
+  taksQueueFilePath: null as unknown as string,
+  isMondayStartOfWeek: null as unknown as boolean,
+  confirmUncheckTask: null as unknown as boolean,
+  hideCompletedTasksAndRoutines: null as unknown as boolean,
+}));
+
+
+export const updateSettingsStores = (newSettings: DailyRoutineSettings) => {
+  useSettingsStores.setState({
+    dailyRoutineFolderPath: newSettings.dailyRoutineFolderPath,
+    routineFolderPath: `${newSettings.dailyRoutineFolderPath}/routines`,
+    routineGroupFolderPath: `${newSettings.dailyRoutineFolderPath}/routines/groups`,
+    noteFolderPath: `${newSettings.dailyRoutineFolderPath}/notes`,
+    taksQueueFilePath: `${newSettings.dailyRoutineFolderPath}/task-queue.md`,
+    isMondayStartOfWeek: newSettings.isMondayStartOfWeek,
+    confirmUncheckTask: newSettings.confirmUncheckTask,
+    hideCompletedTasksAndRoutines: newSettings.hideCompletedTasksAndRoutines,
+  });
+}
+
+export const saveSettings = async (newSettings: Partial<DailyRoutineSettings>) => {
+  const plugin = getPlugin();
+  plugin.settings = { ...plugin.settings, ...newSettings };
+  await plugin.saveData(plugin.settings);
+  updateSettingsStores(plugin.settings);
+}

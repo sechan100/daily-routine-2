@@ -1,13 +1,13 @@
 import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
-import { getSettings } from "@/shared/settings";
+import { useSettingsStores } from "@/shared/settings";
 import { TFile } from "obsidian";
 import { Routine, RoutineProperties } from "./routine";
 import { deserializeRoutine, serializeRoutine } from "./serialize-routine";
 
 
 const getRoutinePath = (routineName: string) => {
-  return `${getSettings().routineFolderPath}/${routineName}.md`;
+  return `${useSettingsStores.getState().routineFolderPath}/${routineName}.md`;
 }
 
 class RoutineRepository {
@@ -19,7 +19,7 @@ class RoutineRepository {
 
   async loadAll(): Promise<Routine[]> {
     if (this.routineCache.size === 0) {
-      const routineFolder = await ensureFolder(getSettings().routineFolderPath);
+      const routineFolder = await ensureFolder(useSettingsStores.getState().routineFolderPath);
       const routines: Routine[] = [];
       for (const file of routineFolder.children) {
         if (file instanceof TFile && file.extension === 'md') {

@@ -4,6 +4,7 @@ import { openRoutineNoteFile, useRoutineNoteQuery } from "@/features/note";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useRouter } from "@/shared/route/use-router";
+import { saveSettings, useSettingsStores } from "@/shared/settings";
 import { openCreateRoutineModal } from "@/widgets/create-routine";
 import { openCreateRoutineGroupModal } from "@/widgets/create-routine-group";
 import { useCallback } from "react";
@@ -12,6 +13,7 @@ import { useCallback } from "react";
 
 
 export const NoteHeader = () => {
+  const hideCompletedTasksAndRoutines = useSettingsStores(s => s.hideCompletedTasksAndRoutines);
   const { route } = useRouter();
   const day = useNoteDayStore(state => state.day);
   const { note } = useRoutineNoteQuery(day);
@@ -19,6 +21,12 @@ export const NoteHeader = () => {
   const handleNoteHeaderClick = useCallback(async () => {
     await openRoutineNoteFile(note.day);
   }, [note]);
+
+  const toggleHideCompletedTasksAndRoutinesSetting = useCallback(async () => {
+    await saveSettings({
+      hideCompletedTasksAndRoutines: !hideCompletedTasksAndRoutines,
+    });
+  }, [hideCompletedTasksAndRoutines]);
 
   return (
     <header
@@ -45,6 +53,12 @@ export const NoteHeader = () => {
         display: "flex",
         gap: "1.5em",
       }}>
+        <ObsidianIcon
+          size='21px'
+          icon={hideCompletedTasksAndRoutines ? "eye-off" : "eye"}
+          onClick={toggleHideCompletedTasksAndRoutinesSetting}
+          pointer
+        />
         <ObsidianIcon
           size='21px'
           icon="alarm-clock-plus"

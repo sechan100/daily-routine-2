@@ -1,7 +1,7 @@
-import { CheckableState, NoteRoutine, RoutineTree, routineTreeUtils } from "@/entities/note";
+import { CheckableState, NoteRoutine, routineTreeUtils } from "@/entities/note";
 import { useRoutineTree } from '@/features/note';
-import { doConfirm } from "@/shared/components/modal/confirm-modal";
-import { getSettings } from "@/shared/settings";
+import { confirmUncheckTask } from "@/shared/domain/confirm-uncheck-task";
+import { useSettingsStores } from "@/shared/settings";
 import { produce } from "immer";
 import { useCallback } from "react";
 
@@ -10,50 +10,30 @@ import { useCallback } from "react";
 
 
 type UseCheckRoutine = (noteRoutine: NoteRoutine) => {
-  handleRoutineCheck: () => void;
+  changeRoutineState: (state: CheckableState) => void;
 }
 export const useCheckRoutine: UseCheckRoutine = (noteRoutine) => {
   const { updateTree, tree } = useRoutineTree();
 
-  const handleRoutineCheck = useCallback(async () => {
-
-    const updateCheckableState = (state: CheckableState) => produce(tree, (draft) => {
-      const routine = routineTreeUtils.findRoutine(draft, noteRoutine.name);
-      if (!routine) throw new Error("Check state change target routine not found");
-      routine.state = state;
-      return draft;
-    });
-
-    let newTree: RoutineTree;
-    // dispatch check state change
-    // un-check
-    if (noteRoutine.state === "unchecked") {
-      newTree = updateCheckableState("accomplished");
-    }
-    // accomplished & failed
-    else if (noteRoutine.state === "accomplished" || noteRoutine.state === "failed") {
-      let doUncheck = true;
-      if (getSettings().confirmUncheckTask) {
-        doUncheck = await doConfirm({
-          title: "Uncheck Task",
-          description: "Are you sure you want to uncheck this task?",
-          confirmText: "Uncheck",
-          confirmBtnVariant: "accent",
-        })
-      }
-      if (!doUncheck) {
+  const changeRoutineState = useCallback(async (newState: CheckableState) => {
+    if (
+      newState === "unchecked" &&
+      useSettingsStores.getState().confirmUncheckTask
+    ) {
+      if (!(await confirmUncheckTask())) {
         return;
       }
-      newTree = updateCheckableState("unchecked");
     }
-    else {
-      throw new Error(`Unknown routine state: ${noteRoutine.state}`);
-    }
-    // update
+
+    const newTree = produce(tree, (draft) => {
+      const routine = routineTreeUtils.findRoutine(draft, noteRoutine.name);
+      if (!routine) throw new Error("Check state change target routine not found");
+      routine.state = newState;
+    });
     await updateTree(newTree);
-  }, [noteRoutine.state, noteRoutine.name, updateTree, tree]);
+  }, [noteRoutine.name, updateTree, tree]);
 
   return {
-    handleRoutineCheck
+    changeRoutineState
   }
 }

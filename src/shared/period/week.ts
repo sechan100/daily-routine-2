@@ -1,4 +1,4 @@
-import { getSettings } from "@/shared/settings";
+import { useSettingsStores } from "@/shared/settings";
 import { Day, DayOfWeek } from "./day";
 
 
@@ -17,7 +17,7 @@ export class Week {
   }
 
   static of(day: Day): Week {
-    const isMondayStart = getSettings().isMondayStartOfWeek;
+    const isMondayStart = useSettingsStores.getState().isMondayStartOfWeek;
 
     // 현재 날짜의 요일 확인
     const dowNum = parseInt(day.format("d"), 10);

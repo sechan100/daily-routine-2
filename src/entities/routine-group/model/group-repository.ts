@@ -1,6 +1,6 @@
 import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
-import { getSettings } from "@/shared/settings";
+import { useSettingsStores } from "@/shared/settings";
 import { TFile } from "obsidian";
 import { RoutineGroup, RoutineGroupProperties } from "./routine-group";
 import { deserializeRoutineGroup, serializeRoutineGroup } from "./serialize-group";
@@ -12,7 +12,7 @@ export type CreateRoutineGroupForm = {
 }
 
 const getGroupPath = (groupName: string) => {
-  return `${getSettings().routineGroupFolderPath}/${groupName}.md`;
+  return `${useSettingsStores.getState().routineGroupFolderPath}/${groupName}.md`;
 }
 
 class RoutineGroupRepository {
@@ -24,7 +24,7 @@ class RoutineGroupRepository {
 
   async loadAll(): Promise<RoutineGroup[]> {
     if (!this.isCacheExist()) {
-      const groupFolder = (await ensureFolder(getSettings().routineGroupFolderPath));
+      const groupFolder = (await ensureFolder(useSettingsStores.getState().routineGroupFolderPath));
       for (const file of groupFolder.children) {
         if (file instanceof TFile && file.extension === 'md') {
           const group = await this.readGroupFile(file);

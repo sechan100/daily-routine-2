@@ -3,12 +3,22 @@ import { useNoteTasks } from '@/features/note';
 import { reorderTasks, taskCollisionResolver } from '@/features/task';
 import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
 import { BaseDndItem } from "@/shared/dnd/drag-item";
-import { useCallback } from "react";
+import { useSettingsStores } from '@/shared/settings';
+import { useCallback, useMemo } from "react";
 import { NoteTaskItem } from "./NoteTaskItem";
 
 
 export const TaskListRoot = () => {
+  const hideCompletedTasksAndRoutines = useSettingsStores(s => s.hideCompletedTasksAndRoutines);
   const { tasks, updateTasks } = useNoteTasks();
+
+  const filterdTasks = useMemo(() => {
+    if (!hideCompletedTasksAndRoutines) {
+      return tasks;
+    } else {
+      return tasks.filter(task => task.state === "unchecked");
+    }
+  }, [hideCompletedTasksAndRoutines, tasks]);
 
   const handleDragEnd = useCallback(async ({ active, over, dndCase }: OnDragEndContext<BaseDndItem>) => {
     const newTasks = reorderTasks(tasks, {
@@ -25,7 +35,7 @@ export const TaskListRoot = () => {
       collisionResolver={taskCollisionResolver}
       onDragEnd={handleDragEnd}
     >
-      {tasks.map(task => (
+      {filterdTasks.map(task => (
         <NoteTaskItem
           key={task.name}
           task={task}

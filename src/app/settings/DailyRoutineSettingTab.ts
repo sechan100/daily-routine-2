@@ -1,4 +1,4 @@
-import { DailyRoutineSettings } from "@/shared/settings";
+import { DailyRoutineSettings, saveSettings } from "@/shared/settings";
 import { FileSuggest } from "@/shared/suggesters/FileSuggester";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
@@ -23,12 +23,12 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       .setDesc("This is the path to the folder where the Daily Routine Plugin saves notes, routines, and other data.")
       .addText(textComponent => {
         new FileSuggest(textComponent, "folder")
-          .setPlaceholder("daily_routine")
-          .setDefaultValue(this.plugin.settings.dailyRoutineFolderPath ?? "")
+          .setPlaceholder("daily-routine")
+          .setDefaultValue(this.plugin.settings.dailyRoutineFolderPath)
           .onChange((value) => {
             this.updateSettings({ dailyRoutineFolderPath: normalizePath(value) });
           })
-      })
+      });
 
     // Start of Week
     new Setting(containerEl)
@@ -45,7 +45,7 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
             const isMondayStartOfWeek = value === "monday";
             this.updateSettings({ isMondayStartOfWeek });
           })
-      })
+      });
 
     // Confirm Uncheck Task
     new Setting(containerEl)
@@ -57,20 +57,32 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
           .onChange((value) => {
             this.updateSettings({ confirmUncheckTask: value });
           })
-      })
+      });
+
+    // Hide Completed Tasks and Routines
+    new Setting(containerEl)
+      .setName("Hide completed tasks and routines")
+      .setDesc("If enabled, completed tasks and routines will not be displayed in the task list.")
+      .addToggle(toggle => {
+        toggle
+          .setValue(this.plugin.settings.hideCompletedTasksAndRoutines)
+          .onChange((value) => {
+            this.updateSettings({ hideCompletedTasksAndRoutines: value });
+          })
+      });
   }
 
   // 닫을 때 저장하기 위해서 override
   override hide(): void {
     super.hide();
 
-    // 저장하고 view를 새로고침
-    this.plugin.saveSettings()
-      .then(() => useLeaf.getState().refresh());
+    saveSettings(this.plugin.settings)
+      .then(() => {
+        useLeaf.getState().refresh()
+      })
   }
 
   updateSettings(partial: Partial<DailyRoutineSettings>) {
-    const settings = { ...this.plugin.settings, ...partial };
     this.plugin.settings = { ...this.plugin.settings, ...partial };
   }
 }

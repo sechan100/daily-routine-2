@@ -14,9 +14,6 @@ export const QueueTaskItem = ({
   task,
 }: Props) => {
 
-  const handleClick = useCallback(async () => {
-  }, []);
-
   const handleContext = useCallback(async () => {
     openQueueTaskControls({ task });
   }, [task]);
@@ -28,7 +25,6 @@ export const QueueTaskItem = ({
   return (
     <TaskItem
       task={task}
-      onClick={handleClick}
       onContextMenu={handleContext}
       optionIcons={[
         <ObsidianIcon

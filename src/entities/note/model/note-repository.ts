@@ -1,7 +1,7 @@
 import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
 import { Day } from "@/shared/period/day";
-import { getSettings } from "@/shared/settings";
+import { useSettingsStores } from "@/shared/settings";
 import { TAbstractFile, TFile } from "obsidian";
 import { RoutineNote } from "../types/note";
 import { deserializeRoutineNote, serializeRoutineNote } from "./serialize-note";
@@ -13,7 +13,7 @@ export const getNoteFile = (day: Day): TFile | null => {
 }
 
 export const getNotePath = (day: Day) => {
-  return `${getSettings().noteFolderPath}/${day.format()}.md`;
+  return `${useSettingsStores.getState().noteFolderPath}/${day.format()}.md`;
 }
 
 class NoteRepository {
@@ -42,7 +42,7 @@ class NoteRepository {
    */
   async loadBetween(start: Day, end: Day): Promise<RoutineNote[]> {
     const notes: RoutineNote[] = [];
-    const routineNoteFiles: TAbstractFile[] = (await ensureFolder(getSettings().noteFolderPath))
+    const routineNoteFiles: TAbstractFile[] = (await ensureFolder(useSettingsStores.getState().noteFolderPath))
       .children
       .filter(file => file instanceof TFile);
     for (const file of routineNoteFiles) {
@@ -71,7 +71,7 @@ class NoteRepository {
       try {
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       } catch (e) {
-        await ensureFolder(getSettings().noteFolderPath);
+        await ensureFolder(useSettingsStores.getState().noteFolderPath);
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       }
       return true;

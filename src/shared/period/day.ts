@@ -1,4 +1,4 @@
-import { getSettings } from "@/shared/settings";
+import { useSettingsStores } from "@/shared/settings";
 import { moment as obsidianMoment } from "obsidian";
 
 
@@ -56,7 +56,7 @@ export class Day {
 
   static getDaysOfWeek(): DayOfWeek[] {
     const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-    const isMondayStart = getSettings().isMondayStartOfWeek;
+    const isMondayStart = useSettingsStores.getState().isMondayStartOfWeek;
     return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
   }
 

@@ -14,12 +14,8 @@ type Props = {
 export const NoteTaskItem = ({
   task,
 }: Props) => {
-  const { handleTaskCheck } = useCheckTask(task);
+  const { changeTaskState } = useCheckTask(task);
   const { openTaskControls } = useNoteTasksContext();
-
-  const handleClick = useCallback(async () => {
-    await handleTaskCheck();
-  }, [handleTaskCheck]);
 
   const handleContext = useCallback(async () => {
     openTaskControls(task);
@@ -32,7 +28,7 @@ export const NoteTaskItem = ({
   return (
     <TaskItem
       task={task}
-      onClick={handleClick}
+      onStateChange={changeTaskState}
       onContextMenu={handleContext}
       optionIcons={[
         <ObsidianIcon
