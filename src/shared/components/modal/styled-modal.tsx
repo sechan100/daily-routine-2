@@ -11,6 +11,9 @@ import { Button } from '../Button';
 import { useModal } from './create-modal';
 
 
+const saveButtonHeight = "50px";
+const saveButtonHeightPhone = "80px";
+
 type ModalProps = {
   header: string;
   className?: string;
@@ -27,14 +30,13 @@ const M = ({ header, className, children }: ModalProps) => {
     <div
       className={className}
       css={{
-        padding: "2em !important",
+        padding: `32px 32px ${saveButtonHeight} 32px !important`,
         maxWidth: "1200px",
         overflow: "scroll",
         margin: "0 auto",
         ".is-phone &": {
           position: "static !important" as "static",
-          // padding: "0 !important",
-          padding: "0 1em !important",
+          padding: `0 16px ${saveButtonHeightPhone} 16px !important`,
         }
       }}
     >

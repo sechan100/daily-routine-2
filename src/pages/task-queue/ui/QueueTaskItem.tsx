@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
 import { TaskItem } from "@/features/task";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useCallback } from "react";
 import { openQueueTaskControls } from "./QueueTaskControls";
+import { openScheduleTaskModal } from "./ScheduleTaskModal";
 
 
 type Props = {
@@ -19,24 +21,21 @@ export const QueueTaskItem = ({
     openQueueTaskControls({ task });
   }, [task]);
 
-  // DEV: 즉시 task controls를 열도록 함.
-  // const isMounted = useRef(false);
-  // useEffect(() => {
-  //   if (isMounted.current) {
-  //     return;
-  //   }
-  //   isMounted.current = true;
-  //   if (task.name === "립밤사기") {
-  //     handleContext();
-  //   }
-  // }, [handleContext, task]);
-  // ]]
+  const handleCalendarIconClick = useCallback(async () => {
+    openScheduleTaskModal({ task });
+  }, [task]);
 
   return (
     <TaskItem
       task={task}
       onClick={handleClick}
       onContextMenu={handleContext}
+      optionIcons={[
+        <ObsidianIcon
+          icon="calendar"
+          onClick={handleCalendarIconClick}
+        />
+      ]}
     />
   )
 }

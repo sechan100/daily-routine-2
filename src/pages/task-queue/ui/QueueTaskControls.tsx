@@ -1,19 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { Task, TaskProperties, taskUtils } from '@/entities/task';
 import { TaskNameValidator } from '@/features/task';
-import { DaySelector } from '@/shared/components/DaySelector';
 import { createModal, useModal } from '@/shared/components/modal';
 import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { ToggleComponent } from '@/shared/components/ToggleComponent';
-import { Day } from '@/shared/period/day';
-import { Month } from '@/shared/period/month';
-import { Platform } from 'obsidian';
 import { useCallback, useEffect, useRef } from "react";
 import { Controller, useForm } from 'react-hook-form';
 import { QueueTaskForm } from '../model/queue-task-from';
 import { useTaskQueue } from '../model/use-task-queue';
 import { DeleteQueueTaskButton } from './DeleteQueueTaskButton';
+import { TaskQueue } from '@/entities/taks-queue';
 
 
 
@@ -21,7 +18,7 @@ type Props = {
   task: Task;
 }
 export const openQueueTaskControls = createModal(({ task }: Props) => {
-  const { queue, updateTasks, scheduleTask } = useTaskQueue();
+  const { queue, updateQueue } = useTaskQueue();
   const modal = useModal();
   const {
     reset,
@@ -49,10 +46,6 @@ export const openQueueTaskControls = createModal(({ task }: Props) => {
     initializeValidator();
   }, [task.name, task, queue.tasks]);
 
-  const handleScheduleTask = useCallback(async (day: Day) => {
-    await scheduleTask(day, task);
-    modal.close();
-  }, [modal, scheduleTask, task]);
 
   const handleSave = useCallback(async (form: QueueTaskForm) => {
     // 속성 변경
@@ -67,10 +60,14 @@ export const openQueueTaskControls = createModal(({ task }: Props) => {
     if (isNameDirty) {
       newTasks = taskUtils.rename(newTasks, task.name, form.name);
     }
-    await updateTasks(newTasks);
+    const newQueue: TaskQueue = {
+      ...queue,
+      tasks: newTasks,
+    }
+    await updateQueue(newQueue);
     reset();
     modal.close();
-  }, [getFieldState, modal, queue.tasks, reset, task.name, task.properties, updateTasks]);
+  }, [getFieldState, modal, queue, reset, task.name, task.properties, updateQueue]);
 
   return (
     <Modal header='Task Controls'>
@@ -113,26 +110,6 @@ export const openQueueTaskControls = createModal(({ task }: Props) => {
             />
           )}
         />
-      </Modal.Section>
-      <Modal.Separator />
-
-      <Modal.Section flexDirection='column'>
-        <Modal.Header
-          name='Schedule Task'
-          align='left'
-          sx={{
-            marginBottom: "16px",
-          }}
-        />
-        <div css={{
-          width: Platform.isMobile ? "100%" : "70%",
-        }}>
-          <DaySelector
-            month={Month.now()}
-            tileHeight={Platform.isMobile ? 45 : 40}
-            onTileClick={handleScheduleTask}
-          />
-        </div>
       </Modal.Section>
       <Modal.Separator />
 

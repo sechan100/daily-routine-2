@@ -13,11 +13,17 @@ type Props = {
   task: Task;
   onClick?: (task: Task) => void;
   onContextMenu?: (task: Task) => void;
+
+  /**
+   * draggingHandle 앞에 추가될 icon option 컴포넌트들을 정의한다.
+   */
+  optionIcons?: React.ReactNode[];
 }
 export const TaskItem = ({
   task,
   onClick,
-  onContextMenu
+  onContextMenu,
+  optionIcons = [],
 }: Props) => {
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
@@ -59,17 +65,28 @@ export const TaskItem = ({
       css={{
         position: "relative",
         touchAction: "none",
+        userSelect: "none",
         backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
       }}
     >
       <CheckableRippleBase>
         <CheckableFlexContainer>
           <CheckableArea checkable={task} />
-          <DragHandleMenu
-            ref={draggableRef}
-            dragState={dragState}
-            setDragState={setDragState}
-          />
+          <div css={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            cursor: "pointer",
+          }}>
+            {optionIcons.map((option, index) => (
+              <div key={index}>{option}</div>
+            ))}
+            <DragHandleMenu
+              ref={draggableRef}
+              dragState={dragState}
+              setDragState={setDragState}
+            />
+          </div>
         </CheckableFlexContainer>
       </CheckableRippleBase>
       <Indicator dndCase={dndCase} depth={0} />

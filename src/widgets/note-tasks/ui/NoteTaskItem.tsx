@@ -1,9 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
 import { TaskItem } from "@/features/task";
+import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useCallback } from "react";
 import { useNoteTasksContext } from "../model/context";
 import { useCheckTask } from "../model/use-check-routine";
+import { openRescheduleTaskModal } from "./RescheduleTaskModal";
 
 
 type Props = {
@@ -23,11 +25,21 @@ export const NoteTaskItem = ({
     openTaskControls(task);
   }, [openTaskControls, task]);
 
+  const handleCalendarIconClick = useCallback(async () => {
+    openRescheduleTaskModal({ task });
+  }, [task]);
+
   return (
     <TaskItem
       task={task}
       onClick={handleClick}
       onContextMenu={handleContext}
+      optionIcons={[
+        <ObsidianIcon
+          icon="calendar"
+          onClick={handleCalendarIconClick}
+        />
+      ]}
     />
   )
 }

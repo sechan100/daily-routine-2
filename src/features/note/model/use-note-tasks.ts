@@ -21,7 +21,8 @@ export const useNoteTasks = () => {
       (prev) => {
         if (!prev) return prev;
         return newNote;
-      });
+      }
+    );
   }, [note, day, queryClient]);
 
   return {
