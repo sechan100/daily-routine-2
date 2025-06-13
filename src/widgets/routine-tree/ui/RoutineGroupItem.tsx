@@ -138,7 +138,8 @@ export const RoutineGroupItem = ({
           component={'div'}
           expandIcon={<ObsidianIcon icon='chevron-right' />}
           css={{
-            padding: checkableStyle.padding,
+            paddingRight: 0,
+            paddingLeft: checkableStyle.paddingLeft,
             minHeight: "0 !important",
             [`& .${accordionSummaryClasses.content}`]: {
               margin: "0",

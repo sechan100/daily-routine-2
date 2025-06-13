@@ -6,6 +6,7 @@ import { Touchable } from "@/shared/components/Touchable";
 import { DELAY_TOUCH_START } from "@/shared/dnd/config";
 import { DragState } from "@/shared/dnd/drag-state";
 import { forwardRef, useCallback } from "react";
+import { checkableStyle } from "./checkable-style";
 
 
 type Props = {
@@ -44,7 +45,7 @@ export const DragHandleMenu = forwardRef<HTMLDivElement, Props>(({
         alignItems: "center",
         justifyContent: "end",
         cursor: "grab",
-        paddingRight: "16px",
+        paddingRight: checkableStyle.paddingRight,
       }}
     >
       <ObsidianIcon color={STYLES.palette.textFaint} icon={"menu"} />

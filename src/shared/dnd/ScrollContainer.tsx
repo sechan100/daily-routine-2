@@ -35,17 +35,10 @@ export const DndScrollContainer = ({
   return (
     <div
       ref={listRef}
-      className="dr-dnd-scroll-container"
       css={{
         height: "100%",
         overflowY: "auto",
-        // 처음, 마지막 child는 각각 margin-top, margin-bottom을 적용하여 스크롤이 자연스럽게 되도록 함
-        "& > *:first-of-type": {
-          marginTop: "6px",
-        },
-        "& > *:last-of-type": {
-          marginBottom: "6px",
-        },
+        paddingBottom: "8px", // 아래 여백
       }}
     >
       {children}

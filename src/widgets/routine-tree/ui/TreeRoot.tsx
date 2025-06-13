@@ -31,9 +31,7 @@ export const TreeRoot = () => {
       collisionResolver={routineCollisionResolver}
       onDragEnd={handleDragEnd}
     >
-      <div css={{ overflowY: "auto" }}>
-        {tree.root.map(nrl => renderRoutineTree(nrl, null, 0))}
-      </div>
+      {tree.root.map(nrl => renderRoutineTree(nrl, null, 0))}
     </DndContext>
   )
 }

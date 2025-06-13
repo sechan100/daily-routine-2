@@ -4,15 +4,16 @@ import { memo, useMemo } from "react";
 import { getAccent } from "../colors/obsidian-accent-color";
 import { DndCase } from "./dnd-case";
 
+const INDICATOR_Z_INDEX = 990;
 
-export const DRAG_ITEM_INDENT = 20;
+export const DRAG_ITEM_INDENT = 25;
 
 const getLineStyle = (direction: "top" | "bottom", depth: number) => css({
   width: "100%",
   height: "2px",
   backgroundColor: "hsla(var(--color-accent-1-hsl), 1)",
   top: direction === "top" ? "0" : "calc(100%)",
-  zIndex: 10,
+  zIndex: INDICATOR_Z_INDEX,
   marginLeft: `${depth * DRAG_ITEM_INDENT}px`,
 
   // dot
@@ -26,7 +27,7 @@ const getLineStyle = (direction: "top" | "bottom", depth: number) => css({
     top: "-4px",
     left: "5px",
     transform: "translateX(-50%)",
-    zIndex: 10,
+    zIndex: INDICATOR_Z_INDEX,
   }
 })
 
