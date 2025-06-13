@@ -16,6 +16,10 @@ export class RoutineLikeNameValidator {
     if (name.trim() === "") {
       return "Name is required.";
     }
+    // 최대 길이
+    if (name.length > 100) {
+      return "Name must be 100 characters or less.";
+    }
     // obsidian file title
     if (OBSIDIAN_FILE_TITLE_INVALID_CHARS_REGEX.test(name)) {
       return "Name contains invalid characters.";

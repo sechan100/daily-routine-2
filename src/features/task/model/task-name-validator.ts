@@ -15,6 +15,10 @@ export class TaskNameValidator {
     if (name.trim() === "") {
       return "Name is required.";
     }
+    // 최대 길이
+    if (name.length > 100) {
+      return "Name must be 100 characters or less.";
+    }
     // other names
     if (this.otherNames.has(name)) {
       return `Name "${name}" already exists.`;

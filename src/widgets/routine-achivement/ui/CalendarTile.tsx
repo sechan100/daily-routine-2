@@ -56,7 +56,7 @@ export const CalendarTile = ({
             ?
             <Checkbox
               state={"unchecked"}
-              css={{
+              sx={{
                 visibility: "hidden",
               }}
               size={14}
