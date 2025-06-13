@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+// eslint-disable-next-line fsd-import/layer-imports
 import { CheckableState } from "@/entities/note";
 import { dr } from "@/shared/utils/daily-routine-bem";
 import { useMemo } from "react";

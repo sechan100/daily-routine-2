@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { Checkable } from "@/entities/note";
+// eslint-disable-next-line fsd-import/layer-imports
+import { Checkable } from "@/entities/checkable";
 import { CancelLineName } from "./CancelLineName";
 import { Checkbox } from "./Checkbox";
 

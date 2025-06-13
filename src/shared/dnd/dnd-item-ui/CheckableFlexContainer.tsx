@@ -18,6 +18,8 @@ export const CheckableFlexContainer = ({
         height: checkableStyle.height,
         display: "flex",
         alignItems: "center",
+        touchAction: "manipulation",
+        userSelect: "none",
         justifyContent: "space-between",
         width: "100%",
         padding: excludePadding ? undefined : checkableStyle.padding,

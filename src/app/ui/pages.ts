@@ -6,7 +6,7 @@ import { PageRouterRegistration, PageType } from "@/shared/route/page-type";
 
 
 
-export const INITIAL_PAGE: PageType = "queue";
+export const INITIAL_PAGE: PageType = "note";
 
 export const PAGES: PageRouterRegistration[] = [
   {

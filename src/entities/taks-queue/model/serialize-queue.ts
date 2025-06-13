@@ -1,4 +1,4 @@
-import { deserializeTask, serializeTask } from "@/entities/task";
+import { deserializeTask, serializeTask, Task } from "@/entities/task";
 import dedent from "dedent";
 import { TaskQueue } from "./task-queue";
 
@@ -21,11 +21,12 @@ export const serializeTaskQueue = (queue: TaskQueue): string => {
 
 export const deserializeTaskQueue = (fileContent: string): TaskQueue => {
   const taskSection = fileContent.split(/#\s*Tasks\s*/)[1];
+  let tasks: Task[];
   if (!taskSection) {
-    throw deserializeError("No '#Tasks' header section found in the file content.");
+    tasks = [];
   }
   const taskLines = taskSection.trim().split('\n').filter(line => line.trim() !== '');
-  const tasks = taskLines.map(line => {
+  tasks = taskLines.map(line => {
     try {
       return deserializeTask(line);
     } catch (error) {

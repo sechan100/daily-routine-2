@@ -87,14 +87,15 @@ const Header = ({ name, align, sx }: HeaderProps) => {
 
 type SectionProps = {
   children: React.ReactNode;
+  flex?: boolean;
   flexDirection?: "row" | "column";
 }
-const Section = ({ children, flexDirection = "row" }: SectionProps) => {
+const Section = ({ children, flex = true, flexDirection = "row" }: SectionProps) => {
 
   return (
     <section
       css={{
-        display: "flex",
+        display: flex ? "flex" : "block",
         justifyContent: "space-between",
         alignItems: "center",
         flexDirection: flexDirection,

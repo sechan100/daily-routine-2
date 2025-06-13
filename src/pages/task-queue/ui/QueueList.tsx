@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { TaskQueue } from '@/entities/taks-queue';
 import { reorderTasks, taskCollisionResolver } from '@/features/task';
 import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
 import { BaseDndItem } from "@/shared/dnd/drag-item";
@@ -8,7 +9,7 @@ import { QueueTaskItem } from "./QueueTaskItem";
 
 
 export const QueueList = () => {
-  const { queue, updateTasks } = useTaskQueue();
+  const { queue, updateQueue } = useTaskQueue();
 
   const handleDragEnd = useCallback(async ({ active, over, dndCase }: OnDragEndContext<BaseDndItem>) => {
     const newTasks = reorderTasks(queue.tasks, {
@@ -16,8 +17,12 @@ export const QueueList = () => {
       over,
       dndCase,
     });
-    await updateTasks(newTasks)
-  }, [queue.tasks, updateTasks]);
+    const newQueue: TaskQueue = {
+      ...queue,
+      tasks: newTasks,
+    };
+    await updateQueue(newQueue);
+  }, [queue, updateQueue]);
 
   return (
     <DndContext

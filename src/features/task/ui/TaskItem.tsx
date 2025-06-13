@@ -53,7 +53,9 @@ export const TaskItem = ({
   }, [onClick, task]);
 
   const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
+    // 이렇게 2개를 다 해줘야 mobile에서 contextMenu가 2번 호출되는 문제를 방지할 수 있다.
     e.preventDefault();
+    e.stopPropagation();
     onContextMenu?.(task);
   }, [onContextMenu, task]);
 
@@ -64,7 +66,6 @@ export const TaskItem = ({
       onContextMenu={handleContext}
       css={{
         position: "relative",
-        touchAction: "none",
         userSelect: "none",
         backgroundColor: isDragging || dragState === "ready" ? STYLES.palette.accent : undefined,
       }}

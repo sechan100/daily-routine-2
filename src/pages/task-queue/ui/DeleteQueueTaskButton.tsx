@@ -1,3 +1,4 @@
+import { TaskQueue } from "@/entities/taks-queue";
 import { Task } from "@/entities/task";
 import { Button } from "@/shared/components/Button";
 import { useModal } from "@/shared/components/modal";
@@ -17,7 +18,7 @@ export const DeleteQueueTaskButton = ({
   task,
 }: Props) => {
   const modal = useModal();
-  const { queue, updateTasks } = useTaskQueue();
+  const { queue, updateQueue } = useTaskQueue();
 
   const handleDelete = useCallback(async () => {
     const deletionConfirm = await doConfirm({
@@ -33,10 +34,14 @@ export const DeleteQueueTaskButton = ({
         draft.splice(index, 1);
       }
     });
-    await updateTasks(newTasks);
+    const newQueue: TaskQueue = {
+      ...queue,
+      tasks: newTasks,
+    }
+    await updateQueue(newQueue);
     new Notice(`Task '${task.name}' has been deleted.`);
     modal.close();
-  }, [modal, queue.tasks, task.name, updateTasks]);
+  }, [modal, queue, task.name, updateQueue]);
 
 
   return (

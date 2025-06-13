@@ -4,7 +4,7 @@ import { TaskItem } from "@/features/task";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useCallback } from "react";
 import { useNoteTasksContext } from "../model/context";
-import { useCheckTask } from "../model/use-check-routine";
+import { useCheckTask } from "../model/use-check-task";
 import { openRescheduleTaskModal } from "./RescheduleTaskModal";
 
 

@@ -64,7 +64,9 @@ export const RoutineItem = ({
    * Context Menu를 열면 routine control을 연다
    */
   const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
+    // 이렇게 2개를 다 해줘야 mobile에서 contextMenu가 2번 호출되는 문제를 방지할 수 있다.
     e.preventDefault();
+    e.stopPropagation();
     // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
     if (day.isPast()) {
       new Notice("Routine control cannot be opened for past routines.");
@@ -92,7 +94,6 @@ export const RoutineItem = ({
         onContextMenu={handleContext}
         css={{
           position: "relative",
-          touchAction: "none",
           backgroundColor: isDragging || mobileDragState === "ready" ? STYLES.palette.accent : undefined,
         }}
       >

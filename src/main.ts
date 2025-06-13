@@ -5,6 +5,7 @@ import { setPlugin } from '@/shared/utils/plugin-service-locator';
 import { activateView } from '@/shared/view/activate-view';
 import { Platform, Plugin } from 'obsidian';
 import { DailyRoutineObsidianView } from './app';
+import { initObsidianProtocalHandler } from './app/obsidian/init-obsidian-protocal-handler';
 import { schemaMigrationEntrypoint } from './app/schema-migration/migration-entrypoint';
 import { DailyRoutineSettings, DEFAULT_SETTINGS } from "./shared/settings";
 
@@ -41,6 +42,8 @@ export default class DailyRoutinePlugin extends Plugin {
         activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
       }
     });
+
+    initObsidianProtocalHandler(this);
 
     // 앱이 로드되면 실행
     this.app.workspace.onLayoutReady(() => {
