@@ -1,12 +1,9 @@
 /** @jsxImportSource @emotion/react */
 // eslint-disable-next-line fsd-import/layer-imports
 import { CheckableState } from "@/entities/note";
-import { dr } from "@/shared/utils/daily-routine-bem";
+import { Interpolation } from "@emotion/react";
+import { Theme } from "@mui/material";
 import { useMemo } from "react";
-import { CSSTransition } from "react-transition-group";
-
-
-const bem = dr("task-cbx")
 
 const CheckMarkWrapper = ({ children, size }: { children: React.ReactNode, size: number }) => {
   return (
@@ -29,139 +26,129 @@ const CheckMarkWrapper = ({ children, size }: { children: React.ReactNode, size:
 type AccomplishCheckMarkProps = {
   size: number;
   custom?: React.ReactNode;
+  isVisible: boolean;
 }
 const AccomplishCheckMark = ({
   size,
   custom,
+  isVisible,
 }: AccomplishCheckMarkProps) => {
   return (
-    <CheckMarkWrapper size={size}>
-      {custom ?? (
-        <polyline
-          points="7 54 35 78 92 7"
-          css={{
-            strokeWidth: 15,
-            stroke: "var(--color-accent-1)"
-          }}
-        />
-      )}
-    </CheckMarkWrapper>
+    <div
+      css={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        transform: isVisible ? "scale(1)" : "scale(0)",
+        opacity: isVisible ? 1 : 0,
+        transition: "all 0.5s ease",
+      }}
+    >
+      <CheckMarkWrapper size={size}>
+        {custom ?? (
+          <polyline
+            points="7 54 35 78 92 7"
+            css={{
+              strokeWidth: 15,
+              stroke: "var(--color-accent-1)"
+            }}
+          />
+        )}
+      </CheckMarkWrapper>
+    </div>
   )
 }
 
 type FailedCheckMarkProps = {
   size: number;
   custom?: React.ReactNode;
+  isVisible: boolean;
 }
 const FailedCheckMark = ({
   size,
   custom,
+  isVisible,
 }: FailedCheckMarkProps) => {
   const x = 15;
   const y = 100 - x;
   const color = "var(--color-accent-2)";
+
   return (
-    <CheckMarkWrapper size={size}>
-      {custom ?? (<>
-        <polyline
-          points={`${x} ${x} ${y} ${y}`}
-          css={{
-            strokeWidth: 15,
-            stroke: color,
-          }}
-        />
-        <polyline
-          points={`${y} ${x} ${x} ${y}`}
-          css={{
-            strokeWidth: 15,
-            stroke: color,
-          }}
-        />
-        {/* 삼각형은 어떻니 */}
-        {/* <polyline
-          points="50 0 0 90 90 90 50 0"
-          css={{
-            strokeWidth: 15,
-            stroke: "var(--color-accent-2)"
-          }}
-        /> */}
-      </>)}
-    </CheckMarkWrapper>
+    <div
+      css={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        transform: isVisible ? "scale(1)" : "scale(0)",
+        opacity: isVisible ? 1 : 0,
+        transition: "all 0.5s ease",
+      }}
+    >
+      <CheckMarkWrapper size={size}>
+        {custom ?? (<>
+          <polyline
+            points={`${x} ${x} ${y} ${y}`}
+            css={{
+              strokeWidth: 15,
+              stroke: color,
+            }}
+          />
+          <polyline
+            points={`${y} ${x} ${x} ${y}`}
+            css={{
+              strokeWidth: 15,
+              stroke: color,
+            }}
+          />
+        </>)}
+      </CheckMarkWrapper>
+    </div>
   )
 }
 
-
-
 interface Props {
   state: CheckableState;
-  className?: string;
   size?: number;
   customAccomplishedSVG?: React.ReactNode;
   customFailedSVG?: React.ReactNode;
+  sx?: Interpolation<Theme>;
 }
+
 export const Checkbox = ({
   state,
-  className,
   customAccomplishedSVG,
   customFailedSVG,
   size = 15,
+  sx,
 }: Props) => {
   const isChecked = useMemo(() => state !== "unchecked", [state]);
+
   return (
     <div
-      className={bem("cbx", "", className)}
-      css={{
+      css={[{
         display: "inline-block",
         position: "relative",
         width: `${size}px`,
         height: `${size}px`,
-
+        minWidth: `${size}px`,
+        minHeight: `${size}px`,
         // checkbox style
         border: "0.07em solid #c8ccd4",
         borderColor: isChecked ? "transparent" : undefined,
         borderRadius: "3px",
         cursor: "pointer",
         transition: "scale",
-
-        // transition
-        "& .fade-enter": {
-          transform: "scale(0)",
-          opacity: 0,
-        },
-        "& .fade-enter-active": {
-          transform: "scale(1)",
-          opacity: 1,
-          transition: "all 0.5s ease",
-        },
-      }}
+      }, sx]}
     >
-      <CSSTransition
-        in={state === "accomplished"}
-        key="accomplish"
-        timeout={500}
-        exit={false}
-        classNames="fade"
-        unmountOnExit
-        children={
-          <AccomplishCheckMark
-            size={size}
-            custom={customAccomplishedSVG}
-          />
-        }
+      <AccomplishCheckMark
+        size={size}
+        custom={customAccomplishedSVG}
+        isVisible={state === "accomplished"}
       />
-      <CSSTransition
-        in={state === "failed"}
-        key="failed"
-        timeout={500}
-        exit={false}
-        classNames="fade"
-        unmountOnExit
-        children={
-          <FailedCheckMark
-            size={size}
-            custom={customFailedSVG}
-          />
-        }
+      <FailedCheckMark
+        size={size}
+        custom={customFailedSVG}
+        isVisible={state === "failed"}
       />
     </div>
   )

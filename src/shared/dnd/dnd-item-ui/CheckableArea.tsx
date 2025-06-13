@@ -23,7 +23,7 @@ export const CheckableArea = ({
       <Checkbox
         state={checkable.state}
         size={13}
-        css={{
+        sx={{
           marginRight: "0.5em",
         }}
       />

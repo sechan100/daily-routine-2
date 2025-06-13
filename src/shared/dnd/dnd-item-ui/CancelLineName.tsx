@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { dr } from "@/shared/utils/daily-routine-bem";
 import { css } from "@emotion/react";
 
 
-const bem = dr("task-name");
 
 const baseStyle = css({
   position: "relative",
   cursor: "pointer",
   transition: "color 0.5s ease",
+  wordBreak: "break-word",
   "&:after": {
     content: "''",
     position: "absolute",
@@ -43,7 +42,6 @@ export const CancelLineName = ({
 }: Props) => {
   return (
     <span
-      className={bem("name")}
       css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}
     >
       {name}

@@ -15,9 +15,10 @@ export const CheckableFlexContainer = ({
   return (
     <div
       css={{
-        height: checkableStyle.height,
+        // height: checkableStyle.height,
+        minHeight: checkableStyle.minHeight,
         display: "flex",
-        alignItems: "center",
+        alignItems: "stretch",
         touchAction: "manipulation",
         userSelect: "none",
         justifyContent: "space-between",

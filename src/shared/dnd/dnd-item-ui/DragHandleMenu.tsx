@@ -44,7 +44,6 @@ export const DragHandleMenu = forwardRef<HTMLDivElement, Props>(({
         display: "flex",
         alignItems: "center",
         justifyContent: "end",
-        height: "100%",
         cursor: "grab",
         paddingRight: "16px",
       }}

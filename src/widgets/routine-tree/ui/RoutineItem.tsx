@@ -103,7 +103,6 @@ export const RoutineItem = ({
             onContextMenu={handleContextMenu}
             sx={{
               width: "100%",
-              height: "100%",
               display: "flex",
               alignItems: "center",
             }}
@@ -112,9 +111,8 @@ export const RoutineItem = ({
           </Touchable>
           <div css={{
             display: "flex",
-            alignItems: "center",
+            alignItems: "stretch",
             gap: "8px",
-            height: "100%",
             cursor: "pointer",
           }}>
             {optionIcons.map((option, index) => (

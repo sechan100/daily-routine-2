@@ -1,16 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
 import { CSSProperties, useMemo } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { Preview } from "react-dnd-preview";
 import { TEXT_CSS } from '../colors/text-style';
 import { useLeaf } from '../view/use-leaf';
 import { BaseDndItem, isBaseDndItem } from "./drag-item";
-
-
-const textStyle = css([TEXT_CSS.description, {
-  color: "var(--color-base-00)",
-}])
 
 type DragItemProps = {
   item: BaseDndItem;
@@ -29,7 +23,8 @@ const Item = ({
 
     const previewWidth = 300;
     const previewHeight = 50;
-    const xOffset = -250;
+    // x 축 방향 조정
+    const xOffset = -50;
 
     const { x: x_viewport, y: y_viewport } = currentOffset;
     // @ts-ignore
@@ -68,7 +63,19 @@ const Item = ({
         boxShadow: "0 0 0.5em 0.5em rgba(0, 0, 0, 0.2)",
         color: "var(--color-base-00)",
       }}>
-        <div css={textStyle}>{item.id}</div>
+        <div
+          css={[
+            TEXT_CSS.description,
+            {
+              color: "var(--color-base-00)",
+              // width: "100px",
+              maxWidth: "100px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }
+          ]}
+        >{item.id}</div>
       </div>
     </div>
   )
