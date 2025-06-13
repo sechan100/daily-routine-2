@@ -18,6 +18,7 @@ export const STYLES = {
   },
   fontSize: {
     smaller: "var(--font-ui-smaller)",
+    small: "var(--font-ui-small)",
     medium: "var(--font-ui-medium)",
     large: "var(--font-ui-large)",
   },

@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
-import { useLeaf } from "@/shared/view/use-leaf";
 import { css, CSSObject } from '@emotion/react';
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import Calendar from "react-calendar";
@@ -88,7 +87,6 @@ const useBaseCalendarStyles = ({
   tile: tileStyle = {},
   neighboringMonthTile: neighboringMonthTileStyle = {},
 }: CalendarStyleOptions) => {
-  const { leafBgColor } = useLeaf();
   const calendarStyles = useMemo(() => css({
     // 네비게이션
     '.react-calendar__navigation': {
@@ -149,13 +147,13 @@ const useBaseCalendarStyles = ({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: leafBgColor,
+        backgroundColor: "inherit",
         opacity: 0.8,
         zIndex: 100,
       },
       ...neighboringMonthTileStyle,
     }
-  }), [leafBgColor, navStyle, neighboringMonthTileStyle, tileContainerStyle, tileStyle, weekdayEachStyle, weekdaysStyle]);
+  }), [navStyle, neighboringMonthTileStyle, tileContainerStyle, tileStyle, weekdayEachStyle, weekdaysStyle]);
 
   return calendarStyles;
 }

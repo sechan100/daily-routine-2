@@ -3,6 +3,7 @@ import { useNoteDayStore } from "@/entities/note";
 import { openRoutineNoteFile, useRoutineNoteQuery } from "@/features/note";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
+import { useRouter } from "@/shared/route/use-router";
 import { openCreateRoutineModal } from "@/widgets/create-routine";
 import { openCreateRoutineGroupModal } from "@/widgets/create-routine-group";
 import { useCallback } from "react";
@@ -10,7 +11,8 @@ import { useCallback } from "react";
 
 
 
-export const NodeHeader = () => {
+export const NoteHeader = () => {
+  const { route } = useRouter();
   const day = useNoteDayStore(state => state.day);
   const { note } = useRoutineNoteQuery(day);
 
@@ -32,7 +34,7 @@ export const NodeHeader = () => {
         onClick={handleNoteHeaderClick}
         css={{
           fontWeight: STYLES.fontWeight.bold,
-          fontSize: STYLES.fontSize.medium,
+          fontSize: 17,
           padding: "1px 4px",
           cursor: "pointer",
         }}
@@ -53,6 +55,12 @@ export const NodeHeader = () => {
           size='21px'
           icon="folder"
           onClick={() => openCreateRoutineGroupModal({})}
+          pointer
+        />
+        <ObsidianIcon
+          size='21px'
+          icon="flame"
+          onClick={() => route("achievement")}
           pointer
         />
       </div>

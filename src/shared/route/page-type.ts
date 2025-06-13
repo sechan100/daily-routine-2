@@ -1,7 +1,7 @@
 import { ComponentType } from "react";
 
 
-export type PageType = "note" | "calendar" | "achievement";
+export type PageType = "note" | "calendar" | "queue" | "achievement";
 
 
 export type PageRouterRegistration = {

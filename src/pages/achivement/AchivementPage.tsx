@@ -29,7 +29,6 @@ export const AchivementPage = () => {
     <>
       <TabNav
         value={type}
-        className="dr-tabs"
         scrollButtons={false}
         centered
         sx={{ borderTop: 1, borderColor: 'divider' }}

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { WeeksWidget } from "@/widgets/weeks";
-import { NodeHeader } from "./NoteHeader";
+import { NoteHeader } from "./NoteHeader";
 import { TasksAndRoutines } from './TasksAndRoutines';
 
 
@@ -65,7 +65,7 @@ export const NoteContent = () => {
       }}
     >
       <WeeksWidget />
-      <NodeHeader />
+      <NoteHeader />
       <TasksAndRoutines />
       {/* <AddTodoModal />
       <StartRoutineModal />

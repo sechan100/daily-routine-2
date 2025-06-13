@@ -58,7 +58,7 @@ interface VirtualSwiperProps<T extends VirtualSlideData> {
   nextNav?: HTMLElement;
 }
 
-const VirtualSwiperComponent = <T extends VirtualSlideData,>({
+const SwiperComponent = <T extends VirtualSlideData,>({
   datas: propsDatas,
   getKey,
   children,
@@ -168,7 +168,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
         modules={[Mousewheel]}
         passiveListeners={false}
         touchMoveStopPropagation={true} // touchmove 이벤트가 부모로 전파되지 않도록 한다.
-        preventInteractionOnTransition={false} // transition 중에는 interaction을 막는다.
+        preventInteractionOnTransition={true} // transition 중에는 interaction을 막는다.
         onTransitionEnd={(swiper: SwiperClass) => {
           if (preventSlideEvent.current) {
             preventSlideEvent.current = false;
@@ -197,4 +197,4 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
 }
 
 
-export const VirtualSwiper = React.memo(VirtualSwiperComponent) as typeof VirtualSwiperComponent;
+export const VirtualSwiper = React.memo(SwiperComponent) as typeof SwiperComponent;

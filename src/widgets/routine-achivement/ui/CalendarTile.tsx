@@ -6,7 +6,7 @@ import { Badge } from "@mui/material";
 import { Tile } from "../model/types";
 // FIXME: 이거 나중에 ui고칠 때 바꾸기
 // eslint-disable-next-line fsd-import/public-api-imports
-import { Checkbox } from "@/features/checkable/ui/Checkbox";
+import { Checkbox } from "@/shared/dnd/dnd-item-ui/Checkbox";
 
 
 

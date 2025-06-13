@@ -1,8 +1,8 @@
-import { Task, TaskProperties } from "@/entities/task";
 import { produce } from "immer";
+import { Task, TaskProperties } from "../types/task";
 
 
-class NoteTaskUtils {
+class TaskUtils {
 
   findTask(tasks: Task[], taskName: string): Task {
     const task = tasks.find(t => t.name === taskName);
@@ -46,4 +46,4 @@ class NoteTaskUtils {
 
 }
 
-export const noteTaskUtils = new NoteTaskUtils();
+export const taskUtils = new TaskUtils();

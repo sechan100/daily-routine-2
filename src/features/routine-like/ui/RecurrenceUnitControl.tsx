@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { RecurrenceUnit } from "@/entities/routine";
-import { Modal } from "@/shared/components/modal/styled";
+import { Modal } from "@/shared/components/modal/styled-modal";
 import { DayOfWeek } from "@/shared/period/day";
 import { RecurrenceUnitButtons } from "./RecurrenceUnitButtons";
 import { RecurrenceUnitDaysSelector } from "./RecurrenceUnitDaysSelector";

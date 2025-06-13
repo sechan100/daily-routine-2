@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useNoteTasks } from '@/features/note';
+import { reorderTasks, taskCollisionResolver } from '@/features/task';
 import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
 import { BaseDndItem } from "@/shared/dnd/drag-item";
 import { useCallback } from "react";
-import { reorderTasks, taskCollisionResolver } from "../model/resolve-dnd";
-import { TaskItem } from "./TaskItem";
+import { NoteTaskItem } from "./NoteTaskItem";
 
 
 export const TaskListRoot = () => {
@@ -26,7 +26,7 @@ export const TaskListRoot = () => {
       onDragEnd={handleDragEnd}
     >
       {tasks.map(task => (
-        <TaskItem
+        <NoteTaskItem
           key={task.name}
           task={task}
         />

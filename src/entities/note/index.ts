@@ -1,6 +1,6 @@
 
 // api
-export { routineNoteQueryKeys } from "./api/routine-note-query-key";
+export { routineNoteQueryKeys } from "./api/routine-note-query-keys";
 
 
 // types
@@ -16,7 +16,6 @@ export type { RoutineTree } from "./types/routine-tree";
 export { getNoteProgress } from "./model/get-note-progress";
 export { noteRepository } from "./model/note-repository";
 export { routineTreeUtils } from "./model/routine-tree-utils";
-export { noteTaskUtils } from "./model/tasks-utils";
 export { ZERO_NOTE_PROGRESS } from "./model/zero-note-progress";
 
 // stores

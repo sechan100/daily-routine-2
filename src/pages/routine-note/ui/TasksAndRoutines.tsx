@@ -2,8 +2,8 @@
 import { routineTreeUtils, useNoteDayStore } from "@/entities/note";
 import { useRoutineNoteQuery } from "@/features/note";
 import { NoteTaskList } from "@/widgets/note-tasks";
-import { openRoutineControlsModal } from "@/widgets/routine-controls";
-import { openRoutineGroupControlsModal } from "@/widgets/routine-group-controls";
+import { openRoutineControls } from "@/widgets/routine-controls";
+import { openRoutineGroupControls } from "@/widgets/routine-group-controls";
 import { NoteRoutineTree } from "@/widgets/routine-tree";
 import { openTaskControlsModal } from "@/widgets/task-control";
 import { useMemo, useRef } from "react";
@@ -62,8 +62,8 @@ export const TasksAndRoutines = () => {
         />
         <Panel minSize={routinePanelMinSize} order={2}>
           <NoteRoutineTree
-            openRoutineControls={routine => openRoutineControlsModal({ routine })}
-            openRoutineGroupControls={group => openRoutineGroupControlsModal({ group })}
+            openRoutineControls={routine => openRoutineControls({ routine })}
+            openRoutineGroupControls={group => openRoutineGroupControls({ group })}
           />
         </Panel>
       </PanelGroup>

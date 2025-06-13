@@ -1,10 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { noteTaskUtils } from '@/entities/note';
-import { Task, TaskProperties } from '@/entities/task';
-import { TaskNameValidator } from '@/features/ task';
+import { Task, TaskProperties, taskUtils } from '@/entities/task';
 import { useNoteTasks } from '@/features/note';
+import { TaskNameValidator } from '@/features/task';
 import { createModal, useModal } from '@/shared/components/modal';
-import { Modal } from '@/shared/components/modal/styled';
+import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { ToggleComponent } from '@/shared/components/ToggleComponent';
 import { useCallback, useEffect, useRef } from "react";
@@ -53,11 +52,11 @@ export const openTaskControlsModal = createModal(({ task }: Props) => {
       showOnCalendar: form.showOnCalendar,
     }
     let newTasks: Task[];
-    newTasks = noteTaskUtils.updateTaskProperties(tasks, task.name, newProperties);
+    newTasks = taskUtils.updateTaskProperties(tasks, task.name, newProperties);
     // 이름 변경
     const isNameDirty = getFieldState('name').isDirty;
     if (isNameDirty) {
-      newTasks = noteTaskUtils.rename(newTasks, task.name, form.name);
+      newTasks = taskUtils.rename(newTasks, task.name, form.name);
     }
     await updateTasks(newTasks);
     reset();

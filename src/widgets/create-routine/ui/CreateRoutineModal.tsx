@@ -3,7 +3,7 @@ import { Routine, routineRepository } from '@/entities/routine';
 import { useRoutineTree } from '@/features/note';
 import { RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
-import { Modal } from '@/shared/components/modal/styled';
+import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { ToggleComponent } from '@/shared/components/ToggleComponent';
 import { useCallback, useEffect, useRef } from "react";

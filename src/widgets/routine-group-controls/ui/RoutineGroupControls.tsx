@@ -3,7 +3,7 @@ import { RoutineGroup, routineGroupRepository } from '@/entities/routine-group';
 import { useRoutineTree } from '@/features/note';
 import { renameRoutineGroup, RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
-import { Modal } from '@/shared/components/modal/styled';
+import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { useCallback, useEffect, useRef } from "react";
 import { Controller, useForm } from 'react-hook-form';
@@ -15,7 +15,7 @@ import { DeleteRoutineGroupButton } from './DeleteRoutineGroupButton';
 type Props = {
   group: RoutineGroup;
 }
-export const openRoutineGroupControlsModal = createModal(({ group }: Props) => {
+export const openRoutineGroupControls = createModal(({ group }: Props) => {
   const { ripple } = useRoutineTree();
   const modal = useModal();
   const {

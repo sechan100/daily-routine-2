@@ -1,25 +1,24 @@
 /** @jsxImportSource @emotion/react */
 import { Task } from "@/entities/note";
-import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/styles";
+import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";
 import { Platform } from "obsidian";
 import { useCallback, useRef, useState } from "react";
-import { useNoteTasksContext } from "../model/context";
-import { useCheckTask } from "../model/use-check-routine";
 
 
 type Props = {
   task: Task;
+  onClick?: (task: Task) => void;
+  onContextMenu?: (task: Task) => void;
 }
 export const TaskItem = ({
   task,
+  onClick,
+  onContextMenu
 }: Props) => {
-  const { handleTaskCheck } = useCheckTask(task);
-  const { openTaskControls } = useNoteTasksContext();
-
   const [dragState, setDragState] = useState<DragState>("idle");
   const draggableRef = useRef<HTMLDivElement>(null);
   const droppableRef = useRef<HTMLDivElement>(null);
@@ -44,13 +43,13 @@ export const TaskItem = ({
   });
 
   const handleClick = useCallback(async () => {
-    await handleTaskCheck();
-  }, [handleTaskCheck]);
+    onClick?.(task);
+  }, [onClick, task]);
 
   const handleContext = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    openTaskControls(task);
-  }, [openTaskControls, task]);
+    onContextMenu?.(task);
+  }, [onContextMenu, task]);
 
   return (
     <div

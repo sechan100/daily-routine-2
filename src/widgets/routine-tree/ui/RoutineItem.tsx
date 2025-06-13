@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutine, NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineRepository } from "@/entities/routine";
-import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/styles";
+import { CheckableArea, CheckableFlexContainer, CheckableRippleBase, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { DRAG_ITEM_INDENT, Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";

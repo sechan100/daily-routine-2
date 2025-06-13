@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { NoteRoutineGroup, useNoteDayStore } from "@/entities/note";
 import { routineGroupRepository } from "@/entities/routine-group";
-import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/features/checkable";
 import { STYLES } from "@/shared/colors/styles";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
+import { CancelLineName, CheckableFlexContainer, checkableStyle, DragHandleMenu } from "@/shared/dnd/dnd-item-ui";
 import { DragState } from "@/shared/dnd/drag-state";
 import { Indicator } from "@/shared/dnd/Indicator";
 import { useDnd } from "@/shared/dnd/use-dnd";

@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { Month } from "@/shared/period/month";
 import { useCallback, useState } from "react";
-import { VirtualSwiper } from '../VirtualSwiper';
-import { CalendarNavigation } from "./Nav";
+import { VirtualSwiper } from '../SwiperComponent';
+import { SwipeableCalendarCalendarNavigation } from "./Nav";
 
 
 
@@ -28,11 +28,15 @@ const getKey = (month: Month) => month.startDay.format()
 interface Props {
   month: Month;
   children: (month: Month, index?: number) => React.ReactNode;
+  /**
+   * verticalHeight를 할당하면 자동으로 vertical swiper로 설정된다.
+   * 설정한 값은 swiper의 높이로 사용된다.
+   */
   verticalHeight?: number;
   maxWidth?: number
   onMonthChange?: (month: Month) => void;
 }
-export const SwipeableCalendar = ({
+export const SwipeableCalendarProvider = ({
   month: propsMonth,
   children,
   verticalHeight,
@@ -41,7 +45,6 @@ export const SwipeableCalendar = ({
 }: Props) => {
   const [months, setMonths] = useState<Month[]>(loadMonths(propsMonth));
   const [activeMonth, setActiveMonth] = useState<Month>(propsMonth);
-
 
   const onSlideChange = useCallback((month: Month) => {
     setActiveMonth(month);
@@ -57,7 +60,6 @@ export const SwipeableCalendar = ({
 
   return (
     <div
-      className="dr-swipeable-calendar"
       css={{
         position: 'relative',
         height: `calc(var(--input-height) + ${verticalHeight}px)`,
@@ -65,7 +67,7 @@ export const SwipeableCalendar = ({
         maxWidth,
       }}
     >
-      <CalendarNavigation
+      <SwipeableCalendarCalendarNavigation
         month={activeMonth}
         setMonth={resetMonths}
       />

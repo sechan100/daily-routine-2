@@ -65,30 +65,39 @@ const Separator = () => {
 
 type HeaderProps = {
   name: string;
+  align?: "left" | "center" | "right";
+  sx?: Interpolation<Theme>
 }
-const Header = ({ name }: HeaderProps) => {
+const Header = ({ name, align, sx }: HeaderProps) => {
   return (
-    <div css={TEXT_CSS.medium}>
-      {name}
+    <div css={[{
+      width: align ? "100%" : "auto",
+      display: "flex",
+      justifyContent: align || "center",
+      alignItems: "center",
+    }, sx]}>
+      <span css={TEXT_CSS.medium}>
+        {name}
+      </span>
     </div>
   )
 }
 
 type SectionProps = {
   children: React.ReactNode;
-  flex?: boolean;
-  css?: Interpolation<Theme>;
+  flexDirection?: "row" | "column";
 }
-const Section = ({ children, flex = true, css }: SectionProps) => {
+const Section = ({ children, flexDirection = "row" }: SectionProps) => {
 
   return (
     <section
-      css={[{
-        display: flex ? "flex" : "block",
+      css={{
+        display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        flexDirection: flexDirection,
         margin: "16px 0",
-      }, css]}
+      }}
     >
       {children}
     </section>

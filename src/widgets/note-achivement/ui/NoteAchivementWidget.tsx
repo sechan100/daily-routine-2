@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { SwipeableCalendar } from '@/shared/components/swipeable-calender/SwipeableCalendar';
+import { SwipeableCalendarProvider } from '@/shared/components/calendar-legacy/SwipeableCalendarProvider';
 import { Month } from '@/shared/period/month';
 import { CalendarSlide } from './CalendarSlide';
 
@@ -13,12 +13,12 @@ export interface NoteAchivementCalendarProps {
 export const NoteAchivementWidget = ({ month, height, maxWidth }: NoteAchivementCalendarProps) => {
 
   return (
-    <SwipeableCalendar
+    <SwipeableCalendarProvider
       month={month}
       verticalHeight={height}
       maxWidth={maxWidth}
     >
       {month => <CalendarSlide month={month} />}
-    </SwipeableCalendar>
+    </SwipeableCalendarProvider>
   )
 }

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { getNoteProgress, useNoteDayStore, } from "@/entities/note";
 import { useRoutineNoteQuery } from "@/features/note";
-import { VirtualSwiper } from "@/shared/components/VirtualSwiper";
+import { VirtualSwiper } from "@/shared/components/SwiperComponent";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
 import { useLeaf } from "@/shared/view/use-leaf";

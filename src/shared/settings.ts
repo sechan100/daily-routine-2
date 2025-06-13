@@ -12,7 +12,7 @@ export type DailyRoutineSettings = {
 }
 
 export const DEFAULT_SETTINGS: DailyRoutineSettings = {
-  dailyRoutineFolderPath: "daily_routine",
+  dailyRoutineFolderPath: "daily-routine",
   isMondayStartOfWeek: true,
   confirmUncheckTask: true
 }
@@ -32,6 +32,10 @@ export const SETTINGS = {
 
   getNoteFolderPath() {
     return `${getPlugin().settings.dailyRoutineFolderPath}/notes`;
+  },
+
+  getTaksQueueFilePath() {
+    return `${getPlugin().settings.dailyRoutineFolderPath}/task-queue.md`;
   },
 
   getIsMondayStartOfWeek() {

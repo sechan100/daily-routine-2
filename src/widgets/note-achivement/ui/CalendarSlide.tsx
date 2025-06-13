@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { getNoteProgress, noteRepository, useNoteDayStore, ZERO_NOTE_PROGRESS } from "@/entities/note";
 import { NoteProgressCircle } from "@/features/note";
-import { BaseCalendar } from "@/shared/components/BaseCalendar";
+import { BaseCalendar } from "@/shared/components/calendar-legacy/BaseCalendar";
 import { Day } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 import { useRouter } from "@/shared/route/use-router";

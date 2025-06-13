@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { Month } from "@/shared/period/month";
-import { useLeaf } from "@/shared/view/use-leaf";
 import { css } from '@emotion/react';
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Calendar from "react-calendar";
@@ -9,17 +8,16 @@ import { OnArgs } from "react-calendar/dist/cjs/shared/types";
 
 
 
-export interface CalendarNavigationProps {
+export interface SwipeableCalendarCalendarNavProps {
   month: Month;
   setMonth: (month: Month) => void;
   className?: string;
 }
-export const CalendarNavigation = ({
+export const SwipeableCalendarCalendarNav = ({
   month,
   setMonth,
   className,
-}: CalendarNavigationProps) => {
-  const { leafBgColor } = useLeaf();
+}: SwipeableCalendarCalendarNavProps) => {
   const calendarRef = useRef(null);
 
   useEffect(() => {
@@ -78,7 +76,7 @@ export const CalendarNavigation = ({
             display: "block",
             borderRadius: "0",
             borderBottom: "0.5px solid var(--color-base-40)",
-            backgroundColor: leafBgColor,
+            backgroundColor: "var(--color-base-20)",
             fontSize: "1em",
             padding: "10px 0",
             overflow: "visible !important",
@@ -105,7 +103,7 @@ export const CalendarNavigation = ({
     ".react-calendar__month-view": {
       display: 'none',
     },
-  }), [leafBgColor]);
+  }), []);
 
 
   return (

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { noteRepository, routineTreeUtils } from "@/entities/note";
-import { BaseCalendar } from "@/shared/components/BaseCalendar";
+import { BaseCalendar } from "@/shared/components/calendar-legacy/BaseCalendar";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 import { useAsync } from "@/shared/utils/use-async";

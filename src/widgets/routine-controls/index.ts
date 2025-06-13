@@ -1,1 +1,1 @@
-export { openRoutineControlsModal } from "./ui/RoutineControls";
+export { openRoutineControls } from "./ui/RoutineControls";

@@ -3,7 +3,7 @@ import { Routine, RoutineProperties, routineRepository } from '@/entities/routin
 import { useRoutineTree } from '@/features/note';
 import { RoutineLikeNameValidator } from '@/features/routine-like';
 import { createModal, useModal } from '@/shared/components/modal';
-import { Modal } from '@/shared/components/modal/styled';
+import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { ToggleComponent } from '@/shared/components/ToggleComponent';
 import { useCallback, useEffect, useRef } from "react";
@@ -17,7 +17,7 @@ import { DeleteRoutineButton } from './DeleteRoutineButton';
 type Props = {
   routine: Routine;
 }
-export const openRoutineControlsModal = createModal(({ routine }: Props) => {
+export const openRoutineControls = createModal(({ routine }: Props) => {
   const { ripple } = useRoutineTree();
   const modal = useModal();
   const {

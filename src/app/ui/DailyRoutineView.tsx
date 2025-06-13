@@ -9,7 +9,7 @@ import { useLeaf } from "@/shared/view/use-leaf";
 import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { MUIThemeProvider } from './MUIThemProvider';
 import "./style.css";
 
@@ -26,15 +26,24 @@ const tabCss = css({
 
 const notePage: PageType = "note";
 const calendarPage: PageType = "calendar";
-const achivementPage: PageType = "achievement";
+const taskQueuePage: PageType = "queue";
 
 export const DailyRoutineView = () => {
   const { current, pages, route } = useRouter();
-  const { view, leafBgColor } = useLeaf();
+  const { view } = useLeaf();
 
   useEffect(() => {
     view.contentEl.classList.add("no-padding");
   }, [view]);
+
+  const tab = useMemo<PageType | boolean>(() => {
+    if (!current || !pages) return false;
+    const p = current.name;
+    if (p !== notePage && p !== calendarPage && p !== taskQueuePage) {
+      return false;
+    }
+    return p;
+  }, [current, pages]);
 
   const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: PageType) => {
     if (current && newValue !== current.name) {
@@ -60,14 +69,14 @@ export const DailyRoutineView = () => {
             <current.Page />
           </div>
           <TabNav
-            value={current.name}
+            value={tab}
             scrollButtons={false}
             centered
             sx={{ borderTop: 1, borderColor: 'divider' }}
             onChange={handleTabChange}
             css={{
               zIndex: 1000,
-              backgroundColor: leafBgColor,
+              backgroundColor: "inherit",
               position: "fixed",
               minHeight: 0,
               width: "100%",
@@ -90,9 +99,9 @@ export const DailyRoutineView = () => {
               css={tabCss}
             />
             <TabNavItem
-              label="Achivement"
-              value={achivementPage}
-              icon={<ObsidianIcon icon="book-check" />}
+              label="Queue"
+              value={taskQueuePage}
+              icon={<ObsidianIcon icon="list-check" />}
               iconPosition="start"
               css={tabCss}
             />
@@ -102,7 +111,7 @@ export const DailyRoutineView = () => {
             position: "fixed",
             width: "100%",
             height: tabsBottomGap,
-            backgroundColor: leafBgColor,
+            backgroundColor: "inherit",
             bottom: 0,
             zIndex: 1000,
           }} />
