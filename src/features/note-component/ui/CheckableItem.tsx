@@ -94,6 +94,7 @@ export const CheckableItem = ({
     });
     setTimeout(() => {
       onStateChange?.(newState);
+      setLocalCheckable(checkable);
       setIsPending(false);
     }, useSettingsStores.getState().hideCompletedTasksAndRoutines ? hideCompletedMs : 0);
   }, [checkable, onStateChange]);

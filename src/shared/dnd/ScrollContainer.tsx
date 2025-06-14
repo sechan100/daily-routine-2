@@ -1,8 +1,27 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useRef } from "react";
+import { css } from '@emotion/react';
+import { useEffect, useMemo, useRef } from "react";
 import { useDragDropManager } from "react-dnd";
+import { getAccent } from '../colors/obsidian-accent-color';
 import { useDndScroll } from "./use-dnd-auto-scroll";
 
+
+export const DND_SCROLL_CONTAINER_CLASS_NAME = "dr-dnd-scroll-container";
+
+
+const gradientCss = css({
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: "1em",
+  background: `linear-gradient(to top, 
+    ${getAccent({ a: 0.15 })} 0%,
+    transparent 100%
+  )`,
+  pointerEvents: "none",
+  borderRadius: "0.2em",
+});
 
 type DndScrollContainerProps = {
   itemTypes: string[];
@@ -12,8 +31,16 @@ export const DndScrollContainer = ({
   itemTypes,
   children
 }: DndScrollContainerProps) => {
-  const listRef = useRef<HTMLDivElement>(null);
-  const { updatePosition } = useDndScroll(listRef);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { updatePosition } = useDndScroll(scrollContainerRef);
+
+  const contentHeight = useMemo(() => {
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return 0;
+    }
+    return container.scrollHeight;
+  }, []);
 
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();
@@ -34,11 +61,12 @@ export const DndScrollContainer = ({
 
   return (
     <div
-      ref={listRef}
+      className={DND_SCROLL_CONTAINER_CLASS_NAME}
+      ref={scrollContainerRef}
       css={{
         height: "100%",
         overflowY: "auto",
-        paddingBottom: "8px", // 아래 여백
+        paddingBottom: contentHeight !== 0 ? "8px" : 0, // contentHeight가 있을 때는 아래 여백을 준다.
       }}
     >
       {children}

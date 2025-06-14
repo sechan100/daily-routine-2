@@ -1,72 +1,44 @@
 /** @jsxImportSource @emotion/react */
-import { routineTreeUtils, useNoteDayStore } from "@/entities/note";
+import { useNoteDayStore } from "@/entities/note";
 import { useRoutineNoteQuery } from "@/features/note";
+import { useSettingsStores } from "@/shared/settings";
 import { NoteTaskList } from "@/widgets/note-tasks";
 import { openRoutineControls } from "@/widgets/routine-controls";
 import { openRoutineGroupControls } from "@/widgets/routine-group-controls";
 import { NoteRoutineTree } from "@/widgets/routine-tree";
 import { openTaskControlsModal } from "@/widgets/task-control";
-import { useMemo, useRef } from "react";
-import { ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { Divider } from "@mui/material";
+import { useEffect, useRef } from "react";
+import { useNotePanel } from "./use-note-panel";
 
-
-export const CHECKABLE_GROUP_PANEL_MIN_SIZE = 20;
 
 export const TasksAndRoutines = () => {
   const day = useNoteDayStore(state => state.day);
   const { note } = useRoutineNoteQuery(day);
-  const panelGroupHandleRef = useRef<ImperativePanelGroupHandle>(null);
+  const settings = useSettingsStores();
 
-  const taskPanelMinSize = useMemo(() => {
-    if (note.tasks.length === 0) {
-      return 0;
-    }
-    return CHECKABLE_GROUP_PANEL_MIN_SIZE;
-  }, [note.tasks.length]);
+  const tasksPanelRef = useRef<HTMLDivElement>(null);
+  const { tasksPanelHeight, optimizePanelLayout } = useNotePanel({
+    tasksPanelRef,
+  });
 
-  const routinePanelMinSize = useMemo(() => {
-    if (routineTreeUtils.getAllRoutines(note.routineTree).length === 0) {
-      return 0;
-    }
-    return CHECKABLE_GROUP_PANEL_MIN_SIZE;
-  }, [note.routineTree]);
-
-  // useEffect(() => {
-  //   const handler = panelGroupHandleRef.current;
-  //   if (!handler) {
-  //     return;
-  //   }
-
-  //   if (note.tasks.length === 0) {
-  //     handler.setLayout([0, 100])
-  //   }
-  // }, [note.tasks.length, panelGroupHandleRef]);
+  // note, 설정 등이 변경되면 panel layout을 최적화합니다.
+  useEffect(() => {
+    optimizePanelLayout();
+  }, [note, settings, optimizePanelLayout]);
 
   return (
     <>
-      <PanelGroup
-        ref={panelGroupHandleRef}
-        autoSaveId={"routine-note-panel-group"}
-        direction="vertical"
-      >
-        <Panel minSize={taskPanelMinSize} order={1}>
-          <NoteTaskList
-            openTaskControls={task => openTaskControlsModal({ task })}
-          />
-        </Panel>
-        <PanelResizeHandle
-          css={{
-            height: "4px",
-            borderTop: `1px solid var(--background-modifier-border)`,
-          }}
+      <div ref={tasksPanelRef}>
+        <NoteTaskList
+          openTaskControls={task => openTaskControlsModal({ task })}
         />
-        <Panel minSize={routinePanelMinSize} order={2}>
-          <NoteRoutineTree
-            openRoutineControls={routine => openRoutineControls({ routine })}
-            openRoutineGroupControls={group => openRoutineGroupControls({ group })}
-          />
-        </Panel>
-      </PanelGroup>
+      </div>
+      {tasksPanelHeight !== 0 && <Divider />}
+      <NoteRoutineTree
+        openRoutineControls={routine => openRoutineControls({ routine })}
+        openRoutineGroupControls={group => openRoutineGroupControls({ group })}
+      />
     </>
   )
 }
