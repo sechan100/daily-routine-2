@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { useAchivementMonthStore } from "@/features/achivement";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useLeaf } from "@/shared/view/use-leaf";
-import { NoteAchivementWidget } from "@/widgets/note-achivement";
-import { RoutineAchivementWidget } from "@/widgets/routine-achivement";
+import { useAchivementMonthStore } from "@/stores/client/use-achivement-month-store";
 import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
 import { useState } from "react";
+import { NoteAchivementWidget } from "./note-achivement/NoteAchivementWidget";
+import { RoutineAchivementWidget } from "./routine-achivement/RoutineAchivementWidget";
 
 
 type AchivementType = "note" | "routine";

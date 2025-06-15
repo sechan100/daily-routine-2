@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
-import { STYLES } from "../colors/styles";
-import { TEXT_CSS } from "../colors/text-style";
+import { STYLES } from "../styles/styles";
+import { TEXT_CSS } from "../styles/text-style";
 
 
 

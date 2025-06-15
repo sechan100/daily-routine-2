@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { getPlugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/app/plugin";
 import { Modal } from "obsidian";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";

@@ -1,4 +1,4 @@
-import { useSettingsStores } from "@/shared/settings";
+import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { moment as obsidianMoment } from "obsidian";
 
 

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { DailyRoutineSettingTab } from '@/app/settings/DailyRoutineSettingTab';
 import { DAILY_ROUTINE_ICON_NAME } from '@/app/ui/daily-routine-icon';
-import { setPlugin } from '@/shared/utils/plugin-service-locator';
 import { activateView } from '@/shared/view/activate-view';
 import { Platform, Plugin } from 'obsidian';
-import { DailyRoutineObsidianView } from './app';
 import { initObsidianProtocalHandler } from './app/obsidian/init-obsidian-protocal-handler';
+import { setPlugin } from './app/plugin';
 import { schemaMigrationEntrypoint } from './app/schema-migration/migration-entrypoint';
-import { DailyRoutineSettings, DEFAULT_SETTINGS, updateSettingsStores } from "./shared/settings";
+import { DailyRoutineObsidianView } from './app/ui/obsidian-view';
+import { DailyRoutineSettings, DEFAULT_SETTINGS } from './shared/settings';
+import { updateSettingsStores } from './stores/client/use-settings-store';
 
 
 export default class DailyRoutinePlugin extends Plugin {

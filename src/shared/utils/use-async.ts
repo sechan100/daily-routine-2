@@ -1,30 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useRef, DependencyList, useState, useMemo } from 'react';
+import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 
 
 type PromiseType<P extends Promise<any>> = P extends Promise<infer T> ? T : never;
 type FunctionReturningPromise = (...args: any[]) => Promise<any>;
 type AsyncState<T> =
   | {
-      loading: boolean;
-      error?: undefined;
-      value?: undefined;
-    }
+    loading: boolean;
+    error?: undefined;
+    value?: undefined;
+  }
   | {
-      loading: true;
-      error?: Error | undefined;
-      value?: T;
-    }
+    loading: true;
+    error?: Error | undefined;
+    value?: T;
+  }
   | {
-      loading: false;
-      error: Error;
-      value?: undefined;
-    }
+    loading: false;
+    error: Error;
+    value?: undefined;
+  }
   | {
-      loading: false;
-      error?: undefined;
-      value: T;
-    };
+    loading: false;
+    error?: undefined;
+    value: T;
+  };
 type StateFromFunctionReturningPromise<T extends FunctionReturningPromise> = AsyncState<
   PromiseType<ReturnType<T>>
 >;
@@ -49,19 +49,19 @@ export function useAsync<T extends FunctionReturningPromise>(
 
     return fn(...args).then(
       (value) => {
-        if(mountedRef.current && callId === lastCallId.current){
+        if (mountedRef.current && callId === lastCallId.current) {
           set({ value, loading: false });
         }
         return value;
       },
       (error) => {
-        if(mountedRef.current && callId === lastCallId.current){
+        if (mountedRef.current && callId === lastCallId.current) {
           set({ error, loading: false });
         }
         return error;
       }
     ) as ReturnType<T>;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   useEffect(() => {

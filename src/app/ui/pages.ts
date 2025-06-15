@@ -1,7 +1,7 @@
-import { AchivementPage } from "@/pages/achivement";
-import { DrCalendar } from "@/pages/calendar";
-import { RoutineNotePage } from "@/pages/routine-note";
-import { TaskQueuePage } from "@/pages/task-queue";
+import { AchivementPage } from "@/pages/achivement/AchivementPage";
+import { DrCalendar } from "@/pages/calendar/DrCalendar";
+import { RoutineNotePage } from "@/pages/routine-note/RoutineNotePage";
+import { TaskQueuePage } from "@/pages/task-queue/TaskQueuePage";
 import { PageRouterRegistration, PageType } from "@/shared/route/page-type";
 
 

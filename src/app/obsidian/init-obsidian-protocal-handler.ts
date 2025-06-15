@@ -1,4 +1,4 @@
-import { addTaskToQueue } from '@/features/task-queue';
+import { addTaskToQueue } from '@/domain/task-queue/add-task-to-queue';
 import { Notice } from 'obsidian';
 import DailyRoutinePlugin from "src/main";
 

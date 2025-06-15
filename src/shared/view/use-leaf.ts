@@ -1,6 +1,5 @@
-import { isMobile } from "@/shared/utils/plugin-service-locator";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
-import { WorkspaceLeaf } from "obsidian";
+import { Platform, WorkspaceLeaf } from "obsidian";
 import { ReactView } from "./react-view";
 
 
@@ -16,7 +15,7 @@ interface UseLeaf {
 }
 export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => {
   // @ts-ignore
-  const leafBgColor = isMobile() ? "#ffffff" : getComputedStyle(data.leaf.containerEl).backgroundColor;
+  const leafBgColor = Platform.isMobile ? "#ffffff" : getComputedStyle(data.leaf.containerEl).backgroundColor;
 
   return {
     leaf: data.leaf,

@@ -1,6 +1,7 @@
-import { DailyRoutineSettings, saveSettings } from "@/shared/settings";
+import { DailyRoutineSettings } from "@/shared/settings";
 import { FileSuggest } from "@/shared/suggesters/FileSuggester";
 import { useLeaf } from "@/shared/view/use-leaf";
+import { saveSettings } from "@/stores/client/use-settings-store";
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import DailyRoutinePlugin from "src/main";
 

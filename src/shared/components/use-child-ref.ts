@@ -1,5 +1,4 @@
-import { extend } from "lodash";
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react";
 
 
 /**
@@ -13,12 +12,12 @@ export const useChildRef = <P extends HTMLElement, C extends HTMLElement>(tagNam
   // 최초 1회 초기화 실행
   useEffect(() => {
     create();
-    return destroy;  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return destroy;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const destroy = useCallback(() => {
-    if(!parentRef.current || !childRef.current) return;
+    if (!parentRef.current || !childRef.current) return;
     parentRef.current.removeChild(childRef.current);
     childRef.current = null;
   }, []);
@@ -27,7 +26,7 @@ export const useChildRef = <P extends HTMLElement, C extends HTMLElement>(tagNam
    * 이미 있으면 안 만든다.
    */
   const create = useCallback(() => {
-    if(!parentRef.current || childRef.current) return;
+    if (!parentRef.current || childRef.current) return;
     const child = document.createElement(tagName);
     parentRef.current.appendChild(child);
     childRef.current = child as C;

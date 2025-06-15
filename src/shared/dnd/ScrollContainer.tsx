@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import { useEffect, useMemo, useRef } from "react";
 import { useDragDropManager } from "react-dnd";
-import { getAccent } from '../colors/obsidian-accent-color';
+import { getAccent } from '../styles/obsidian-accent-color';
 import { useDndScroll } from "./use-dnd-auto-scroll";
 
 

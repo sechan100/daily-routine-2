@@ -1,14 +1,11 @@
-/**
- * 모달에서 사용가능한 styled-components들을 제공
- */
 /** @jsxImportSource @emotion/react */
-import { STYLES } from '@/shared/colors/styles';
 import { Interpolation } from '@emotion/react';
 import { Theme } from '@mui/material';
 import { useEffect } from 'react';
-import { TEXT_CSS } from '../../colors/text-style';
+import { TEXT_CSS } from '../../styles/text-style';
 import { Button } from '../Button';
 import { useModal } from './create-modal';
+import { STYLES } from '@/shared/styles/styles';
 
 
 const saveButtonHeight = "50px";

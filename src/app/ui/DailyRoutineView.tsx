@@ -1,17 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { useNoteDayStore } from "@/entities/note";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { AppDndProvider } from "@/shared/dnd/AppDndProvider";
 import { Day } from "@/shared/period/day";
-import { ReactQueryProvider } from "@/shared/react-query/ReactQueryProvider";
 import { PageType } from "@/shared/route/page-type";
 import { useRouter } from "@/shared/route/use-router";
 import { num_tabsBottomGap, num_tabsHeight } from "@/shared/use-tab-height";
 import { useLeaf } from "@/shared/view/use-leaf";
+import { useNoteDayStore } from "@/stores/client/use-note-day-store";
 import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
 import { useCallback, useEffect, useMemo } from "react";
+import { ReactQueryProvider } from "../react-query/ReactQueryProvider";
 import { MUIThemeProvider } from './MUIThemProvider';
 import "./style.css";
 

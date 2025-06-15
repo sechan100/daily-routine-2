@@ -1,8 +1,7 @@
-/* eslint-disable fsd-import/public-api-imports */
+import { getPlugin } from "@/app/plugin";
 import { ensureFolder } from "@/shared/file/ensure-folder";
 import { fileAccessor } from "@/shared/file/file-accessor";
-import { useSettingsStores } from "@/shared/settings";
-import { getPlugin } from "@/shared/utils/plugin-service-locator";
+import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { Notice, TFile } from "obsidian";
 import { UpdateMigrationPercentage } from "../migration-entrypoint";
 import { migrateGroup } from "./migrate-group";

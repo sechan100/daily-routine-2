@@ -1,6 +1,6 @@
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
-import { getPlugin } from "@/shared/utils/plugin-service-locator";
 import { Modal, Notice } from "obsidian";
+import { getPlugin } from "../plugin";
 import { isRequireMigration, migrateTo2xx } from "./migration-to-2xx/migrate";
 
 

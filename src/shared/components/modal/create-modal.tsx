@@ -1,5 +1,5 @@
-import { queryClient } from '@/shared/react-query/query-client';
-import { getPlugin } from '@/shared/utils/plugin-service-locator';
+import { getPlugin } from '@/app/plugin';
+import { queryClient } from '@/app/react-query/query-client';
 import { QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Modal } from 'obsidian';
 import { ComponentType, createContext, PropsWithChildren, Suspense, useContext } from 'react';

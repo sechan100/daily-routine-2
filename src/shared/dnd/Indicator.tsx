@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { memo, useMemo } from "react";
-import { getAccent } from "../colors/obsidian-accent-color";
+import { getAccent } from "../styles/obsidian-accent-color";
 import { DndCase } from "./dnd-case";
 
 const INDICATOR_Z_INDEX = 990;

@@ -2,7 +2,7 @@
 import { CSSProperties, useMemo } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { Preview } from "react-dnd-preview";
-import { TEXT_CSS } from '../colors/text-style';
+import { TEXT_CSS } from '../styles/text-style';
 import { useLeaf } from '../view/use-leaf';
 import { BaseDndItem, isBaseDndItem } from "./drag-item";
 

@@ -1,4 +1,4 @@
-import { getPlugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/app/plugin";
 import { WorkspaceLeaf } from "obsidian";
 
 /**

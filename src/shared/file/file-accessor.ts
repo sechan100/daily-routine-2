@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getPlugin } from "@/shared/utils/plugin-service-locator";
+import { getPlugin } from "@/app/plugin";
 import { TFile, TFolder, getFrontMatterInfo, parseYaml } from "obsidian";
 
 
