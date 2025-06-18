@@ -35,13 +35,19 @@ const cancelLineStyle = css({
 interface Props {
   name: string;
   cancel: boolean;
+  faded?: boolean;
 }
 export const CancelLineName = ({
   name,
   cancel,
+  faded = false,
 }: Props) => {
   return (
-    <span css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}>
+    <span css={[
+      baseStyle,
+      cancel && cancelLineStyle,
+      (cancel || faded) && cancelTextStyle
+    ]}>
       {name}
     </span>
   )

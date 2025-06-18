@@ -162,6 +162,7 @@ export const GroupDrNode = <C extends Checkable>({
               <CancelLineName
                 name={group.name}
                 cancel={useCancelLine ? isAllChildChecked : false}
+                faded={group.children.length === 0}
               />
             </Touchable>
             <OptionIconsContainer icons={optionIcons} />

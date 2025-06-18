@@ -60,7 +60,7 @@ export const NoteHeader = () => {
         />
         <ObsidianIcon
           size='21px'
-          icon="calendar"
+          icon="alarm-clock"
           onClick={() => route("routines")}
           pointer
         />
