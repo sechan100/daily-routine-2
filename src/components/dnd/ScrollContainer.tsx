@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useMemo, useRef } from "react";
 import { useDragDropManager } from "react-dnd";
-import { DraggableType, isDraggableType } from "./draggable-type";
+import { DraggableType } from "./draggable-type";
 import { useDndScroll } from "./use-dnd-auto-scroll";
 
 
@@ -34,11 +34,8 @@ export const DndScrollContainer = ({
     const unsubscribe = monitor.subscribeToOffsetChange(() => {
       const offset = monitor.getSourceClientOffset();
       const type = monitor.getItemType();
-      if (!offset) {
-        return;
-      }
-      if (type && isDraggableType(type)) {
-        updatePosition({ position: offset.y, isScrollAllowed: true });
+      if (type && draggableTypes.includes(type as DraggableType)) {
+        offset ? updatePosition({ position: offset.y, isScrollAllowed: true }) : updatePosition({ position: 0, isScrollAllowed: false });
       }
     });
     return unsubscribe;
