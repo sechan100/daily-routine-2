@@ -59,14 +59,14 @@ export const RoutineGroupNode = ({
     dndCase,
   }), [isDragging, isOver, droppable, preDragState, dndCase]);
 
-  const handleOpen = useCallback(() => {
+  const handleOpen = useCallback((isOpen: boolean) => {
     queryClient.setQueryData<RoutineTree>(
       ALL_ROUTINE_TREE_QUERY_KEY,
       (prev) => {
         if (!prev) return prev;
         return produce(prev, (draft) => {
           const found = routineTreeUtils.findRoutineGroup(draft, group.name);
-          found.isOpen = !found.isOpen;
+          found.isOpen = isOpen;
         });
       }
     );
@@ -84,6 +84,7 @@ export const RoutineGroupNode = ({
       dndModule={dndModule}
       onContextMenu={handleContextMenu}
       onOpenChange={handleOpen}
+      useCancelLine={false}
       optionIcons={[
         <DragHandle
           draggable={draggable}

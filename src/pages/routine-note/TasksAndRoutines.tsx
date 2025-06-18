@@ -1,6 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { openRoutineControls } from "@/components/routine-controls/RoutineControls";
-import { openRoutineGroupControls } from "@/components/routine-group-controls/RoutineGroupControls";
 import { openTaskControlsModal } from "@/components/task-control/TaskControls";
 import { NoteRoutineTree } from "@/pages/routine-note/routine-tree";
 import { useNoteDayStore } from "@/stores/client/use-note-day-store";
@@ -35,10 +33,7 @@ export const TasksAndRoutines = () => {
         />
       </div>
       {tasksPanelHeight !== 0 && <Divider />}
-      <NoteRoutineTree
-        openRoutineControls={routine => openRoutineControls({ routine })}
-        openRoutineGroupControls={group => openRoutineGroupControls({ group })}
-      />
+      <NoteRoutineTree />
     </>
   )
 }

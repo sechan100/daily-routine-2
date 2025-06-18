@@ -1,6 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { openCreateRoutineGroupModal } from "@/components/create-routine-group/CreateRoutineGroupModal";
-import { openCreateRoutineModal } from "@/components/create-routine/CreateRoutineModal";
 import { openRoutineNoteFile } from "@/core/note/open-routine-note";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useRouter } from "@/shared/route/use-router";
@@ -64,18 +62,6 @@ export const NoteHeader = () => {
           size='21px'
           icon="calendar"
           onClick={() => route("routines")}
-          pointer
-        />
-        <ObsidianIcon
-          size='21px'
-          icon="alarm-clock-plus"
-          onClick={() => openCreateRoutineModal({})}
-          pointer
-        />
-        <ObsidianIcon
-          size='21px'
-          icon="folder"
-          onClick={() => openCreateRoutineGroupModal({})}
           pointer
         />
         <ObsidianIcon

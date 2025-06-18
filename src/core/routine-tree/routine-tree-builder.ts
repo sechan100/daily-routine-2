@@ -61,8 +61,15 @@ export class RoutineTreeBuilder {
     return this.buildWithRoutines(routines);
   }
 
-  buildWithRoutines(routines: Routine[]): RoutineTree {
+  buildWithRoutines(routines: Routine[], containAllGroups = false): RoutineTree {
     const routineMap = new Map<string, NoteRoutine | NoteRoutineGroup>();
+
+    if (containAllGroups) {
+      for (const group of this.groupMap.values()) {
+        const derivedGroup = deriveNoteRoutineGroup(group);
+        routineMap.set(group.name, derivedGroup);
+      }
+    }
 
     // routines를 기반으로 NoteRoutine을 만들고, 이들이 속한 RoutineGroup도 찾아서 routineMap에 추가한다.
     for (const routine of routines) {

@@ -15,10 +15,12 @@ export const useRipple = () => {
   const ripple = useCallback(async () => {
     await rippleRoutines();
     queryClient.invalidateQueries({
-      queryKey: routineNoteQueryKeys.all,
+      queryKey: ALL_ROUTINE_TREE_QUERY_KEY,
+      type: "all",
     });
     queryClient.invalidateQueries({
-      queryKey: ALL_ROUTINE_TREE_QUERY_KEY
+      queryKey: routineNoteQueryKeys.all,
+      type: "all",
     });
   }, [queryClient]);
 

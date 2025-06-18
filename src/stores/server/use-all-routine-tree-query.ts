@@ -3,7 +3,7 @@ import { RoutineTree } from '@/entities/types/routine-tree';
 import { useQuery } from "@tanstack/react-query";
 
 
-export const ALL_ROUTINE_TREE_QUERY_KEY = ['routine-tree'];
+export const ALL_ROUTINE_TREE_QUERY_KEY = ['all-routine-tree', 7] as const;
 
 export const useAllRoutineTreeQuery = () => {
   const query = useQuery<RoutineTree>({
@@ -11,7 +11,7 @@ export const useAllRoutineTreeQuery = () => {
     queryFn: async () => {
       const treeBuilder = await RoutineTreeBuilder.withRepositoriesAsync();
       const allRoutines = treeBuilder.getRoutines();
-      return treeBuilder.buildWithRoutines(allRoutines);
+      return treeBuilder.buildWithRoutines(allRoutines, true);
     }
   });
 

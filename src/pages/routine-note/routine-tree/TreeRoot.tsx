@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { DndContext, OnDragEndContext } from "@/components/dnd/DndContext";
+import { useRipple } from "@/service/use-ripple";
 import { useRoutineTree } from "@/service/use-routine-tree";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { Notice } from "obsidian";
@@ -13,7 +14,8 @@ import { renderRoutineTree } from "./render-routine-tree";
 
 export const TreeRoot = () => {
   const hideCompletedTasksAndRoutines = useSettingsStores(s => s.hideCompletedTasksAndRoutines);
-  const { day, ripple, tree } = useRoutineTree();
+  const { ripple } = useRipple();
+  const { day, tree } = useRoutineTree();
 
   const filterdTree = useMemo(() => {
     if (!hideCompletedTasksAndRoutines) {

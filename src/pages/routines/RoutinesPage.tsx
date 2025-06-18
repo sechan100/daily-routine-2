@@ -1,6 +1,7 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { AllRoutineTree } from "./AllRoutineTree";
+import { Header } from "./Header";
 
 
 
@@ -21,6 +22,7 @@ export const RoutinesPage = () => {
             </div>
           )}
         >
+          <Header />
           <AllRoutineTree />
         </ErrorBoundary>
       )}

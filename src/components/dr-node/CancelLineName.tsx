@@ -41,9 +41,7 @@ export const CancelLineName = ({
   cancel,
 }: Props) => {
   return (
-    <span
-      css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}
-    >
+    <span css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}>
       {name}
     </span>
   )

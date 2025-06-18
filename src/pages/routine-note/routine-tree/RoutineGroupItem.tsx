@@ -58,9 +58,9 @@ export const RoutineGroupItem = ({
     dndCase,
   }), [isDragging, isOver, droppable, preDragState, dndCase]);
 
-  const handleOpen = useCallback(() => {
-    handleRoutineGroupOpen(!group.isOpen);
-  }, [group.isOpen, handleRoutineGroupOpen]);
+  const handleOpen = useCallback((isOpen: boolean) => {
+    handleRoutineGroupOpen(isOpen);
+  }, [handleRoutineGroupOpen]);
 
   /**
    * Context Menu를 열면 routine control을 연다

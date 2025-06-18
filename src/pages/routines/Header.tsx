@@ -43,23 +43,17 @@ export const Header = () => {
         onClick={handleNoteHeaderClick}
         css={{
           fontWeight: STYLES.fontWeight.bold,
-          fontSize: 17,
+          fontSize: 20,
           padding: "1px 4px",
           cursor: "pointer",
         }}
       >
-        {note.day.format()}
+        Routines
       </span>
       <div css={{
         display: "flex",
         gap: "1.5em",
       }}>
-        <ObsidianIcon
-          size='21px'
-          icon={hideCompletedTasksAndRoutines ? "eye-off" : "eye"}
-          onClick={toggleHideCompletedTasksAndRoutinesSetting}
-          pointer
-        />
         <ObsidianIcon
           size='21px'
           icon="alarm-clock-plus"
@@ -70,12 +64,6 @@ export const Header = () => {
           size='21px'
           icon="folder"
           onClick={() => openCreateRoutineGroupModal({})}
-          pointer
-        />
-        <ObsidianIcon
-          size='21px'
-          icon="flame"
-          onClick={() => route("achievement")}
           pointer
         />
       </div>

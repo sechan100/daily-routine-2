@@ -2,10 +2,10 @@ import { DndContext, OnDragEndContext } from "@/components/dnd/DndContext";
 import { useRipple } from "@/service/use-ripple";
 import { useAllRoutineTreeQuery } from "@/stores/server/use-all-routine-tree-query";
 import { useCallback } from "react";
-import { renderRoutineTree } from "../routine-note/routine-tree/render-routine-tree";
 import { RoutineDndItem } from "./model/dnd-item";
 import { relocateRoutines } from "./model/relocate-routines";
 import { routineCollisionResolver } from "./model/routine-collision-resolver";
+import { renderRoutineNodes } from "./render-routine-nodes";
 
 
 
@@ -36,7 +36,7 @@ export const AllRoutineTree = ({
       collisionResolver={routineCollisionResolver}
       onDragEnd={handleDragEnd}
     >
-      {allRoutineTree.root.map(nrl => renderRoutineTree(nrl, null, 0))}
+      {allRoutineTree.root.map(nrl => renderRoutineNodes(nrl, null, 0))}
     </DndContext>
   )
 }
