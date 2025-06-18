@@ -1,12 +1,13 @@
 import { AchivementPage } from "@/pages/achivement/AchivementPage";
 import { DrCalendar } from "@/pages/calendar/DrCalendar";
 import { RoutineNotePage } from "@/pages/routine-note/RoutineNotePage";
+import { RoutinesPage } from "@/pages/routines/RoutinesPage";
 import { TaskQueuePage } from "@/pages/task-queue/TaskQueuePage";
 import { PageRouterRegistration, PageType } from "@/shared/route/page-type";
 
 
 
-export const INITIAL_PAGE: PageType = "note";
+export const INITIAL_PAGE: PageType = "routines";
 
 export const PAGES: PageRouterRegistration[] = [
   {
@@ -24,5 +25,9 @@ export const PAGES: PageRouterRegistration[] = [
   {
     name: "achievement",
     Page: AchivementPage
+  },
+  {
+    name: "routines",
+    Page: RoutinesPage
   }
 ]

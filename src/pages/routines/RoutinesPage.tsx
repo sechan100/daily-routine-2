@@ -5,7 +5,7 @@ import { AllRoutineTree } from "./AllRoutineTree";
 
 
 
-export const AllRoutineTreePage = () => {
+export const RoutinesPage = () => {
 
   return (
     <QueryErrorResetBoundary>

@@ -13,7 +13,7 @@ import { useCallback } from "react";
 
 
 
-export const NoteHeader = () => {
+export const Header = () => {
   const hideCompletedTasksAndRoutines = useSettingsStores(s => s.hideCompletedTasksAndRoutines);
   const { route } = useRouter();
   const day = useNoteDayStore(state => state.day);
@@ -58,12 +58,6 @@ export const NoteHeader = () => {
           size='21px'
           icon={hideCompletedTasksAndRoutines ? "eye-off" : "eye"}
           onClick={toggleHideCompletedTasksAndRoutinesSetting}
-          pointer
-        />
-        <ObsidianIcon
-          size='21px'
-          icon="calendar"
-          onClick={() => route("routines")}
           pointer
         />
         <ObsidianIcon

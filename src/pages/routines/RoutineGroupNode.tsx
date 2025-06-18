@@ -3,14 +3,16 @@ import { useDnd } from "@/components/dnd/use-dnd";
 import { DragHandle } from "@/components/dr-node/DragHandle";
 import { GroupDrNode, GroupDrNodeDndModule } from "@/components/dr-node/GroupDrNode";
 import { openRoutineGroupControls } from "@/components/routine-group-controls/RoutineGroupControls";
+import { routineTreeUtils } from "@/core/routine-tree/routine-tree-utils";
 import { routineGroupRepository } from "@/entities/repository/group-repository";
 import { NoteRoutineGroup } from "@/entities/types/note-routine-like";
-import { useNoteDayStore } from "@/stores/client/use-note-day-store";
-import { Notice } from "obsidian";
+import { RoutineTree } from "@/entities/types/routine-tree";
+import { ALL_ROUTINE_TREE_QUERY_KEY } from "@/stores/server/use-all-routine-tree-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { produce } from "immer";
 import { useCallback, useMemo } from "react";
-import { RoutineDndItem } from "../../routines/model/dnd-item";
-import { renderRoutineTree } from "./render-routine-tree";
-import { useOpenRoutineGroup } from "./use-open-routine-group";
+import { RoutineDndItem } from "./model/dnd-item";
+import { renderRoutineNodes } from "./render-routine-nodes";
 
 
 
@@ -18,12 +20,11 @@ type Props = {
   group: NoteRoutineGroup;
   depth: number;
 }
-export const RoutineGroupItem = ({
+export const RoutineGroupNode = ({
   group,
   depth,
 }: Props) => {
-  const day = useNoteDayStore(s => s.day);
-  const { handleRoutineGroupOpen } = useOpenRoutineGroup(group);
+  const queryClient = useQueryClient();
 
   const dndItem = useMemo<RoutineDndItem>(() => ({
     id: group.name,
@@ -59,21 +60,22 @@ export const RoutineGroupItem = ({
   }), [isDragging, isOver, droppable, preDragState, dndCase]);
 
   const handleOpen = useCallback(() => {
-    handleRoutineGroupOpen(!group.isOpen);
-  }, [group.isOpen, handleRoutineGroupOpen]);
+    queryClient.setQueryData<RoutineTree>(
+      ALL_ROUTINE_TREE_QUERY_KEY,
+      (prev) => {
+        if (!prev) return prev;
+        return produce(prev, (draft) => {
+          const found = routineTreeUtils.findRoutineGroup(draft, group.name);
+          found.isOpen = !found.isOpen;
+        });
+      }
+    );
+  }, [group, queryClient]);
 
-  /**
-   * Context Menu를 열면 routine control을 연다
-   */
   const handleContextMenu = useCallback(async () => {
-    // 과거의 RoutineGroup은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
-    if (day.isPast()) {
-      new Notice("Routine group control cannot be opened for past routines.");
-      return;
-    }
     const sourceRoutineGroup = await routineGroupRepository.load(group.name);
     openRoutineGroupControls({ group: sourceRoutineGroup });
-  }, [day, group.name]);
+  }, [group.name]);
 
   return (
     <GroupDrNode
@@ -90,7 +92,7 @@ export const RoutineGroupItem = ({
         />
       ]}
     >
-      {() => group.children.map(r => renderRoutineTree(r, group, depth + 1))}
+      {() => group.children.map(r => renderRoutineNodes(r, group, depth + 1))}
     </GroupDrNode >
   )
 }

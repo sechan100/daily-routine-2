@@ -5,11 +5,8 @@ import { DragHandle } from "@/components/dr-node/DragHandle";
 import { openRoutineControls } from "@/components/routine-controls/RoutineControls";
 import { routineRepository } from "@/entities/repository/routine-repository";
 import { NoteRoutine, NoteRoutineGroup } from "@/entities/types/note-routine-like";
-import { useNoteDayStore } from "@/stores/client/use-note-day-store";
-import { Notice } from "obsidian";
 import { useCallback, useMemo } from "react";
-import { RoutineDndItem } from "../../routines/model/dnd-item";
-import { useCheckRoutine } from "./use-check-routine";
+import { RoutineDndItem } from "./model/dnd-item";
 
 
 type Props = {
@@ -18,14 +15,12 @@ type Props = {
   depth: number;
   optionIcons?: React.ReactNode[];
 }
-export const RoutineItem = ({
+export const RoutineNode = ({
   routine,
   // parent,
   depth,
   optionIcons = [],
 }: Props) => {
-  const day = useNoteDayStore(s => s.day);
-  const { changeRoutineState } = useCheckRoutine(routine);
 
   const dndItem = useMemo<RoutineDndItem>(() => ({
     id: routine.name,
@@ -59,24 +54,15 @@ export const RoutineItem = ({
     dndCase
   }), [isDragging, isOver, preDragState, dndCase]);
 
-  /**
-   * Context Menu를 열면 routine control을 연다
-   */
   const handleContextMenu = useCallback(async () => {
-    // 과거의 루틴은 현재 존재하지 않을 수 있으므로 control을 열지 않음.
-    if (day.isPast()) {
-      new Notice("Routine control cannot be opened for past routines.");
-      return;
-    }
     const sourceRoutine = await routineRepository.load(routine.name);
     openRoutineControls({ routine: sourceRoutine });
-  }, [day, routine.name]);
+  }, [routine.name]);
 
   return (
     <CheckableDrNode
       checkable={routine}
       depth={depth}
-      onStateChange={changeRoutineState}
       onContextMenu={handleContextMenu}
       // dnd config
       ref={droppable}

@@ -16,7 +16,9 @@ export const useAllRoutineTreeQuery = () => {
   });
 
   return {
-    allRoutineTree: query.data,
+    allRoutineTree: query.data ?? {
+      root: [],
+    },
     query,
   }
 }

@@ -4,11 +4,11 @@ import { useRoutineTree } from "@/service/use-routine-tree";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { Notice } from "obsidian";
 import { useCallback, useMemo } from "react";
-import { RoutineDndItem } from "./dnd-item";
+import { RoutineDndItem } from "../../routines/model/dnd-item";
+import { relocateRoutines } from "../../routines/model/relocate-routines";
+import { routineCollisionResolver } from "../../routines/model/routine-collision-resolver";
 import { filterCompletedRoutines } from './filter-completed-routines';
-import { relocateRoutines } from "./relocate-routines";
 import { renderRoutineTree } from "./render-routine-tree";
-import { routineCollisionResolver } from "./routine-collision-resolver";
 
 
 export const TreeRoot = () => {
