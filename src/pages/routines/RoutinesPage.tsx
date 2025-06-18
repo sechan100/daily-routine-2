@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { PageLayout } from "@/components/PageLayout";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { AllRoutineTree } from "./AllRoutineTree";
@@ -22,8 +24,10 @@ export const RoutinesPage = () => {
             </div>
           )}
         >
-          <Header />
-          <AllRoutineTree />
+          <PageLayout>
+            <Header />
+            <AllRoutineTree />
+          </PageLayout>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>

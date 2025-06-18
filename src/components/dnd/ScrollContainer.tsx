@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDragDropManager } from "react-dnd";
 import { DraggableType } from "./draggable-type";
 import { useDndScroll } from "./use-dnd-auto-scroll";
@@ -19,13 +19,7 @@ export const DndScrollContainer = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { updatePosition } = useDndScroll(scrollContainerRef);
 
-  const contentHeight = useMemo(() => {
-    const container = scrollContainerRef.current;
-    if (!container) {
-      return 0;
-    }
-    return container.scrollHeight;
-  }, []);
+  const contentHeight = scrollContainerRef.current ? scrollContainerRef.current.scrollHeight : 0;
 
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();

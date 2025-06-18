@@ -2,7 +2,7 @@
 import { RoutineLikeNameValidator } from '@/core/routine/routine-like-name-validator';
 import { routineRepository } from '@/entities/repository/routine-repository';
 import { Routine } from '@/entities/types/routine';
-import { useRoutineTree } from '@/service/use-routine-tree';
+import { useRipple } from '@/service/use-ripple';
 import { createModal, useModal } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
@@ -15,7 +15,7 @@ import { getbaseRoutine } from './get-base-routine';
 
 
 export const openCreateRoutineModal = createModal(() => {
-  const { ripple } = useRoutineTree();
+  const { ripple } = useRipple();
   const modal = useModal();
   const baseRoutineRef = useRef(getbaseRoutine());
   const baseRoutine = baseRoutineRef.current;

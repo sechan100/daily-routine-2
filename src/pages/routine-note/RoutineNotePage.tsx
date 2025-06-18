@@ -1,6 +1,9 @@
+import { PageLayout } from "@/components/PageLayout";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
-import { NoteContent } from "./NoteContent";
+import { NoteHeader } from "./NoteHeader";
+import { TasksAndRoutines } from "./TasksAndRoutines";
+import { WeeksWidget } from "./weeks/WeeksWidget";
 
 
 
@@ -21,7 +24,11 @@ export const RoutineNotePage = () => {
             </div>
           )}
         >
-          <NoteContent />
+          <PageLayout>
+            <WeeksWidget />
+            <NoteHeader />
+            <TasksAndRoutines />
+          </PageLayout>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>

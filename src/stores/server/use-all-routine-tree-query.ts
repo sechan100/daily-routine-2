@@ -3,7 +3,7 @@ import { RoutineTree } from '@/entities/types/routine-tree';
 import { useQuery } from "@tanstack/react-query";
 
 
-export const ALL_ROUTINE_TREE_QUERY_KEY = ['all-routine-tree', 7] as const;
+export const ALL_ROUTINE_TREE_QUERY_KEY = ['all-routine-tree'] as const;
 
 export const useAllRoutineTreeQuery = () => {
   const query = useQuery<RoutineTree>({

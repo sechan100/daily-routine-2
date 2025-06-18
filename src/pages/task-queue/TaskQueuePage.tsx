@@ -1,3 +1,4 @@
+import { PageLayout } from "@/components/PageLayout";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { QueueList } from "./QueueList";
@@ -22,8 +23,10 @@ export const TaskQueuePage = () => {
             </div>
           )}
         >
-          <TaskQueueHeader />
-          <QueueList />
+          <PageLayout>
+            <TaskQueueHeader />
+            <QueueList />
+          </PageLayout>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>

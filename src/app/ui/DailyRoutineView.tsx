@@ -66,70 +66,66 @@ export const DailyRoutineView = () => {
   }
 
   return (
-    <div css={{
-      backgroundColor: STYLES.palette.background,
-    }}>
-      <MUIThemeProvider>
-        <ReactQueryProvider>
-          <AppDndProvider>
-            <div
-              css={{
-                height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
-              }}
-            >
-              <current.Page />
-            </div>
-            <TabNav
-              value={tab}
-              scrollButtons={false}
-              centered
-              sx={{ borderTop: 1, borderColor: 'divider' }}
-              onChange={handleTabChange}
-              css={{
-                zIndex: 1000,
-                backgroundColor: STYLES.palette.background,
-                position: "fixed",
-                minHeight: 0,
-                width: "100%",
-                left: "0",
-                bottom: tabsBottomGap,
-              }}
-            >
-              <TabNavItem
-                label="Note"
-                value={notePage}
-                onClick={handleNoteTabClick}
-                icon={<ObsidianIcon icon="notebook-pen" />}
-                iconPosition="start"
-                css={tabCss}
-              />
-              <TabNavItem
-                label="Calendar"
-                value={calendarPage}
-                icon={<ObsidianIcon icon="calendar-check-2" />}
-                iconPosition="start"
-                css={tabCss}
-              />
-              <TabNavItem
-                label="Queue"
-                value={taskQueuePage}
-                icon={<ObsidianIcon icon="list-check" />}
-                iconPosition="start"
-                css={tabCss}
-              />
-            </TabNav>
-            <div css={{
-              display: "block",
-              position: "fixed",
-              width: "100%",
-              height: tabsBottomGap,
-              backgroundColor: "inherit",
-              bottom: 0,
+    <MUIThemeProvider>
+      <ReactQueryProvider>
+        <AppDndProvider>
+          <div
+            css={{
+              height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
+            }}
+          >
+            <current.Page />
+          </div>
+          <TabNav
+            value={tab}
+            scrollButtons={false}
+            centered
+            sx={{ borderTop: 1, borderColor: 'divider' }}
+            onChange={handleTabChange}
+            css={{
               zIndex: 1000,
-            }} />
-          </AppDndProvider>
-        </ReactQueryProvider>
-      </MUIThemeProvider>
-    </div>
+              backgroundColor: STYLES.palette.background,
+              position: "fixed",
+              minHeight: 0,
+              width: "100%",
+              left: "0",
+              bottom: tabsBottomGap,
+            }}
+          >
+            <TabNavItem
+              label="Note"
+              value={notePage}
+              onClick={handleNoteTabClick}
+              icon={<ObsidianIcon icon="notebook-pen" />}
+              iconPosition="start"
+              css={tabCss}
+            />
+            <TabNavItem
+              label="Calendar"
+              value={calendarPage}
+              icon={<ObsidianIcon icon="calendar-check-2" />}
+              iconPosition="start"
+              css={tabCss}
+            />
+            <TabNavItem
+              label="Queue"
+              value={taskQueuePage}
+              icon={<ObsidianIcon icon="list-check" />}
+              iconPosition="start"
+              css={tabCss}
+            />
+          </TabNav>
+          <div css={{
+            display: "block",
+            position: "fixed",
+            width: "100%",
+            height: tabsBottomGap,
+            backgroundColor: "inherit",
+            bottom: 0,
+            zIndex: 1000,
+          }} />
+        </AppDndProvider>
+      </ReactQueryProvider>
+    </MUIThemeProvider>
   );
 }
