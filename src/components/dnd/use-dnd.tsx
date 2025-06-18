@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { Platform } from "obsidian";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
@@ -79,7 +80,7 @@ export const useDnd = <D extends BaseDndItem>({
   // DRAG
   const [{ isDragging }, drag, preview] = useDrag({
     type,
-    canDrag: canDrag && preDragState === "ready",
+    canDrag: canDrag && Platform.isMobile ? preDragState === "ready" : true,
     item: dndItem,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
