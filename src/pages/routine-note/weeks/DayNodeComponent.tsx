@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { NoteProgressCircle } from "@/components/note/NoteProgressCircle";
 import { Day } from "@/shared/period/day";
-import { useLeaf } from "@/shared/view/use-leaf";
+import { STYLES } from "@/shared/styles/styles";
 import { css } from "@emotion/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { DayNode } from "./types";
@@ -14,7 +14,6 @@ interface DayNodeProps {
   onClick: (day: Day, event?: React.MouseEvent) => void;
 }
 export const DayNodeComponent = React.memo(({ dayNode: { day, progress: _progress }, onClick }: DayNodeProps) => {
-  const { leafBgColor } = useLeaf();
   // const isToday = useMemo(() => day.isSameDay(Day.now()), [day]);
 
   const activeNode = useWeeksActiveDay();
@@ -42,10 +41,10 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, progress: _progres
       right: "0",
       bottom: "0",
       borderRadius: "7px",
-      backgroundColor: leafBgColor,
+      backgroundColor: STYLES.palette.background,
       opacity: "0.7",
     })
-  }, [day, leafBgColor]);
+  }, [day]);
 
   const activeStyle = useMemo(() => {
     if (!isActiveDay) return { self: {}, after: {} };

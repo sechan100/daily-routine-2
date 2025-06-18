@@ -3,7 +3,7 @@ import { getNoteProgress } from "@/core/note/get-note-progress";
 import { VirtualSwiper } from "@/shared/components/SwiperComponent";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";
-import { useLeaf } from "@/shared/view/use-leaf";
+import { STYLES } from "@/shared/styles/styles";
 import { useNoteDayStore } from "@/stores/client/use-note-day-store";
 import { useRoutineNoteQuery } from "@/stores/server/use-routine-note-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -27,7 +27,6 @@ export const WeeksWidget = ({
   const { note } = useRoutineNoteQuery(activeDay);
   const currentNoteProgress = useMemo(() => getNoteProgress(note), [note]);
   const [weeks, setWeeks] = useState<WeekNode[]>([]);
-  const { leafBgColor } = useLeaf();
 
   /**
    * weeks 최초 초기화
@@ -84,7 +83,7 @@ export const WeeksWidget = ({
             justifyContent: "center",
             alignItems: "stretch",
             flexWrap: "nowrap",
-            backgroundColor: leafBgColor,
+            backgroundColor: STYLES.palette.background,
           }}>
             {week.days.map((dayNode, idx) => (
               <DayNodeComponent

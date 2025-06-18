@@ -4,6 +4,7 @@ import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Day } from "@/shared/period/day";
 import { PageType } from "@/shared/route/page-type";
 import { useRouter } from "@/shared/route/use-router";
+import { STYLES } from "@/shared/styles/styles";
 import { num_tabsBottomGap, num_tabsHeight } from "@/shared/use-tab-height";
 import { useLeaf } from "@/shared/view/use-leaf";
 import { useNoteDayStore } from "@/stores/client/use-note-day-store";
@@ -65,67 +66,70 @@ export const DailyRoutineView = () => {
   }
 
   return (
-    <MUIThemeProvider>
-      <ReactQueryProvider>
-        <AppDndProvider>
-          <div
-            className="dr-tab"
-            css={{
-              height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
-            }}
-          >
-            <current.Page />
-          </div>
-          <TabNav
-            value={tab}
-            scrollButtons={false}
-            centered
-            sx={{ borderTop: 1, borderColor: 'divider' }}
-            onChange={handleTabChange}
-            css={{
-              zIndex: 1000,
-              backgroundColor: "var(--system-status-background, var(--tab-container-background))",
+    <div css={{
+      backgroundColor: STYLES.palette.background,
+    }}>
+      <MUIThemeProvider>
+        <ReactQueryProvider>
+          <AppDndProvider>
+            <div
+              css={{
+                height: `calc(100% - ${tabsHeight} - ${tabsBottomGap})`,
+              }}
+            >
+              <current.Page />
+            </div>
+            <TabNav
+              value={tab}
+              scrollButtons={false}
+              centered
+              sx={{ borderTop: 1, borderColor: 'divider' }}
+              onChange={handleTabChange}
+              css={{
+                zIndex: 1000,
+                backgroundColor: STYLES.palette.background,
+                position: "fixed",
+                minHeight: 0,
+                width: "100%",
+                left: "0",
+                bottom: tabsBottomGap,
+              }}
+            >
+              <TabNavItem
+                label="Note"
+                value={notePage}
+                onClick={handleNoteTabClick}
+                icon={<ObsidianIcon icon="notebook-pen" />}
+                iconPosition="start"
+                css={tabCss}
+              />
+              <TabNavItem
+                label="Calendar"
+                value={calendarPage}
+                icon={<ObsidianIcon icon="calendar-check-2" />}
+                iconPosition="start"
+                css={tabCss}
+              />
+              <TabNavItem
+                label="Queue"
+                value={taskQueuePage}
+                icon={<ObsidianIcon icon="list-check" />}
+                iconPosition="start"
+                css={tabCss}
+              />
+            </TabNav>
+            <div css={{
+              display: "block",
               position: "fixed",
-              minHeight: 0,
               width: "100%",
-              left: "0",
-              bottom: tabsBottomGap,
-            }}
-          >
-            <TabNavItem
-              label="Note"
-              value={notePage}
-              onClick={handleNoteTabClick}
-              icon={<ObsidianIcon icon="notebook-pen" />}
-              iconPosition="start"
-              css={tabCss}
-            />
-            <TabNavItem
-              label="Calendar"
-              value={calendarPage}
-              icon={<ObsidianIcon icon="calendar-check-2" />}
-              iconPosition="start"
-              css={tabCss}
-            />
-            <TabNavItem
-              label="Queue"
-              value={taskQueuePage}
-              icon={<ObsidianIcon icon="list-check" />}
-              iconPosition="start"
-              css={tabCss}
-            />
-          </TabNav>
-          <div css={{
-            display: "block",
-            position: "fixed",
-            width: "100%",
-            height: tabsBottomGap,
-            backgroundColor: "inherit",
-            bottom: 0,
-            zIndex: 1000,
-          }} />
-        </AppDndProvider>
-      </ReactQueryProvider>
-    </MUIThemeProvider>
+              height: tabsBottomGap,
+              backgroundColor: "inherit",
+              bottom: 0,
+              zIndex: 1000,
+            }} />
+          </AppDndProvider>
+        </ReactQueryProvider>
+      </MUIThemeProvider>
+    </div>
   );
 }

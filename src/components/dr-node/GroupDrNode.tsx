@@ -8,7 +8,6 @@ import { Checkable, Group } from "@/entities/types/dr-nodes";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { Touchable } from "@/shared/components/Touchable";
 import { STYLES } from "@/shared/styles/styles";
-import { useLeaf } from "@/shared/view/use-leaf";
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from "@mui/material";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -45,8 +44,6 @@ export const GroupDrNode = <C extends Checkable>({
   dndModule,
   useCancelLine = true,
 }: Props<C>) => {
-  const bgColor = useLeaf(s => s.leafBgColor);
-
   const [isAllChildChecked, setIsAllChildChecked] = useState(group.children.every(r => r.state === "accomplished"));
 
   const changeOpen = useCallback((isOpen: boolean) => {
@@ -115,7 +112,7 @@ export const GroupDrNode = <C extends Checkable>({
       expanded={group.isOpen}
       onChange={debouncedHandleExpandChange}
       css={{
-        backgroundColor: bgColor,
+        backgroundColor: STYLES.palette.background,
         "&::before": {
           display: "none",
         },

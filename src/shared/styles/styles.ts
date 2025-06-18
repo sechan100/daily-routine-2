@@ -12,6 +12,7 @@ export const STYLES = {
     textError: "var(--text-error)",
     textOnAccent: "var(--text-on-accent)",
     divider: "var(--background-modifier-border)",
+    background: "var(--system-status-background, var(--tab-container-background))",
   },
   fontWeight: {
     bold: "var(--font-bold)",

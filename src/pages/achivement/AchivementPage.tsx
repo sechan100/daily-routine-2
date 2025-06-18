@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
-import { useLeaf } from "@/shared/view/use-leaf";
+import { STYLES } from "@/shared/styles/styles";
 import { useAchivementMonthStore } from "@/stores/client/use-achivement-month-store";
 import { css } from "@emotion/react";
 import TabNavItem from '@mui/material/Tab';
@@ -23,7 +23,6 @@ const tabCss = css({
 export const AchivementPage = () => {
   const { month } = useAchivementMonthStore();
   const [type, setType] = useState<AchivementType>("note");
-  const { leafBgColor } = useLeaf();
 
   return (
     <>
@@ -35,7 +34,7 @@ export const AchivementPage = () => {
         onChange={(e, value) => setType(value)}
         css={{
           zIndex: 5,
-          backgroundColor: leafBgColor,
+          backgroundColor: STYLES.palette.background,
           minHeight: 0,
           width: "100%",
         }}

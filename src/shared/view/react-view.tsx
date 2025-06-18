@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { StrictMode, useState } from "react";
 import { Root, createRoot } from "react-dom/client";
+import { STYLES } from "../styles/styles";
 import { UseLeafProvider } from "./use-leaf";
 
 
@@ -54,6 +55,10 @@ export abstract class ReactView extends ItemView {
 
   async onOpen() {
     this.root = createRoot(this.containerEl.children[1]);
+
+    this.contentEl.setCssStyles({
+      backgroundColor: STYLES.palette.background,
+    });
     this.root.render(<AdapterComponent view={this} />);
   }
 
