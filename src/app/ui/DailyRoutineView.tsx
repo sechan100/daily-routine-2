@@ -84,7 +84,7 @@ export const DailyRoutineView = () => {
             onChange={handleTabChange}
             css={{
               zIndex: 1000,
-              backgroundColor: "inherit",
+              backgroundColor: "var(--system-status-background, var(--tab-container-background))",
               position: "fixed",
               minHeight: 0,
               width: "100%",

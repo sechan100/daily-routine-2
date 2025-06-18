@@ -36,6 +36,11 @@ type Props = {
   checkable: Checkable;
   depth: number;
 
+  /**
+   * 클릭하여 체크하는 등의 동작을 사용할지 여부.
+   * routines 페이지와 같은 곳에서는 checkbox가 필요 없음
+   */
+  checkAction?: boolean;
   dndState?: CheckableNodeDndState;
   onStateChange?: (state: CheckableState) => void;
   onContextMenu?: () => void;
@@ -45,6 +50,7 @@ export const CheckableDrNode = forwardRef<HTMLDivElement, Props>(({
   checkable,
   depth,
 
+  checkAction = true,
   dndState,
   onStateChange,
   onContextMenu,
@@ -68,6 +74,7 @@ export const CheckableDrNode = forwardRef<HTMLDivElement, Props>(({
   }, [checkable]);
   const [isPending, setIsPending] = useState(false);
   const handleClick = useCallback(() => {
+    if (!checkAction) return;
     const newState = getNextCheckableState(checkable.state);
     setIsPending(true);
     setLocalCheckable({
@@ -79,7 +86,7 @@ export const CheckableDrNode = forwardRef<HTMLDivElement, Props>(({
       setLocalCheckable(checkable);
       setIsPending(false);
     }, useSettingsStores.getState().hideCompletedTasksAndRoutines ? hideCompletedMs : 0);
-  }, [checkable, onStateChange]);
+  }, [checkAction, checkable, onStateChange]);
   /**
    * 모바일에서 touch할 때, 엘리먼트들의 height가 너무 작아서 위아래 다른 엘리먼트가 같이 눌리는 일이 빈번함.
    * 하지만 크기를 더 키우면 못생겨져서 debounce로 해결
@@ -115,7 +122,10 @@ export const CheckableDrNode = forwardRef<HTMLDivElement, Props>(({
               alignItems: "center",
             }}
           >
-            <CheckableArea checkable={localCheckable} />
+            <CheckableArea
+              checkable={localCheckable}
+              disableCheckbox={!checkAction}
+            />
           </Touchable>
           <OptionIconsContainer icons={optionIcons} />
         </DrNodeFlexContainer>

@@ -64,6 +64,7 @@ export const RoutineNode = ({
       checkable={routine}
       depth={depth}
       onContextMenu={handleContextMenu}
+      checkAction={false}
       // dnd config
       ref={droppable}
       dndState={dndState}

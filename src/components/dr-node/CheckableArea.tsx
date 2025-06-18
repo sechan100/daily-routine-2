@@ -8,9 +8,11 @@ import { Checkbox } from "./Checkbox";
 
 type Props = {
   checkable: Checkable;
+  disableCheckbox?: boolean;
 }
 export const CheckableArea = ({
-  checkable
+  checkable,
+  disableCheckbox = false,
 }: Props) => {
 
   return (
@@ -19,13 +21,13 @@ export const CheckableArea = ({
       alignItems: "center",
       justifyContent: "start",
     }}>
-      <Checkbox
+      {!disableCheckbox && <Checkbox
         state={checkable.state}
         size={13}
         sx={{
           marginRight: "0.5em",
         }}
-      />
+      />}
       <CancelLineName name={checkable.name} cancel={checkable.state !== "unchecked"} />
     </div >
   )
