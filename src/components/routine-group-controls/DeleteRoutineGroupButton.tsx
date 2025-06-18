@@ -1,6 +1,6 @@
-import { useRoutineTree } from "@/domain/note/use-routine-tree";
-import { deleteRoutineGroup } from "@/domain/routine/delete-routine-group";
+import { deleteRoutineGroup } from "@/core/routine/delete-routine-group";
 import { RoutineGroup } from "@/entities/types/routine-group";
+import { useRoutineTree } from "@/service/use-routine-tree";
 import { Button } from "@/shared/components/Button";
 import { useModal } from "@/shared/components/modal/create-modal";
 import { doFlagConfirm } from "@/shared/components/modal/flag-confirm-modal";

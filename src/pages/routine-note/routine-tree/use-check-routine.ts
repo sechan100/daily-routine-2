@@ -1,8 +1,8 @@
-import { confirmUncheckCheckable } from "@/domain/checkable/confirm-uncheck-checkable";
-import { routineTreeUtils } from "@/domain/note/routine-tree-utils";
-import { useRoutineTree } from "@/domain/note/use-routine-tree";
-import { CheckableState } from "@/entities/types/checkable";
+import { confirmUncheckCheckable } from "@/core/checkable/confirm-uncheck-checkable";
+import { routineTreeUtils } from "@/core/routine-tree/routine-tree-utils";
+import { CheckableState } from "@/entities/types/dr-nodes";
 import { NoteRoutine } from "@/entities/types/note-routine-like";
+import { useRoutineTree } from "@/service/use-routine-tree";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { produce } from "immer";
 import { useCallback } from "react";

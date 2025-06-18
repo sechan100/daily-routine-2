@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Checkable } from "@/entities/types/checkable";
+import { Checkable } from "@/entities/types/dr-nodes";
 import { Day, DayOfWeek } from "@/shared/period/day";
 import { TEXT_CSS } from "@/shared/styles/text-style";
 import { css } from "@emotion/react";

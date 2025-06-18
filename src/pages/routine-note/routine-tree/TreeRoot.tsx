@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineTree } from "@/domain/note/use-routine-tree";
-import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
+import { DndContext, OnDragEndContext } from "@/components/dnd/DndContext";
+import { useRoutineTree } from "@/service/use-routine-tree";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { Notice } from "obsidian";
 import { useCallback, useMemo } from "react";
@@ -38,7 +38,7 @@ export const TreeRoot = () => {
 
   return (
     <DndContext
-      itemTypes={["ROUTINE", "GROUP"]}
+      draggableTypes={["ROUTINE", "GROUP"]}
       collisionResolver={routineCollisionResolver}
       onDragEnd={handleDragEnd}
     >

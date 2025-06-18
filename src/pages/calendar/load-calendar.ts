@@ -1,7 +1,7 @@
-import { isRoutineDueTo } from "@/domain/note/is-routine-due-to";
+import { isRoutineDueTo } from "@/core/routine-tree/is-routine-due-to";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { routineRepository } from "@/entities/repository/routine-repository";
-import { Checkable } from "@/entities/types/checkable";
+import { Checkable } from "@/entities/types/dr-nodes";
 import { Routine } from "@/entities/types/routine";
 import { Task } from "@/entities/types/task";
 import { Day, DayFormat } from "@/shared/period/day";

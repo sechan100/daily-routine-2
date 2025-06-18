@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { routineTreeUtils } from "@/domain/note/routine-tree-utils";
+import { routineTreeUtils } from "@/core/routine-tree/routine-tree-utils";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { BaseCalendar } from "@/shared/components/calendar-legacy/BaseCalendar";
 import { Day, DayFormat } from "@/shared/period/day";

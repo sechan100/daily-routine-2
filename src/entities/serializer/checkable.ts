@@ -1,4 +1,4 @@
-import { CheckableState } from "../types/checkable";
+import { CheckableState } from "../types/dr-nodes";
 
 
 const deserializeError = (message: string): Error => new Error(`[Checkable Deserialize Error]: ${message}`);

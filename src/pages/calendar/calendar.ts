@@ -1,4 +1,4 @@
-import { Checkable } from "@/entities/types/checkable";
+import { Checkable } from "@/entities/types/dr-nodes";
 import { Day, DayFormat } from "@/shared/period/day";
 import { Month } from "@/shared/period/month";
 

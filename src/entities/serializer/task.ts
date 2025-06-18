@@ -1,4 +1,4 @@
-import { CheckableState } from "../types/checkable";
+import { CheckableState } from "../types/dr-nodes";
 import { Task, TaskProperties } from "../types/task";
 import { checkboxChars, deserializeCheckableState, serializeCheckableState } from "./checkable";
 

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { openCreateRoutineGroupModal } from "@/components/create-routine-group/CreateRoutineGroupModal";
 import { openCreateRoutineModal } from "@/components/create-routine/CreateRoutineModal";
-import { openRoutineNoteFile } from "@/domain/note/open-routine-note";
+import { openRoutineNoteFile } from "@/core/note/open-routine-note";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
 import { useRouter } from "@/shared/route/use-router";
 import { STYLES } from "@/shared/styles/styles";

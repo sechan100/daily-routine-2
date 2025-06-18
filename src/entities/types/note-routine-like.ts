@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Checkable } from "./checkable";
+import { Checkable, Group } from "./dr-nodes";
 import { RoutineLikeType } from "./routine-like";
 
 /**
@@ -15,10 +15,8 @@ export interface NoteRoutine extends NoteRoutineLike, Checkable {
   routineLikeType: "routine";
 }
 
-export interface NoteRoutineGroup extends NoteRoutineLike {
+export interface NoteRoutineGroup extends NoteRoutineLike, Group<NoteRoutine> {
   routineLikeType: "routine-group";
-  routines: NoteRoutine[];
-  isOpen: boolean;
 }
 
 export const isNoteRoutine = (obj: any): obj is NoteRoutine => {

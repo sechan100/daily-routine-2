@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
+import { AppDndProvider } from "@/components/dnd/AppDndProvider";
 import { ObsidianIcon } from "@/shared/components/ObsidianIcon";
-import { AppDndProvider } from "@/shared/dnd/AppDndProvider";
 import { Day } from "@/shared/period/day";
 import { PageType } from "@/shared/route/page-type";
 import { useRouter } from "@/shared/route/use-router";

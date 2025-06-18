@@ -1,5 +1,5 @@
 import dedent from "dedent";
-import { CheckableState } from "../types/checkable";
+import { CheckableState } from "../types/dr-nodes";
 import { NoteRoutine, NoteRoutineGroup } from "../types/note-routine-like";
 import { checkboxChars, deserializeCheckableState, serializeCheckableState } from "./checkable";
 
@@ -54,7 +54,7 @@ export const deserializeNoteRoutine = (routineLine: string): NoteRoutine => {
 export const serializeNoteRoutineGroup = (group: NoteRoutineGroup): string => {
   return dedent`
     ## ${group.isOpen ? group.name : `(${group.name})`}
-    ${group.routines.map(t => serializeNoteRoutine(t)).join('\n')}
+    ${group.children.map(t => serializeNoteRoutine(t)).join('\n')}
   `;
 }
 
@@ -82,7 +82,7 @@ export const deserializeNoteRoutineGroup = (block: string): NoteRoutineGroup => 
   return {
     name,
     routineLikeType: 'routine-group',
-    routines: taskLines.map(l => deserializeNoteRoutine(l)),
+    children: taskLines.map(l => deserializeNoteRoutine(l)),
     isOpen
   };
 }

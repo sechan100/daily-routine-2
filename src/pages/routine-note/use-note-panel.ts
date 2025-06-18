@@ -1,6 +1,5 @@
-import { DND_SCROLL_CONTAINER_CLASS_NAME } from "@/shared/dnd/ScrollContainer";
+import { DND_SCROLL_CONTAINER_CLASS_NAME } from "@/components/dnd/ScrollContainer";
 import { RefObject, useCallback, useState } from "react";
-
 
 /**
  * tasks가 늘어날 때 자동으로 tasks panel의 크기를 늘릴 최대 비율

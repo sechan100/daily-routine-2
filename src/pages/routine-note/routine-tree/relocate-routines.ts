@@ -1,4 +1,5 @@
-import { routineTreeUtils } from "@/domain/note/routine-tree-utils";
+import { DndCase } from "@/components/dnd/dnd-case";
+import { routineTreeUtils } from "@/core/routine-tree/routine-tree-utils";
 import { routineGroupRepository } from "@/entities/repository/group-repository";
 import { routineRepository } from "@/entities/repository/routine-repository";
 import { NoteRoutine, NoteRoutineGroup, NoteRoutineLike, isNoteRoutineGroup } from "@/entities/types/note-routine-like";
@@ -6,7 +7,6 @@ import { Routine } from "@/entities/types/routine";
 import { UNGROUPED_GROUP_NAME } from "@/entities/types/routine-group";
 import { RoutineLike } from "@/entities/types/routine-like";
 import { RoutineTree } from "@/entities/types/routine-tree";
-import { DndCase } from "@/shared/dnd/dnd-case";
 import { RoutineDndItem } from "./dnd-item";
 
 
@@ -115,13 +115,13 @@ class RoutineOrderUpdater {
         break;
       case "insert-into-first": {
         newGroup = over.name;
-        const firstChild = over.routines[0] ?? null;
+        const firstChild = over.children[0] ?? null;
         beforeAndAfter = firstChild ? await this.getWithBeforeAndAfter(firstChild, "before") : { before: null, after: null };
         break;
       }
       case "insert-into-last": {
         newGroup = over.name;
-        const lastChild = over.routines[over.routines.length - 1] ?? null;
+        const lastChild = over.children[over.children.length - 1] ?? null;
         beforeAndAfter = lastChild ? await this.getWithBeforeAndAfter(lastChild, "after") : { before: null, after: null };
         break;
       }
@@ -177,7 +177,7 @@ class RoutineOrderUpdater {
    */
   private async getWithBeforeAndAfter(nrl: NoteRoutineLike, with_: "before" | "after"): Promise<{ before: RoutineLike | null, after: RoutineLike | null }> {
     const parent = routineTreeUtils.getParent(this.tree, nrl.name);
-    const parentList = parent ? parent.routines : this.tree.root;
+    const parentList = parent ? parent.children : this.tree.root;
     const index = parentList.findIndex(r => r.name === nrl.name);
     if (index === -1) {
       throw new Error(`RoutineLike with name ${nrl.name} not found in the tree`);
@@ -246,7 +246,7 @@ class RoutineOrderUpdater {
 
         // group이라면 재귀
         if (isGroup) {
-          await resetSiblings(nrl.routines);
+          await resetSiblings(nrl.children);
         }
       }
     }

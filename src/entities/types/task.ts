@@ -1,4 +1,4 @@
-import { Checkable } from "./checkable";
+import { Checkable } from "./dr-nodes";
 
 
 export type TaskPropertiesArray = [

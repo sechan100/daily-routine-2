@@ -7,8 +7,8 @@ const flatMapFilter = (routines: NoteRoutineLike[]): NoteRoutineLike[] => {
     if (isNoteRoutine(nrl)) {
       return nrl.state === "unchecked" ? nrl : [];
     } else if (isNoteRoutineGroup(nrl)) {
-      const filteredChildren: NoteRoutine[] = flatMapFilter(nrl.routines) as NoteRoutine[];
-      const newGroup: NoteRoutineGroup = { ...nrl, routines: filteredChildren }
+      const filteredChildren: NoteRoutine[] = flatMapFilter(nrl.children) as NoteRoutine[];
+      const newGroup: NoteRoutineGroup = { ...nrl, children: filteredChildren }
       return filteredChildren.length > 0 ? newGroup : [];
     } else {
       throw new Error(`Unknown NoteRoutineLike type: ${JSON.stringify(nrl)}`);

@@ -1,4 +1,4 @@
-import { getNoteProgress } from "@/domain/note/get-note-progress";
+import { getNoteProgress } from "@/core/note/get-note-progress";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { ZERO_NOTE_PROGRESS } from "@/entities/types/progress";
 import { Day } from "@/shared/period/day";

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { NoteProgressCircle } from "@/components/note/NoteProgressCircle";
-import { getNoteProgress } from "@/domain/note/get-note-progress";
+import { getNoteProgress } from "@/core/note/get-note-progress";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { ZERO_NOTE_PROGRESS } from "@/entities/types/progress";
 import { BaseCalendar } from "@/shared/components/calendar-legacy/BaseCalendar";

@@ -1,5 +1,5 @@
-import { DndCase } from '@/shared/dnd/dnd-case';
-import { CollisionContext } from '@/shared/dnd/DndContext';
+import { DndCase } from '@/components/dnd/dnd-case';
+import { CollisionContext } from '@/components/dnd/DndContext';
 import { RoutineDndItem } from './dnd-item';
 
 

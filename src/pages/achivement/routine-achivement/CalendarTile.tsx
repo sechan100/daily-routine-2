@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Checkbox } from "@/components/checkable/Checkbox";
+import { Checkbox } from "@/components/dr-node/Checkbox";
 import { Circle } from "@/shared/components/Circle";
 import { Day } from "@/shared/period/day";
 import { Badge } from "@mui/material";

@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { reorderTasks, taskCollisionResolver } from "@/domain/task/resolve-dnd";
+import { DndContext, OnDragEndContext } from "@/components/dnd/DndContext";
+import { BaseDndItem } from "@/components/dnd/drag-item";
+import { reorderTasks, taskCollisionResolver } from "@/core/task/resolve-dnd";
 import { TaskQueue } from "@/entities/types/task-queue";
-import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
-import { BaseDndItem } from "@/shared/dnd/drag-item";
 import { useCallback } from "react";
 import { QueueTaskItem } from "./QueueTaskItem";
 import { useTaskQueue } from "./use-task-queue";
@@ -26,7 +26,7 @@ export const QueueList = () => {
 
   return (
     <DndContext
-      itemTypes={["TASK"]}
+      draggableTypes={["TASK"]}
       collisionResolver={taskCollisionResolver}
       onDragEnd={handleDragEnd}
     >

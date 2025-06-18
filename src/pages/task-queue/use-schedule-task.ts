@@ -1,4 +1,4 @@
-import { ensureRoutineNote } from "@/domain/note/ensure-routine-note";
+import { ensureRoutineNote } from "@/core/note/ensure-routine-note";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { Task } from "@/entities/types/task";
 import { Day } from "@/shared/period/day";

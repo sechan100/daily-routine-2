@@ -1,7 +1,7 @@
-import { confirmUncheckCheckable } from "@/domain/checkable/confirm-uncheck-checkable";
-import { useNoteTasks } from "@/domain/note/use-note-tasks";
-import { CheckableState } from "@/entities/types/checkable";
+import { confirmUncheckCheckable } from "@/core/checkable/confirm-uncheck-checkable";
+import { CheckableState } from "@/entities/types/dr-nodes";
 import { Task } from "@/entities/types/task";
+import { useNoteTasks } from "@/service/use-note-tasks";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { produce } from "immer";
 import { useCallback } from "react";

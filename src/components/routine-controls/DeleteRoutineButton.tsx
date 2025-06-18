@@ -1,6 +1,6 @@
-import { useRoutineTree } from "@/domain/note/use-routine-tree";
 import { routineRepository } from "@/entities/repository/routine-repository";
 import { Routine } from "@/entities/types/routine";
+import { useRoutineTree } from "@/service/use-routine-tree";
 import { Button } from "@/shared/components/Button";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { useModal } from "@/shared/components/modal/create-modal";

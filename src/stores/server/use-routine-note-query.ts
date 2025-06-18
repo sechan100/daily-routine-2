@@ -1,4 +1,4 @@
-import { ensureRoutineNote } from '@/domain/note/ensure-routine-note';
+import { ensureRoutineNote } from '@/core/note/ensure-routine-note';
 import { RoutineNote } from "@/entities/types/note";
 import { Day } from "@/shared/period/day";
 import { useQuery } from "@tanstack/react-query";

@@ -1,5 +1,5 @@
-import { useNoteTasks } from "@/domain/note/use-note-tasks";
 import { Task } from "@/entities/types/task";
+import { useNoteTasks } from "@/service/use-note-tasks";
 import { Button } from "@/shared/components/Button";
 import { doConfirm } from "@/shared/components/modal/confirm-modal";
 import { useModal } from "@/shared/components/modal/create-modal";

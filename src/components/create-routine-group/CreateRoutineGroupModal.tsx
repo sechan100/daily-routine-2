@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { useRoutineTree } from '@/domain/note/use-routine-tree';
-import { RoutineLikeNameValidator } from '@/domain/routine/routine-like-name-validator';
+import { RoutineLikeNameValidator } from '@/core/routine/routine-like-name-validator';
 import { routineGroupRepository } from '@/entities/repository/group-repository';
 import { RoutineGroup } from '@/entities/types/routine-group';
+import { useRoutineTree } from '@/service/use-routine-tree';
 import { createModal, useModal } from '@/shared/components/modal/create-modal';
 import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';

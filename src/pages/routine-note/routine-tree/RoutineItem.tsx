@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { CheckableItem } from "@/components/checkable/CheckableItem";
+import { useDnd } from "@/components/dnd/use-dnd";
+import { CheckableDrNode, CheckableNodeDndState } from "@/components/dr-node/CheckableDrNode";
+import { DragHandle } from "@/components/dr-node/DragHandle";
 import { routineRepository } from "@/entities/repository/routine-repository";
 import { NoteRoutine, NoteRoutineGroup } from "@/entities/types/note-routine-like";
 import { useNoteDayStore } from "@/stores/client/use-note-day-store";
@@ -32,6 +34,32 @@ export const RoutineItem = ({
     routine,
   }), [routine]);
 
+  const {
+    isDragging,
+    isOver,
+    preDragState,
+    setPreDragState,
+    draggable,
+    droppable,
+    dndCase
+  } = useDnd({
+    dndItem,
+    draggable: {
+      type: "ROUTINE",
+    },
+    droppable: {
+      accept: depth === 0 ? ["ROUTINE", "GROUP"] : ["ROUTINE"],
+      rectSplitCount: "two"
+    }
+  });
+
+  const dndState = useMemo<CheckableNodeDndState>(() => ({
+    isDragging,
+    isOver,
+    preDragState,
+    dndCase
+  }), [isDragging, isOver, preDragState, dndCase]);
+
   /**
    * Context Menu를 열면 routine control을 연다
    */
@@ -46,15 +74,22 @@ export const RoutineItem = ({
   }, [day, openRoutineControls, routine.name]);
 
   return (
-    <CheckableItem
+    <CheckableDrNode
       checkable={routine}
       depth={depth}
-      draggableType="ROUTINE"
-      droppableAccept={depth === 0 ? ["ROUTINE", "GROUP"] : ["ROUTINE"]}
-      dndItem={dndItem}
       onStateChange={changeRoutineState}
       onContextMenu={handleContextMenu}
-      optionIcons={optionIcons}
+      // dnd config
+      ref={droppable}
+      dndState={dndState}
+      optionIcons={[
+        ...optionIcons,
+        <DragHandle
+          draggable={draggable}
+          preDragState={preDragState}
+          setPreDragState={setPreDragState}
+        />
+      ]}
     />
   )
 }

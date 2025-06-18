@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { CheckableState } from "@/entities/types/checkable";
+import { CheckableState } from "@/entities/types/dr-nodes";
 import { Task } from "@/entities/types/task";
-import { useCallback } from "react";
-import { CheckableItem } from "../checkable/CheckableItem";
+import { useCallback, useMemo } from "react";
+import { useDnd } from "../dnd/use-dnd";
+import { CheckableDrNode, CheckableNodeDndState } from "../dr-node/CheckableDrNode";
+import { DragHandle } from "../dr-node/DragHandle";
 
 
 type Props = {
@@ -21,21 +23,53 @@ export const TaskItem = ({
   onContextMenu,
   optionIcons = [],
 }: Props) => {
+  const {
+    isDragging,
+    isOver,
+    preDragState,
+    setPreDragState,
+    draggable,
+    droppable,
+    dndCase
+  } = useDnd({
+    dndItem: { id: task.name },
+    draggable: {
+      type: "TASK"
+    },
+    droppable: {
+      accept: ["TASK"],
+      rectSplitCount: "two"
+    }
+  });
+
+  const dndState = useMemo<CheckableNodeDndState>(() => ({
+    isDragging,
+    isOver,
+    preDragState,
+    dndCase
+  }), [isDragging, isOver, preDragState, dndCase]);
 
   const handleContextMenu = useCallback(async () => {
     onContextMenu?.(task);
   }, [onContextMenu, task]);
 
   return (
-    <CheckableItem
+    <CheckableDrNode
       checkable={task}
       depth={0}
-      draggableType="TASK"
-      droppableAccept={["TASK"]}
-      dndItem={{ id: task.name }}
       onStateChange={onStateChange}
       onContextMenu={handleContextMenu}
-      optionIcons={optionIcons}
+      // dnd config
+      ref={droppable}
+      dndState={dndState}
+      optionIcons={[
+        ...optionIcons,
+        <DragHandle
+          draggable={draggable}
+          preDragState={preDragState}
+          setPreDragState={setPreDragState}
+        />
+      ]}
     />
   )
 }

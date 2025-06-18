@@ -28,14 +28,14 @@ export const serializeRoutineNote = (note: RoutineNote): string => {
         const newUngroupedGroup: NoteRoutineGroup = {
           name: 'UNGROUPED',
           routineLikeType: 'routine-group',
-          routines: [],
+          children: [],
           isOpen: true
         }
         lastGroup = newUngroupedGroup;
         routineGroups.push(newUngroupedGroup);
       }
       // 마지막 그룹에 현재 routine을 추가한다.
-      lastGroup.routines.push(routienLike);
+      lastGroup.children.push(routienLike);
     }
     else {
       throw new Error('Invalid NoteRoutineLike Type');

@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { useNoteTasks } from "@/domain/note/use-note-tasks";
-import { reorderTasks, taskCollisionResolver } from "@/domain/task/resolve-dnd";
-import { DndContext, OnDragEndContext } from "@/shared/dnd/DndContext";
-import { BaseDndItem } from "@/shared/dnd/drag-item";
+import { DndContext, OnDragEndContext } from "@/components/dnd/DndContext";
+import { BaseDndItem } from "@/components/dnd/drag-item";
+import { reorderTasks, taskCollisionResolver } from "@/core/task/resolve-dnd";
+import { useNoteTasks } from "@/service/use-note-tasks";
 import { useSettingsStores } from "@/stores/client/use-settings-store";
 import { useCallback, useMemo } from "react";
 import { NoteTaskItem } from "./NoteTaskItem";
@@ -31,7 +31,7 @@ export const TaskListRoot = () => {
 
   return (
     <DndContext
-      itemTypes={["TASK"]}
+      draggableTypes={["TASK"]}
       collisionResolver={taskCollisionResolver}
       onDragEnd={handleDragEnd}
     >

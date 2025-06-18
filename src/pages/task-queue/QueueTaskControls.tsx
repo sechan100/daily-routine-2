@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { TaskNameValidator } from '@/domain/task/task-name-validator';
-import { taskUtils } from '@/domain/task/tasks-utils';
+import { TaskNameValidator } from '@/core/task/task-name-validator';
+import { taskUtils } from '@/core/task/tasks-utils';
 import { Task, TaskProperties } from '@/entities/types/task';
 import { TaskQueue } from '@/entities/types/task-queue';
 import { createModal, useModal } from '@/shared/components/modal/create-modal';

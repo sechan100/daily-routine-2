@@ -1,5 +1,5 @@
-import { useRoutineTree } from "@/domain/note/use-routine-tree";
 import { NoteRoutineGroup, isNoteRoutineGroup } from "@/entities/types/note-routine-like";
+import { useRoutineTree } from "@/service/use-routine-tree";
 import { produce } from "immer";
 import { useCallback } from "react";
 

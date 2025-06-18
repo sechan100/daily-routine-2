@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { useNoteTasks } from '@/domain/note/use-note-tasks';
-import { TaskNameValidator } from '@/domain/task/task-name-validator';
-import { taskUtils } from '@/domain/task/tasks-utils';
+import { TaskNameValidator } from '@/core/task/task-name-validator';
+import { taskUtils } from '@/core/task/tasks-utils';
 import { Task, TaskProperties } from '@/entities/types/task';
+import { useNoteTasks } from '@/service/use-note-tasks';
 import { createModal, useModal } from '@/shared/components/modal/create-modal';
+import { Modal } from '@/shared/components/modal/styled-modal';
 import { TextEditComponent } from '@/shared/components/TextEditComponent';
 import { ToggleComponent } from '@/shared/components/ToggleComponent';
-import { Modal } from '@/shared/components/modal/styled-modal';
 import { useCallback, useEffect, useRef } from "react";
 import { Controller, useForm } from 'react-hook-form';
 import { DeleteTaskButton } from './DeleteTaskButton';

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { getNoteProgress } from "@/domain/note/get-note-progress";
+import { getNoteProgress } from "@/core/note/get-note-progress";
 import { VirtualSwiper } from "@/shared/components/SwiperComponent";
 import { Day } from "@/shared/period/day";
 import { Week } from "@/shared/period/week";

@@ -1,9 +1,9 @@
-import { ensureRoutineNote } from "@/domain/note/ensure-routine-note";
-import { useNoteTasks } from "@/domain/note/use-note-tasks";
+import { ensureRoutineNote } from "@/core/note/ensure-routine-note";
 import { noteRepository } from "@/entities/repository/note-repository";
 import { taskQueueRepository } from "@/entities/repository/task-queue-repository";
 import { Task } from "@/entities/types/task";
 import { TaskQueue } from "@/entities/types/task-queue";
+import { useNoteTasks } from "@/service/use-note-tasks";
 import { Day } from "@/shared/period/day";
 import { routineNoteQueryKeys } from "@/stores/server/use-routine-note-query";
 import { taskQueueQueryKey, useTaskQueueQuery } from "@/stores/server/use-task-queue-query";
