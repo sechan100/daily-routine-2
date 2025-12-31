@@ -1,4 +1,4 @@
-import BEMHelper, { WordSet } from "react-bem-helper"
+import BEMHelper, { WordSet } from "react-bem-helper";
 
 
 export type DailyRoutineBEM = (element?: string, modifiers?: WordSet, extra?: WordSet) => string;

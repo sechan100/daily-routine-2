@@ -1,6 +1,6 @@
 {
   "name": "daily-routine-obsidian-plugin",
-  "version": "1.0.2",
+  "version": "1.0.8",
   "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "@typescript-eslint/eslint-plugin": "5.29.0",
     "@typescript-eslint/parser": "5.29.0",
     "builtin-modules": "3.3.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.27.2",
     "eslint-plugin-fsd-import": "^0.0.13",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -44,7 +44,7 @@
     "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "neverthrow": "^8.1.1",
-    "npm": "^10.8.3",
+    "npm": "^11.7.0",
     "react": "^18.3.1",
     "react-bem-helper": "^1.4.1",
     "react-calendar": "^5.0.0",
