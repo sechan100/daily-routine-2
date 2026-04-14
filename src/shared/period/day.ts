@@ -48,7 +48,7 @@ export class Day {
   }
 
   static fromString(str: string){
-    return new Day(moment(str));
+    return new Day(moment(str, 'YYYY-MM-DD'));
   }
 
   static fromJsDate(date: Date){
