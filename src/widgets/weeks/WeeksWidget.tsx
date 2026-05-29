@@ -23,8 +23,6 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
   const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
   const currentNotePerformance = useMemo(() => NoteEntity.getPerformance(note), [note]);
   const [ weeks, setWeeks ] = useState<WeekNode[]>([]);
-  const { leafBgColor } = useLeaf();
-
   /**
    * weeks 최초 초기화
    */
@@ -76,7 +74,7 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
             justifyContent: "center",
             alignItems: "stretch",
             flexWrap: "nowrap",
-            backgroundColor: leafBgColor,
+            backgroundColor: "var(--background-primary)",
           }}>
             {week.days.map((dayNode, idx) => (
               <DayNodeComponent

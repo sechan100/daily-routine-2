@@ -20,7 +20,7 @@ export const Button = (props: ButtonProps) => {
     switch(props.variant){
       // PRIMARY
       case "primary": return css({
-        color: "black"
+        color: "var(--text-normal)"
       });
       // DESTRUCTIVE
       case "destructive": return css({

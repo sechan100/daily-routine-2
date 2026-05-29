@@ -146,6 +146,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
           ".MuiTouchRipple-child": {
             backgroundColor: "var(--color-accent-1) !important",
           },
+          color: "var(--text-normal)",
           width: "100%",
         }}
       >

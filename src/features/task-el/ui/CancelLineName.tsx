@@ -8,6 +8,7 @@ const bem = dr("task-name");
 const baseStyle = css({
   position: "relative",
   cursor: "pointer",
+  color: "var(--text-normal)",
   transition: "color 0.5s ease",
   "&:after": {
     content: "''",
@@ -17,16 +18,15 @@ const baseStyle = css({
     width: 0,
     transform: "translateY(-50%)",
     height: "1.5px", // check 취소선 두께
-    background: "var(--color-base-60)", // check 취소선 색
+    background: "var(--text-muted)",
   }
 })
 
 const cancelTextStyle = css({
-  color: "var(--color-base-35)", // check된 상태에서 글자색
+  color: "var(--text-muted)",
 })
 
 const cancelLineStyle = css({
-  color: "var(--color-base-40)",
   "&:after": {
     width: "100%",
     transition: "all 0.5s ease",
@@ -44,7 +44,7 @@ export const CancelLineName = ({
   return (
     <span 
       className={bem("name")}
-      css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}
+      css={[baseStyle, cancel && cancelTextStyle, cancel && cancelLineStyle]}
     >
       {name}
     </span>

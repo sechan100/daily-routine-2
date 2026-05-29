@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { NoteEntity, noteRepository, RoutineNote, TaskEntity, TaskGroup, TaskGroupEntity } from '@entities/note';
-import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/utils/daily-routine-bem';
@@ -38,7 +38,6 @@ export const BaseTaskGroupFeature = React.memo(({
 }: Props) => {
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
-  const bgColor = useLeaf(s=>s.leafBgColor);
   const { note, setNote } = useRoutineNote();
 
 
@@ -140,7 +139,7 @@ export const BaseTaskGroupFeature = React.memo(({
         expanded={open}
         onChange={() => changeOpen(!open)}
         css={{
-          backgroundColor: bgColor,
+          backgroundColor: "var(--background-primary)",
           "&::before": {
             display: "none",
           }
@@ -182,10 +181,15 @@ export const BaseTaskGroupFeature = React.memo(({
                 flexDirection: "row-reverse",
                 gap: "0.5em",
                 fontWeight: "500",
-
-                // 열림상태
-                [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]: {
-                  transform: 'rotate(90deg)',
+                color: "var(--text-normal)",
+                "& .MuiAccordionSummary-content": {
+                  color: "var(--text-normal)",
+                },
+                "& .MuiAccordionSummary-expandIconWrapper": {
+                  color: "var(--icon-color)",
+                },
+                "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                  transform: "rotate(90deg)",
                 },
               }}
             >

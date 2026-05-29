@@ -16,7 +16,7 @@ const calendarCss = css({
   ".react-calendar": {
     width: "100%",
     maxWidth: "100%",
-    background: "white",
+    background: "var(--background-primary)",
     lineHeight: "1.125em",
   },
 
@@ -119,7 +119,7 @@ const CalendarTile = ({ date, active }: CalendarTileProps) => {
       })
     } else {
       return css({
-        color: "black"
+        color: "var(--text-normal)"
       });
     }
   }, [active]);

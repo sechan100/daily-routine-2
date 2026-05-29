@@ -16,7 +16,7 @@ export const OptionIcon = ({
       onMenuShow={onOptionMenu}
       icon="ellipsis"
       css={{
-        color: 'var(--color-base-40)',
+        color: "var(--icon-color)",
         width: "3em",
       }}
     />

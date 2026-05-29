@@ -15,11 +15,11 @@ interface DayNodeProps {
   onClick: (day: Day, event?: React.MouseEvent) => void;
 }
 export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _performance }, onClick }: DayNodeProps) => {
-  const { leafBgColor } = useLeaf();
   // const isToday = useMemo(() => day.isSameDay(Day.now()), [day]);
 
   const activeNode = useWeeksActiveDay();
   const isActiveDay = useMemo(() => day.isSameDay(activeNode.day), [activeNode.day, day]);
+  const isFutureDay = useMemo(() => day.isAfter(Day.today()), [day]);
   const [performance, setPerformance] = useState(_performance);
 
   /**
@@ -43,10 +43,10 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
       right: "0",
       bottom: "0",
       borderRadius: "7px",
-      backgroundColor: leafBgColor,
+      backgroundColor: "var(--background-primary)",
       opacity: "0.7",
     })
-  }, [day, leafBgColor]);
+  }, [day]);
 
   const activeStyle = useMemo(() => {
     if(!isActiveDay) return { self: {}, after: {} };
@@ -55,6 +55,10 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
       after: { boxShadow: "inset 0 0 2px 0.5px rgba(0, 0, 0, 0.5)" },
     }
   }, [isActiveDay]);
+
+  const textColor = useMemo(() => {
+    return isFutureDay ? "var(--text-muted)" : "var(--text-normal)";
+  }, [isFutureDay]);
 
   const bem = dr("weeks");
   return (
@@ -80,6 +84,9 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
         textAlign: "center",
         fontSize: "0.8em",
         height: "1em",
+        color: textColor,
+        position: "relative",
+        zIndex: 1,
       }}
     >
       {day.format("M/D").toUpperCase()}
@@ -88,9 +95,11 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
       css={{
         position: "relative",
         bottom: "0px",
+        zIndex: 1,
       }}
       width="100%"
       performance={performance}
+      textColor={textColor}
       text={day.format("ddd").toUpperCase()} 
     />
   </div>

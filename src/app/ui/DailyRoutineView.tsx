@@ -29,7 +29,7 @@ const tabCss = css({
 
 export const DailyRoutineView = () => {
   const { tab, route } = useTabRoute();
-  const { view, leafBgColor } = useLeaf();
+  const { view } = useLeaf();
 
   useEffect(() => {
     view.contentEl.classList.add("no-padding");
@@ -72,7 +72,7 @@ export const DailyRoutineView = () => {
         onChange={onTabChange}
         css={{
           zIndex: 1000,
-          backgroundColor: leafBgColor,
+          backgroundColor: "var(--background-primary)",
           position: "fixed",
           minHeight: 0,
           width: "100%",
@@ -107,7 +107,7 @@ export const DailyRoutineView = () => {
         position: "fixed",
         width: "100%",
         height: tabsBottomGap,
-        backgroundColor: leafBgColor,
+        backgroundColor: "var(--background-primary)",
         bottom: 0,
         zIndex: 1000,
       }} />

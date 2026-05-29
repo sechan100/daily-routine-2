@@ -22,6 +22,7 @@ const accomplishmentCircleColor = "hsl(var(--color-accent-hsl))";
 interface PercentageCircleProps {
   performance: NotePerformance;
   text: string;
+  textColor?: string;
   transition?: boolean;
   width?: string;
   className?: string;
@@ -31,6 +32,7 @@ export const PerformanceCircle = React.memo(({
   width,
   className,
   text,
+  textColor = "var(--text-normal)",
   transition=true
 }: PercentageCircleProps) => {
   const accomplishment = cleanPercentage(performance.accomplishment);
@@ -48,6 +50,7 @@ export const PerformanceCircle = React.memo(({
         textAnchor="middle"
         fontSize="45"
         dominantBaseline="central"
+        fill={textColor}
       >
         {text}
       </text>
