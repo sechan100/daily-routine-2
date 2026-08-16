@@ -27,3 +27,26 @@ data.json
 # dist
 dist/
 styles.css
+
+
+# IDEs and agents
+.idea/
+.vscode/
+.claude/
+.codex/
+.gemini/
+CLAUDE*.md
+
+# etc
+justfile
+*.just
+just/
+.gstack/
+.superpowers/
+/docs/
+/apps/ops/
+/tmp/
+/resources/
+/backup/
+/out/
+/apk/
