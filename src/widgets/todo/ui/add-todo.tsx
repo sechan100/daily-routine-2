@@ -5,6 +5,7 @@ import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/utils/daily-routine-bem";
+import { Notice } from "obsidian";
 import { useCallback, useMemo, useState } from "react";
 
 
@@ -12,13 +13,23 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
   const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask(""));
   
-  const onSaveBtnClick = useCallback(() => {
+  const onSaveBtnClick = useCallback(async () => {
+    const validation = TaskEntity.validateTodoName(todo.name);
+    if(validation.isErr()){
+      new Notice(`Invalid todo name: ${validation.error}`);
+      return;
+    }
     const newNote = {
       ...note,
       children: [todo, ...note.children]
     }
     // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
-    noteRepository.save(newNote);
+    try {
+      await noteRepository.save(newNote);
+    } catch (e) {
+      new Notice('Failed to save todo.');
+      return;
+    }
     setNote(newNote);
     modal.close();
   }, [modal, note, setNote, todo]);

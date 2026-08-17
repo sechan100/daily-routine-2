@@ -34,8 +34,9 @@ export const ElementPreview = ({ item, style, backend }: TaskPreviewProps) => {
     // @ts-ignore
     // const appEl = plugin().app.dom.appContainerEl;
     const leafEl = leaf.view.containerEl;
-    const x_leaf = x_viewport - (window.innerWidth - leafEl.clientWidth);
-    const y_leaf = y_viewport - (window.innerHeight - leafEl.clientHeight);
+    const leafRect = leafEl.getBoundingClientRect();
+    const x_leaf = x_viewport - leafRect.left;
+    const y_leaf = y_viewport - leafRect.top;
     
     const getTransform = (backend: "html5" | "touch") => {
       return `translate(${x_leaf - previewWidth/2}px, ${y_leaf - previewHeight}px)`;

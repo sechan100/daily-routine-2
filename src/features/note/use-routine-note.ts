@@ -10,19 +10,26 @@ interface UseRoutineNote {
   setNote(day: Day): void;
 }
 
-export const [UseRoutineNoteProvider, useRoutineNote] = 
-createStoreContext<RoutineNote, UseRoutineNote>((routineNote, set, get) => ({
-  note: routineNote,
+export const [UseRoutineNoteProvider, useRoutineNote] =
+createStoreContext<RoutineNote, UseRoutineNote>((routineNote, set, get) => {
+  // setNote 호출 순서를 추적하여, 늦게 resolve된 이전 요청이 최신 상태를 덮어쓰지 않도록 한다.
+  let lastSetNoteId = 0;
 
-  async setNote(noteOrDay: RoutineNote | Day){
-    let note: RoutineNote;
-    if(noteOrDay instanceof Day){
-      note = await resolveRoutineNote(noteOrDay);
-    } else {
-      note = noteOrDay;
-    }
-    set({ note });
-  },
+  return {
+    note: routineNote,
+
+    async setNote(noteOrDay: RoutineNote | Day){
+      const id = ++lastSetNoteId;
+      let note: RoutineNote;
+      if(noteOrDay instanceof Day){
+        note = await resolveRoutineNote(noteOrDay);
+        if(id !== lastSetNoteId) return;
+      } else {
+        note = noteOrDay;
+      }
+      set({ note });
+    },
 
 
-}));
+  };
+});

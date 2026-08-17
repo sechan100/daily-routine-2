@@ -9,6 +9,7 @@ import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
 import { TaskElDragItem, TaskElDragItemType } from "./drag-item";
 import { useRoutineMutationMerge } from "@features/merge-note";
+import { Notice } from "obsidian";
 
 
 interface UseTaskDndOption {
@@ -39,7 +40,8 @@ export const useTaskDnd = ({
     return <DndIndicator mode={hit} />
   }, [hit])
 
-  const isLastNode = useMemo(() => {
+  // reorder가 note를 제자리에서 변경하므로, memo하지 않고 event 시점에 최신 상태로 계산한다.
+  const isLastNode = useCallback(() => {
     if(!group) return false;
     const note = useRoutineNote.getState().note;
     const lastGroup = (() => {
@@ -81,7 +83,7 @@ export const useTaskDnd = ({
   const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
     if(dropped.name === task.name) return null;
     const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const hit = HitAreaEvaluator.evaluateTask(coord, taskRef.current as HTMLElement, isLastNode);
+    const hit = HitAreaEvaluator.evaluateTask(coord, taskRef.current as HTMLElement, isLastNode());
     return hit;
   }, [task, taskRef, isLastNode])
 
@@ -101,23 +103,31 @@ export const useTaskDnd = ({
     drop: async (item, monitor) => {
       if(!hit) return;
       const dropped = item.el;
-      let newNote: RoutineNote;
-      if(dropped.elementType === "task") {
-        newNote = await DroppedElReplacer.taskDropOnTask({
-          dropped: dropped as Task,
-          on: task,
-          hit
-        });
-      } else {
-        newNote = await DroppedElReplacer.groupDropOnTask({
-          dropped: dropped as TaskGroup,
-          on: task,
-          hit
-        }); 
-      }
       setHit(null);
-      mergeNotes(newNote);
-      onElDrop?.(newNote, dropped);
+      try {
+        let newNote: RoutineNote;
+        if(dropped.elementType === "task") {
+          newNote = await DroppedElReplacer.taskDropOnTask({
+            dropped: dropped as Task,
+            on: task,
+            hit
+          });
+        } else {
+          newNote = await DroppedElReplacer.groupDropOnTask({
+            dropped: dropped as TaskGroup,
+            on: task,
+            hit
+          });
+        }
+        await mergeNotes(newNote);
+        onElDrop?.(newNote, dropped);
+      } catch(e) {
+        console.error("Failed to persist reordered elements.", e);
+        new Notice(`Failed to save order: ${e instanceof Error ? e.message : String(e)}`);
+        // UI가 디스크의 상태와 어긋나지 않도록 note를 다시 로드한다.
+        const { note, setNote } = useRoutineNote.getState();
+        setNote(note.day);
+      }
     },
 
     collect: (monitor) => ({

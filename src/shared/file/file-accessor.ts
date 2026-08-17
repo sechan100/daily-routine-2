@@ -116,20 +116,17 @@ export const fileAccessor: FileAccessor = {
   },
 
   /**
-   * 1차 시도는 metadataCache에서 frontmatter를 가져오고,
-   * 실패하면 파일을 직접 읽어서 frontmatter를 파싱한다.
-   * 그래도 안되면 에러를 발생시킨다.
-   * @param file 
-   * @returns 
+   * 파일 내용을 직접 읽어서 frontmatter를 파싱한다.
+   *
+   * metadataCache를 사용하지 않는 이유:
+   * 1. cache의 frontmatter 객체를 그대로 반환하면 호출자가 obsidian 전역 캐시를 직접 변경해버릴 수 있다.
+   * 2. 파일 쓰기 직후에는 재색인 전이라 cache가 stale할 수 있다. (쓰기 직후의 재로드가 이전 값을 읽는 문제)
+   * @param file
+   * @returns
    */
   loadFrontMatter: async (file: TFile): Promise<object> => {
-    const metadataCache = plugin().app.metadataCache.getFileCache(file);
-    if(metadataCache && metadataCache.frontmatter){
-      return metadataCache.frontmatter;
-    } else {
-      const content = await fileAccessor.readFileAsReadonly(file);
-      return parseFrontmatterFromContent(content);
-    }
+    const content = await fileAccessor.readFileAsReadonly(file);
+    return parseFrontmatterFromContent(content);
   }
 }
 
@@ -140,5 +137,5 @@ export const parseFrontmatterFromContent = (fileContent: string): object => {
     return {};
   }
   const yaml = fmInfo.frontmatter.replace('---', '').trim()
-  return parseYaml(yaml);
+  return parseYaml(yaml) ?? {};
 }

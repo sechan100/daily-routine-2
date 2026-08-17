@@ -119,7 +119,7 @@ export const TaskCheckbox = ({
         height: `${size}px`,
 
         // checkbox style
-        border: "0.07em solid #c8ccd4",
+        border: "0.07em solid var(--background-modifier-border)",
         borderColor: isChecked ? "transparent" : undefined,
         borderRadius: "3px",
         cursor: "pointer",

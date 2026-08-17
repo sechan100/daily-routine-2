@@ -16,7 +16,7 @@ import { useDragDropManager } from "react-dnd";
 import { TaskElDragItem } from './drag-item';
 import { isNoteElement, isTaskGroup } from "@entities/note";
 import { CustomHTML5Backend } from "./CustomHTML5BackendImpl";
-import { CustomTouchBackend } from "./CustomTouchBackendImpl copy";
+import { CustomTouchBackend } from "./CustomTouchBackendImpl";
 
 
 export const DELAY_TOUCH_START = 800;

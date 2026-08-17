@@ -3,6 +3,7 @@ import { noteRepository, RoutineNote } from "@entities/note";
 import { RoutineNoteCreator } from "@entities/routine-to-note/RoutineNoteCreator";
 import { useRoutineNote } from "@features/note";
 import { Day } from "@shared/period/day";
+import { Notice } from "obsidian";
 import { useCallback } from "react";
 
 
@@ -36,32 +37,55 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
    * 
    */
   const mergeMutationToNotes = useCallback(async (manuallyMergedCurrentNote?: RoutineNote) => {
-    if(manuallyMergedCurrentNote){
-      if(!manuallyMergedCurrentNote.day.isSameDay(currentNote.day)) throw new Error("manuallyMergedCurrentNote must be same day with currentNote.");
-      
-      // currentNote 저장
-      setNote(manuallyMergedCurrentNote);
-      await noteRepository.updateIfExist(manuallyMergedCurrentNote);
+    // 하나의 note 병합이 실패해도 나머지 note들의 병합은 계속 진행하고, 실패한 날짜들을 모아서 알린다.
+    const failedDays: string[] = [];
 
-      // currentNote를 제외한 나머지 notes merge
-      let notes = await noteRepository.loadBetween(Day.today(), Day.max());
-      notes = notes.filter(n => !n.day.isSameDay(currentNote.day));
-      const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
-      for(const note of notes){
-        const merged = mergeNote(note, noteCreator);
-        await noteRepository.update(merged);
-      }
-    } 
-    else {
-      const notes = await noteRepository.loadBetween(Day.today(), Day.max());
-      const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
-      for(const note of notes){
-        const merged = mergeNote(note, noteCreator);
-        if(merged.day.isSameDay(currentNote.day)){
-          setNote(merged);
+    // 호출부 다수가 fire-and-forget이므로, 이 함수는 절대 reject하지 않는다.
+    try {
+      if(manuallyMergedCurrentNote){
+        if(!manuallyMergedCurrentNote.day.isSameDay(currentNote.day)) throw new Error("manuallyMergedCurrentNote must be same day with currentNote.");
+
+        // currentNote 저장
+        setNote(manuallyMergedCurrentNote);
+        await noteRepository.updateIfExist(manuallyMergedCurrentNote);
+
+        // currentNote를 제외한 나머지 notes merge
+        let notes = await noteRepository.loadBetween(Day.today(), Day.max());
+        notes = notes.filter(n => !n.day.isSameDay(currentNote.day));
+        const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
+        for(const note of notes){
+          try {
+            const merged = mergeNote(note, noteCreator);
+            await noteRepository.update(merged);
+          } catch(e) {
+            console.error(`Failed to merge note '${note.day.format()}'.`, e);
+            failedDays.push(note.day.format());
+          }
         }
-        await noteRepository.update(merged);
       }
+      else {
+        const notes = await noteRepository.loadBetween(Day.today(), Day.max());
+        const noteCreator = await RoutineNoteCreator.withLoadFromRepositoryAsync();
+        for(const note of notes){
+          try {
+            const merged = mergeNote(note, noteCreator);
+            if(merged.day.isSameDay(currentNote.day)){
+              setNote(merged);
+            }
+            await noteRepository.update(merged);
+          } catch(e) {
+            console.error(`Failed to merge note '${note.day.format()}'.`, e);
+            failedDays.push(note.day.format());
+          }
+        }
+      }
+    } catch(e) {
+      console.error("Failed to apply routine changes to notes.", e);
+      new Notice("Failed to apply routine changes to notes.");
+    }
+
+    if(failedDays.length > 0){
+      new Notice(`Failed to merge ${failedDays.length} note(s): ${failedDays.join(", ")}`);
     }
   }, [currentNote.day, setNote]);
 

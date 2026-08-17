@@ -5,6 +5,7 @@ import { Button } from '@shared/components/Button';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { Modal } from '@shared/components/modal/styled';
 import { dr } from '@shared/utils/daily-routine-bem';
+import { Notice } from "obsidian";
 import { memo, useCallback, useMemo, useState } from "react";
 
 
@@ -19,7 +20,11 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
   const onSaveBtnClick = useCallback(async () => {
-    if(todo.name.trim() === "") return;
+    const validation = TaskEntity.validateTodoName(todo.name);
+    if(validation.isErr()){
+      new Notice(`Invalid todo name: ${validation.error}`);
+      return;
+    }
     const newNote = TaskEntity.updateTask(note, originalName, todo);
     setNote(newNote);
     await noteRepository.update(newNote);

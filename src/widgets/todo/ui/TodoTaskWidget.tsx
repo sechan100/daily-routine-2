@@ -28,7 +28,14 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
     })
     if(!rescheduleConfirm) return;
 
-    const todoDeletedNote = await rescheduleTodo(note, task.name, destDay);
+    let todoDeletedNote;
+    try {
+      todoDeletedNote = await rescheduleTodo(note, task.name, destDay);
+    } catch(e) {
+      // 실패 Notice는 rescheduleTodo 내부에서 처리된다.
+      console.error(e);
+      return;
+    }
     setNote(todoDeletedNote);
     new Notice(`Todo ${task.name} rescheduled to ${destDay.format()}.`);
   }, [note, setNote, task.name]);

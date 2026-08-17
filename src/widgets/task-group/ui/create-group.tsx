@@ -28,6 +28,17 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
   const [group, dispatch] = useReducer<GroupReducer>(groupReducer, createDefaultGroup());
 
   const onSaveBtnClick = useCallback(async () => {
+    const name = group.name.trim();
+    // 괄호로 감싸진 이름은 닫힌 그룹 표기와 충돌한다.
+    if(/^\(.*\)$/.test(name)){
+      new Notice(`Group name cannot be wrapped in parentheses.`);
+      return;
+    }
+    // 'UNGROUPED'는 노트 직렬화에 사용되는 예약어이다.
+    if(name.startsWith("UNGROUPED")){
+      new Notice(`Group name cannot be, or start with, 'UNGROUPED'.`);
+      return;
+    }
     await groupRepository.persist(group);
     mergeNotes();
     modal.close();

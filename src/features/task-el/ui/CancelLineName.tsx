@@ -9,6 +9,10 @@ const baseStyle = css({
   position: "relative",
   cursor: "pointer",
   transition: "color 0.5s ease",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  minWidth: 0,
   "&:after": {
     content: "''",
     position: "absolute",

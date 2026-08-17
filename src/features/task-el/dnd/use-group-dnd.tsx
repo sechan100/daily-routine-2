@@ -8,6 +8,8 @@ import { GroupHitArea, HitAreaEvaluator } from "./hit-area";
 import { DndIndicator } from "./indicator";
 import { DroppedElReplacer } from "../model/reorder-elements";
 import { useRoutineMutationMerge } from "@features/merge-note";
+import { useRoutineNote } from "@features/note";
+import { Notice } from "obsidian";
 
 
 
@@ -81,24 +83,33 @@ export const useGroupDnd = ({
     drop: async (item, monitor) => {
       if(!hit) return;
       const dropped = item.el;
-      let newNote: RoutineNote;
-      if(dropped.elementType === "task") {
-        newNote = await DroppedElReplacer.taskDropOnGroup({
-          dropped: dropped as Task,
-          on: group,
-          hit,
-        });
-      } else {
-        if(hit === "in") return null;
-        newNote = await DroppedElReplacer.groupDropOnGroup({
-          dropped: dropped as TaskGroup,
-          on: group,
-          hit,
-        }); 
+      try {
+        let newNote: RoutineNote;
+        if(dropped.elementType === "task") {
+          setHit(null);
+          newNote = await DroppedElReplacer.taskDropOnGroup({
+            dropped: dropped as Task,
+            on: group,
+            hit,
+          });
+        } else {
+          if(hit === "in") return null;
+          setHit(null);
+          newNote = await DroppedElReplacer.groupDropOnGroup({
+            dropped: dropped as TaskGroup,
+            on: group,
+            hit,
+          });
+        }
+        await mergeNotes(newNote);
+        onElDrop?.(newNote, dropped);
+      } catch(e) {
+        console.error("Failed to persist reordered elements.", e);
+        new Notice(`Failed to save order: ${e instanceof Error ? e.message : String(e)}`);
+        // UI가 디스크의 상태와 어긋나지 않도록 note를 다시 로드한다.
+        const { note, setNote } = useRoutineNote.getState();
+        setNote(note.day);
       }
-      setHit(null);
-      mergeNotes(newNote);
-      onElDrop?.(newNote, dropped);
     },
 
     collect: (monitor) => ({
