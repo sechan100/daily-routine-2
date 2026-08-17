@@ -1,1 +1,0 @@
-export { AchivementPage } from "./AchivementPage";

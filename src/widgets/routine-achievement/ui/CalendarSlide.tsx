@@ -18,7 +18,7 @@ export const CalendarSlide = ({
   month,
 }: Props) => {
   const notesAsync = useAsync(() => noteRepository.loadBetween(month.startDay, month.endDay), [month]);
-  const { currentRoutine, addRoutineOptionsPerMonth, routineOptionsPerMonth } = useRoutineSelector();
+  const { currentRoutine, addRoutineOptionsPerMonth } = useRoutineSelector();
 
 
   const tileMap = useMemo<Map<DayFormat, Tile> | null>(() => {
@@ -56,10 +56,9 @@ export const CalendarSlide = ({
   }, [currentRoutine, month, notesAsync.loading, notesAsync.value]);
 
 
-  // routineOptions를 최초 계산하여 routineOptionsPerMonth에 추가한다.
+  // routineOptions를 계산하여 routineOptionsPerMonth에 반영한다. (upsert이므로 새로 생긴 루틴도 반영됨)
   useEffect(() => {
     if(notesAsync.loading || !notesAsync.value) return;
-    if(routineOptionsPerMonth.has(month.format())) return;
 
     const notes = notesAsync.value;
     const existingRoutineNames = notes.flatMap(note => NoteEntity
@@ -69,7 +68,7 @@ export const CalendarSlide = ({
     );
     const routineOptions = Array.from(new Set(existingRoutineNames));
     addRoutineOptionsPerMonth(month.format(), routineOptions);
-  }, [addRoutineOptionsPerMonth, month, notesAsync.loading, notesAsync.value, routineOptionsPerMonth]);
+  }, [addRoutineOptionsPerMonth, month, notesAsync.loading, notesAsync.value]);
 
 
   const tile = useCallback((day: Day) => {

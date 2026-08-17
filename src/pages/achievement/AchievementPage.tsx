@@ -1,16 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { Month } from "@shared/period/month";
-import { NoteAchivementWidget } from "@widgets/note-achivement";
+import { NoteAchievementWidget } from "@widgets/note-achievement";
 import TabNavItem from '@mui/material/Tab';
 import TabNav from '@mui/material/Tabs';
 import { useState } from "react";
 import { useLeaf } from "@shared/view/use-leaf";
 import { css } from "@emotion/react";
 import { Icon } from "@shared/components/Icon";
-import { RoutineAchivementWidget } from "@widgets/routine-achivement";
+import { RoutineAchievementWidget } from "@widgets/routine-achievement";
 
 
-type AchivementType = "note" | "routine";
+type AchievementType = "note" | "routine";
 
 const tabCss = css({
   boxShadow: "none !important",
@@ -21,11 +21,11 @@ const tabCss = css({
   width: "50%",
 })
 
-export interface AchivementPageProps {
+export interface AchievementPageProps {
   month: Month;
 }
-export const AchivementPage = ({ month }: AchivementPageProps) => {
-  const [type, setType] = useState<AchivementType>("note");
+export const AchievementPage = ({ month }: AchievementPageProps) => {
+  const [type, setType] = useState<AchievementType>("note");
   const { leafBgColor } = useLeaf();
 
   return (
@@ -65,9 +65,9 @@ export const AchivementPage = ({ month }: AchivementPageProps) => {
       }}>
         <div>
         {type === "note" ?
-          <NoteAchivementWidget month={month} height={400} maxWidth={420} />
+          <NoteAchievementWidget month={month} height={400} maxWidth={420} />
           :
-          <RoutineAchivementWidget month={month} height={400} maxWidth={420} />
+          <RoutineAchievementWidget month={month} height={400} maxWidth={420} />
         }
         </div>
       </div>

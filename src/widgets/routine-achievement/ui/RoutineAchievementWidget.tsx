@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { SwipeableCalendar } from '@shared/components/swipeable-calender/SwipeableCalendar';
+import { SwipeableCalendar } from '@shared/components/swipeable-calendar/SwipeableCalendar';
 import { Month } from '@shared/period/month';
 import { useState } from 'react';
 import { CalendarSlide } from './CalendarSlide';
@@ -12,7 +12,7 @@ export interface Props {
   height: number;
   maxWidth: number;
 }
-export const RoutineAchivementWidget = ({ 
+export const RoutineAchievementWidget = ({ 
   month: propsMonth,
   height,
   maxWidth

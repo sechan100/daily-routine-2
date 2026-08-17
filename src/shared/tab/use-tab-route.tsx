@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { INITIAL_TAB } from "./initial-tab";
 
-export type DrTabType = "calendar" | "note" | "achivement";
+export type DrTabType = "calendar" | "note" | "achievement";
 
 interface UseTabRoute {
   tab: DrTabType;

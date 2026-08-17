@@ -15,9 +15,10 @@ export const useRoutineSelector = create<UseRoutineSelector>((set, get) => ({
   routineOptionsPerMonth: new Map(),
   addRoutineOptionsPerMonth: (monthFormat: MonthFormat, routineOptions: string[]) => {
     const map = get().routineOptionsPerMonth as Map<MonthFormat, string[]>;
-    if(!map.has(monthFormat)){
-      map.set(monthFormat, routineOptions);
-      set({ routineOptionsPerMonth: new Map(map) });
-    }
+    // 캐시된 options와 동일하면 불필요한 렌더링을 막기 위해 skip
+    const prev = map.get(monthFormat);
+    if(prev && prev.length === routineOptions.length && prev.every((v, i) => v === routineOptions[i])) return;
+    map.set(monthFormat, routineOptions);
+    set({ routineOptionsPerMonth: new Map(map) });
   }
 }))

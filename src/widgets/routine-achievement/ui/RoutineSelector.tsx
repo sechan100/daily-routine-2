@@ -49,7 +49,7 @@ export const RoutineSelector = ({
           height: "50px",
           border: "1px solid var(--color-base-30)",
         }}
-        id="dr-routine-achivement_routine-selector"
+        id="dr-routine-achievement_routine-selector"
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           setAnchorEl(event.currentTarget);
         }}
