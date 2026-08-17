@@ -50,3 +50,6 @@ just/
 /backup/
 /out/
 /apk/
+
+# 과거 tsc 컴파일 잔재물
+dist/

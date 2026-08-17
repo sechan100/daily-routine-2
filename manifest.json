@@ -3,7 +3,7 @@
   "name": "Daily Routine",
   "version": "1.0.8",
   "minAppVersion": "1.8.0",
-  "description": "Manage your daily tasks as 'Routine' and organize your everyday life more effectively.",
+  "description": "Track recurring tasks and build daily habits. Schedule routines by weekday, date, or interval, manage todos, and follow your progress with calendar and achievement views.",
   "author": "sechan100",
   "repo": "sechan100/daily-routine-2",
   "authorUrl": "https://www.linkedin.com/in/sechan-baek-80b3462b0",
