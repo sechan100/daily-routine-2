@@ -29,44 +29,47 @@ const getEmptyNotePerformance = (): NotePerformance => {
   }
 }
 
-const findEl = (parent: TaskParent, name: string): NoteElement | null => {
+// elementType을 지정하면 해당 타입의 요소만 찾는다. (task와 group이 같은 이름을 가질 수 있으므로)
+const findEl = (parent: TaskParent, name: string, elementType?: NoteElement['elementType']): NoteElement | null => {
   for(const el of parent.children){
     if(isTaskGroup(el)){
-      if(el.name === name){
+      if(el.name === name && elementType !== 'task'){
         return el;
-      } else {
-        const rs = findEl(el, name);
+      }
+      if(elementType !== 'group'){
+        const rs = findEl(el, name, elementType);
         if(rs) return rs;
       }
     } else if(isTask(el)){
-      if(el.name === name) return el;
+      if(el.name === name && elementType !== 'group') return el;
     }
   }
   return null;
 }
 
 const findGroup = (note: RoutineNote, name: string): TaskGroup | null => {
-  const rs = findEl(note, name);
+  const rs = findEl(note, name, 'group');
   return rs && isTaskGroup(rs) ? rs : null;
 }
 
 const findTask = (note: RoutineNote, name: string): Task | null => {
-  const rs = findEl(note, name);
+  const rs = findEl(note, name, 'task');
   return rs && isTask(rs) ? rs : null;
 }
 
-const findParent = (note: RoutineNote, name: string): TaskParent => {
+const findParent = (note: RoutineNote, name: string, elementType: NoteElement['elementType'] = 'task'): TaskParent => {
   for(const el of note.children){
     if(isTaskGroup(el)){
-      if(el.name === name){
+      if(el.name === name && elementType === 'group'){
         return note;
-      } else {
+      }
+      if(elementType === 'task'){
         for(const t of el.children){
           if(t.name === name) return el;
         }
       }
     } else if(isTask(el)){
-      if(el.name === name) return note;
+      if(el.name === name && elementType === 'task') return note;
     }
   }
   throw new Error(`Task or Group not found: ${name}`);
@@ -77,11 +80,11 @@ const flatten = (note: RoutineNote): Task[] => {
 }
 
 const replaceTask = (note: RoutineNote, taskName: string, withTask: Task): RoutineNote => {
-  const parent = findParent(note, taskName);
+  const parent = findParent(note, taskName, 'task');
   if(isTaskGroup(parent)){
     parent.children = parent.children.map(t => t.name === taskName ? withTask : t);
   } else {
-    note.children = note.children.map(t => t.name === taskName ? withTask : t);
+    note.children = note.children.map(t => isTask(t) && t.name === taskName ? withTask : t);
   }
   return { ...note };
 }

@@ -5,6 +5,7 @@ import { Notice, TAbstractFile, TFile } from "obsidian";
 import { DR_SETTING } from "@app/settings/setting-provider";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { RoutineNote } from "../domain/note.type";
+import { TASKS_HEADING_REGEX } from "./serialize-constants";
 import { parseRoutineNote, serializeRoutineNote } from "./serializer";
 
 
@@ -74,7 +75,16 @@ export const noteRepository: NoteRepository = {
     const routineNoteFiles: TAbstractFile[] = (await ensureArchive("notes")).children.filter(file => file instanceof TFile);
     for(const file of routineNoteFiles){
       if(!(file instanceof TFile)) continue;
-      const day = Day.fromString(file.basename);
+      if(file.extension !== 'md') continue;
+      // 노트 파일명 형식(YYYY-MM-DD)이 아닌 파일은 무시한다.
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(file.basename)) continue;
+      let day: Day | null = null;
+      try {
+        day = Day.fromString(file.basename);
+      } catch {
+        // 유효한 날짜가 아닌 파일은 무시한다.
+      }
+      if(!day) continue;
       if(day.isBetween(start, end, 'day', '[]')){
         notes.push(await parseNote(day, file));
       }
@@ -138,7 +148,19 @@ export const noteRepository: NoteRepository = {
     const day = routineNote.day;
     const file = ROUTINE_NOTE_FILE(day);
     if(file){
-      await fileAccessor.writeFile(file, () => serializeRoutineNote(routineNote));
+      // '# Tasks' 섹션만 교체하고, 그 외의 사용자 컨텐츠(frontmatter, 메모 등)는 보존한다.
+      await fileAccessor.writeFile(file, (data) => {
+        const serialized = serializeRoutineNote(routineNote);
+        const headingMatch = data.match(TASKS_HEADING_REGEX);
+        if(headingMatch === null || headingMatch.index === undefined){
+          return data.trim() === '' ? serialized : `${data.replace(/\s+$/, '')}\n\n${serialized}`;
+        }
+        const prefix = data.slice(0, headingMatch.index);
+        const afterHeading = data.slice(headingMatch.index + headingMatch[0].length);
+        const nextH1Idx = afterHeading.search(/\n# /);
+        const suffix = nextH1Idx !== -1 ? afterHeading.slice(nextH1Idx) : '';
+        return prefix + serialized + suffix;
+      });
     } else {
       throw new Error('RoutineNote file is not exist.');
     }

@@ -41,7 +41,11 @@ export class RoutineNoteCreator {
         continue;
       }
       const routines = routineMap.get(groupName);
-      if(!routines) throw new Error(`${routine.name}'s Group '${groupName}' not found.`);
+      if(!routines){
+        // 존재하지 않는 그룹을 참조하는 routine은 UNGROUPED로 취급한다.
+        r_root.push(routine);
+        continue;
+      }
       routines.push(routine);
     }
     // routine과 routineGroup으로 이루어진 임시 root를 정렬
@@ -51,8 +55,7 @@ export class RoutineNoteCreator {
       if(isRoutine(el)){
         return TaskEntity.createRoutineTask(el);
       } else {
-        const routines = routineMap.get(el.name);
-        if(!routines) throw new Error(`RoutineGroup ${el.name} not found.`);
+        const routines = routineMap.get(el.name) ?? [];
 
         routines.sort((a, b) => a.properties.order - b.properties.order);
         const tasks = routines.map(routine => TaskEntity.createRoutineTask(routine));

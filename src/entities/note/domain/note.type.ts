@@ -42,6 +42,7 @@ export type Task = NoteElement & {
   taskType: TaskType;
   state: TaskState;
   showOnCalendar: boolean;
+  tags: string[];
 }
 export const isTask = (task: any): task is Task => {
   const elementType = task.elementType === "task";
@@ -68,6 +69,7 @@ export const isTodoTask = (todoTask: any): todoTask is TodoTask => {
 export type TaskMetaData = {
   type: TaskType;
   soc: boolean; // showOnCalendar
+  tags?: string[]; // 구버전 라인과의 호환을 위해, 비어있는 경우 직렬화하지 않는다.
 }
 
 export type NotePerformance = {
