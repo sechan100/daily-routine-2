@@ -4,6 +4,7 @@ import { dr } from "@shared/utils/daily-routine-bem";
 import { Button } from "@shared/components/Button";
 import { WeekOption } from "./active-criteria-week";
 import { MonthOption } from "./active-criteria-month";
+import { IntervalOption } from "./active-criteria-interval";
 import { TEXT_CSS } from "@shared/components/text-style";
 import { Routine, RoutineProperties } from "@entities/routine";
 
@@ -41,21 +42,34 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
           >Week
           </Button>
           <Button
+            css={{marginRight: "0.5em"}}
             variant={activeCriteria === "month" ? "accent" : "primary"}
             onClick={() => setProperties({ activeCriteria: "month"} )}
           >Month
+          </Button>
+          <Button
+            variant={activeCriteria === "interval" ? "accent" : "primary"}
+            onClick={() => setProperties({ activeCriteria: "interval"} )}
+          >Interval
           </Button>
         </nav>
       </header>
       <div
         className={bem("tiles", {
           "week": activeCriteria === "week",
-          "month": activeCriteria === "month"
+          "month": activeCriteria === "month",
+          "interval": activeCriteria === "interval"
         })}
       >{activeCriteria === "week" ?
         <WeekOption daysOfWeek={routine.properties.daysOfWeek} setProperties={setProperties} />
-        :
+        : activeCriteria === "month" ?
         <MonthOption daysOfMonth={routine.properties.daysOfMonth} setProperties={setProperties} />
+        :
+        <IntervalOption
+          intervalDays={routine.properties.intervalDays}
+          intervalStart={routine.properties.intervalStart}
+          setProperties={setProperties}
+        />
       }</div>
     </div>
   )

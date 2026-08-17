@@ -13,7 +13,10 @@ export const createNewRoutine = (): Routine => {
       activeCriteria: "week",
       daysOfWeek: Day.getDaysOfWeek(),
       daysOfMonth: [Day.today().date],
-      enabled: true
+      intervalDays: 1,
+      intervalStart: Day.today().format(),
+      enabled: true,
+      tags: []
     }
   }
 }

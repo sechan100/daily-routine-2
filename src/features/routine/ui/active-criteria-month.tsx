@@ -16,7 +16,6 @@ const calendarCss = css({
   ".react-calendar": {
     width: "100%",
     maxWidth: "100%",
-    background: "white",
     lineHeight: "1.125em",
   },
 
@@ -32,11 +31,6 @@ const calendarCss = css({
     "abbr": {
       display: "none",
     },
-    
-    // 다음달의 1, 2, 3, 4일 타일은 안보이게
-    "button:nth-child(32), button:nth-child(33), button:nth-child(34), button:nth-child(35)": {
-      display: "none",
-    }
   },
 
   // 날짜 타일
@@ -93,6 +87,7 @@ export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOpti
         allowPartialRange={false}
         selectRange={false}
         showNavigation={false}
+        showNeighboringMonth={false}
         onClickDay={onClickDay}
         css={calendarCss}
       />
@@ -119,7 +114,7 @@ const CalendarTile = ({ date, active }: CalendarTileProps) => {
       })
     } else {
       return css({
-        color: "black"
+        color: "var(--text-normal)"
       });
     }
   }, [active]);

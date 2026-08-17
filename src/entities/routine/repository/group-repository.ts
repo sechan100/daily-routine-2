@@ -74,7 +74,8 @@ export const groupRepository: GroupRepository = {
   async update(group: RoutineGroup){
     const file = fileAccessor.loadFile(GROUP_PATH(group.name));
     if(!file) throw new Error('Group file not found.');
-    await fileAccessor.writeFile(file, () => serialize(group));
+    // 사용자가 작성한 본문을 보존하기 위해서 frontmatter만 수정한다.
+    await fileAccessor.writeFrontMatter(file, () => group.properties);
     return group;
   },
   

@@ -27,10 +27,13 @@ export type RoutineProperties = {
   order: number;
   group: string;
   showOnCalendar: boolean;
-  activeCriteria: "week" | "month";
+  activeCriteria: "week" | "month" | "interval";
   daysOfWeek: DayOfWeek[];
   daysOfMonth: number[];
+  intervalDays: number;
+  intervalStart: string; // "YYYY-MM-DD"
   enabled: boolean;
+  tags: string[];
 };
 
 export type RoutineGroup = RoutineElement & {

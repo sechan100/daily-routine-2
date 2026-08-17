@@ -1,5 +1,4 @@
 import { ensureArchive } from "@entities/archives";
-import { compose } from "@shared/utils/compose";
 import { fileAccessor } from "@shared/file/file-accessor";
 import { Notice, stringifyYaml, TFile } from "obsidian";
 import { GROUP_PREFIX, ROUTINE_PATH } from "./utils";
@@ -66,7 +65,6 @@ export const routineRepository: RoutineRepository = {
     const path = ROUTINE_PATH(routineName);
     const file = fileAccessor.loadFile(path);
     if(!file) throw new Error('Routine file not found.');
-    fileAccessor.loadFrontMatter(file);
     return await parse(file);
   },
 
@@ -82,12 +80,9 @@ export const routineRepository: RoutineRepository = {
   },
 
   async delete(routineName: string){
-    const composed = compose(
-      fileAccessor.deleteFile,
-      fileAccessor.loadFile,
-      ROUTINE_PATH
-    );
-    await composed(routineName);
+    const file = fileAccessor.loadFile(ROUTINE_PATH(routineName));
+    if(!file) return;
+    await fileAccessor.deleteFile(file);
   },
 
   async changeName(originalName: string, newName: string){
@@ -99,7 +94,8 @@ export const routineRepository: RoutineRepository = {
   async update(routine: Routine){
     const file = fileAccessor.loadFile(ROUTINE_PATH(routine.name));
     if(!file) throw new Error('Routine file not found.');
-    await fileAccessor.writeFile(file, () => serialize(routine));
+    // 사용자가 작성한 본문을 보존하기 위해서 frontmatter만 수정한다.
+    await fileAccessor.writeFrontMatter(file, () => routine.properties);
     return routine;
   },
 

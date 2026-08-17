@@ -21,6 +21,22 @@ const validateName = ({
 }
 
 /**
+ * tag들을 정규화(앞의 '#' 제거, trim)하고 검증한다. 중복은 제거된다.
+ */
+const validateTags = (tags0: any[]): Result<string[], string> => {
+  const tags: string[] = [];
+  for(const t of tags0){
+    if(typeof t !== 'string') return err(`tag must be a string: ${t}`);
+    const tag = t.trim().replace(/^#+/, '');
+    if(tag === '') return err('tag cannot be empty.');
+    if(/\s/.test(tag)) return err(`tag cannot contain whitespace: '${tag}'`);
+    if(tag.includes('%')) return err(`tag cannot contain '%': '${tag}'`);
+    if(!tags.includes(tag)) tags.push(tag);
+  }
+  return ok(tags);
+}
+
+/**
  * @param frontmatter frontmatter를 해석한 js object
  */
 const validateRoutineProperties = (p: any): Result<RoutineProperties, string> => {
@@ -56,10 +72,10 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
   }
 
   if(
-    'activeCriteria' in p && 
+    'activeCriteria' in p &&
     typeof p.activeCriteria === 'string'
   ){
-    if(!["week", "month"].includes(p.activeCriteria)) return err("property 'activeCriteria' must be either 'week' or 'month'");
+    if(!["week", "month", "interval"].includes(p.activeCriteria)) return err("property 'activeCriteria' must be one of 'week', 'month', or 'interval'");
   } else {
     return err("property 'activeCriteria' is missing or not a string.");
   }
@@ -87,6 +103,29 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     return err("property 'daysOfMonth' is missing or not an array of number.");
   }
 
+  if('intervalDays' in p){
+    if(
+      typeof p.intervalDays !== 'number' ||
+      !Number.isInteger(p.intervalDays) ||
+      p.intervalDays < 1
+    ) return err("property 'intervalDays' must be an integer greater than or equal to 1.");
+  } else {
+    // 구버전 루틴 파일에는 존재하지 않는 property이므로 기본값으로 채운다.
+    p.intervalDays = 1;
+  }
+
+  if('intervalStart' in p){
+    // yaml 파서가 날짜를 Date 객체로 해석하는 경우를 보정한다.
+    if(p.intervalStart instanceof Date) p.intervalStart = Day.fromJsDate(p.intervalStart).format();
+    if(
+      typeof p.intervalStart !== 'string' ||
+      !Day.isValidFormat(p.intervalStart)
+    ) return err("property 'intervalStart' must be a valid 'YYYY-MM-DD' date string.");
+  } else {
+    // 구버전 루틴 파일에는 존재하지 않는 property이므로 기본값으로 채운다.
+    p.intervalStart = Day.today().format();
+  }
+
   if(
     'enabled' in p &&
     typeof p.enabled === 'boolean'
@@ -94,6 +133,16 @@ const validateRoutineProperties = (p: any): Result<RoutineProperties, string> =>
     //
   } else {
     return err("property 'enabled' is missing or not a boolean.");
+  }
+
+  if('tags' in p){
+    if(!Array.isArray(p.tags)) return err("property 'tags' must be an array of string.");
+    const tagsValidation = validateTags(p.tags);
+    if(tagsValidation.isErr()) return err(`Invalid property 'tags': ${tagsValidation.error}`);
+    p.tags = tagsValidation.value;
+  } else {
+    // 구버전 루틴 파일에는 존재하지 않는 property이므로 기본값으로 채운다.
+    p.tags = [];
   }
 
   return ok(p as RoutineProperties);
@@ -120,6 +169,12 @@ const isDueTo = (routine: Routine, day: Day): boolean => {
   else if(p.activeCriteria === "week") {
     if(!p.daysOfWeek.contains(day.dow)) return false;
   }
+  else if(p.activeCriteria === "interval") {
+    // intervalStart로부터 intervalDays 간격마다 수행한다. (시작일 당일 포함, 시작일 이전은 수행하지 않음)
+    const diff = day.wholeDayDiff(Day.fromString(p.intervalStart));
+    if(diff < 0) return false;
+    if(diff % p.intervalDays !== 0) return false;
+  }
   else {
     throw new Error('Invalid activeCriteria');
   }
@@ -130,6 +185,7 @@ const isDueTo = (routine: Routine, day: Day): boolean => {
 
 export const RoutineEntity = {
   validateName,
+  validateTags,
   validateRoutineProperties,
   isDueTo,
 }
