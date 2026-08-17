@@ -136,8 +136,8 @@ export const RoutineNoteContent = () => {
             if(isTaskGroup(el)) {
               return (
                 <TaskGroupWidget
-                  key={`${el.elementType}-${el.name}`}
-                  group={el} 
+                  key={`${note.day.format()}-${el.elementType}-${el.name}`}
+                  group={el}
                 />)
             } else if(isTask(el)) {
               return renderTask(el, null);

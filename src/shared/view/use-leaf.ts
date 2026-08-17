@@ -1,5 +1,4 @@
 import { DailyRoutineObsidianView } from "@app/obsidian-view";
-import { isMobile } from "@shared/utils/plugin-service-locator";
 import { createStoreContext } from "@shared/zustand/create-store-context";
 import { WorkspaceLeaf } from "obsidian";
 
@@ -15,8 +14,8 @@ interface UseLeaf {
   refresh: () => void;
 }
 export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => {
-  // @ts-ignore
-  const leafBgColor = isMobile() ? "#ffffff" : getComputedStyle(data.leaf.containerEl).backgroundColor;
+  // CSS 변수 문자열을 그대로 사용하여 테마 변경을 실시간으로 따라가도록 한다.
+  const leafBgColor = "var(--background-primary)";
 
   return {
     leaf: data.leaf,

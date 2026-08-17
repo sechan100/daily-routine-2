@@ -40,7 +40,10 @@ export default class DailyRoutinePlugin extends Plugin {
       () => this.app.emulateMobile(!Platform.isMobile)
     );
     
-    setTimeout(() => activateView(DailyRoutineObsidianView.VIEW_TYPE, 1), 500);
+    // layout 복원이 끝난 뒤에 뷰가 없으면 생성한다. (사이드바를 강제로 열지는 않는다)
+    this.app.workspace.onLayoutReady(() => {
+      activateView(DailyRoutineObsidianView.VIEW_TYPE, 1, false);
+    });
   }
   
   onunload() {

@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { StrictMode, useState } from "react";
 import { Root, createRoot } from "react-dom/client";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { UseLeafProvider } from "./use-leaf";
 
 
@@ -15,7 +16,9 @@ const AdapterComponent = ({ view }: { view: ReactView }) => {
         leaf: view.leaf,
         setShow
       }}>
-        {view.render()}
+        <ErrorBoundary>
+          {view.render()}
+        </ErrorBoundary>
       </UseLeafProvider>
     </StrictMode>
   )

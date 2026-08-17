@@ -72,17 +72,18 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     })
   }
 
-  // 닫을 때 저장하기 위해서 override
+  // 닫을 때 view를 새로고침하기 위해서 override
   override hide(): void {
     super.hide();
 
-    // 저장하고 view를 새로고침
-    this.plugin.saveSettings()
-    .then(() => useLeaf.getState().refresh());
+    // view가 한 번도 마운트되지 않았다면 getState가 존재하지 않는다
+    if(typeof useLeaf.getState === "function") {
+      useLeaf.getState().refresh();
+    }
   }
 
   updateSettings(partial: Partial<DailyRoutinePluginSettings>) {
-    const settings = {...this.plugin.settings, ...partial};
     this.plugin.settings = {...this.plugin.settings, ...partial};
+    this.plugin.saveSettings();
   }
 }
