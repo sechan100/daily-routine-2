@@ -1,5 +1,5 @@
 import { DR_SETTING } from "@app/settings/setting-provider";
-import { Day, DayOfWeek } from "./day";
+import { Day } from "./day";
 
 
 export class Week {
@@ -17,23 +17,12 @@ export class Week {
   }
 
   static of(day: Day): Week {
-    const isMondayStart = DR_SETTING.isMondayStartOfWeek();
-    const s = day.clone(m => m.startOf("week"));
-
-    let startDay: Day;
-
-    // 월요일 시작인데 일요일인 경우
-    if(isMondayStart && s.dow === DayOfWeek.SUN) {
-      startDay = s.clone(m => m.subtract(6, "day"));
-    }
-    // 일요일 시작인데 월요일인 경우(하루 앞으로)
-    else if(!isMondayStart && s.dow === DayOfWeek.MON) {
-      startDay = s.clone(m => m.subtract(1, "day"));
-    }
-    // 잘 부합하는 경우
-    else {
-      startDay = s;
-    }
+    // 로케일에 따라 달라지는 startOf("week") 대신, 설정된 주 시작 요일로부터 직접 계산한다.
+    const weekStartDow = DR_SETTING.isMondayStartOfWeek() ? 1 : 0; // moment: 0=SUN, 1=MON (로케일 무관)
+    const startDay = day.clone(m => {
+      const diff = (m.day() - weekStartDow + 7) % 7;
+      m.subtract(diff, "day").startOf("day");
+    });
     return new Week(startDay);
   }
 

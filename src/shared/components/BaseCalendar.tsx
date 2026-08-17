@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css, CSSObject, Interpolation } from '@emotion/react';
+import { DR_SETTING } from "@app/settings/setting-provider";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useLeaf } from "@shared/view/use-leaf";
@@ -55,7 +56,8 @@ export const BaseCalendar = ({
   return (
     <>
       <Calendar
-        calendarType='gregory'
+        // 주 시작 요일 설정을 따라간다. (iso8601: 월요일 시작, gregory: 일요일 시작)
+        calendarType={DR_SETTING.isMondayStartOfWeek() ? 'iso8601' : 'gregory'}
         className={className}
         css={calendarStyles}
         tileContent={renderTileContent}

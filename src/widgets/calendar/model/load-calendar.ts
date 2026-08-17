@@ -20,6 +20,11 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
     } as Tile;
   }
 
+  /**
+   * 이웃한 달의 tile 범위 계산.
+   * Day.getDaysOfWeek()는 isMondayStartOfWeek 설정 순서를 따르므로,
+   * 같은 설정으로 calendarType을 정하는 BaseCalendar의 그리드와 항상 일치한다.
+   */
   // 추가로 로드해야하는 앞달의 tile들 개수
   const prevNeighboringMonthTilesNum = Day.getDaysOfWeek().indexOf(month.startDay.dow)
   const startDay = month.startDay.clone(m => m.subtract(prevNeighboringMonthTilesNum, "day"))

@@ -15,7 +15,16 @@ export enum DayOfWeek {
 }
 
 // HACK: obsidian.d.ts에서 typeof 로 선언된 Moment가 호출될 수 없다고 에러가 발생함.
-const moment = obsidianMoment as unknown as (inp?: moment.MomentInput) => moment.Moment;
+const moment = obsidianMoment as unknown as (inp?: moment.MomentInput, format?: moment.MomentFormatSpecification, strict?: boolean) => moment.Moment;
+
+/**
+ * 로케일이 아닌 플러그인 설정(isMondayStartOfWeek)에 따른 주 시작일로 moment를 이동시킨다.
+ */
+const moveToStartOfSettingWeek = (m: moment.Moment): moment.Moment => {
+  const weekStartDow = DR_SETTING.isMondayStartOfWeek() ? 1 : 0; // 0=SUN, 1=MON
+  const diff = (m.day() - weekStartDow + 7) % 7;
+  return m.subtract(diff, "day").startOf("day");
+}
 
 export type DayFormat = ReturnType<Day['format']>;
 
@@ -44,7 +53,7 @@ export class Day {
   }
 
   static max(): Day{
-    return new Day(moment('9999-12-31T23:59:59.999Z'));
+    return new Day(moment('9999-12-31'));
   }
 
   static fromString(str: string){
@@ -53,6 +62,13 @@ export class Day {
 
   static fromJsDate(date: Date){
     return new Day(moment(date));
+  }
+
+  /**
+   * "YYYY-MM-DD" 형식의 유효한 날짜 문자열인지 검사한다.
+   */
+  static isValidFormat(str: string): boolean {
+    return moment(str, 'YYYY-MM-DD', true).isValid();
   }
 
   static getDaysOfWeek(): DayOfWeek[] {
@@ -104,19 +120,19 @@ export class Day {
   }
 
   get week(){
-    return this.#moment.week();
+    // 주차 계산이 로케일에 좌우되지 않도록, 설정된 주 시작 요일 기준으로 계산한다.
+    return DR_SETTING.isMondayStartOfWeek()
+      ? this.#moment.isoWeek()
+      : this.#moment.clone().locale("en").week();
   }
 
   get date(){
     return this.#moment.date();
   }
 
-  get dow(): DayOfWeek {  
-    let dayOfWeekNum = parseInt(this.#moment.format('d'), 10);
-    // ISO 8601 (Monday = 1) 체계를 사용하는 경우 조정
-    if(this.#moment.localeData().firstDayOfWeek() === 1) {
-      dayOfWeekNum = dayOfWeekNum === 0 ? 6 : dayOfWeekNum - 1; // Sunday(0)으로 맞춤
-    }
+  get dow(): DayOfWeek {
+    // moment.day()는 로케일과 무관하게 항상 0=일요일 ~ 6=토요일을 반환한다.
+    const dayOfWeekNum = this.#moment.day();
     switch(dayOfWeekNum) {
       case 0: return DayOfWeek.SUN;
       case 1: return DayOfWeek.MON;
@@ -137,12 +153,21 @@ export class Day {
     return this.#moment.isSame(day.#moment, 'day');
   }
 
+  /**
+   * day 단위로 (this - day)의 차이를 반환한다. 시각(time-of-day)은 무시한다.
+   */
+  wholeDayDiff(day: Day): number {
+    return this.#moment.clone().startOf('day').diff(day.#moment.clone().startOf('day'), 'day');
+  }
+
   isSameMonth(day: Day){
     return this.#moment.isSame(day.#moment, 'month');
   }
 
   isSameWeek(day: Day){
-    return this.#moment.isSame(day.#moment, 'week');
+    // 로케일의 'week' 단위 대신 설정된 주 시작 요일을 기준으로 비교한다.
+    return moveToStartOfSettingWeek(this.#moment.clone())
+      .isSame(moveToStartOfSettingWeek(day.#moment.clone()), 'day');
   }
 
   isSameDow(day: Day | DayOfWeek){
