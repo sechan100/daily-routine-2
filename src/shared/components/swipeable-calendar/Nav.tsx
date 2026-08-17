@@ -90,7 +90,7 @@ export const CalendarNavigation = ({
           "button:nth-child(1)": {
             borderTopLeftRadius: "5px",
             borderTopRightRadius: "5px",
-            borderTop: "0.5px solird var(--color-base-40)",
+            borderTop: "0.5px solid var(--color-base-40)",
           },
   
           "button:nth-last-child(1)": {

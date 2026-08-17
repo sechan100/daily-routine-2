@@ -20,7 +20,7 @@ export const Button = (props: ButtonProps) => {
     switch(props.variant){
       // PRIMARY
       case "primary": return css({
-        color: "black"
+        color: "var(--text-normal)"
       });
       // DESTRUCTIVE
       case "destructive": return css({
@@ -33,7 +33,7 @@ export const Button = (props: ButtonProps) => {
       })
       // DISABLED
       case "disabled": return css({
-        backgroundColor: "var(--base-30) !important",
+        backgroundColor: "var(--color-base-30) !important",
         "&:hover": {
           cursor: "not-allowed"
         }

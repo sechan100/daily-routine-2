@@ -34,7 +34,7 @@ const DateBadge = ({ day }: { day: Day }) => {
         borderRadius: '50%',
         textAlign: 'center',
         backgroundColor: 'transparent',
-        color: isToday ? "var(--text-on-accent)" : isWeekend ? 'var(--color-accent-1)' : "var(--text-color)",
+        color: isToday ? "var(--text-on-accent)" : isWeekend ? 'var(--color-accent-1)' : "var(--text-normal)",
         zIndex: 2,
 
         "&::after": isToday && {
@@ -120,6 +120,8 @@ const TaskLine = ({ task }: { task: Task }) => {
       padding: '2px 0 2px 2px',
       // backgroundColor: 'var(--color-accent-1)',
       textAlign: 'start',
+      display: "block",
+      overflow: "hidden",
       textOverflow: 'ellipsis',
       whiteSpace: "nowrap",
       borderTop: taskLineBorderStyle,

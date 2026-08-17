@@ -8,9 +8,9 @@ import { Month } from "@shared/period/month";
 import { DrTabType, useTabRoute } from "@shared/tab/use-tab-route";
 import { useLeaf } from "@shared/view/use-leaf";
 import { useCallback, useEffect } from "react";
-import { MUIThemeProvider } from './MUIThemProvider';
+import { MUIThemeProvider } from './MUIThemeProvider';
 import "./style.css";
-import { AchivementTab } from "./tab-achivement";
+import { AchievementTab } from "./tab-achievement";
 import { CalendarTab } from "./tab-calendar";
 import { RouitneNoteTab } from "./tab-note";
 
@@ -41,7 +41,7 @@ export const DailyRoutineView = () => {
       case "note": 
         route(tab, { day: Day.today() });
         break;
-      case "achivement":
+      case "achievement":
         route(tab, { month: Month.now() });
         break
       case "calendar":
@@ -60,7 +60,7 @@ export const DailyRoutineView = () => {
         }}
       >
         <RouitneNoteTab />
-        <AchivementTab />
+        <AchievementTab />
         <CalendarTab />
       </div>
       <TabNav
@@ -95,8 +95,8 @@ export const DailyRoutineView = () => {
           css={tabCss} 
         />
         <TabNavItem 
-          label="Achivement" 
-          value={"achivement"}
+          label="Achievement" 
+          value={"achievement"}
           icon={<Icon icon="book-check" />} 
           iconPosition="start" 
           css={tabCss} 

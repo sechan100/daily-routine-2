@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Month } from "@shared/period/month";
-import { SwipeableCalendar } from "@shared/components/swipeable-calender/SwipeableCalendar";
+import { SwipeableCalendar } from "@shared/components/swipeable-calendar/SwipeableCalendar";
 import { useTabHeight } from "@app/ui/use-tab-height";
 import { TileHeightInfoProvider } from "./tile-height-info-context";
 import { CalendarSlide } from "./CalendarSlide";

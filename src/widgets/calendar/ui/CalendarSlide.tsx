@@ -60,7 +60,7 @@ export const CalendarSlide = ({ month }: CalendarSlideProps) => {
           gap: "0",
         },
         tile: {
-          border: "0.5px solid black",
+          border: "1px solid var(--background-modifier-border)",
           borderRadius: "0",
         }
       }}

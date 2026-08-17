@@ -32,9 +32,10 @@ const M = ({ header, className, children, modal }: ModalProps) => {
         overflow: "scroll",
         margin: "0 auto",
         ".is-phone &": {
-          position: "static !important" as "static", 
+          position: "static !important" as "static",
           // padding: "0 !important",
-          padding: "0 1em !important",
+          // 하단에 고정된 SaveBtn(80px)에 마지막 폼 요소가 가려지지 않도록 공간을 확보
+          padding: "0 1em 80px !important",
         }
       }}
     >

@@ -38,7 +38,7 @@ export const PerformanceCircle = React.memo(({
   return (
     <svg width={width??"100%"} viewBox="0 0 200 200" className={className}>
       <g transform="rotate(-90 100 100)" >
-        <Circle transition={false} color="#ececec" percentage={100} />
+        <Circle transition={false} color="var(--background-modifier-border)" percentage={100} />
         <Circle transition={transition} color={completion ? completionCircleColor : "transparent"} percentage={completion} />
         <Circle transition={transition} color={completion ? accomplishmentCircleColor : "transparent"} percentage={accomplishment} />
       </g>
@@ -48,6 +48,7 @@ export const PerformanceCircle = React.memo(({
         textAnchor="middle"
         fontSize="45"
         dominantBaseline="central"
+        fill="var(--text-normal)"
       >
         {text}
       </text>

@@ -15,5 +15,5 @@ export const getCustomAccentHSL = ({
   l?: number;
   a?: number;
 }) => {
-  return `hsla(calc(var(--accent-h) * ${a}), calc(var(--accent-s) * ${s}), calc(var(--accent-l) * ${l}), ${a})`;
+  return `hsla(calc(var(--accent-h) * ${h}), calc(var(--accent-s) * ${s}), calc(var(--accent-l) * ${l}), ${a})`;
 }
