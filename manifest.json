@@ -1,10 +1,10 @@
 {
-  "id": "daily-routine",
-  "name": "Daily Routine",
-  "version": "1.0.8",
-  "minAppVersion": "1.8.0",
-  "description": "Track recurring tasks and build daily habits. Schedule routines by weekday, date, or interval, manage todos, and follow your progress with calendar and achievement views.",
-  "author": "sechan100",
-  "authorUrl": "https://github.com/sechan100",
-  "isDesktopOnly": false
+	"id": "daily-routine",
+	"name": "Daily Routine",
+	"version": "1.0.9",
+	"minAppVersion": "1.8.0",
+	"description": "Track recurring tasks and build daily habits. Schedule routines by weekday, date, or interval, manage todos, and follow your progress with calendar and achievement views.",
+	"author": "sechan100",
+	"authorUrl": "https://github.com/sechan100",
+	"isDesktopOnly": false
 }
