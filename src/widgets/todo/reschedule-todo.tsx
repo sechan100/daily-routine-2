@@ -1,5 +1,4 @@
 import { RoutineNote, noteRepository, TodoTask, NoteEntity, TaskEntity } from "@entities/note";
-import { RoutineRepository } from "@entities/routine";
 import { RoutineNoteCreator } from "@entities/routine-to-note/RoutineNoteCreator";
 import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";

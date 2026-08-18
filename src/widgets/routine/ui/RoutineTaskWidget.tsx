@@ -1,14 +1,14 @@
-import { NoteEntity, noteRepository, RoutineTask, TaskEntity, TaskGroup, TaskGroupEntity } from "@entities/note";
+import { noteRepository, RoutineTask, TaskEntity, TaskGroup } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useRoutineOptionModal } from "./routine-option";
-import { isRoutine, routineRepository } from "@entities/routine";
+import { routineRepository } from "@entities/routine";
 import { Menu, Notice } from "obsidian";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { changeTaskState } from "@features/task-el/model/change-task-state";
 import { useRoutineNote } from "@features/note";
-import { ResultAsync, safeTry } from "neverthrow";
+import { ResultAsync } from "neverthrow";
 
 interface RoutineTaskProps {
   task: RoutineTask;
@@ -17,7 +17,8 @@ interface RoutineTaskProps {
 export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps) => {
   const RoutineOptionModal = useRoutineOptionModal();
   const { mergeNotes } = useRoutineMutationMerge();
-  const { note, setNote } = useRoutineNote();
+  const noteStore = useRoutineNote();
+  const { note } = noteStore;
 
 
   const removeRoutineFromNoteOnly = useCallback(async () => {
@@ -30,9 +31,9 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
     if(!removeConfirm) return;
 
     const newNote = TaskEntity.removeTask(note, task.name);
-    setNote(newNote);
+    noteStore.setNote(newNote);
     await noteRepository.save(newNote);
-  }, [note, setNote, task.name])
+  }, [note, noteStore, task.name])
 
 
   const deleteRoutine = useCallback(async () => {
@@ -43,9 +44,9 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
       confirmBtnVariant: "destructive"
     })
     if(!deleteConfirm) return;
-    
+
     await routineRepository.delete(task.name);
-    mergeNotes();
+    void mergeNotes();
     new Notice(`Routine '${task.name}' deleted.`);
   }, [mergeNotes, task.name])
 
@@ -82,7 +83,7 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
       i.setIcon("cross");
       i.onClick(async () => {
         const newNote = await changeTaskState(note, task.name, "failed");
-        setNote(newNote);
+        noteStore.setNote(newNote);
       });
     })
 
@@ -97,7 +98,7 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
       i.setIcon("trash");
       i.onClick(deleteRoutine);
     })
-  }, [RoutineOptionModal, deleteRoutine, note, removeRoutineFromNoteOnly, setNote, task.name])
+  }, [RoutineOptionModal, deleteRoutine, note, noteStore, removeRoutineFromNoteOnly, task.name])
   
 
   return (

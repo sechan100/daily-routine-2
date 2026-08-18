@@ -40,7 +40,7 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
       return;
     }
     await groupRepository.persist(group);
-    mergeNotes();
+    await mergeNotes();
     modal.close();
     new Notice(`Group '${group.name}' created.`);
   }, [group, mergeNotes, modal]);
@@ -61,7 +61,7 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
       {/* save */}
       <Modal.SaveBtn
         disabled={group.name.trim() === ""}
-        onSaveBtnClick={onSaveBtnClick}
+        onSaveBtnClick={() => { void onSaveBtnClick(); }}
       />
     </Modal>
   )

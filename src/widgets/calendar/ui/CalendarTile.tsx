@@ -4,9 +4,7 @@ import { Tile } from "../model/types";
 import { TEXT_CSS } from "@shared/components/text-style";
 import { Task } from "@entities/note";
 import { css } from "@emotion/react";
-import { useContext, useEffect } from "react";
 import { useTileHeightInfo } from "./tile-height-info-context";
-import { last } from "lodash";
 
 
 const defaultTextStyle = css({

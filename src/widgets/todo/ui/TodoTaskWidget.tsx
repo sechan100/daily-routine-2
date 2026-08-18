@@ -1,4 +1,4 @@
-import { noteRepository, TaskEntity, TaskGroup, TodoTask } from "@entities/note";
+import { noteRepository, RoutineNote, TaskEntity, TaskGroup, TodoTask } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useTodoOptionModal } from './todo-option';
@@ -16,7 +16,9 @@ interface TodoTaskProps {
 }
 export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
-  const { note, setNote } = useRoutineNote();
+  const routineNoteStore = useRoutineNote();
+  const { note } = routineNoteStore;
+  const setNote = useCallback((newNote: RoutineNote) => routineNoteStore.setNote(newNote), [routineNoteStore]);
 
 
   const rescheduleTask = useCallback(async (destDay: Day) => {

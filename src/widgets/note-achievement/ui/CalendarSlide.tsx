@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { NoteEntity, noteRepository, Task } from "@entities/note";
+import { NoteEntity, noteRepository } from "@entities/note";
 import { BaseCalendar } from "@shared/components/BaseCalendar";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useAsync } from "@shared/utils/use-async";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useTabRoute } from "@shared/tab/use-tab-route";
 import { PerformanceCircle } from "@features/performance";
 import { Badge } from "@mui/material";

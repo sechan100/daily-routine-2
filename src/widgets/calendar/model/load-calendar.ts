@@ -17,7 +17,7 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
     return {
       day,
       tasks: tileTasks,
-    } as Tile;
+    };
   }
 
   /**

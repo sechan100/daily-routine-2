@@ -1,4 +1,3 @@
-import { DailyRoutineObsidianView } from "@app/obsidian-view";
 import { useTabHeight } from "@app/ui/use-tab-height";
 import { createContext, useContext, useMemo } from "react";
 

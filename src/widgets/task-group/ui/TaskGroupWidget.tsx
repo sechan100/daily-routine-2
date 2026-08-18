@@ -1,12 +1,11 @@
-import { NoteEntity, noteRepository, TaskGroup, TaskGroupEntity } from "@entities/note"
+import { noteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from "@entities/note"
 import { BaseTaskGroupFeature } from "@features/task-el/ui/BaseTaskGroupFeature"
 import { useGroupOptionModal } from "./group-option";
 import { useRoutineNote } from "@features/note";
 import { useCallback } from "react";
-import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { doFlagConfirm } from "@shared/components/modal/flag-confirm-modal";
 import { Menu, Notice } from "obsidian";
-import { groupRepository, RoutineGroup } from "@entities/routine";
+import { groupRepository } from "@entities/routine";
 import { deleteGroup } from "../delete-group";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { ResultAsync } from "neverthrow";
@@ -23,8 +22,10 @@ export const TaskGroupWidget = ({
 }: Props) => {
   const { mergeNotes } = useRoutineMutationMerge();
   const GroupOptionModal = useGroupOptionModal();
-  const { note, setNote } = useRoutineNote();
-  
+  const routineNoteStore = useRoutineNote();
+  const { note } = routineNoteStore;
+  const setNote = useCallback((newNote: RoutineNote) => routineNoteStore.setNote(newNote), [routineNoteStore]);
+
 
   const doDeleteGroup = useCallback(async () => {
     const deleteConfirm = await doFlagConfirm({
@@ -40,7 +41,7 @@ export const TaskGroupWidget = ({
     if(!deleteConfirm.confirm) return;
 
     await deleteGroup(note, group.name, deleteConfirm.flag);
-    mergeNotes();
+    void mergeNotes();
     new Notice(`Group ${group.name} deleted.`);
   }, [group.name, note, mergeNotes])
 
@@ -109,7 +110,7 @@ export const TaskGroupWidget = ({
   return (
     <>
       <BaseTaskGroupFeature
-        onOptionMenu={onOptionMenu}
+        onOptionMenu={(m) => { void onOptionMenu(m); }}
         group={group}
       />
       <GroupOptionModal />

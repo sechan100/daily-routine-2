@@ -1,10 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { noteRepository, TaskEntity, TodoTask } from '@entities/note';
 import { useRoutineNote } from '@features/note';
-import { Button } from '@shared/components/Button';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { Modal } from '@shared/components/modal/styled';
-import { dr } from '@shared/utils/daily-routine-bem';
 import { Notice } from "obsidian";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -14,8 +12,8 @@ interface TodoOptionModalProps {
   modal: ModalApi;
 }
 export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: TodoOptionModalProps) => {
-  const bem = useMemo(() => dr("todo-option"), []);
-  const { note, setNote } = useRoutineNote();
+  const routineNote = useRoutineNote();
+  const { note } = routineNote;
   const [ todo, setTodo ] = useState<TodoTask>(propsTodo);
   const originalName = useMemo(() => propsTodo.name, [propsTodo]);
 
@@ -26,10 +24,10 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       return;
     }
     const newNote = TaskEntity.updateTask(note, originalName, todo);
-    setNote(newNote);
+    routineNote.setNote(newNote);
     await noteRepository.update(newNote);
     modal.close();
-  }, [modal, note, originalName, setNote, todo]);
+  }, [modal, note, originalName, routineNote, todo]);
 
 
   return (
@@ -54,7 +52,7 @@ export const useTodoOptionModal = createModal(memo(({ todo: propsTodo, modal }: 
       {/* save */}
       <Modal.SaveBtn
         disabled={todo.name.trim() === ""}
-        onSaveBtnClick={onSaveBtnClick}
+        onSaveBtnClick={() => { void onSaveBtnClick(); }}
       />
     </Modal>
   )

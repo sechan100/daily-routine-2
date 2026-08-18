@@ -55,7 +55,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       new Notice(`Failed to save routine '${originalName}'.`);
       return;
     }
-    mergeNotes();
+    void mergeNotes();
     modal.close();
   }, [mergeNotes, modal, originalName, routine, tagsText]);
 
@@ -98,7 +98,7 @@ export const useRoutineOptionModal = createModal(({ modal, routine: originalRout
       {/* save */}
       <Modal.SaveBtn
         disabled={routine.name.trim() === ""}
-        onSaveBtnClick={onSaveBtnClick}
+        onSaveBtnClick={() => { void onSaveBtnClick(); }}
       />
 
     </Modal>

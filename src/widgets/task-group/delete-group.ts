@@ -1,4 +1,4 @@
-import { noteRepository, RoutineNote, TaskGroupEntity } from "@entities/note";
+import { RoutineNote, TaskGroupEntity } from "@entities/note";
 import { groupRepository, RoutineGroupEntity, routineRepository } from "@entities/routine";
 
 

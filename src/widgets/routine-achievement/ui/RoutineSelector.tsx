@@ -4,9 +4,8 @@ import { Button } from '@shared/components/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useRoutineSelector } from "../model/use-routine-selector";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useLeaf } from '@shared/view/use-leaf';
-import { maxWidth } from '@mui/system';
 import { Month } from '@shared/period/month';
 
 
@@ -25,7 +24,6 @@ type Props = {
 export const RoutineSelector = ({
   month,
   maxWidth,
-  className
 }: Props) => {
   const { currentRoutine, setCurrentRoutine, routineOptionsPerMonth } = useRoutineSelector();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

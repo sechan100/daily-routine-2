@@ -3,7 +3,7 @@ import { DayNode } from "./types";
 
 
 
-export const [WeeksActiveDayContextProvider, useWeeksActiveDay] = createStoreContext<DayNode, DayNode>((data, set, get) => ({
+export const [WeeksActiveDayContextProvider, useWeeksActiveDay] = createStoreContext<DayNode, DayNode>((data, _set, _get) => ({
   day: data.day,
   performance: data.performance,
 }));

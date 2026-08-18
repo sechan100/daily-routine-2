@@ -18,7 +18,8 @@ interface WeeksProps {
   className?: string;
 }
 export const WeeksWidget = ({ className }: WeeksProps) => {
-  const { note, setNote } = useRoutineNote();
+  const routineNote = useRoutineNote();
+  const { note } = routineNote;
   const activeDay = useMemo(() => note.day, [note]);
   const activeWeek = useMemo(() => Week.of(activeDay), [activeDay]);
   const currentNotePerformance = useMemo(() => NoteEntity.getPerformance(note), [note]);
@@ -29,9 +30,9 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
    * weeks 최초 초기화
    */
   useEffect(() => {
-    loadWeekNodes(activeWeek, {prev: 1, next: 1})
+    void loadWeekNodes(activeWeek, {prev: 1, next: 1})
     .then(weeks => setWeeks(weeks))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 mount 시 1회만 로드
   }, []);
 
 
@@ -52,8 +53,8 @@ export const WeeksWidget = ({ className }: WeeksProps) => {
   }, []);
 
   const onDayClick = useCallback((day: Day) => {
-    setNote(day);
-  }, [setNote]);
+    routineNote.setNote(day);
+  }, [routineNote]);
 
   return (
     <WeeksActiveDayContextProvider 

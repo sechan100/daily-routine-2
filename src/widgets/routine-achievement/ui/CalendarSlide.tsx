@@ -81,8 +81,8 @@ export const CalendarSlide = ({
   }, [month.monthNum, tileMap]);
 
 
-  const onTileClick = useCallback((day: Day) => {
-    // console.log(day);
+  const onTileClick = useCallback((_day: Day) => {
+    // console.log(_day);
   }, []);
 
 

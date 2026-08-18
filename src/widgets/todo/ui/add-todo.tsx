@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { noteRepository, TaskEntity, TodoTask } from "@entities/note";
 import { useRoutineNote } from "@features/note";
-import { Button } from "@shared/components/Button";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/utils/daily-routine-bem";
@@ -26,7 +25,7 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
     // NOTE: Todo 만들기는 거의 사용자가 원하는 동작임이 분명함으로, 노트가 없다면 강제로 생성해서 저장함. (confirm 띄우지 않음)
     try {
       await noteRepository.save(newNote);
-    } catch (e) {
+    } catch {
       new Notice('Failed to save todo.');
       return;
     }
@@ -60,7 +59,7 @@ export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
       {/* save */}
       <Modal.SaveBtn
         disabled={todo.name.trim() === ""}
-        onSaveBtnClick={onSaveBtnClick}
+        onSaveBtnClick={() => { void onSaveBtnClick(); }}
       />
     </Modal>
   );

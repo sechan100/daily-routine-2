@@ -55,7 +55,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
       new Notice(`Failed to create routine '${routine.name}'.`);
       return;
     }
-    mergeNotes();
+    void mergeNotes();
     modal.close();
     new Notice(`Routine '${routine.name}' started! 🎉`);
   }, [mergeNotes, modal, routine, tagsText]);
@@ -100,7 +100,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
       {/* save */}
       <Modal.SaveBtn
         disabled={routine.name.trim() === ""}
-        onSaveBtnClick={onSaveBtnClick}
+        onSaveBtnClick={() => { void onSaveBtnClick(); }}
       />
     </Modal>
   )

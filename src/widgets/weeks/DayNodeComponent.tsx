@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Day } from "@shared/period/day";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DayNode } from "./types";
 import { dr } from "@shared/utils/daily-routine-bem";
 import { useLeaf } from "@shared/view/use-leaf";
