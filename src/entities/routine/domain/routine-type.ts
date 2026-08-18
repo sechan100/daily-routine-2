@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DayOfWeek } from "@shared/period/day";
 
 
-export type RoutineElement<> = {
+export type RoutineElement = {
   routineElementType: "routine" | "routine-group";
   name: string;
   properties: {
     order: number
   };
 }
-export const isRoutineElement = (r: any): r is RoutineElement => {
-  const hasName = typeof r.name === "string";
-  const hasRoutineElementType = r.routineElementType === "routine" || r.routineElementType === "routine-group";
+export const isRoutineElement = (r: unknown): r is RoutineElement => {
+  const el = r as Partial<RoutineElement>;
+  const hasName = typeof el.name === "string";
+  const hasRoutineElementType = el.routineElementType === "routine" || el.routineElementType === "routine-group";
   return hasName && hasRoutineElementType;
 }
 

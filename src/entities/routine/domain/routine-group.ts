@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { Err, err, ok, Result } from "neverthrow";
 import { RoutineGroupProperties } from "./routine-type";
@@ -20,20 +19,21 @@ const validateName = (name0: string, groupNames: string[]): Result<string, strin
 /**
  * @param frontmatter frontmatter를 해석한 js object
  */
-const validateGroupProperties = (p: any): Result<RoutineGroupProperties, string> => {
+const validateGroupProperties = (p: unknown): Result<RoutineGroupProperties, string> => {
   if(typeof p !== 'object'){
     return err('RoutineGroupProperties validation target is not object.');
   }
-  const propsErr = (propertyName: string, value: any, msg?: string): Err<RoutineGroupProperties, string> => {
-    return err(`[Invalid RoutineGroupProperties]: ${msg??"invalid format"}(${propertyName}: ${value})`);
+  const props = p as Record<string, unknown>;
+  const propsErr = (propertyName: string, value: unknown, msg?: string): Err<RoutineGroupProperties, string> => {
+    return err(`[Invalid RoutineGroupProperties]: ${msg??"invalid format"}(${propertyName}: ${String(value)})`);
   }
 
   if(
-    'order' in p &&
-    typeof p.order === 'number'
+    'order' in props &&
+    typeof props.order === 'number'
   ){
-    if(p.order < 0) return propsErr('order', p.order, "Order must be a non-negative integer.");
-  } else return propsErr('order', p.order);
+    if(props.order < 0) return propsErr('order', props.order, "Order must be a non-negative integer.");
+  } else return propsErr('order', props.order);
 
   return ok(p as RoutineGroupProperties);
 }

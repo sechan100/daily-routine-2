@@ -19,7 +19,7 @@ export const ROUTINE_NOTE_FILE = (day: Day): TFile | null => {
   const path = ROUTINE_ARCHIVE_PATH(day);
   try {
     return fileAccessor.loadFile(path);
-  } catch (e) {
+  } catch {
     new Notice(`Error while loading note file. Please check the path: ${path}`);
     return null;
   }
@@ -103,7 +103,7 @@ export const noteRepository: NoteRepository = {
       const path = ROUTINE_ARCHIVE_PATH(day);
       try {
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
-      } catch (e) {
+      } catch {
         await fileAccessor.createFolder(DR_SETTING.noteFolderPath());
         await fileAccessor.createFile(path, serializeRoutineNote(routineNote));
       }

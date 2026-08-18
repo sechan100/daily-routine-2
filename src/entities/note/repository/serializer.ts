@@ -113,17 +113,17 @@ export const parseRoutineNote = (day: Day, content: string): RoutineNote => {
     children: []
   };
 
-  const root: NoteElement[] = blocks.flatMap(b => {
+  const root: NoteElement[] = blocks.flatMap<NoteElement>(b => {
     const firstLine = b.split('\n', 1)[0];
     if(/^##\s+UNGROUPED\s*$/.test(firstLine)){
       const lines = b.split('\n').slice(1);
       return lines.flatMap(l => {
         const task = parseTask(l);
-        return task ? [task as NoteElement] : [];
+        return task ? [task] : [];
       });
     } else {
       const group = parseTaskGroup(b);
-      return group ? [group as NoteElement] : [];
+      return group ? [group] : [];
     }
   });
 

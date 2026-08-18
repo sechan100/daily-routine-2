@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Day, DayOfWeek } from "@shared/period/day";
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
-import { keys } from "lodash";
-import { err, Err, ok, Result } from "neverthrow";
+import { keys } from "es-toolkit/compat";
+import { err, ok, Result } from "neverthrow";
 import { Routine, RoutineProperties } from "./routine-type";
 
 
@@ -23,10 +22,10 @@ const validateName = ({
 /**
  * tag들을 정규화(앞의 '#' 제거, trim)하고 검증한다. 중복은 제거된다.
  */
-const validateTags = (tags0: any[]): Result<string[], string> => {
+const validateTags = (tags0: unknown[]): Result<string[], string> => {
   const tags: string[] = [];
   for(const t of tags0){
-    if(typeof t !== 'string') return err(`tag must be a string: ${t}`);
+    if(typeof t !== 'string') return err(`tag must be a string: ${String(t)}`);
     const tag = t.trim().replace(/^#+/, '');
     if(tag === '') return err('tag cannot be empty.');
     if(/\s/.test(tag)) return err(`tag cannot contain whitespace: '${tag}'`);
@@ -39,10 +38,11 @@ const validateTags = (tags0: any[]): Result<string[], string> => {
 /**
  * @param frontmatter frontmatter를 해석한 js object
  */
-const validateRoutineProperties = (p: any): Result<RoutineProperties, string> => {
-  if(typeof p !== 'object'){
+const validateRoutineProperties = (frontmatter: unknown): Result<RoutineProperties, string> => {
+  if(typeof frontmatter !== 'object'){
     return err('Internal error: Invalid frontmatter format');
   }
+  const p = frontmatter as Record<string, unknown>;
 
   if(
     'order' in p &&

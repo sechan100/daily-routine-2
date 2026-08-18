@@ -1,6 +1,6 @@
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { err, ok, Result } from "neverthrow";
-import { isTask, isTaskGroup, RoutineNote, Task, TaskGroup } from "./note.type";
+import { isTaskGroup, RoutineNote, Task, TaskGroup } from "./note.type";
 
 
 

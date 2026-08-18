@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { validateObsidianFileTitle } from "@shared/utils/validate-obsidian-file-title";
 import { Routine } from "@entities/routine";
-import { isTask, isTaskGroup, RoutineNote, RoutineTask, Task, TodoTask } from "./note.type";
+import { isTask, isTaskGroup, RoutineNote, RoutineTask, TodoTask } from "./note.type";
 import { NoteEntity } from "./note";
 
 

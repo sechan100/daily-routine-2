@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { RoutineNote, RoutineTask, TaskGroup, NoteElement, TaskGroupEntity, TaskEntity } from "@entities/note";
+import { RoutineNote, NoteElement, TaskEntity } from "@entities/note";
 import { isRoutine, Routine, RoutineEntity, RoutineGroup, RoutineGroupEntity } from "@entities/routine";
 import { groupRepository } from "@entities/routine/repository/group-repository";
 import { routineRepository } from "@entities/routine/repository/routine-repository";
@@ -64,7 +63,7 @@ export class RoutineNoteCreator {
           name: el.name,
           children: tasks,
           isOpen: true
-        } as TaskGroup;
+        };
       }
     });
     

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Day } from "@shared/period/day";
 
 
@@ -6,9 +5,10 @@ export type RoutineNote = {
   day: Day;
   children: NoteElement[];
 }
-export const isRoutineNote = (routineNote: any): routineNote is RoutineNote => {
-  const hasDay = routineNote.day instanceof Day;
-  const hasRoot = Array.isArray(routineNote.children);
+export const isRoutineNote = (routineNote: unknown): routineNote is RoutineNote => {
+  const candidate = routineNote as RoutineNote;
+  const hasDay = candidate.day instanceof Day;
+  const hasRoot = Array.isArray(candidate.children);
   return hasDay && hasRoot;
 }
 
@@ -16,9 +16,10 @@ export type NoteElement = {
   elementType: "group" | "task";
   name: string;
 }
-export const isNoteElement = (noteElement: any): noteElement is NoteElement => {
-  const hasName = typeof noteElement.name === "string";
-  const hasType = noteElement.elementType === "group" || noteElement.elementType === "task";
+export const isNoteElement = (noteElement: unknown): noteElement is NoteElement => {
+  const candidate = noteElement as NoteElement;
+  const hasName = typeof candidate.name === "string";
+  const hasType = candidate.elementType === "group" || candidate.elementType === "task";
   return hasName && hasType;
 }
 
@@ -27,9 +28,10 @@ export type TaskGroup = NoteElement & {
   children: Task[];
   isOpen: boolean;
 }
-export const isTaskGroup = (taskGroup: any): taskGroup is TaskGroup => {
-  const elementType = taskGroup.elementType === "group";
-  const hasTasks = Array.isArray(taskGroup.children);
+export const isTaskGroup = (taskGroup: unknown): taskGroup is TaskGroup => {
+  const candidate = taskGroup as TaskGroup;
+  const elementType = candidate.elementType === "group";
+  const hasTasks = Array.isArray(candidate.children);
   return elementType && hasTasks;
 }
 
@@ -44,25 +46,26 @@ export type Task = NoteElement & {
   showOnCalendar: boolean;
   tags: string[];
 }
-export const isTask = (task: any): task is Task => {
-  const elementType = task.elementType === "task";
-  const hasTaskType = task.taskType === "routine" || task.taskType === "todo";
-  const hasState = task.state === "un-checked" || task.state === "accomplished" || task.state === "failed";
-  const hasShowOnCalendar = typeof task.showOnCalendar === "boolean";
+export const isTask = (task: unknown): task is Task => {
+  const candidate = task as Task;
+  const elementType = candidate.elementType === "task";
+  const hasTaskType = candidate.taskType === "routine" || candidate.taskType === "todo";
+  const hasState = candidate.state === "un-checked" || candidate.state === "accomplished" || candidate.state === "failed";
+  const hasShowOnCalendar = typeof candidate.showOnCalendar === "boolean";
   return elementType && hasTaskType && hasState && hasShowOnCalendar;
 }
 
 export type RoutineTask = Task & {
   taskType: "routine";
 }
-export const isRoutineTask = (routineTask: any): routineTask is RoutineTask => {
+export const isRoutineTask = (routineTask: unknown): routineTask is RoutineTask => {
   return isTask(routineTask) && routineTask.taskType == "routine";
 }
 
 export type TodoTask = Task & {
   taskType: "todo";
 }
-export const isTodoTask = (todoTask: any): todoTask is TodoTask => {
+export const isTodoTask = (todoTask: unknown): todoTask is TodoTask => {
   return isTask(todoTask) && todoTask.taskType === "todo";
 }
 
