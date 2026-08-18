@@ -1,4 +1,3 @@
-import { extend } from "lodash";
 import { useCallback, useEffect, useRef } from "react"
 
 
@@ -13,8 +12,8 @@ export const useChildRef = <P extends HTMLElement, C extends HTMLElement>(tagNam
   // 최초 1회 초기화 실행
   useEffect(() => {
     create();
-    return destroy;  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return destroy;
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 1회만 실행되어야 하므로 deps에서 제외
   }, []);
 
   const destroy = useCallback(() => {
@@ -28,7 +27,7 @@ export const useChildRef = <P extends HTMLElement, C extends HTMLElement>(tagNam
    */
   const create = useCallback(() => {
     if(!parentRef.current || childRef.current) return;
-    const child = document.createElement(tagName);
+    const child = createEl(tagName);
     parentRef.current.appendChild(child);
     childRef.current = child as C;
   }, [tagName]);

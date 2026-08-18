@@ -1,5 +1,5 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
-import { StrictMode, useState } from "react";
+import React, { StrictMode, useState } from "react";
 import { Root, createRoot } from "react-dom/client";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { UseLeafProvider } from "./use-leaf";
@@ -53,7 +53,7 @@ export abstract class ReactView extends ItemView {
   /**
    * 해당 메서드로 함수형 컴포넌트를 구현하면 된다.
    */
-  abstract render(): JSX.Element;
+  abstract render(): React.JSX.Element;
 
 	async onOpen() {
 		this.root = createRoot(this.containerEl.children[1]);

@@ -1,8 +1,7 @@
 
 /** @jsxImportSource @emotion/react */
-import { MenuItem } from "obsidian";
-import React, { useCallback, useMemo } from "react";
-import { Menu, getIcon } from "obsidian";
+import React, { useCallback } from "react";
+import { Menu } from "obsidian";
 import { Icon } from "./Icon";
 
 
@@ -31,8 +30,8 @@ export const MenuComponent = ({
 
 
   return (
-    <div 
-      onClick={openMenu}
+    <div
+      onClick={(e) => { void openMenu(e); }}
       className={className}
       css={{
         cursor: "pointer",

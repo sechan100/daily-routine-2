@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "../Button";
 import { Modal } from "obsidian";
 import { plugin } from "@shared/utils/plugin-service-locator";
@@ -101,7 +101,7 @@ const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: Confi
   })
 
   // modal button container
-  const modalButtonContainer = document.createElement("div");
+  const modalButtonContainer = createDiv();
   modalButtonContainer.addClass("modal-button-container");
   modal.modalEl.appendChild(modalButtonContainer);
   createRoot(modalButtonContainer).render(
@@ -110,7 +110,7 @@ const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: Confi
 
   // modal content
   modal.contentEl.appendChild((() => {
-    const p = document.createElement("p");
+    const p = createEl("p");
     p.setText(options.description);
     return p;
   })());

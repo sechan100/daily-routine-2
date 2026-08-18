@@ -28,7 +28,7 @@ export const ToggleComponent = memo(({
     .onChange(onChange)
     
     isComponentCreated.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 마운트 시 한 번만 생성
   }, []);
 
   

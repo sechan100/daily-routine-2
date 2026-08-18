@@ -1,11 +1,11 @@
 
 
-type Switch<T, R> = { [key: string]: R };
+type Switch<R> = { [key: string]: R };
 
 
 export const switchTo = <T extends string | number, R>(
   key: T,
-  cases: Switch<T, R>,
+  cases: Switch<R>,
   defaultCase?: R
 ): R => {
   if(defaultCase){

@@ -13,7 +13,7 @@ interface UseLeaf {
   leafBgColor: string;
   refresh: () => void;
 }
-export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data, set, get) => {
+export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseLeaf>((data) => {
   // CSS 변수 문자열을 그대로 사용하여 테마 변경을 실시간으로 따라가도록 한다.
   const leafBgColor = "var(--background-primary)";
 
@@ -23,7 +23,7 @@ export const [UseLeafProvider, useLeaf] = createStoreContext<UseDrLeafData, UseL
     leafBgColor,
     refresh: () => {
       data.setShow(false);
-      setTimeout(() => data.setShow(true), 0);
+      window.setTimeout(() => data.setShow(true), 0);
     },
   }
 });

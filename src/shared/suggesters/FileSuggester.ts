@@ -50,7 +50,7 @@ export class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
     return files.slice(0, 1000);
   }
 
-  override selectSuggestion(value: TAbstractFile, evt: MouseEvent | KeyboardEvent): void {
+  override selectSuggestion(value: TAbstractFile, __: MouseEvent | KeyboardEvent): void {
     this.setValue(value.path);
     this.#onSelectCbs.forEach(cb => cb(value.path));
     this.close();

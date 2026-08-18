@@ -3,10 +3,9 @@ import 'swiper/swiper-bundle.css';
 import { Mousewheel } from 'swiper/modules';
 import React, { useCallback, useEffect, useMemo, useRef, useState, Key, useLayoutEffect } from "react";
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
-import { Month } from '@shared/period/month';
 
 
-export interface VirtualSlideData {}
+export type VirtualSlideData = object;
 
 
 interface SlideComponentProps<T extends VirtualSlideData> {
@@ -104,7 +103,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
   // propsDatas가 변경되면 datas를 업데이트하고 slideIndex를 중앙으로 이동시킨다.
   useEffect(() => {
     setDatas(propsDatas, getCenterIndex(propsDatas));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- setDatas는 참조가 안정적이라 deps에서 제외
   }, [propsDatas]);
 
 
@@ -175,7 +174,7 @@ const VirtualSwiperComponent = <T extends VirtualSlideData,>({
             preventSlideEvent.current = false;
             return;
           } else {
-            onTransitionEnd(swiper);
+            void onTransitionEnd(swiper);
           }
         }}
         direction={verticalHeight ? "vertical" : "horizontal"}

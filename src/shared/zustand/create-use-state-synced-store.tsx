@@ -39,7 +39,7 @@ interface UseStateSyncStore<S>{
 // <S>() => (useStateRv: UseStateRv<S>) => StoreApi<UseStateSyncStore<S>></UseStateSyncStore>
 // 해당 함수는 useState를 받아서 store를 생성후 동기화해서 반환하는 함수를 반환한다.
 const createSyncedStore = <S,>(useStateRv: UseStateRv<S>): StoreApi<UseStateSyncStore<S>> => {
-  const store = createStore<UseStateSyncStore<S>>((set, get) => ({
+  const store = createStore<UseStateSyncStore<S>>((set, _get) => ({
     state: useStateRv.state,
     setState: (state: S) => {
       set({ state });

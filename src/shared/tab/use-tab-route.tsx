@@ -8,7 +8,7 @@ interface UseTabRoute {
   route: (tab: DrTabType, routeParams: object | null) => void;
   routeParams: object | null;
 }
-export const useTabRoute = create<UseTabRoute>((set, get) => ({
+export const useTabRoute = create<UseTabRoute>((set, _get) => ({
   tab: INITIAL_TAB,
   route: (tab, routeParams = null) => {
     set({ tab, routeParams });

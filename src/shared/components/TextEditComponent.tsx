@@ -1,10 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
 import { TextComponent } from "obsidian";
-import { useRef, useState, useEffect, memo } from "react";
+import { useRef, useEffect, memo } from "react";
 import { dr } from "@shared/utils/daily-routine-bem";
-import { Button } from "./Button";
-import clsx from "clsx";
 
 
 
@@ -44,7 +41,7 @@ export const TextEditComponent = memo((props: TextEditComponentProps) => {
     }
     
     textComponentCreated.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 마운트 시 한 번만 생성
   }, []);
 
   

@@ -1,8 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Interpolation, SerializedStyles, Theme } from "@emotion/react";
-import styled from "@emotion/styled";
-import _ from "lodash";
-import { DebouncedFunc } from "lodash";
+import { debounce, DebouncedFunc } from "es-toolkit/compat";
 import { useRef, useCallback, useMemo, forwardRef, memo } from "react";
 
 
@@ -49,12 +46,12 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   const isTouchRef = useRef<boolean>(false);
 
   const longPressDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
-    _.debounce((e: React.TouchEvent) => {
+    debounce((_e: React.TouchEvent) => {
       props.onAfterLongPressDelay?.();
     }, longPressDelay)
   );
   const longPressStartDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
-    _.debounce((e: React.TouchEvent) => {
+    debounce((e: React.TouchEvent) => {
       props.onPressChange?.(true);
       props.onLongPressStart?.(e);
     }, startDelay)
@@ -87,7 +84,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
     longPressStartCall(e);
   }, [longPressStartCall])
 
-  const touchMove = useCallback((e: React.TouchEvent) => {
+  const touchMove = useCallback((_e: React.TouchEvent) => {
     longPressCancel();
     isMovedRef.current = true;
   }, [longPressCancel])

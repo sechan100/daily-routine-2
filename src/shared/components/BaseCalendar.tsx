@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { css, CSSObject, Interpolation } from '@emotion/react';
+import { css, CSSObject } from '@emotion/react';
 import { DR_SETTING } from "@app/settings/setting-provider";
 import { Day } from "@shared/period/day";
 import { Month } from "@shared/period/month";
 import { useLeaf } from "@shared/view/use-leaf";
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import Calendar from "react-calendar";
 import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
 
@@ -14,7 +14,7 @@ import { OnArgs, TileArgs } from "react-calendar/dist/cjs/shared/types";
 export interface BaseCalendarProps {
   month: Month;
   setMonth: Dispatch<SetStateAction<Month>>;
-  tile: (day: Day) => JSX.Element;
+  tile: (day: Day) => React.JSX.Element;
   className?: string;
   onTileClick?: (day: Day) => void;
   showNavigation?: boolean;

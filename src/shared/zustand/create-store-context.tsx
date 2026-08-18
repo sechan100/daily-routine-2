@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * useContext와 zustand store를 결합하여 사용할 수 있도록 해주는 유틸함수. 
  * zustand store를 특정 컨텍스트하에서, 특정 값을 가지고 초기화할 수 있도록 한다. 
  */
 import { StoreApi, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import React from 'react';
 
 
@@ -14,7 +13,7 @@ import React from 'react';
  * D: 초기 데이터 타입
  * S: store 상태 타입
  */
-type SetState<S> = (partial: S | Partial<S> | ((state: S) => S | Partial<S>), replace?: boolean | undefined) => void
+type SetState<S> = (partial: S | Partial<S> | ((state: S) => S | Partial<S>), replace?: boolean) => void
 type GetState<S> = () => S
 type Initializer<D, S> = (data: D, set: SetState<S>, get: GetState<S>) => S
 
@@ -68,11 +67,11 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): [
   });
 
 
-  const useStoreHook = ((selector?: any) => {
+  const useStoreHook = ((selector?: (state: S) => unknown) => {
     const store = useContext(StoreContext);
     if (!store) throw new Error("해당 context에서는 store가 정의되지 않습니다. 올바른 컨텍스트에서 접근가능");
     Object.assign(useStoreHook, store);
-    return useStore(store, selector);
+    return useStore(store, selector as (state: S) => unknown);
   }) as UseBoundStore<StoreApi<S>>;
 
   return [Provider, useStoreHook];

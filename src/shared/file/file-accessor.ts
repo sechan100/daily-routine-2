@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { plugin } from "@shared/utils/plugin-service-locator";
 import { TFile, TFolder, getFrontMatterInfo, parseYaml } from "obsidian";
 
@@ -55,7 +54,7 @@ export interface FileAccessor {
    * 파일의 frontmatter를 수정한다.
    * frontmatter 객체는 json object로 전달된다.
    */
-  writeFrontMatter: (file: TFile, frontMatterModifier: (frontmatter: any) => any) => Promise<void>;
+  writeFrontMatter: (file: TFile, frontMatterModifier: (frontmatter: Record<string, unknown>) => object) => Promise<void>;
 
   loadFrontMatter: (file: TFile) => Promise<object>;
 }
@@ -105,11 +104,11 @@ export const fileAccessor: FileAccessor = {
   },
 
   deleteFile: async (file: TFile) => {
-    return await plugin().app.vault.delete(file);
+    return await plugin().app.fileManager.trashFile(file);
   },
 
   writeFrontMatter: async (file: TFile, frontMatterModifier) => {
-    return await plugin().app.fileManager.processFrontMatter(file, (fm: any) => {
+    return await plugin().app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
       const newFm = frontMatterModifier(fm);
       Object.assign(fm, newFm);
     });

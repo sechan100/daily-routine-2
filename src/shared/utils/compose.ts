@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-type Func<T = any, R = any> = (arg: T) => R;
+type Func<T = unknown, R = unknown> = (arg: T) => R;
 
 export function compose(...funcs: Func[]): Func {
-  return (arg: any): any => funcs.reduceRight((result, fn) => fn(result), arg);
+  return (arg: unknown): unknown => funcs.reduceRight((result, fn) => fn(result), arg);
 }

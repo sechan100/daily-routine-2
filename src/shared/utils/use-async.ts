@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useRef, DependencyList, useState, useMemo } from 'react';
+import { useCallback, useEffect, useRef, DependencyList, useState } from 'react';
 
 
-type PromiseType<P extends Promise<any>> = P extends Promise<infer T> ? T : never;
-type FunctionReturningPromise = (...args: any[]) => Promise<any>;
+type PromiseType<P extends Promise<unknown>> = P extends Promise<infer T> ? T : never;
+type FunctionReturningPromise = (...args: never[]) => Promise<unknown>;
 type AsyncState<T> =
   | {
       loading: boolean;
@@ -47,7 +46,8 @@ export function useAsync<T extends FunctionReturningPromise>(
     const callId = ++lastCallId.current;
     set((prevState) => ({ ...prevState, loading: true }));
 
-    return fn(...args).then(
+    const promise = fn(...args) as Promise<PromiseType<ReturnType<T>>>;
+    return promise.then(
       (value) => {
         if(mountedRef.current && callId === lastCallId.current){
           set({ value, loading: false });
@@ -61,11 +61,11 @@ export function useAsync<T extends FunctionReturningPromise>(
         return error;
       }
     ) as ReturnType<T>;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- deps는 호출자가 전달하는 동적 배열이라 정적 분석이 불가능하다.
   }, deps);
 
   useEffect(() => {
-    (callback as unknown as T)();
+    void (callback as unknown as T)();
   }, [callback]);
 
 

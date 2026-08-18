@@ -24,7 +24,7 @@ export const CalendarNavigation = ({
 
   useEffect(() => {
     if(!calendarRef.current) return;
-    // @ts-ignore
+    // @ts-expect-error -- react-calendar가 타입에 노출하지 않는 내부 인스턴스 메서드
     calendarRef.current.setActiveStartDate(month.startDay.getJsDate());
   }, [month]);
 

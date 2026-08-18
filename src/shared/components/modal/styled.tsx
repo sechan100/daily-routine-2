@@ -4,11 +4,10 @@
 /** @jsxImportSource @emotion/react */
 import { ToggleComponent } from "@shared/components/ToggleComponent";
 import { TEXT_CSS } from '../text-style';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ModalApi } from './create-modal';
 import { TextEditComponent } from "@shared/components/TextEditComponent"
 import { Button } from "@shared/components/Button"
-import { plugin } from "@shared/utils/plugin-service-locator";
 
 
 type ModalProps = {
