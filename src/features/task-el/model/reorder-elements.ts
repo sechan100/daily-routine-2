@@ -48,7 +48,6 @@ const resolveChangeList = async (parent: TaskParent): Promise<OrderChangeList> =
     if(rOrG){
       return [rOrG];
     } else {
-      console.info(`Routine, or RoutineGroup not exist currently. (name: '${c.name})'`);
       return [];
     }
   })

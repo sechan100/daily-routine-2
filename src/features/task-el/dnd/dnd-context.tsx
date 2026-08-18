@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import React, { useEffect, useMemo, useRef } from "react";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
 import {
   DndProvider,
   // TouchTransition,
@@ -14,7 +12,7 @@ import { ElementPreview } from "../ui/ElementPreview";
 import { useDndScroll } from "./use-dnd-scroll";
 import { useDragDropManager } from "react-dnd";
 import { TaskElDragItem } from './drag-item';
-import { isNoteElement, isTaskGroup } from "@entities/note";
+import { isNoteElement } from "@entities/note";
 import { CustomHTML5Backend } from "./CustomHTML5BackendImpl";
 import { CustomTouchBackend } from "./CustomTouchBackendImpl";
 
@@ -68,13 +66,12 @@ export const TaskDndContext = ({ children }: {children: React.ReactNode }) => {
         {children}
       </ScrollComponent>
       <div className="dr-task-preview-context">
-        <Preview generator={({ item, style, itemType }) => {
-          // @ts-ignore
+        <Preview<TaskElDragItem> generator={({ item, style, itemType }) => {
           if(item.el !== undefined && isNoteElement(item.el) && itemType !== "__NATIVE_TEXT__"){
             return (
               <ElementPreview
-                item={item as TaskElDragItem}
-                style={style} 
+                item={item}
+                style={style}
                 backend={backend}
               />
             )

@@ -6,28 +6,28 @@ import { resolveRoutineNote } from "./resolve-note";
 
 interface UseRoutineNote {
   note: RoutineNote;
-  setNote(note: RoutineNote): void;
-  setNote(day: Day): void;
+  setNote(this: void, note: RoutineNote): void;
+  setNote(this: void, day: Day): void;
 }
 
 export const [UseRoutineNoteProvider, useRoutineNote] =
-createStoreContext<RoutineNote, UseRoutineNote>((routineNote, set, get) => {
+createStoreContext<RoutineNote, UseRoutineNote>((routineNote, set) => {
   // setNote 호출 순서를 추적하여, 늦게 resolve된 이전 요청이 최신 상태를 덮어쓰지 않도록 한다.
   let lastSetNoteId = 0;
 
   return {
     note: routineNote,
 
-    async setNote(noteOrDay: RoutineNote | Day){
+    setNote(noteOrDay: RoutineNote | Day){
       const id = ++lastSetNoteId;
-      let note: RoutineNote;
       if(noteOrDay instanceof Day){
-        note = await resolveRoutineNote(noteOrDay);
-        if(id !== lastSetNoteId) return;
+        void resolveRoutineNote(noteOrDay).then((note) => {
+          if(id !== lastSetNoteId) return;
+          set({ note });
+        });
       } else {
-        note = noteOrDay;
+        set({ note: noteOrDay });
       }
-      set({ note });
     },
 
 

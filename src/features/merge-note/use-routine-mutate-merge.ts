@@ -27,7 +27,8 @@ type UseRoutineMutationMerge = () => {
  * 이 훅은 이러한 복잡한 변경사항 적용을 캡슐화한다.
  */
 export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
-  const { note: currentNote, setNote } = useRoutineNote();
+  const routineNoteState = useRoutineNote();
+  const currentNote = routineNoteState.note;
 
 
   /**
@@ -46,7 +47,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
         if(!manuallyMergedCurrentNote.day.isSameDay(currentNote.day)) throw new Error("manuallyMergedCurrentNote must be same day with currentNote.");
 
         // currentNote 저장
-        setNote(manuallyMergedCurrentNote);
+        routineNoteState.setNote(manuallyMergedCurrentNote);
         await noteRepository.updateIfExist(manuallyMergedCurrentNote);
 
         // currentNote를 제외한 나머지 notes merge
@@ -70,7 +71,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
           try {
             const merged = mergeNote(note, noteCreator);
             if(merged.day.isSameDay(currentNote.day)){
-              setNote(merged);
+              routineNoteState.setNote(merged);
             }
             await noteRepository.update(merged);
           } catch(e) {
@@ -87,7 +88,7 @@ export const useRoutineMutationMerge: UseRoutineMutationMerge = () => {
     if(failedDays.length > 0){
       new Notice(`Failed to merge ${failedDays.length} note(s): ${failedDays.join(", ")}`);
     }
-  }, [currentNote.day, setNote]);
+  }, [currentNote.day, routineNoteState]);
 
 
   return {

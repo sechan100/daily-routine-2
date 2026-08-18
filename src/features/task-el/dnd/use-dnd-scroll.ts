@@ -34,7 +34,7 @@ export const useDndScroll = (ref: RefObject<HTMLElement | null>) => {
     isScrollAllowed: false
   });
 
-  const scrollTimer = useRef<null | NodeJS.Timeout>(null);
+  const scrollTimer = useRef<null | number>(null);
 
   const scrollSpeed = 2; // 스크롤 이동량 조정
   const scrollInterval = 1; // 50ms 간격으로 스크롤 업데이트
@@ -49,13 +49,13 @@ export const useDndScroll = (ref: RefObject<HTMLElement | null>) => {
 
   useEffect(() => {
     if (direction !== "stable" && isScrollAllowed) {
-      scrollTimer.current = setInterval(() => {
+      scrollTimer.current = window.setInterval(() => {
         ref.current?.scrollBy(0, scrollSpeed * (direction === "top" ? -1 : 1));
       }, scrollInterval);
     }
     return () => {
       if (scrollTimer.current) {
-        clearInterval(scrollTimer.current);
+        window.clearInterval(scrollTimer.current);
       }
     };
   }, [isScrollAllowed, direction, ref, scrollSpeed]);

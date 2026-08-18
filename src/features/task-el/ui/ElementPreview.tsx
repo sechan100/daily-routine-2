@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useLeaf } from "@shared/view/use-leaf";
-import { CSSProperties, useEffect, useMemo, useRef } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { TaskElDragItem } from '../dnd/drag-item';
 import { TEXT_CSS } from "@shared/components/text-style";
@@ -16,7 +16,7 @@ interface TaskPreviewProps {
   style: React.CSSProperties;
   backend: "touch" | "html5";
 }
-export const ElementPreview = ({ item, style, backend }: TaskPreviewProps) => {
+export const ElementPreview = ({ item, style }: TaskPreviewProps) => {
 
   const { currentOffset } = useDragLayer((monitor) => ({
     currentOffset: monitor.getClientOffset(),
@@ -31,17 +31,16 @@ export const ElementPreview = ({ item, style, backend }: TaskPreviewProps) => {
     const previewHeight = 50;
     
     const { x: x_viewport, y: y_viewport } = currentOffset;
-    // @ts-ignore
     // const appEl = plugin().app.dom.appContainerEl;
     const leafEl = leaf.view.containerEl;
     const leafRect = leafEl.getBoundingClientRect();
     const x_leaf = x_viewport - leafRect.left;
     const y_leaf = y_viewport - leafRect.top;
-    
-    const getTransform = (backend: "html5" | "touch") => {
+
+    const getTransform = () => {
       return `translate(${x_leaf - previewWidth/2}px, ${y_leaf - previewHeight}px)`;
     }
-    const transform = getTransform(backend);
+    const transform = getTransform();
     return {
       ...style,
       width: previewWidth,
@@ -53,7 +52,7 @@ export const ElementPreview = ({ item, style, backend }: TaskPreviewProps) => {
       justifyContent: "center",
       alignItems: "center",
     };
-  }, [backend, currentOffset, leaf.view.containerEl, style]);
+  }, [currentOffset, leaf.view.containerEl, style]);
 
   return (
     <div style={previewStyle}>

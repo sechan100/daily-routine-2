@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { RoutineNote, Task, TaskEntity, TaskGroup, TaskState } from '@entities/note';
+import { RoutineNote, Task, TaskGroup, TaskState } from '@entities/note';
 import { useRoutineNote } from "@features/note";
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/utils/daily-routine-bem';
@@ -16,8 +16,7 @@ import { Menu, Notice } from 'obsidian';
 import { isMobile } from '@shared/utils/plugin-service-locator';
 import { doConfirm } from '@shared/components/modal/confirm-modal';
 import { DR_SETTING } from '@app/settings/setting-provider';
-import { ButtonBase, ToggleButton } from '@mui/material';
-import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
+import { ButtonBase } from '@mui/material';
 
 
 const indentStyle = css({
@@ -49,7 +48,8 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
 }: TaskProps<T>) => {
   const taskRef = useRef<HTMLDivElement>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("idle");
-  const { setNote, note } = useRoutineNote();
+  const routineNote = useRoutineNote();
+  const { note } = routineNote;
 
 
   const onElDrop = useCallback((newNote: RoutineNote, dropped: T) => {
@@ -116,7 +116,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
       }
       if(doUncheck){
         const newNote = await changeTaskState(note, task.name, destState);
-        setNote(newNote);
+        routineNote.setNote(newNote);
         if(onStateChange) onStateChange({ ...task, checked: destState });
       }
     } catch(error) {
@@ -124,11 +124,11 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
       new Notice("Failed to save task state.");
     } finally {
       // HACK: 빠르게 인접한 task를 클릭하면 클릭히 씹히거나 두번 클릭되는 문제가 있어서, 일단 0.5초 정도 막아둠으로 해결
-      setTimeout(() => {
+      window.setTimeout(() => {
         disableTouch.current = false;
       }, 500);
     }
-  }, [note, onStateChange, setNote, task])
+  }, [note, onStateChange, routineNote, task])
 
 
   return (
@@ -156,7 +156,7 @@ export const BaseTaskFeature = React.memo(<T extends Task>({
         }}
       >
         <Touchable
-          onClick={onClick}
+          onClick={(e) => { void onClick(e); }}
           longPressDelay={DELAY_TOUCH_START}
           onPressChange={onPressChange}
           onAfterLongPressDelay={onAfterLongPressDelay}

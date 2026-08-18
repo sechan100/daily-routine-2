@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { NoteEntity, noteRepository, RoutineNote, TaskEntity, TaskGroup, TaskGroupEntity } from '@entities/note';
+import { noteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from '@entities/note';
 import { Accordion, AccordionDetails, AccordionSummary, accordionSummaryClasses } from '@mui/material';
 import { Icon } from '@shared/components/Icon';
 import { Touchable } from '@shared/components/Touchable';
 import { dr } from '@shared/utils/daily-routine-bem';
 import { useLeaf } from '@shared/view/use-leaf';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useGroupDnd } from '../dnd/use-group-dnd';
 import { baseHeaderStyle, draggingStyle, dragReadyStyle, elementHeight, pressedStyle } from './base-element-style';
 import { DELAY_TOUCH_START } from '../dnd/dnd-context';
@@ -39,7 +39,8 @@ export const BaseTaskGroupFeature = React.memo(({
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupMode, setGroupMode] = useState<GroupMode>("idle");
   const bgColor = useLeaf(s=>s.leafBgColor);
-  const { note, setNote } = useRoutineNote();
+  const routineNote = useRoutineNote();
+  const { note } = routineNote;
 
 
   // dnd 시에 발생하는 일시적인 open/close를 위해서 따로 상태로 저장
@@ -53,9 +54,9 @@ export const BaseTaskGroupFeature = React.memo(({
   const changeOpen = useCallback(async (isOpen: boolean) => {
     _setOpen(isOpen);
     const newNote = TaskGroupEntity.openGroup(note, group.name, isOpen);
-    setNote(newNote);
+    routineNote.setNote(newNote);
     await noteRepository.save(newNote);
-  }, [group.name, note, setNote])
+  }, [group.name, note, routineNote])
 
 
   /**
@@ -65,7 +66,7 @@ export const BaseTaskGroupFeature = React.memo(({
   const isAllSubTasksCheckedBeforeRef = useRef(isAllSubTasksChecked);
   useEffect(() => {
     if(!isAllSubTasksCheckedBeforeRef.current && isAllSubTasksChecked){
-      changeOpen(false);
+      void changeOpen(false);
     }
     isAllSubTasksCheckedBeforeRef.current = isAllSubTasksChecked;
   }, [changeOpen, isAllSubTasksChecked])
@@ -126,7 +127,7 @@ export const BaseTaskGroupFeature = React.memo(({
   }, [])
   
 
-  const onClick = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+  const onClick = useCallback(() => {
     onGroupClick?.(group);
   }, [group, onGroupClick])
 
@@ -137,7 +138,7 @@ export const BaseTaskGroupFeature = React.memo(({
         disableGutters
         elevation={0}
         expanded={open}
-        onChange={() => changeOpen(!open)}
+        onChange={() => { void changeOpen(!open); }}
         css={{
           backgroundColor: bgColor,
           "&::before": {

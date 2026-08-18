@@ -1,4 +1,4 @@
-import { Routine, RoutineGroup, RoutineGroupProperties, RoutineProperties } from "@entities/routine";
+import { RoutineGroup, RoutineGroupProperties } from "@entities/routine";
 
 
 export type GroupReduceAction = 
@@ -29,6 +29,6 @@ export const groupReducer: GroupReducer = (state, action) => {
         }
       }
     default:
-      throw new Error(`Unhandled action type: ${action}`);
+      throw new Error(`Unhandled action type: ${JSON.stringify(action)}`);
   }
 };

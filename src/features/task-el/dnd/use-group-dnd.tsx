@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
 import { useLeaf } from "@shared/view/use-leaf";
-import React, { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { TaskElDragItem, TaskElDragItemType } from "./drag-item";
 import { GroupHitArea, HitAreaEvaluator } from "./hit-area";
@@ -48,9 +48,9 @@ export const useGroupDnd = ({
 
     item: () => ({
       el: group,
-    } as TaskElDragItem),
+    }),
 
-    end: (item, monitor) => {
+    end: () => {
       onElDragEnd?.();
     },
 
@@ -80,7 +80,7 @@ export const useGroupDnd = ({
       setHit(hit);
     },
 
-    drop: async (item, monitor) => {
+    drop: async (item) => {
       if(!hit) return;
       const dropped = item.el;
       try {
@@ -107,8 +107,8 @@ export const useGroupDnd = ({
         console.error("Failed to persist reordered elements.", e);
         new Notice(`Failed to save order: ${e instanceof Error ? e.message : String(e)}`);
         // UI가 디스크의 상태와 어긋나지 않도록 note를 다시 로드한다.
-        const { note, setNote } = useRoutineNote.getState();
-        setNote(note.day);
+        const state = useRoutineNote.getState();
+        state.setNote(state.note.day);
       }
     },
 
@@ -138,7 +138,7 @@ export const useGroupDnd = ({
      */
     let pseudoPreview = document.querySelector("#dr-pseudo-preview");
     if(!pseudoPreview){
-      const div = document.createElement("div");
+      const div = createDiv();
       div.setCssStyles({
         backgroundColor: "red",
         width: "0.1px",

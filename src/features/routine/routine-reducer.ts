@@ -31,6 +31,6 @@ export const routineReducer: RoutineReducer = (state, action) => {
         }
       }
     default:
-      throw new Error(`Unhandled action type: ${action}`);
+      throw new Error(`Unhandled action type: ${JSON.stringify(action)}`);
   }
 };

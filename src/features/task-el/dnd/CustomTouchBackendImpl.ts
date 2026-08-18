@@ -1,8 +1,13 @@
 import { DragDropManager } from 'dnd-core';
-import { HTML5BackendContext, HTML5BackendOptions } from 'react-dnd-html5-backend';
 import { isTaskElDragItemType } from './drag-item';
 import { TouchBackendContext, TouchBackendImpl, TouchBackendOptions } from 'react-dnd-touch-backend';
 
+
+type TouchBackendInternalState = {
+  _isScrolling: boolean;
+  lastTargetTouchFallback: Touch | undefined;
+  moveStartSourceIds: string[] | undefined;
+}
 
 
 class CustomTouchBackendImpl extends TouchBackendImpl {
@@ -18,8 +23,7 @@ class CustomTouchBackendImpl extends TouchBackendImpl {
       } else {
         // task drag가 아닌 경우에도 원본 handler의 상태 정리는 그대로 수행해야한다. (drop/endDrag만 억제)
         // 정리하지 않으면 _isScrolling, moveStartSourceIds 등이 남아서 이후의 터치 동작이 오작동한다.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const self = this as any;
+        const self = this as unknown as TouchBackendInternalState;
         self._isScrolling = false;
         self.lastTargetTouchFallback = undefined;
         self.moveStartSourceIds = undefined;

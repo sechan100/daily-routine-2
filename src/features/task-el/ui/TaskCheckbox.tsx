@@ -1,11 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
 import { TaskState } from "@entities/note";
-import { Icon } from "@shared/components/Icon";
-import { getCustomAccentHSL } from "@shared/components/obsidian-accent-color";
 import { dr } from "@shared/utils/daily-routine-bem";
 import { useMemo } from "react";
-import { CSSTransition, SwitchTransition } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 
 
 const bem = dr("task-cbx")

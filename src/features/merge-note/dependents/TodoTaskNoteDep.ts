@@ -1,5 +1,5 @@
-import { RoutineNote, NoteEntity, TodoTask, TaskGroup, isTodoTask, Task, isTaskGroup, TaskParent, isTask, NoteElement } from "@entities/note";
-import { RoutineGroup, RoutineGroupEntity } from "@entities/routine";
+import { RoutineNote, NoteEntity, TodoTask, isTodoTask, isTaskGroup, TaskParent, NoteElement } from "@entities/note";
+import { RoutineGroupEntity } from "@entities/routine";
 import { NoteDependent } from "./NoteDependent";
 
 
@@ -59,7 +59,7 @@ export class TodoTaskNoteDep extends NoteDependent {
           note.children.unshift(task);
           continue;
         } else {
-          parent = parentOrNull as TaskGroup;
+          parent = parentOrNull;
         }
       } else {
         parent = note;

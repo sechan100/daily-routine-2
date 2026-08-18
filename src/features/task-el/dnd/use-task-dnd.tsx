@@ -2,7 +2,7 @@
 import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { useLeaf } from "@shared/view/use-leaf";
-import { RefObject, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { HitAreaEvaluator, TaskHitArea } from "./hit-area";
 import { DndIndicator } from "./indicator";
@@ -67,9 +67,9 @@ export const useTaskDnd = ({
 
     item: () => ({
       el: task,
-    } as TaskElDragItem),
+    }),
 
-    end: (item, monitor) => {
+    end: () => {
       onElDragEnd?.();
     },
 
@@ -100,7 +100,7 @@ export const useTaskDnd = ({
       }
     },
 
-    drop: async (item, monitor) => {
+    drop: async (item) => {
       if(!hit) return;
       const dropped = item.el;
       setHit(null);
@@ -156,7 +156,7 @@ export const useTaskDnd = ({
      */
     let pseudoPreview = document.querySelector("#dr-pseudo-preview");
     if(!pseudoPreview) {
-      const div = document.createElement("div");
+      const div = createDiv();
       div.setCssStyles({
         backgroundColor: "red",
         width: "0.1px",

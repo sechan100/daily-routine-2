@@ -1,4 +1,4 @@
-import { noteRepository, RoutineNote } from "@entities/note";
+import { RoutineNote } from "@entities/note";
 import { RoutineNoteCreator } from "@entities/routine-to-note/RoutineNoteCreator";
 import { TaskCheckedStateNoteDep } from "./dependents/TaskCheckedStateNoteDep";
 import { TodoTaskNoteDep } from "./dependents/TodoTaskNoteDep";

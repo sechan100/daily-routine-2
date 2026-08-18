@@ -5,8 +5,6 @@ export type TaskHitArea = "top" | "bottom";
 
 export type GroupHitArea = "top" | "in" | "bottom";
 
-type X = XYCoord["x"];
-type Y = XYCoord["y"];
 
 type NodeRect = DOMRect;
 
@@ -23,7 +21,7 @@ export const HitAreaEvaluator = {
    * @param node 
    * @param isLastNode 전체 리스트를 기준으로 가장 마지막 노드인 경우에만 true. 개별 group의 마지막인 경우는 false로 처리해야한다.
    */
-  evaluateTask({ x, y }: XYCoord, node: HTMLElement, isLastNode: boolean): TaskHitArea | null {
+  evaluateTask({ x: _x, y }: XYCoord, node: HTMLElement, _isLastNode: boolean): TaskHitArea | null {
     const rect: NodeRect = node.getBoundingClientRect();
     const dropTargetHeight = rect.height;
     const hitBoundary = 0.40;

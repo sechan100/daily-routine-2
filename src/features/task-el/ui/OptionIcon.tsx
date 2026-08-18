@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { Icon } from "@shared/components/Icon";
 import { MenuComponent } from "@shared/components/Menu";
 import { Menu } from "obsidian";
 
