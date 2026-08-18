@@ -36,7 +36,7 @@ export const AchievementPage = ({ month }: AchievementPageProps) => {
         scrollButtons={false}
         centered
         sx={{ borderTop: 1, borderColor: 'divider' }}
-        onChange={(e, value) => setType(value)}
+        onChange={(_, value) => setType(value)}
         css={{
           zIndex: 5,
           backgroundColor: leafBgColor,

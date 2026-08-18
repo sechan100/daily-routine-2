@@ -35,8 +35,7 @@ export const DailyRoutineView = () => {
     view.contentEl.classList.add("no-padding");
   }, [view]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onTabChange = useCallback((e: React.SyntheticEvent, tab: DrTabType) => {
+  const onTabChange = useCallback((_e: React.SyntheticEvent, tab: DrTabType) => {
     switch(tab){
       case "note": 
         route(tab, { day: Day.today() });

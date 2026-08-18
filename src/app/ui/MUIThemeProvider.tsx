@@ -1,5 +1,5 @@
 import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
-import _ from 'lodash';
+import { debounce } from 'es-toolkit/compat';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 
@@ -18,9 +18,11 @@ export const MUIThemeProvider = (props: MUIThemeProviderProps) => {
 
   const resolveAccentColor = useCallback(() => {
     // --color-accent-1 같은 토큰은 calc()가 남아있을 수 있으므로, probe 엘리먼트로 실제 색상값을 얻는다.
-    const probe = document.createElement("div");
-    probe.style.display = "none";
-    probe.style.color = "var(--interactive-accent)";
+    const probe = createDiv();
+    probe.setCssProps({
+      display: "none",
+      color: "var(--interactive-accent)",
+    });
     body.appendChild(probe);
     const color = getComputedStyle(probe).color;
     probe.remove();
@@ -51,7 +53,7 @@ export const MUIThemeProvider = (props: MUIThemeProviderProps) => {
   const [ theme, setTheme ] = useState<Theme>(() => extractMUIThemeFromBodyEl());
 
   useEffect(() => {
-    const updateThemeColor = _.debounce(() => {
+    const updateThemeColor = debounce(() => {
       setTheme(extractMUIThemeFromBodyEl())
     }, 100);
 

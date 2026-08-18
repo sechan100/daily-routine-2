@@ -1,5 +1,5 @@
 import DailyRoutinePlugin from "src/main";
-import { App, normalizePath, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import { FileSuggest } from "@shared/suggesters/FileSuggester";
 import { useLeaf } from "@shared/view/use-leaf";
 
@@ -32,10 +32,10 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
     // DAILY ROUTINE FOLDER PATH
     new Setting(containerEl)
     .setName("Daily routine folder path") 
-    .setDesc("This is the path to the folder where the Daily Routine Plugin saves notes, routines, and other data.")
+    .setDesc("This is the path to the folder where the daily routine plugin saves notes, routines, and other data.")
     .addText(textComponent => {
       new FileSuggest(textComponent, "folder")
-      .setPlaceholder("daily_routine")
+      .setPlaceholder("Daily_routine")
       .setDefaultValue(this.plugin.settings.dailyRoutineFolderPath??"")
       .onChange((value) => {
         this.updateSettings({ dailyRoutineFolderPath: normalizePath(value)});
@@ -84,6 +84,6 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
 
   updateSettings(partial: Partial<DailyRoutinePluginSettings>) {
     this.plugin.settings = {...this.plugin.settings, ...partial};
-    this.plugin.saveSettings();
+    void this.plugin.saveSettings();
   }
 }

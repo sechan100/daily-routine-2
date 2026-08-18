@@ -3,7 +3,6 @@ import { resolveRoutineNote, UseRoutineNoteProvider } from "@features/note";
 import { Day } from "@shared/period/day";
 import { Notice } from "obsidian";
 import { useState, useEffect } from "react";
-import { RoutineNoteContent } from "./Content";
 
 
 interface Props {

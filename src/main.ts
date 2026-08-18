@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { Plugin, Platform } from 'obsidian';
 import { setPlugin } from '@shared/utils/plugin-service-locator';
 import { DailyRoutinePluginSettings, DailyRoutineSettingTab, DEFAULT_SETTINGS } from '@app/settings/DailyRoutineSettingTab';
@@ -29,20 +28,20 @@ export default class DailyRoutinePlugin extends Plugin {
       icon: DAILY_ROUTINE_ICON_NAME,
       name: "Open routine view",
       callback: () => {
-        activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
+        void activateView(DailyRoutineObsidianView.VIEW_TYPE, 1);
       }
     });
 
     process.env.NODE_ENV === "development" && this.addRibbonIcon(
       "toggle-left",
       "Toggle mobile view",
-      // @ts-ignore
+      // @ts-expect-error -- emulateMobile은 공개 타입 정의에 없는 내부 API다.
       () => this.app.emulateMobile(!Platform.isMobile)
     );
     
     // layout 복원이 끝난 뒤에 뷰가 없으면 생성한다. (사이드바를 강제로 열지는 않는다)
     this.app.workspace.onLayoutReady(() => {
-      activateView(DailyRoutineObsidianView.VIEW_TYPE, 1, false);
+      void activateView(DailyRoutineObsidianView.VIEW_TYPE, 1, false);
     });
   }
   

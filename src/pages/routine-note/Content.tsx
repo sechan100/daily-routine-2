@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { isTask, isTaskGroup, NoteEntity } from '@entities/note';
+import { isTask, isTaskGroup } from '@entities/note';
 import { useRoutineNote } from "@features/note";
 import { renderTask, TaskDndContext } from '@features/task-el';
 import { Icon } from '@shared/components/Icon';
@@ -10,8 +10,7 @@ import { TaskGroupWidget, useCreateGroupModal } from '@widgets/task-group';
 import { useAddTodoModal } from '@widgets/todo';
 import { WeeksWidget } from "@widgets/weeks";
 import { Menu, Notice } from "obsidian";
-import { useCallback, useMemo } from "react";
-import { NoteContext } from './NoteContext';
+import { useCallback } from "react";
 import { useRoutineMutationMerge } from '@features/merge-note';
 
 
@@ -65,8 +64,8 @@ export const RoutineNoteContent = () => {
       item.setIcon("merge");
       item.setTitle("Merge notes");
       item.onClick(() => {
-        mergeNotes();
-        new Notice("All Notes Merged!");
+        void mergeNotes();
+        new Notice("All notes merged!");
       });
     });
     
