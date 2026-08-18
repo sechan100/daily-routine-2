@@ -1,5 +1,4 @@
 import { moment as obsidianMoment } from "obsidian";
-import _ from "lodash";
 import { DR_SETTING } from "@app/settings/setting-provider";
 
 
