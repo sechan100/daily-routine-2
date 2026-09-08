@@ -1,6 +1,6 @@
 # Daily Routine
 
-![Image|300](https://github.com/user-attachments/assets/7dd6ba71-7c4a-489a-856a-17df9dc74522)
+![Image|300](https://github.com/user-attachments/assets/8546d688-2d98-4196-b8cc-92b6c1027cc8)
 
 **Daily Routine** is an Obsidian plugin for tracking recurring tasks and building daily habits. Define your routines once — weekly, monthly, or on a custom interval — and the plugin generates a daily checklist note for you, every day, automatically.
 
