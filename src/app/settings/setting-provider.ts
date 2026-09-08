@@ -22,5 +22,13 @@ export const DR_SETTING = {
 
   confirmUncheckTask(){
     return s().confirmUncheckTask;
+  },
+
+  defaultRoutineShowOnCalendar(){
+    return s().defaultRoutineShowOnCalendar;
+  },
+
+  defaultTodoShowOnCalendar(){
+    return s().defaultTodoShowOnCalendar;
   }
 }

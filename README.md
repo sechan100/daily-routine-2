@@ -62,6 +62,8 @@ Track your overall completion rate and per-routine consistency over time with vi
 - **Daily routine folder path** — where routine files and daily notes are stored
 - **Start of week** — Monday-first or Sunday-first weeks, independent of your Obsidian language
 - **Do confirmation when unchecking task** — ask before unchecking a completed task
+- **Show new routines on calendar** — the **Show on calendar** value a new routine starts with
+- **Show new todos on calendar** — the **Show on calendar** value a new todo starts with
 
 ## Feedback
 

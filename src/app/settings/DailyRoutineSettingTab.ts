@@ -8,12 +8,16 @@ export interface DailyRoutinePluginSettings {
   dailyRoutineFolderPath: string;
   isMondayStartOfWeek: boolean;
   confirmUncheckTask: boolean;
+  defaultRoutineShowOnCalendar: boolean;
+  defaultTodoShowOnCalendar: boolean;
 }
 
 export const DEFAULT_SETTINGS: DailyRoutinePluginSettings = {
   dailyRoutineFolderPath: "daily_routine",
   isMondayStartOfWeek: true,
-  confirmUncheckTask: true
+  confirmUncheckTask: true,
+  defaultRoutineShowOnCalendar: false,
+  defaultTodoShowOnCalendar: true
 }
 
 
@@ -68,6 +72,30 @@ export class DailyRoutineSettingTab extends PluginSettingTab {
       .setValue(this.plugin.settings.confirmUncheckTask)
       .onChange((value) => {
         this.updateSettings({ confirmUncheckTask: value });
+      })
+    })
+
+    // Default 'Show on calendar' for new routines
+    new Setting(containerEl)
+    .setName("Show new routines on calendar")
+    .setDesc("Only applies to routines created from now on. Existing routines keep their own value.")
+    .addToggle(toggle => {
+      toggle
+      .setValue(this.plugin.settings.defaultRoutineShowOnCalendar)
+      .onChange((value) => {
+        this.updateSettings({ defaultRoutineShowOnCalendar: value });
+      })
+    })
+
+    // Default 'Show on calendar' for new todos
+    new Setting(containerEl)
+    .setName("Show new todos on calendar")
+    .setDesc("Only applies to todos created from now on. Existing todos keep their own value.")
+    .addToggle(toggle => {
+      toggle
+      .setValue(this.plugin.settings.defaultTodoShowOnCalendar)
+      .onChange((value) => {
+        this.updateSettings({ defaultTodoShowOnCalendar: value });
       })
     })
   }

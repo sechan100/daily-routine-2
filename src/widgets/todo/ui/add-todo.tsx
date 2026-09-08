@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { DR_SETTING } from "@app/settings/setting-provider";
 import { noteRepository, TaskEntity, TodoTask } from "@entities/note";
 import { useRoutineNote } from "@features/note";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
@@ -10,7 +11,7 @@ import { useCallback, useMemo, useState } from "react";
 
 export const useAddTodoModal = createModal(({ modal }: { modal: ModalApi}) => {
   const { note, setNote } = useRoutineNote();
-  const [ todo, setTodo ] = useState<TodoTask>(TaskEntity.createTodoTask(""));
+  const [ todo, setTodo ] = useState<TodoTask>(() => TaskEntity.createTodoTask("", DR_SETTING.defaultTodoShowOnCalendar()));
   
   const onSaveBtnClick = useCallback(async () => {
     const validation = TaskEntity.validateTodoName(todo.name);
