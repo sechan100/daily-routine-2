@@ -38,12 +38,12 @@ const createRoutineTask = (routine: Routine): RoutineTask => ({
   tags: routine.properties.tags ?? [],
 })
 
-const createTodoTask = (name: string): TodoTask => ({
+const createTodoTask = (name: string, showOnCalendar: boolean): TodoTask => ({
   elementType: "task",
   name,
   taskType: "todo",
   state: "un-checked",
-  showOnCalendar: true,
+  showOnCalendar,
   tags: [],
 })
 
