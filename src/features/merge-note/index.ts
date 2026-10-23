@@ -4,3 +4,5 @@
  * 해당 slice는 이러한 작업을 구현한다.
  */
 export { useRoutineMutationMerge } from "./use-routine-mutate-merge";
+export { runExclusiveWithMerges } from "./merge-queue";
+export { removeGroupInNotes, renameGroupInNotes, renameRoutineInNotes } from "./rename-in-notes";
