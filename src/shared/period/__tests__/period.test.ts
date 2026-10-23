@@ -2,6 +2,8 @@ import moment from "moment";
 // 로케일 등록(등록 시 전역 로케일이 바뀌므로 beforeEach에서 'en'으로 복원한다)
 import "moment/locale/de";
 import "moment/locale/ko";
+import "moment/locale/ar";
+import "moment/locale/fa";
 import { Day, DayOfWeek } from "@shared/period/day";
 import { Week } from "@shared/period/week";
 import { Month } from "@shared/period/month";
@@ -9,12 +11,12 @@ import { DR_SETTING } from "@app/settings/setting-provider";
 
 jest.mock("@app/settings/setting-provider", () => ({
   DR_SETTING: {
-    isMondayStartOfWeek: jest.fn(() => true),
+    weekStartDow: jest.fn(() => 1),
   },
 }));
 
 const setMondayStart = (value: boolean) => {
-  (DR_SETTING.isMondayStartOfWeek as jest.Mock).mockReturnValue(value);
+  (DR_SETTING.weekStartDow as jest.Mock).mockReturnValue(value ? 1 : 0);
 };
 
 // en: 일요일 시작 로케일, de: 월요일 시작 로케일, ko: 일요일 시작 로케일
@@ -46,7 +48,7 @@ describe("Day.dow", () => {
       expect(Day.fromString(date).dow).toBe(expected);
     });
 
-    it("isMondayStartOfWeek 설정과 무관하게 동일하다", () => {
+    it("주 시작 요일 설정과 무관하게 동일하다", () => {
       moment.locale(locale);
       for (const mondayStart of [true, false]) {
         setMondayStart(mondayStart);
@@ -66,7 +68,7 @@ describe("Day.max", () => {
 
 
 describe("Week.of", () => {
-  describe.each([true, false])("isMondayStartOfWeek: %s", (mondayStart) => {
+  describe.each([true, false])("월요일 시작: %s", (mondayStart) => {
     describe.each(LOCALES)("locale: %s", (locale) => {
       it("어떤 요일을 넣어도 그 날을 포함하는 주를 반환한다", () => {
         setMondayStart(mondayStart);
@@ -169,5 +171,60 @@ describe("Day.isSameWeek", () => {
       expect(sun.isSameWeek(sat)).toBe(true);
       expect(sat.isSameWeek(nextSun)).toBe(false);
     });
+  });
+});
+
+
+describe("토요일 시작", () => {
+  beforeEach(() => {
+    (DR_SETTING.weekStartDow as jest.Mock).mockReturnValue(6);
+  });
+
+  it("주는 토요일부터 금요일까지다", () => {
+    const week = Week.of(Day.fromString("2025-01-15")); // 수요일
+    expect(week.startDay.format()).toBe("2025-01-11");
+    expect(week.startDay.dow).toBe(DayOfWeek.SAT);
+    expect(week.endDay.format()).toBe("2025-01-17");
+    expect(Week.of(Day.fromString("2025-01-17")).startDay.format()).toBe("2025-01-11"); // 금요일
+    expect(Week.of(Day.fromString("2025-01-18")).startDay.format()).toBe("2025-01-18"); // 토요일
+  });
+
+  it("요일 순서는 토요일부터 시작한다", () => {
+    expect(Day.getDaysOfWeek()).toEqual([
+      DayOfWeek.SAT, DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI,
+    ]);
+  });
+
+  it("같은 주 판정도 토요일 기준이다", () => {
+    expect(Day.fromString("2025-01-17").isSameWeek(Day.fromString("2025-01-11"))).toBe(true);
+    expect(Day.fromString("2025-01-18").isSameWeek(Day.fromString("2025-01-17"))).toBe(false);
+  });
+});
+
+
+describe("앱 언어가 고유 숫자를 쓰는 로케일일 때 (issue: 노트 파일 이름이 '٢٠٢٦-١٠-٢٣'으로 만들어짐)", () => {
+  it.each(["ar", "fa"])("locale %s: 저장용 format()은 항상 아라비아 숫자 YYYY-MM-DD다", (locale) => {
+    moment.locale(locale);
+    expect(Day.fromString("2026-10-23").format()).toBe("2026-10-23");
+    expect(Day.fromJsDate(new Date(2026, 9, 23)).format()).toBe("2026-10-23");
+    expect(Day.today().format()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(new Month(Day.fromString("2026-10-23")).format()).toBe("2026-10");
+  });
+
+  it.each(["ar", "fa"])("locale %s: 저장된 날짜를 읽고 검증할 수 있다", (locale) => {
+    moment.locale(locale);
+    expect(Day.isValidFormat("2026-10-23")).toBe(true);
+    expect(Day.isValidFormat("2026-13-01")).toBe(false);
+    expect(Day.fromString("2026-10-23").dow).toBe(DayOfWeek.FRI);
+    expect(Day.fromString("2026-10-23").clone(m => m.add(1, "day")).format()).toBe("2026-10-24");
+  });
+});
+
+
+describe("이전 버전이 앱 언어의 숫자로 저장한 날짜", () => {
+  it.each(["٢٠٢٦-١٠-٢٣", "۲۰۲۶-۱۰-۲۳", "२०२६-१०-२३"])("%s를 읽을 수 있다 (영어 로케일에서도)", (stored) => {
+    moment.locale("en");
+    expect(Day.isValidFormat(stored)).toBe(true);
+    expect(Day.fromString(stored).format()).toBe("2026-10-23");
   });
 });

@@ -1,5 +1,6 @@
 import { moment as obsidianMoment } from "obsidian";
 import { DR_SETTING } from "@app/settings/setting-provider";
+import { toAsciiDigits } from "./ascii-digits";
 
 
 
@@ -14,13 +15,16 @@ export enum DayOfWeek {
 }
 
 // HACK: obsidian.d.ts에서 typeof 로 선언된 Moment가 호출될 수 없다고 에러가 발생함.
-const moment = obsidianMoment as unknown as (inp?: moment.MomentInput, format?: moment.MomentFormatSpecification, strict?: boolean) => moment.Moment;
+const moment = obsidianMoment as unknown as {
+  (inp?: moment.MomentInput, format?: moment.MomentFormatSpecification, strict?: boolean): moment.Moment;
+  (inp?: moment.MomentInput, format?: moment.MomentFormatSpecification, language?: string, strict?: boolean): moment.Moment;
+};
 
 /**
- * 로케일이 아닌 플러그인 설정(isMondayStartOfWeek)에 따른 주 시작일로 moment를 이동시킨다.
+ * 로케일이 아닌 플러그인 설정(weekStart)에 따른 주 시작일로 moment를 이동시킨다.
  */
 const moveToStartOfSettingWeek = (m: moment.Moment): moment.Moment => {
-  const weekStartDow = DR_SETTING.isMondayStartOfWeek() ? 1 : 0; // 0=SUN, 1=MON
+  const weekStartDow = DR_SETTING.weekStartDow(); // 0=SUN, 1=MON, 6=SAT
   const diff = (m.day() - weekStartDow + 7) % 7;
   return m.subtract(diff, "day").startOf("day");
 }
@@ -35,7 +39,9 @@ export class Day {
    * @param day "YYYY-MM-DD" 형식의 문자열
    */ 
   constructor(_moment: moment.Moment) {
-    const m = _moment.clone();
+    // Obsidian은 moment의 전역 로케일을 앱 언어로 바꾼다. 아랍어·페르시아어·힌디어 등은 format()이 그 언어의 숫자를 쓰므로
+    // ('٢٠٢٦-١٠-٢٣') 노트 파일 이름 같은 저장 값이 깨진다. Day는 항상 영어 로케일로 다루고, 화면 표시는 @shared/i18n의 포매터를 쓴다.
+    const m = _moment.clone().locale('en');
     if(m.isValid()) {
       this.#moment = m;
     } else {
@@ -52,11 +58,15 @@ export class Day {
   }
 
   static max(): Day{
-    return new Day(moment('9999-12-31'));
+    return Day.fromString('9999-12-31');
   }
 
   static fromString(str: string){
-    return new Day(moment(str));
+    // 저장된 값은 로케일과 무관한 'YYYY-MM-DD'이므로 영어 로케일로 읽는다.
+    // 이전 버전이 앱 언어의 숫자('٢٠٢٦-١٠-٢٣')로 저장한 값도 아라비아 숫자로 바꿔 읽는다.
+    const ascii = toAsciiDigits(str);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(ascii)) return new Day(moment(ascii, 'YYYY-MM-DD', 'en', true));
+    return new Day(moment(ascii));
   }
 
   static fromJsDate(date: Date){
@@ -67,13 +77,16 @@ export class Day {
    * "YYYY-MM-DD" 형식의 유효한 날짜 문자열인지 검사한다.
    */
   static isValidFormat(str: string): boolean {
-    return moment(str, 'YYYY-MM-DD', true).isValid();
+    return moment(toAsciiDigits(str), 'YYYY-MM-DD', 'en', true).isValid();
   }
 
+  /**
+   * 설정된 주 시작 요일부터 순서대로 7개 요일을 돌려준다.
+   */
   static getDaysOfWeek(): DayOfWeek[] {
-    const weekWithoutSun = [DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
-    const isMondayStart = DR_SETTING.isMondayStartOfWeek();
-    return isMondayStart ? [...weekWithoutSun, DayOfWeek.SUN] : [DayOfWeek.SUN, ...weekWithoutSun];
+    const sundayFirst = [DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE, DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT];
+    const start = DR_SETTING.weekStartDow();
+    return [...sundayFirst.slice(start), ...sundayFirst.slice(0, start)];
   }
 
   format(format?: string){
@@ -120,9 +133,14 @@ export class Day {
 
   get week(){
     // 주차 계산이 로케일에 좌우되지 않도록, 설정된 주 시작 요일 기준으로 계산한다.
-    return DR_SETTING.isMondayStartOfWeek()
-      ? this.#moment.isoWeek()
-      : this.#moment.clone().locale("en").week();
+    // 월요일 시작은 ISO 주차, 일요일 시작은 미국식 주차다. 토요일 시작도 같은 규칙(1월 1일이 든 주가 1주차)으로 센다.
+    const start = DR_SETTING.weekStartDow();
+    if(start === 1) return this.#moment.isoWeek();
+    if(start === 0) return this.#moment.clone().locale("en").week();
+    const weekStart = moveToStartOfSettingWeek(this.#moment.clone());
+    const weekEnd = weekStart.clone().add(6, 'day');
+    const firstWeekStart = moveToStartOfSettingWeek(moment([weekEnd.year(), 0, 1]).locale('en'));
+    return weekStart.diff(firstWeekStart, 'week') + 1;
   }
 
   get date(){

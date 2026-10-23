@@ -8,7 +8,7 @@ export class Week {
 
   /**
    * moment의 전체 설정을 변경할 수 없기 때문에, 여기서 설정을 적용해야한다.
-   * DR_SETTING.isMondayStartOfWeek()를 통해 월요일부터 시작하는지를 확인하고,
+   * DR_SETTING.weekStartDow()로 주의 첫 요일을 확인하고,
    * 그에 따라서 startDay와 endDay를 적절히 조정한다.
    */
   private constructor(startOfDay: Day) {
@@ -18,7 +18,7 @@ export class Week {
 
   static of(day: Day): Week {
     // 로케일에 따라 달라지는 startOf("week") 대신, 설정된 주 시작 요일로부터 직접 계산한다.
-    const weekStartDow = DR_SETTING.isMondayStartOfWeek() ? 1 : 0; // moment: 0=SUN, 1=MON (로케일 무관)
+    const weekStartDow = DR_SETTING.weekStartDow(); // moment: 0=SUN, 1=MON, 6=SAT (로케일 무관)
     const startDay = day.clone(m => {
       const diff = (m.day() - weekStartDow + 7) % 7;
       m.subtract(diff, "day").startOf("day");
