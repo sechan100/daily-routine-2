@@ -7,16 +7,15 @@ import { CalendarSlide } from './CalendarSlide';
 
 export interface NoteAchievementCalendarProps {
   month: Month;
+  // 월 네비게이션을 제외하고 위젯이 쓸 수 있는 높이(px)
   height: number;
-  maxWidth: number;
 }
-export const NoteAchievementWidget = ({ month, height, maxWidth }: NoteAchievementCalendarProps) => {
+export const NoteAchievementWidget = ({ month, height }: NoteAchievementCalendarProps) => {
 
   return (
     <SwipeableCalendar
       month={month}
       verticalHeight={height}
-      maxWidth={maxWidth}
     >
       {month => <CalendarSlide month={month}/>}
     </SwipeableCalendar>

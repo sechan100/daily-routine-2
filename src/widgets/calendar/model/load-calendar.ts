@@ -3,6 +3,7 @@ import { Calendar, Tile } from "./types";
 import { RoutineEntity, routineRepository } from "@entities/routine";
 import { NoteEntity, noteRepository, TaskEntity } from "@entities/note";
 import { Day, DayFormat } from "@shared/period/day";
+import { getCalendarGridRange } from "@shared/components/swipeable-calendar/calendar-grid";
 
 
 
@@ -20,18 +21,8 @@ export const loadCalendar = async (month: Month): Promise<Calendar> => {
     };
   }
 
-  /**
-   * 이웃한 달의 tile 범위 계산.
-   * Day.getDaysOfWeek()는 isMondayStartOfWeek 설정 순서를 따르므로,
-   * 같은 설정으로 calendarType을 정하는 BaseCalendar의 그리드와 항상 일치한다.
-   */
-  // 추가로 로드해야하는 앞달의 tile들 개수
-  const prevNeighboringMonthTilesNum = Day.getDaysOfWeek().indexOf(month.startDay.dow)
-  const startDay = month.startDay.clone(m => m.subtract(prevNeighboringMonthTilesNum, "day"))
-
-  // 뒷달
-  const nextNeighboringMonthTilesNum = 6 - Day.getDaysOfWeek().indexOf(month.endDay.dow);
-  const endDay = month.endDay.clone(m => m.add(nextNeighboringMonthTilesNum, "day"))
+  // 이웃한 달까지 포함한 그리드의 첫 날·마지막 날. BaseCalendar의 주 시작 설정과 항상 일치한다.
+  const { startDay, endDay } = getCalendarGridRange(month);
 
 	const loadedNotes = await noteRepository.loadBetween(startDay, endDay);
 	const tiles: Map<DayFormat, Tile> = new Map();
