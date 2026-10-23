@@ -2,8 +2,9 @@
 import { css } from "@emotion/react";
 import { RoutineProperties } from "@entities/routine";
 import { Button } from "@shared/components/Button";
-import clsx from "clsx";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { formatDayOfMonth, getDateLocale, t } from "@shared/i18n";
+import { Day } from "@shared/period/day";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Calendar from "react-calendar";
 import ReactDOM from "react-dom";
 
@@ -11,6 +12,7 @@ import ReactDOM from "react-dom";
 
 // px
 const tileRadius = 20;
+
 
 const calendarCss = css({
   ".react-calendar": {
@@ -54,6 +56,12 @@ interface MonthOptionProps {
   setProperties: (properties: Partial<RoutineProperties>) => void;
 }
 export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOptionProps) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  // '마지막 날' 버튼을 끼워 넣을 타일 컨테이너. 다른 곳의 달력과 섞이지 않도록 이 컴포넌트 안에서만 찾는다.
+  const [tilesEl, setTilesEl] = useState<Element | null>(null);
+  useEffect(() => {
+    setTilesEl(wrapperRef.current?.querySelector(".react-calendar__month-view__days") ?? null);
+  }, []);
 
   const toggleDay = useCallback((day: number) => {
     if(daysOfMonth.includes(day)){
@@ -77,6 +85,7 @@ export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOpti
 
   return (
     <div 
+      ref={wrapperRef}
       className={className} 
       css={{
         width: "100%",
@@ -84,6 +93,10 @@ export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOpti
       <Calendar
         tileContent={({ date }) => <CalendarTile date={date} active={daysOfMonth.includes(date.getDate())} />}
         value={new Date(2024, 0, 1)}
+        locale={getDateLocale()}
+        // 2024년 1월은 실제 달이 아니라 날짜 번호를 늘어놓기 위한 고정 달이다. 월요일에 시작하므로 iso8601이면 앞쪽 빈 칸이 없다.
+        // 주 시작 요일 설정을 따르면 일요일·토요일 시작에서 빈 칸이 생겨 1일이 밀린다.
+        calendarType="iso8601"
         allowPartialRange={false}
         selectRange={false}
         showNavigation={false}
@@ -92,6 +105,7 @@ export const MonthOption = ({ className, daysOfMonth, setProperties }: MonthOpti
         css={calendarCss}
       />
       <LastDayOfMonthButton
+        container={tilesEl}
         onClick={onLasyDayBtnClick}
         active={daysOfMonth.includes(0)}
       />
@@ -134,7 +148,7 @@ const CalendarTile = ({ date, active }: CalendarTileProps) => {
         activeStyle
       ]}
     >
-      {date.getDate().toString()} 
+      {formatDayOfMonth(Day.fromJsDate(date))}
     </div>
   )
 }
@@ -143,34 +157,20 @@ const CalendarTile = ({ date, active }: CalendarTileProps) => {
 
 interface LastDayOfMonthButtonProps {
   className?: string;
+  container: Element | null;
   active: boolean;
   onClick: (isActive: boolean) => void;
 }
 const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
-  const [element, setElement] = useState<Element>();
-
-  const calendarTileFlexCn = useMemo(() => ".react-calendar__month-view__days", []);
-  useEffect(() => {
-    const calendarTileFlex = document.querySelector(calendarTileFlexCn);
-    if(!calendarTileFlex) return;
-    setElement(calendarTileFlex);
-  }, [calendarTileFlexCn]);
-
-
-  const activeCn = useMemo(() => `${props.className}--active`, [props.className]);
-  
-  const onClick = useCallback((e: React.MouseEvent) => {
+  const onClick = useCallback(() => {
     props.onClick(!props.active);
-    e.currentTarget.classList.toggle(activeCn);
-  }, [activeCn, props]);
+  }, [props]);
 
   
-  if(!element) return null;
+  if(!props.container) return null;
   return ReactDOM.createPortal(
     <Button
-      className={clsx(props.className, {
-        activeCn: props.active
-      })}
+      className={props.className}
       onClick={onClick}
       variant={props.active ? "accent" : "primary"}
       css={css`
@@ -183,8 +183,8 @@ const LastDayOfMonthButton = (props: LastDayOfMonthButtonProps) => {
         }
       `}
     >
-      Last day of month
+      {t("tasks.criteria.lastDay")}
     </Button>,
-    element
+    props.container
   )
 }

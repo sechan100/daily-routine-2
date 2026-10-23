@@ -7,6 +7,8 @@ import { MonthOption } from "./active-criteria-month";
 import { IntervalOption } from "./active-criteria-interval";
 import { TEXT_CSS } from "@shared/components/text-style";
 import { Routine, RoutineProperties } from "@entities/routine";
+import { getActiveCriteriaError } from "../routine-reducer";
+import { t } from "@shared/i18n";
 
 
 interface ActiveCriteriaProps {
@@ -19,6 +21,7 @@ interface ActiveCriteriaProps {
  */
 export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCriteriaProps) => {  
   const activeCriteria = useMemo(() => routine.properties.activeCriteria, [routine]);
+  const criteriaError = useMemo(() => getActiveCriteriaError(routine.properties), [routine]);
 
 
   const bem = useMemo(() => dr("active-criteria"), []);
@@ -33,24 +36,24 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
         }}
         className={bem("header")}
       >
-        <div css={TEXT_CSS.medium}>Active criteria</div>
+        <div css={TEXT_CSS.medium}>{t("tasks.criteria.title")}</div>
         <nav className={bem("nav")}>
           <Button
-            css={{marginRight: "0.5em"}}
+            css={{marginInlineEnd: "0.5em"}}
             variant={activeCriteria === "week" ? "accent" : "primary"} 
             onClick={() => setProperties({ activeCriteria: "week"} )}
-          >Week
+          >{t("tasks.criteria.week")}
           </Button>
           <Button
-            css={{marginRight: "0.5em"}}
+            css={{marginInlineEnd: "0.5em"}}
             variant={activeCriteria === "month" ? "accent" : "primary"}
             onClick={() => setProperties({ activeCriteria: "month"} )}
-          >Month
+          >{t("tasks.criteria.month")}
           </Button>
           <Button
             variant={activeCriteria === "interval" ? "accent" : "primary"}
             onClick={() => setProperties({ activeCriteria: "interval"} )}
-          >Interval
+          >{t("tasks.criteria.interval")}
           </Button>
         </nav>
       </header>
@@ -71,6 +74,11 @@ export const ActiveCriteria = ({ className, routine, setProperties }: ActiveCrit
           setProperties={setProperties}
         />
       }</div>
+      {criteriaError && (
+        <div dir="auto" css={[TEXT_CSS.description, TEXT_CSS.errorColor, { paddingTop: "0.7em", textAlign: "end" }]}>
+          {criteriaError}
+        </div>
+      )}
     </div>
   )
 }
