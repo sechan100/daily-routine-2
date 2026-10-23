@@ -1,7 +1,7 @@
 {
 	"id": "daily-routine",
 	"name": "Daily Routine",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"minAppVersion": "1.8.7",
 	"description": "Track recurring tasks and build daily habits. Schedule routines by weekday, date, or interval, manage todos, and follow your progress with calendar and achievement views.",
 	"author": "sechan100",
