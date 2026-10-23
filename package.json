@@ -1,7 +1,7 @@
 {
   "name": "daily-routine-obsidian-plugin",
   "version": "1.1.0",
-  "description": "Daily Routine — an Obsidian plugin for tracking recurring tasks and daily habits",
+  "description": "Daily Routine — a habit tracker and routine planner plugin for Obsidian",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs dev",
@@ -15,6 +15,9 @@
     "obsidian",
     "obsidian-plugin",
     "habit-tracker",
+    "habit",
+    "habits",
+    "streak",
     "routine",
     "recurring-tasks"
   ],
