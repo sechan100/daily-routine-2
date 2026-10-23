@@ -4,7 +4,7 @@ import { Routine, RoutineProperties } from "@entities/routine/domain/routine-typ
 
 jest.mock("@app/settings/setting-provider", () => ({
   DR_SETTING: {
-    isMondayStartOfWeek: jest.fn(() => true),
+    weekStartDow: jest.fn(() => 1),
   },
 }));
 

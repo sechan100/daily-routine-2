@@ -11,4 +11,5 @@ export * from "./domain/routine-type";
 
 // domain
 export { RoutineEntity } from "./domain/routine";
+export type { TagError } from "./domain/routine";
 export { RoutineGroupEntity } from "./domain/routine-group";

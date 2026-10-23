@@ -19,17 +19,23 @@ const validateName = ({
   });
 }
 
+// 사용자에게 보여줄 문구는 호출하는 쪽(UI)이 code로 만든다.
+export type TagError = {
+  code: 'not-string' | 'empty' | 'whitespace' | 'reserved-char';
+  tag: string;
+}
+
 /**
  * tag들을 정규화(앞의 '#' 제거, trim)하고 검증한다. 중복은 제거된다.
  */
-const validateTags = (tags0: unknown[]): Result<string[], string> => {
+const validateTags = (tags0: unknown[]): Result<string[], TagError> => {
   const tags: string[] = [];
   for(const t of tags0){
-    if(typeof t !== 'string') return err(`tag must be a string: ${String(t)}`);
+    if(typeof t !== 'string') return err({ code: 'not-string', tag: String(t) });
     const tag = t.trim().replace(/^#+/, '');
-    if(tag === '') return err('tag cannot be empty.');
-    if(/\s/.test(tag)) return err(`tag cannot contain whitespace: '${tag}'`);
-    if(tag.includes('%')) return err(`tag cannot contain '%': '${tag}'`);
+    if(tag === '') return err({ code: 'empty', tag });
+    if(/\s/.test(tag)) return err({ code: 'whitespace', tag });
+    if(tag.includes('%')) return err({ code: 'reserved-char', tag });
     if(!tags.includes(tag)) tags.push(tag);
   }
   return ok(tags);
@@ -115,12 +121,15 @@ const validateRoutineProperties = (frontmatter: unknown): Result<RoutineProperti
   }
 
   if('intervalStart' in p){
-    // yaml 파서가 날짜를 Date 객체로 해석하는 경우를 보정한다.
-    if(p.intervalStart instanceof Date) p.intervalStart = Day.fromJsDate(p.intervalStart).format();
+    // yaml 파서가 날짜를 Date 객체로 해석하는 경우를 보정한다. yaml의 날짜(시각 없음)는 UTC 자정이므로,
+    // 로컬 시각으로 읽으면 UTC보다 서쪽(미주 등)에서는 하루 앞당겨진다. UTC 기준 연월일을 그대로 쓴다.
+    if(p.intervalStart instanceof Date) p.intervalStart = p.intervalStart.toISOString().slice(0, 10);
     if(
       typeof p.intervalStart !== 'string' ||
       !Day.isValidFormat(p.intervalStart)
     ) return err("property 'intervalStart' must be a valid 'YYYY-MM-DD' date string.");
+    // 이전 버전이 앱 언어의 숫자로 저장한 값('٢٠٢٦-١٠-٢٣')은 아라비아 숫자로 맞춘다. 다음에 루틴을 저장할 때 파일도 고쳐진다.
+    p.intervalStart = Day.fromString(p.intervalStart).format();
   } else {
     // 구버전 루틴 파일에는 존재하지 않는 property이므로 기본값으로 채운다.
     p.intervalStart = Day.today().format();
@@ -138,7 +147,7 @@ const validateRoutineProperties = (frontmatter: unknown): Result<RoutineProperti
   if('tags' in p){
     if(!Array.isArray(p.tags)) return err("property 'tags' must be an array of string.");
     const tagsValidation = validateTags(p.tags);
-    if(tagsValidation.isErr()) return err(`Invalid property 'tags': ${tagsValidation.error}`);
+    if(tagsValidation.isErr()) return err(`Invalid property 'tags': ${tagsValidation.error.code} ('${tagsValidation.error.tag}')`);
     p.tags = tagsValidation.value;
   } else {
     // 구버전 루틴 파일에는 존재하지 않는 property이므로 기본값으로 채운다.
