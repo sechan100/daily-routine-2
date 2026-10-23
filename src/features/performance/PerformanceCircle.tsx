@@ -10,6 +10,17 @@ const cleanPercentage = (percentage: number) => {
 };
 
 
+// 원 안에 한 줄로 들어가는 글자 수. 이를 넘는 이름(아랍어 요일 등)은 글자 크기를 줄여 원 밖으로 나가지 않게 한다.
+const FULL_SIZE_TEXT_MAX_CHARS = 4;
+const FULL_FONT_SIZE = 45;
+const MIN_FONT_SIZE = 22;
+
+const textFontSize = (text: string) => {
+  const length = Array.from(text).length;
+  if(length <= FULL_SIZE_TEXT_MAX_CHARS) return FULL_FONT_SIZE;
+  return Math.max(MIN_FONT_SIZE, Math.floor(FULL_FONT_SIZE * FULL_SIZE_TEXT_MAX_CHARS / length));
+}
+
 const completionCircleColor = getCustomAccentHSL({
   h: 1,
   s: 1,
@@ -46,7 +57,7 @@ export const PerformanceCircle = React.memo(({
         x="50%"
         y="50%"
         textAnchor="middle"
-        fontSize="45"
+        fontSize={textFontSize(text)}
         dominantBaseline="central"
         fill="var(--text-normal)"
       >

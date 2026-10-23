@@ -1,1 +1,1 @@
-export { WeeksWidget } from "./WeeksWidget";
+export { WeeksWidget, WEEKS_WIDGET_HEIGHT } from "./WeeksWidget";

@@ -1,22 +1,28 @@
 /** @jsxImportSource @emotion/react */
+import { formatMonthDayNumeric, formatWeekdayShort } from "@shared/i18n";
 import { Day } from "@shared/period/day";
 import React, { useEffect, useMemo, useState } from "react";
 import { DayNode } from "./types";
 import { dr } from "@shared/utils/daily-routine-bem";
-import { useLeaf } from "@shared/view/use-leaf";
-import { css } from "@emotion/react";
 import { useWeeksActiveDay } from "./WeeksContext";
 import { PerformanceCircle } from "@features/performance";
+import { useToday } from "@shared/today/use-today";
 
 
+const bem = dr("weeks");
+
+// 한 칸이 37px 안팎이라, 한국어의 "10. 23."처럼 공백이 낀 표기는 공백을 지워 칸을 아낀다. (en "10/23", ko "10.23.", de "23.10.")
+const formatCompactMonthDay = (day: Day): string => formatMonthDayNumeric(day).replace(/\s+/g, "");
 
 interface DayNodeProps {
   dayNode: DayNode;
   onClick: (day: Day, event?: React.MouseEvent) => void;
 }
 export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _performance }, onClick }: DayNodeProps) => {
-  const { leafBgColor } = useLeaf();
-  // const isToday = useMemo(() => day.isSameDay(Day.now()), [day]);
+  // 자정을 넘기면 갱신되어 오늘 표시와 미래 날짜 흐림이 따라 바뀐다.
+  const today = useToday(s => s.today);
+  const isToday = day.isSameDay(today);
+  const isFuture = day.wholeDayDiff(today) > 0;
 
   const activeNode = useWeeksActiveDay();
   const isActiveDay = useMemo(() => day.isSameDay(activeNode.day), [activeNode.day, day]);
@@ -33,66 +39,72 @@ export const DayNodeComponent = React.memo(({ dayNode: { day, performance: _perf
     }
   }, [isActiveDay, activeNode.performance]);
 
-  const afterStyle = useMemo(() => {
-    if(!day.isAfter(Day.today())) return css({});
-    return css({
-      content: "''",
-      position: "absolute",
-      top: "0",
-      left: "0",
-      right: "0",
-      bottom: "0",
-      borderRadius: "7px",
-      backgroundColor: leafBgColor,
-      opacity: "0.7",
-    })
-  }, [day, leafBgColor]);
-
-  const activeStyle = useMemo(() => {
-    if(!isActiveDay) return { self: {}, after: {} };
-    return {
-      self: { boxShadow: "inset 0 0 2px 0.5px rgba(0, 0, 0, 0.5)" },
-      after: { boxShadow: "inset 0 0 2px 0.5px rgba(0, 0, 0, 0.5)" },
-    }
-  }, [isActiveDay]);
-
-  const bem = dr("weeks");
   return (
     <div
-      className={bem("day")}
+      className={bem("day", { today: isToday, active: isActiveDay, future: isFuture })}
+      aria-current={isToday ? "date" : undefined}
       css={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "0.3em",
-        position: "relative",
+        // 7칸이 좁은 사이드바에서도 잘리지 않도록 폭을 균등하게 나누고, 내용 때문에 늘어나지 않게 한다.
+        flex: "1 1 0",
+        minWidth: 0,
+        // 날짜 문구의 글자 크기를 칸 폭에 맞추기 위한 기준(cqw)
+        containerType: "inline-size",
         height: "100%",
         padding: "3px 1.5px",
         cursor: "pointer",
-        borderRadius: "7px",
-        "&::after": [afterStyle, activeStyle.after],
-        ...activeStyle.self,
+        borderRadius: "var(--radius-m)",
+        transition: "background-color 120ms ease-out",
+        ...(isActiveDay && {
+          backgroundColor: "var(--background-modifier-hover)",
+          boxShadow: "inset 0 0 0 1.5px var(--interactive-accent)",
+        }),
+        "@media (hover: hover)": {
+          "&:hover": {
+            backgroundColor: "var(--background-modifier-hover)",
+          },
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          transition: "none",
+        },
       }}
       onClick={(e) => onClick(day, e)}
     >
-    <div
-      css={{
-        textAlign: "center",
-        fontSize: "0.8em",
-        height: "1em",
-      }}
-    >
-      {day.format("M/D").toUpperCase()}
+      <div
+        css={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "0.3em",
+          height: "100%",
+          // 아직 오지 않은 날은 흐리게
+          opacity: isFuture ? 0.45 : 1,
+        }}
+      >
+        <div
+          css={{
+            textAlign: "center",
+            // 언어마다 날짜 문구 길이가 다르므로, 좁은 칸에서는 칸 폭에 맞춰 줄인다. (container query 미지원 환경은 앞의 값을 쓴다)
+            fontSize: ["0.75em", "min(0.75em, 33cqw)"],
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+            color: isToday ? "var(--text-accent)" : "var(--text-muted)",
+            fontWeight: isToday ? "var(--font-bold)" : undefined,
+          }}
+        >
+          {formatCompactMonthDay(day)}
+        </div>
+        <PerformanceCircle
+          css={{
+            display: "block",
+            // 넓은 pane에서 원이 줄 높이를 넘지 않도록
+            maxWidth: "3.25em",
+          }}
+          width="100%"
+          performance={performance}
+          text={formatWeekdayShort(day)}
+        />
+      </div>
     </div>
-    <PerformanceCircle
-      css={{
-        position: "relative",
-        bottom: "0px",
-      }}
-      width="100%"
-      performance={performance}
-      text={day.format("ddd").toUpperCase()} 
-    />
-  </div>
   )
 });

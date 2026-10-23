@@ -1,3 +1,4 @@
+import { t } from "@shared/i18n";
 import { ReactView } from "@shared/view/react-view";
 import { IconName, WorkspaceLeaf } from "obsidian";
 import { DailyRoutineView } from "./ui/DailyRoutineView";
@@ -11,7 +12,7 @@ export class DailyRoutineObsidianView extends ReactView {
   constructor(leaf: WorkspaceLeaf) {
     super(leaf, {
       viewTypeName: DailyRoutineObsidianView.VIEW_TYPE,
-      displayText: "Routine"
+      displayText: t("shell.view.title")
     });
   }
 
