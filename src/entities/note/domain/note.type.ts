@@ -27,6 +27,8 @@ export type TaskGroup = NoteElement & {
   elementType: "group";
   children: Task[];
   isOpen: boolean;
+  // 그룹 heading과 첫 task 사이에 사용자가 직접 쓴 줄들. Task.body와 같은 규칙으로 보존한다.
+  body?: string[];
 }
 export const isTaskGroup = (taskGroup: unknown): taskGroup is TaskGroup => {
   const candidate = taskGroup as TaskGroup;
@@ -45,6 +47,9 @@ export type Task = NoteElement & {
   state: TaskState;
   showOnCalendar: boolean;
   tags: string[];
+  // task 라인 아래에 사용자가 직접 쓴 줄들(하위 항목, 메모 등). 플러그인은 해석하지 않고 그대로 보존한다.
+  // undefined면 저장할 때 파일에 있던 같은 이름 task의 body를 유지하고, 빈 배열이면 body를 지운다.
+  body?: string[];
 }
 export const isTask = (task: unknown): task is Task => {
   const candidate = task as Task;

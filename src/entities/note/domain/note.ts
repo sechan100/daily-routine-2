@@ -79,14 +79,16 @@ const flatten = (note: RoutineNote): Task[] => {
   return note.children.flatMap(t => isTaskGroup(t) ? t.children : [t as Task]);
 }
 
+// 전달받은 노트는 수정하지 않고 새 노트를 반환한다.
 const replaceTask = (note: RoutineNote, taskName: string, withTask: Task): RoutineNote => {
   const parent = findParent(note, taskName, 'task');
-  if(isTaskGroup(parent)){
-    parent.children = parent.children.map(t => t.name === taskName ? withTask : t);
-  } else {
-    note.children = note.children.map(t => isTask(t) && t.name === taskName ? withTask : t);
-  }
-  return { ...note };
+  const children = note.children.map(el => {
+    if(isTaskGroup(el) && el === parent){
+      return { ...el, children: el.children.map(t => t.name === taskName ? withTask : t) };
+    }
+    return parent === note && isTask(el) && el.name === taskName ? withTask : el;
+  });
+  return { ...note, children };
 }
 
 
