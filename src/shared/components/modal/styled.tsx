@@ -4,10 +4,12 @@
 /** @jsxImportSource @emotion/react */
 import { ToggleComponent } from "@shared/components/ToggleComponent";
 import { TEXT_CSS } from '../text-style';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ModalApi } from './create-modal';
 import { TextEditComponent } from "@shared/components/TextEditComponent"
 import { Button } from "@shared/components/Button"
+import { Notice } from "obsidian";
+import { t } from "@shared/i18n";
 
 
 type ModalProps = {
@@ -28,8 +30,12 @@ const M = ({ header, className, children, modal }: ModalProps) => {
       css={{
         padding: "2em !important",
         maxWidth: "1200px",
-        overflow: "scroll",
+        overflow: "auto",
         margin: "0 auto",
+        // 작은 모달(sidebarLayout이 아닌 것)은 Obsidian 모달의 여백 안에 놓이고, 하단에 고정된 SaveBtn(50px)만큼 공간을 비운다.
+        ".modal:not(.mod-sidebar-layout) &": {
+          padding: "0 0 calc(50px + 1em) !important",
+        },
         ".is-phone &": {
           position: "static !important" as "static",
           // padding: "0 !important",
@@ -42,6 +48,10 @@ const M = ({ header, className, children, modal }: ModalProps) => {
         css={[{
           padding: "1em 0",
           ".is-phone &": {
+            display: "none"
+          },
+          // 작은 모달은 Obsidian이 setTitle로 제목을 보여주므로 중복해서 그리지 않는다.
+          ".modal:not(.mod-sidebar-layout) &": {
             display: "none"
           },
         }, TEXT_CSS.large, TEXT_CSS.bold]}
@@ -103,7 +113,7 @@ export const ToggleSection = ({
 }: ToggleSectionProps) => {
   return (
     <Section
-      name={name??"Toggle Value"}
+      name={name??t("tasks.modal.toggleValue")}
       className={className}
     >
       <ToggleComponent
@@ -139,7 +149,7 @@ export const NameSection = ({
 
   return (
     <Section
-      name={name??"Name"}
+      name={name??t("common.name")}
       className={className}
     >
       <div css={{
@@ -164,7 +174,8 @@ export const NameSection = ({
 
 
 type SaveBtnProps = {
-  onSaveBtnClick?: () => void;
+  // 비동기 저장이면 Promise를 반환해야 저장이 끝날 때까지 버튼이 잠긴다.
+  onSaveBtnClick?: () => void | Promise<void>;
   disabled?: boolean;
   name?: string;
 }
@@ -173,31 +184,61 @@ export const SaveBtn = ({
   onSaveBtnClick,
   name,
 }: SaveBtnProps) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  // 키 반복·더블 클릭으로 저장이 겹치지 않도록 동기적으로 읽을 수 있는 ref로 막고, 표시용으로만 state를 쓴다.
+  const submittingRef = useRef(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = useCallback(async () => {
+    if(submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
+    try {
+      await onSaveBtnClick?.();
+    } catch(e) {
+      // 각 모달이 예측 가능한 실패는 직접 알리므로, 여기는 예상 밖의 실패만 받는다.
+      console.error("Failed to save.", e);
+      new Notice(t("tasks.modal.saveFailed"));
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
+  }, [onSaveBtnClick]);
 
   /**
    * Enter Key로 Save Button을 트리거하는 이벤트를 등록
    */
   useEffect(() => {
 
-    const handleEnterKeyDown = ({ key, isComposing}: KeyboardEvent) => {
-      if(isComposing) return;
-      
-      if(key === "Enter" && !disabled){
-        onSaveBtnClick?.();
-      }
+    const handleEnterKeyDown = (e: KeyboardEvent) => {
+      if(e.isComposing || e.repeat) return;
+      if(e.key !== "Enter" || disabled) return;
+
+      // 이 모달 안에서 발생한 키 입력만 처리한다. (다른 모달·뷰에서 누른 Enter에 반응하면 안 된다)
+      const modalContainer = rootRef.current?.closest(".modal-container");
+      const target = e.target as Element | null;
+      if(!modalContainer || !target || !modalContainer.contains(target)) return;
+      // 포커스된 버튼에서의 Enter는 그 버튼의 클릭으로 처리된다.
+      if(target.closest("button")) return;
+
+      void submit();
     }
 
     document.addEventListener('keydown', handleEnterKeyDown);
     return () => document.removeEventListener('keydown', handleEnterKeyDown);
-  }, [disabled, onSaveBtnClick]);
-  
+  }, [disabled, submit]);
+
+  const isDisabled = disabled || submitting;
   return (
-    <div css={{
-      position: "absolute",
-      bottom: "0",
-      left: "0",
-      right: "0",
-    }}>
+    <div
+      ref={rootRef}
+      css={{
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        right: "0",
+      }}
+    >
       <Button
         css={{
           width: "100%",
@@ -208,11 +249,12 @@ export const SaveBtn = ({
           borderBottomLeftRadius: "0",
           borderBottomRightRadius: "0",
         }}
-        disabled={disabled}
-        variant={disabled ? "disabled" : "accent"}
-        onClick={onSaveBtnClick}
+        disabled={isDisabled}
+        aria-busy={submitting}
+        variant={isDisabled ? "disabled" : "accent"}
+        onClick={() => { void submit(); }}
       >
-        {name ?? "Save"}
+        {name ?? t("common.save")}
       </Button>
     </div>
   )

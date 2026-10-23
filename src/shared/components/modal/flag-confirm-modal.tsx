@@ -4,6 +4,7 @@ import { Button } from "../Button";
 import { Modal } from "obsidian";
 import { plugin } from "@shared/utils/plugin-service-locator";
 import { createRoot } from "react-dom/client";
+import { t } from "@shared/i18n";
 
 
 
@@ -73,15 +74,15 @@ const ConfirmModalButtons = ({
       <Button
         variant={confirmBtnVariant} 
         onClick={() => {
+          // onClose의 resolve({ confirm: false })는 이미 resolve된 Promise에는 영향이 없다.
           resolve({ confirm: true, flag });
-          modal.onClose = () => {};
           modal.close();
         }}
       >
         {confirmText}
       </Button>
       <Button onClick={() => modal.close()}>
-        Cancel
+        {t("common.cancel")}
       </Button>
     </div>
   )
@@ -104,7 +105,8 @@ const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: Confi
   const modalButtonContainer = createDiv();
   modalButtonContainer.addClass("modal-button-container");
   modal.modalEl.appendChild(modalButtonContainer);
-  createRoot(modalButtonContainer).render(
+  const buttonsRoot = createRoot(modalButtonContainer);
+  buttonsRoot.render(
     <ConfirmModalButtons {...options} modal={modal} resolve={resolve} flag={options.flagOption} />
   )
 
@@ -115,10 +117,14 @@ const createFlagConfirmModal = (options: FlagConfirmModalOptions, resolve: Confi
     return p;
   })());
   
-  modal.onClose = () => resolve({
-    confirm: false,
-    flag: false,
-  });
+  modal.onClose = () => {
+    resolve({
+      confirm: false,
+      flag: false,
+    });
+    // 닫힌 뒤에도 React root가 남아 누수되지 않도록 해제한다.
+    buttonsRoot.unmount();
+  };
 
   return modal;
 }

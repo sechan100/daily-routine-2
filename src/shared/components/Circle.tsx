@@ -27,7 +27,7 @@ export const Circle = ({
   const r = 85;
   const circ = 2 * Math.PI * r;
   const strokePct = ((100 - percentage) * circ) / 100; // where stroke will start, e.g. from 15% to 100%.
-  const transitionString = transition ? "all 0.7s ease-in-out" : "none";
+  const transitionString = transition ? "stroke-dashoffset 250ms ease-out, stroke 250ms ease-out" : "none";
 
   useEffect(() => {
     if(percentage !== propsPercentage){
@@ -46,9 +46,12 @@ export const Circle = ({
       }}
     >
       <circle
-        style={{
+        css={{
           position: "relative",
           transition: transitionString,
+          "@media (prefers-reduced-motion: reduce)": {
+            transition: "none",
+          },
         }}
         r={r}
         cx={100}

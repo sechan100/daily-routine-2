@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import 'swiper/swiper-bundle.css';
+// bundle CSS는 쓰지 않는 모든 모듈(effect·navigation 등)의 스타일까지 끌어오므로 core만 쓴다. (Mousewheel 모듈은 CSS가 없다)
+import 'swiper/swiper.css';
 import { Mousewheel } from 'swiper/modules';
 import React, { useCallback, useEffect, useMemo, useRef, useState, Key, useLayoutEffect } from "react";
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';

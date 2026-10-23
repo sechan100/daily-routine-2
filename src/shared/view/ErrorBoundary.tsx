@@ -1,3 +1,4 @@
+import { t } from "@shared/i18n";
 import { Component, ReactNode } from "react";
 
 
@@ -23,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (error) {
       return (
         <div style={{ padding: "1em", color: "var(--text-normal)" }}>
-          <h3>Daily Routine crashed</h3>
+          <h3>{t("shell.error.title")}</h3>
           <pre style={{
             whiteSpace: "pre-wrap",
             padding: "0.5em",
@@ -34,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
           }}>
             {error.message || String(error)}
           </pre>
-          <button onClick={() => this.setState({ error: null })}>Retry</button>
+          <button onClick={() => this.setState({ error: null })}>{t("shell.error.retry")}</button>
         </div>
       );
     }

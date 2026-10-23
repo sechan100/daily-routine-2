@@ -1,10 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import { formatMonthYear, getDateLocale, t } from "@shared/i18n";
 import { Month } from "@shared/period/month";
 import { useLeaf } from "@shared/view/use-leaf";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Calendar from "react-calendar";
-import { OnArgs } from "react-calendar/dist/cjs/shared/types";
+import { OnArgs, View } from "react-calendar/dist/cjs/shared/types";
 
 
 
@@ -28,6 +29,10 @@ export const CalendarNavigation = ({
     calendarRef.current.setActiveStartDate(month.startDay.getJsDate());
   }, [month]);
 
+  // 버튼 툴팁은 월 화면일 때만 의미가 분명하다. (연도·10년 화면에서는 같은 버튼이 이동 단위가 다르다)
+  const [view, setView] = useState<View>("month");
+  const isMonthView = view === "month";
+
   const lastChangedMonthRef = useRef<Month>(month);
   const monthChangeHandler = useCallback((month: Month) => {
     if(lastChangedMonthRef.current.isSameMonth(month)) return;
@@ -40,7 +45,7 @@ export const CalendarNavigation = ({
     '.react-calendar__navigation': {
       display: 'flex',
       'button:disabled': {
-        backgroundColor: 'var(--color-base-10)',
+        backgroundColor: 'var(--background-modifier-hover)',
       },
     },
 
@@ -63,7 +68,7 @@ export const CalendarNavigation = ({
           bottom: 0,
           transform: "translateY(10%)",
           zIndex: -1,
-          backgroundColor: "rgba(0, 0, 0, 0.1)",
+          backgroundColor: "var(--background-modifier-box-shadow)",
           filter: "blur(30px)",
         },
 
@@ -77,7 +82,7 @@ export const CalendarNavigation = ({
           "button": {
             display: "block",
             borderRadius: "0",
-            borderBottom: "0.5px solid var(--color-base-40)",
+            borderBottom: "0.5px solid var(--background-modifier-border)",
             backgroundColor: leafBgColor,
             fontSize: "1em",
             padding: "10px 0",
@@ -90,7 +95,7 @@ export const CalendarNavigation = ({
           "button:nth-child(1)": {
             borderTopLeftRadius: "5px",
             borderTopRightRadius: "5px",
-            borderTop: "0.5px solid var(--color-base-40)",
+            borderTop: "0.5px solid var(--background-modifier-border)",
           },
   
           "button:nth-last-child(1)": {
@@ -112,6 +117,14 @@ export const CalendarNavigation = ({
     <>
       <Calendar
         ref={calendarRef}
+        // 지정하지 않으면 OS 언어를 따르므로 Obsidian 언어로 고정한다. 양력으로 표기하는 로케일이다.
+        locale={getDateLocale()}
+        formatMonthYear={(_locale, date) => formatMonthYear(Month.fromJsDate(date))}
+        prevAriaLabel={isMonthView ? t("stats.nav.previousMonth") : undefined}
+        nextAriaLabel={isMonthView ? t("stats.nav.nextMonth") : undefined}
+        prev2AriaLabel={isMonthView ? t("stats.nav.previousYear") : undefined}
+        next2AriaLabel={isMonthView ? t("stats.nav.nextYear") : undefined}
+        onViewChange={({ view: nextView }) => setView(nextView)}
         className={className}
         css={calendarStyles}
         defaultValue={month.startDay.getJsDate()}

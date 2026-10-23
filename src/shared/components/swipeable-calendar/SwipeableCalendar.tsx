@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { VirtualSwiper } from "@shared/components/VirtualSwiper";
 import { Month } from "@shared/period/month";
-import { useCallback, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { CalendarNavigation } from "./Nav";
 
 
@@ -23,6 +23,11 @@ const loadEdgeMonth = (edge: "start" | "end", month: Month) => {
 };
 
 const getKey = (month: Month) => month.startDay.format()
+
+
+// 슬라이드(한 달) 하나의 높이. VirtualSwiper가 슬라이드를 id로 memo하므로, 창 크기 변화는 props 대신 context로 전달한다.
+const SlideHeightContext = createContext<number>(0);
+export const useSlideHeight = () => useContext(SlideHeightContext);
 
 
 interface Props {
@@ -69,15 +74,17 @@ export const SwipeableCalendar = ({
         month={activeMonth}
         setMonth={resetMonths}
       />
-      <VirtualSwiper
-        datas={months}
-        getKey={getKey}
-        loadEdgeData={loadEdgeMonth}
-        onSlideChange={onSlideChange}
-        verticalHeight={verticalHeight}
-      >
-        {children}
-      </VirtualSwiper>
+      <SlideHeightContext.Provider value={verticalHeight ?? 0}>
+        <VirtualSwiper
+          datas={months}
+          getKey={getKey}
+          loadEdgeData={loadEdgeMonth}
+          onSlideChange={onSlideChange}
+          verticalHeight={verticalHeight}
+        >
+          {children}
+        </VirtualSwiper>
+      </SlideHeightContext.Provider>
     </div>
   )
 

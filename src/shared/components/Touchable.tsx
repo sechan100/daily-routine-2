@@ -35,7 +35,13 @@ interface TouchableProps {
 
   // click
   onClick?: (e: React.MouseEvent | React.TouchEvent) => void;
+
+  // 마우스 우클릭(contextmenu). 터치 long press가 만든 contextmenu에는 호출되지 않는다.
+  onContextMenu?: (e: React.MouseEvent) => void;
 }
+
+// 터치 직후(long press 중 contextmenu가 touchmove 뒤에 발생하는 경우 포함) 들어온 contextmenu는 터치로 취급
+const TOUCH_CONTEXT_MENU_WINDOW = 1000;
 export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props: TouchableProps, ref) => {
 
   const clickPreventRef = useRef<boolean>(false);
@@ -44,6 +50,7 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   const longPressDelay = useMemo(() => props.longPressDelay??500, [props.longPressDelay]);
   const isMovedRef = useRef<boolean>(false);
   const isTouchRef = useRef<boolean>(false);
+  const lastTouchAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
 
   const longPressDebounce = useRef<DebouncedFunc<(e: React.TouchEvent) => void>>(
     debounce((_e: React.TouchEvent) => {
@@ -81,15 +88,26 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
   
   const touchStart = useCallback((e: React.TouchEvent) => {
     performanceRef.current = performance.now();
+    lastTouchAtRef.current = performanceRef.current;
     longPressStartCall(e);
   }, [longPressStartCall])
 
   const touchMove = useCallback((_e: React.TouchEvent) => {
+    lastTouchAtRef.current = performance.now();
     longPressCancel();
     isMovedRef.current = true;
   }, [longPressCancel])
+
+  // OS/edge-swipe 등으로 터치가 중단된 경우: click으로 취급하면 안 되므로 상태만 초기화
+  const touchCancel = useCallback((_e: React.TouchEvent) => {
+    lastTouchAtRef.current = performance.now();
+    longPressCancel();
+    performanceRef.current = 0;
+    isMovedRef.current = false;
+  }, [longPressCancel])
   
   const touchEnd = useCallback((e: React.TouchEvent) => {
+    lastTouchAtRef.current = performance.now();
     longPressCancel();
     const duration = performance.now() - performanceRef.current + 50; // 50ms는 딜레이
     performanceRef.current = 0;
@@ -110,14 +128,16 @@ export const Touchable = memo(forwardRef<HTMLDivElement, TouchableProps>((props:
       className={props.className}
       onTouchStart={touchStart}
       onTouchMove={touchMove}
-      onTouchCancel={touchEnd}
+      onTouchCancel={touchCancel}
       onTouchEnd={touchEnd}
       onClick={onClick}
       onContextMenu={e => {
         e.preventDefault();
         e.stopPropagation();
-        if(!isTouchRef.current){
-          props.onAfterLongPressDelay?.();
+        // 터치 long press는 debounce(onAfterLongPressDelay)가 처리하므로, 데스크톱 우클릭만 전달한다.
+        const fromTouch = isTouchRef.current || performance.now() - lastTouchAtRef.current < TOUCH_CONTEXT_MENU_WINDOW;
+        if(!fromTouch){
+          props.onContextMenu?.(e);
         }
       }}
     >
