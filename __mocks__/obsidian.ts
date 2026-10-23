@@ -18,3 +18,6 @@ export class TFolder extends TAbstractFile {
 
 
 export const moment = _moment;
+
+// 테스트 기본 언어. 다른 언어는 @shared/i18n/language의 setAppLanguageForTest로 바꾼다.
+export const getLanguage = () => "en";
