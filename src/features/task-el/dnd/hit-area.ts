@@ -1,72 +1,38 @@
-import { XYCoord } from "react-dnd";
-
-
 export type TaskHitArea = "top" | "bottom";
 
 export type GroupHitArea = "top" | "in" | "bottom";
 
 
-type NodeRect = DOMRect;
+type NodeRect = Pick<DOMRect, "top" | "bottom" | "height">;
 
+type GroupHitOption = {
+  // task를 group 안으로 넣을 수 있는지. (group header가 group 전체일 때만: 닫혀 있거나 비어 있음)
+  allowIn: boolean;
+  // group 아래(다음 위치)에 놓을 수 있는지. 펼쳐진 group의 header 아래는 첫 자식 자리라서, 그 위치를 '아래'로 표시하면 실제 위치와 어긋난다.
+  allowBottom: boolean;
+}
 
-// group-bottom은 보류
-// const getIsXOnLeft = (x: X, rect: NodeRect): boolean => {
-//   // 어차피 getBoundingClientRect()는 마진을 제외하기 떄문에, 왼쪽을 가리킨다는 것은 이미 rect의 x축 방향 경계를 벗어났다는 것이다.
-//   return x < rect.left;
-// }
 
 export const HitAreaEvaluator = {
   /**
-   * @param param0 
-   * @param node 
-   * @param isLastNode 전체 리스트를 기준으로 가장 마지막 노드인 경우에만 true. 개별 group의 마지막인 경우는 false로 처리해야한다.
+   * 가운데 영역은 null을 반환한다. 호출부는 직전 hit을 유지하므로, 경계에서 indicator가 깜빡이지 않는다.
    */
-  evaluateTask({ x: _x, y }: XYCoord, node: HTMLElement, _isLastNode: boolean): TaskHitArea | null {
-    const rect: NodeRect = node.getBoundingClientRect();
-    const dropTargetHeight = rect.height;
-    const hitBoundary = 0.40;
-    const hixbox = dropTargetHeight * hitBoundary;
-  
-    // TOP HIT
-    if(y < rect.top + hixbox){
-      return "top";
-
-    // BOTTOM HIT
-    } else if(y > rect.bottom - hixbox){
-      return "bottom";
-    // MIDDLE HIT
-    } else {
-      return null;
-    }
+  evaluateTask(y: number, rect: NodeRect): TaskHitArea | null {
+    const hitbox = rect.height * 0.40;
+    if(y < rect.top + hitbox) return "top";
+    if(y > rect.bottom - hitbox) return "bottom";
+    return null;
   },
 
-  /**
-   * @param in_hit 'in' hit 활성화 여부
-   */
-  evaluateGroup({ y }: XYCoord, node: HTMLElement, in_hit: boolean): GroupHitArea | null {
-    const rect: NodeRect = node.getBoundingClientRect();
-    const dropTargetHeight = rect.height;
-    const hitBoundary = 0.30;
-    const hixbox = dropTargetHeight * hitBoundary;
-  
-    // TOP HIT
-    if(y < rect.top + hixbox){
-      return "top";
-
-    // BOTTOM HIT
-    } else if(y > rect.bottom - hixbox){
-      if(!in_hit){
-        return null;
-      } else {
-        return "bottom";
-      }
-    // MIDDLE HIT
-    } else {
-      if(in_hit){
-        return "in";
-      } else {
-        return null;
-      }
+  evaluateGroup(y: number, rect: NodeRect, { allowIn, allowBottom }: GroupHitOption): GroupHitArea | null {
+    if(allowIn){
+      const hitbox = rect.height * 0.30;
+      if(y < rect.top + hitbox) return "top";
+      if(allowBottom && y > rect.bottom - hitbox) return "bottom";
+      return "in";
     }
+    const isUpperHalf = y < rect.top + rect.height / 2;
+    if(isUpperHalf) return "top";
+    return allowBottom ? "bottom" : null;
   },
 }

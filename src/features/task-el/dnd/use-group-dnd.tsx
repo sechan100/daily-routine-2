@@ -1,15 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { RoutineNote, Task, NoteElement, TaskGroup } from "@entities/note";
+import { RoutineNote, NoteElement, TaskGroup } from "@entities/note";
 import { useLeaf } from "@shared/view/use-leaf";
-import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
+import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { TaskElDragItem, TaskElDragItemType } from "./drag-item";
 import { GroupHitArea, HitAreaEvaluator } from "./hit-area";
 import { DndIndicator } from "./indicator";
-import { DroppedElReplacer } from "../model/reorder-elements";
-import { useRoutineMutationMerge } from "@features/merge-note";
-import { useRoutineNote } from "@features/note";
-import { Notice } from "obsidian";
+import { useReorderDrop } from "./use-reorder-drop";
 
 
 
@@ -33,9 +30,16 @@ export const useGroupDnd = ({
   onElDragEnd,
   onElDrop
 }: UseGroupDndOption): UseGroupDndResult => {
-  const { mergeNotes } = useRoutineMutationMerge();
+  const applyDrop = useReorderDrop();
   const { view } = useLeaf();
   const [hit, setHit] = useState<GroupHitArea | null>(null);
+  // drop은 마지막 hover 직후, 다시 렌더되기 전에 올 수 있으므로 최신 hit은 ref로 읽는다.
+  const hitRef = useRef<GroupHitArea | null>(null);
+  const updateHit = useCallback((newHit: GroupHitArea | null) => {
+    hitRef.current = newHit;
+    setHit(newHit);
+  }, [])
+
   const indicator = useMemo<React.ReactNode | null>(() => {
     if(!hit) return null;
     return <DndIndicator mode={hit} />
@@ -62,68 +66,52 @@ export const useGroupDnd = ({
   }, [group, canDrag, onElDragEnd])
 
   const evaluateHitArea = useCallback((dropped: NoteElement, monitor: DropTargetMonitor) => {
-    if(dropped.name === group.name) return null;
-    const coord = monitor.getClientOffset()??{x: -1, y: -1};
-    const isGroupCloseOrNoChildren = !isGroupOpen || group.children.length === 0;
-    const isDroppedElTypeofGroup = dropped.elementType === "group";
-    const hit = HitAreaEvaluator.evaluateGroup(coord, groupRef.current as HTMLElement, isGroupCloseOrNoChildren && !isDroppedElTypeofGroup);
-    return hit;
+    if(dropped.elementType === "group" && dropped.name === group.name) return null;
+    const node = groupRef.current;
+    const coord = monitor.getClientOffset();
+    if(!node || !coord) return null;
+    // 닫혀 있거나 비어 있으면 header가 group 전체이므로, 안(in)과 아래(bottom)에 놓을 수 있다.
+    const isHeaderWholeGroup = !isGroupOpen || group.children.length === 0;
+    return HitAreaEvaluator.evaluateGroup(coord.y, node.getBoundingClientRect(), {
+      // group 안에 group을 넣으면 계층이 깊어진다.
+      allowIn: isHeaderWholeGroup && dropped.elementType === "task",
+      allowBottom: isHeaderWholeGroup,
+    });
   }, [group, groupRef, isGroupOpen])
 
   const [{ isOver }, drop ] = useDrop({
     accept: ["TASK", "GROUP"],
 
     hover(item: TaskElDragItem, monitor) {
-      const dropped = item.el;
-      const hit = evaluateHitArea(dropped, monitor);
-      if(!hit) return;
-      setHit(hit);
+      const newHit = evaluateHitArea(item.el, monitor);
+      // 판정할 수 없는 영역(null)에서는 직전 hit을 유지한다.
+      if(newHit && newHit !== hitRef.current){
+        updateHit(newHit);
+      }
     },
 
-    drop: async (item) => {
-      if(!hit) return;
+    drop: (item) => {
+      const dropHit = hitRef.current;
+      updateHit(null);
+      if(!dropHit) return;
       const dropped = item.el;
-      try {
-        let newNote: RoutineNote;
-        if(dropped.elementType === "task") {
-          setHit(null);
-          newNote = await DroppedElReplacer.taskDropOnGroup({
-            dropped: dropped as Task,
-            on: group,
-            hit,
-          });
-        } else {
-          if(hit === "in") return null;
-          setHit(null);
-          newNote = await DroppedElReplacer.groupDropOnGroup({
-            dropped: dropped as TaskGroup,
-            on: group,
-            hit,
-          });
-        }
-        await mergeNotes(newNote);
-        onElDrop?.(newNote, dropped);
-      } catch(e) {
-        console.error("Failed to persist reordered elements.", e);
-        new Notice(`Failed to save order: ${e instanceof Error ? e.message : String(e)}`);
-        // UI가 디스크의 상태와 어긋나지 않도록 note를 다시 로드한다.
-        const state = useRoutineNote.getState();
-        state.setNote(state.note.day);
-      }
+      void applyDrop({ dropped, on: group, hit: dropHit }).then(newNote => {
+        if(newNote) onElDrop?.(newNote, dropped);
+      });
     },
 
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     })
 
-  }, [group, hit, onElDrop, mergeNotes, evaluateHitArea])
+  }, [group, applyDrop, onElDrop, evaluateHitArea, updateHit])
 
   // hoverOut시에 indicator를 제거
   useEffect(() => {
     if(!isOver) {
-      setHit(null);
+      updateHit(null);
     }
-  }, [isOver])
+  }, [isOver, updateHit])
 
   useEffect(() => {
     if(!groupRef.current) return;

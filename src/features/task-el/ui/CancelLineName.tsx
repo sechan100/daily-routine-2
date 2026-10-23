@@ -8,32 +8,41 @@ const bem = dr("task-name");
 const baseStyle = css({
   position: "relative",
   cursor: "pointer",
-  transition: "color 0.5s ease",
+  transition: "color 200ms ease-out",
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   minWidth: 0,
+  // 취소선: width 대신 scaleX로 키워서 체크/해제 양쪽 모두 부드럽게 움직인다.
   "&:after": {
     content: "''",
     position: "absolute",
     top: "50%",
-    left: 0,
-    width: 0,
-    transform: "translateY(-50%)",
-    height: "1.5px", // check 취소선 두께
-    background: "var(--color-base-60)", // check 취소선 색
-  }
-})
-
-const cancelTextStyle = css({
-  color: "var(--color-base-35)", // check된 상태에서 글자색
-})
-
-const cancelLineStyle = css({
-  color: "var(--color-base-40)",
-  "&:after": {
+    insetInlineStart: 0,
     width: "100%",
-    transition: "all 0.5s ease",
+    transform: "translateY(-50%) scaleX(0)",
+    transformOrigin: "left center",
+    transition: "transform 200ms ease-out",
+    height: "1.5px", // check 취소선 두께
+    background: "var(--text-muted)", // check 취소선 색
+  },
+  // 오른쪽→왼쪽 언어에서는 취소선이 글자의 시작(오른쪽)부터 그어진다.
+  ".mod-rtl &::after": {
+    transformOrigin: "right center",
+  },
+  "@media (prefers-reduced-motion: reduce)": {
+    transition: "none",
+    "&:after": {
+      transition: "none",
+    },
+  },
+})
+
+// check된 상태: 글자를 흐리게 하고 취소선을 긋는다.
+const cancelStyle = css({
+  color: "var(--text-muted)",
+  "&:after": {
+    transform: "translateY(-50%) scaleX(1)",
   }
 })
 
@@ -46,9 +55,10 @@ export const CancelLineName = ({
   cancel,
 }: Props) => {
   return (
-    <span 
+    <span
       className={bem("name")}
-      css={[baseStyle, cancel && cancelTextStyle && cancelLineStyle]}
+      dir="auto"
+      css={[baseStyle, cancel && cancelStyle]}
     >
       {name}
     </span>

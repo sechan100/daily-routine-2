@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   DndProvider,
   // TouchTransition,
@@ -10,7 +10,6 @@ import {
 import { Preview } from "react-dnd-preview";
 import { ElementPreview } from "../ui/ElementPreview";
 import { useDndScroll } from "./use-dnd-scroll";
-import { useDragDropManager } from "react-dnd";
 import { TaskElDragItem } from './drag-item';
 import { isNoteElement } from "@entities/note";
 import { CustomHTML5Backend } from "./CustomHTML5BackendImpl";
@@ -91,19 +90,7 @@ interface ScrollComponentProps {
 }
 const ScrollComponent = ({ children }: ScrollComponentProps) => {
   const listRef = useRef<HTMLDivElement>(null);
-  const { updatePosition } = useDndScroll(listRef);
-
-  const dragDropManager = useDragDropManager();
-  const monitor = dragDropManager.getMonitor();
-
-  useEffect(() => {
-    const unsubscribe = monitor.subscribeToOffsetChange(() => {
-      const offset = monitor.getSourceClientOffset()?.y as number;
-      updatePosition({ position: offset, isScrollAllowed: true });
-    });
-
-    return unsubscribe;
-  }, [monitor, updatePosition]);
+  useDndScroll(listRef);
 
   return (
     <div 
