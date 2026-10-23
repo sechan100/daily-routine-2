@@ -32,16 +32,21 @@ const M = ({ header, className, children, modal }: ModalProps) => {
         maxWidth: "1200px",
         overflow: "auto",
         margin: "0 auto",
-        // 작은 모달(sidebarLayout이 아닌 것)은 Obsidian 모달의 여백 안에 놓이고, 하단에 고정된 SaveBtn(50px)만큼 공간을 비운다.
+        // 작은 모달(sidebarLayout이 아닌 것)은 Obsidian 모달의 여백 안에 놓이고, SaveBtn은 고정하지 않고 내용 아래에 둔다.
         ".modal:not(.mod-sidebar-layout) &": {
-          padding: "0 0 calc(50px + 1em) !important",
+          padding: "0 0 0.5em !important",
         },
         ".is-phone &": {
           position: "static !important" as "static",
           // padding: "0 !important",
           // 하단에 고정된 SaveBtn(80px)에 마지막 폼 요소가 가려지지 않도록 공간을 확보
           padding: "0 1em 80px !important",
-        }
+        },
+        // 휴대폰의 작은 모달은 Obsidian이 모달 자체에 여백을 주지 않으므로, 내용이 가장자리에 붙지 않게 직접 여백을 준다.
+        // (위 두 규칙보다 구체적이어야 둘 다 덮어쓴다)
+        ".is-phone .modal:not(.mod-sidebar-layout) &": {
+          padding: "0 var(--size-4-4) var(--size-4-4) !important",
+        },
       }}
     >
       <header 
@@ -237,6 +242,11 @@ export const SaveBtn = ({
         bottom: "0",
         left: "0",
         right: "0",
+        // 작은 모달은 높이가 내용에 맞춰지므로, 바닥에 고정하면 휴대폰의 바닥 시트 밖으로 넘친다. 내용 아래에 둔다.
+        ".modal:not(.mod-sidebar-layout) &": {
+          position: "static",
+          marginTop: "1.25em",
+        },
       }}
     >
       <Button
@@ -248,6 +258,14 @@ export const SaveBtn = ({
           },
           borderBottomLeftRadius: "0",
           borderBottomRightRadius: "0",
+          // 내용 아래에 놓이는 작은 모달의 버튼은 일반 버튼 모양으로 둔다.
+          ".modal:not(.mod-sidebar-layout) &": {
+            height: "40px",
+            borderRadius: "var(--button-radius, var(--radius-s))",
+          },
+          ".is-phone .modal:not(.mod-sidebar-layout) &": {
+            height: "48px",
+          },
         }}
         disabled={isDisabled}
         aria-busy={submitting}
