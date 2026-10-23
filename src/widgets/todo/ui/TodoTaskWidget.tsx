@@ -1,13 +1,16 @@
-import { noteRepository, RoutineNote, TaskEntity, TaskGroup, TodoTask } from "@entities/note";
+import { NoteEntity, RoutineNote, TaskEntity, TaskGroup, TodoTask } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useTodoOptionModal } from './todo-option';
+import { useRescheduleTodoModal } from './reschedule-todo-modal';
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { useRoutineNote } from "@features/note";
 import { rescheduleTodo } from "../reschedule-todo";
 import { Menu, Notice } from "obsidian";
 import { Day } from "@shared/period/day";
+import { formatFullDate, t } from "@shared/i18n";
 import { changeTaskState } from "@features/task-el/model/change-task-state";
+import { updateNote } from "@features/task-el/model/update-note";
 
 
 interface TodoTaskProps {
@@ -16,84 +19,107 @@ interface TodoTaskProps {
 }
 export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
   const TodoOptionModal = useTodoOptionModal();
+  const RescheduleTodoModal = useRescheduleTodoModal();
   const routineNoteStore = useRoutineNote();
   const { note } = routineNoteStore;
   const setNote = useCallback((newNote: RoutineNote) => routineNoteStore.setNote(newNote), [routineNoteStore]);
+  const isPastNote = note.day.wholeDayDiff(Day.today()) < 0;
 
 
   const rescheduleTask = useCallback(async (destDay: Day) => {
     const rescheduleConfirm = await doConfirm({
-      title: "Reschedule todo",
-      confirmText: "Reschedule",
-      description: `Are you sure you want to reschedule '${task.name}' to ${destDay.format()}?`,
+      title: t("tasks.todo.rescheduleTitle"),
+      confirmText: t("tasks.todo.reschedule"),
+      description: t("tasks.todo.rescheduleConfirm", { name: task.name, date: formatFullDate(destDay) }),
       confirmBtnVariant: "accent",
     })
     if(!rescheduleConfirm) return;
 
-    let todoDeletedNote;
-    try {
-      todoDeletedNote = await rescheduleTodo(note, task.name, destDay);
-    } catch(e) {
-      // 실패 Notice는 rescheduleTodo 내부에서 처리된다.
-      console.error(e);
-      return;
-    }
-    setNote(todoDeletedNote);
-    new Notice(`Todo ${task.name} rescheduled to ${destDay.format()}.`);
+    // 재조정할 수 없는 이유는 rescheduleTodo가 Notice로 알린다.
+    const result = await rescheduleTodo(note, task.name, destDay);
+    if(result.isErr()) return;
+    setNote(result.value);
+    new Notice(t("tasks.todo.rescheduled", { name: task.name, date: formatFullDate(destDay) }));
   }, [note, setNote, task.name]);
   
 
   const deleteTask = useCallback(async () => {
     const deleteConfirm = await doConfirm({
-      title: "Delete todo",
-      confirmText: "Delete",
-      description: `Are you sure you want to delete '${task.name}'?`,
+      title: t("tasks.todo.deleteTitle"),
+      confirmText: t("common.delete"),
+      description: t("tasks.todo.deleteConfirm", { name: task.name }),
       confirmBtnVariant: "destructive",
     })
     if(!deleteConfirm) return;
 
-    const newNote = TaskEntity.removeTask(note, task.name);
-    setNote(newNote);
-    await noteRepository.update(newNote);
-    new Notice(`Todo ${task.name} deleted.`);
+    try {
+      // 확인창을 기다리는 동안 파일이 바뀌었을 수 있으므로, 파일의 최신 내용에서 이 todo만 제거한다.
+      const newNote = await updateNote(note, current => {
+        return NoteEntity.findTask(current, task.name) ? TaskEntity.removeTask(current, task.name) : current;
+      });
+      setNote(newNote);
+    } catch(e) {
+      console.error("Failed to delete todo.", e);
+      new Notice(t("tasks.todo.deleteFailed", { name: task.name }));
+      return;
+    }
+    new Notice(t("tasks.todo.deleted", { name: task.name }));
   }, [note, setNote, task.name])
 
   
   const onOptionMenu = useCallback((m: Menu) => {
     m.addItem(i => {
-      i.setTitle(`Todo: ${task.name}`);
+      i.setTitle(t("tasks.menu.todoInfo", { name: task.name }));
       i.setIcon("info");
     })
     m.addSeparator();
 
 
     m.addItem(i => {
-      i.setTitle("Edit");
+      i.setTitle(t("common.edit"));
       i.setIcon("pencil");
       i.onClick(() => TodoOptionModal.open({ todo: task }))
     })
 
-    m.addItem(i => {
-      i.setTitle("Check task as failed");
+    task.state !== "failed" && m.addItem(i => {
+      i.setTitle(t("tasks.menu.checkAsFailed"));
       i.setIcon("cross");
       i.onClick(async () => {
-        const newNote = await changeTaskState(note, task.name, "failed");
-        setNote(newNote);
+        try {
+          const newNote = await changeTaskState(note, task.name, "failed");
+          setNote(newNote);
+        } catch(e) {
+          console.error("Failed to check task as failed.", e);
+          new Notice(t("tasks.task.updateFailed", { name: task.name }));
+        }
       });
     })
 
     m.addItem(i => {
-      i.setTitle("Reschedule todo to tomorrow");
+      i.setTitle(t("tasks.menu.rescheduleTomorrow"));
       i.setIcon("calendar");
       i.onClick(() => rescheduleTask(note.day.clone(m=>m.add(1, "day"))));
     })
 
     m.addItem(i => {
-      i.setTitle("Delete");
+      i.setTitle(t("tasks.menu.rescheduleTo"));
+      i.setIcon("calendar-days");
+      i.onClick(() => RescheduleTodoModal.open({ taskName: task.name }));
+    })
+
+    // 지난 날짜의 노트에서 끝내지 못한 todo는 오늘로 바로 가져올 수 있다.
+    isPastNote && task.state === "un-checked" && m.addItem(i => {
+      i.setTitle(t("tasks.menu.moveToToday"));
+      i.setIcon("calendar-check");
+      i.onClick(() => rescheduleTask(Day.today()));
+    })
+
+    m.addItem(i => {
+      i.setTitle(t("common.delete"));
       i.setIcon("trash");
       i.onClick(deleteTask);
     })
-  }, [TodoOptionModal, deleteTask, note, rescheduleTask, setNote, task])
+  }, [RescheduleTodoModal, TodoOptionModal, deleteTask, isPastNote, note, rescheduleTask, setNote, task])
 
   return (
     <>
@@ -104,6 +130,7 @@ export const TodoTaskWidget = React.memo(({ task, parent }: TodoTaskProps) => {
         onOptionMenu={onOptionMenu}
       />
       <TodoOptionModal />
+      <RescheduleTodoModal />
     </>
   )
 });

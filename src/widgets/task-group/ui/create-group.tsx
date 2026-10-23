@@ -7,6 +7,8 @@ import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer } from "react";
+import { groupNameErrorMessage, validateGroupName } from "../validate-group-name";
+import { t } from "@shared/i18n";
 
 
 const bem = dr("create-group");
@@ -28,25 +30,35 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
   const [group, dispatch] = useReducer<GroupReducer>(groupReducer, createDefaultGroup());
 
   const onSaveBtnClick = useCallback(async () => {
-    const name = group.name.trim();
-    // 괄호로 감싸진 이름은 닫힌 그룹 표기와 충돌한다.
-    if(/^\(.*\)$/.test(name)){
-      new Notice(`Group name cannot be wrapped in parentheses.`);
+    let name: string;
+    try {
+      const existingNames = (await groupRepository.loadAll()).map(g => g.name);
+      const validation = validateGroupName(group.name, existingNames);
+      if(validation.isErr()){
+        new Notice(groupNameErrorMessage(validation.error, group.name.trim()));
+        return;
+      }
+      name = validation.value;
+
+      // 검증은 공백을 제거한 이름으로 하므로, 저장도 같은 이름으로 해야 한다.
+      const created = await groupRepository.persist({ ...group, name });
+      if(!created){
+        new Notice(groupNameErrorMessage("duplicated", name));
+        return;
+      }
+    } catch(e) {
+      console.error("Failed to create group.", e);
+      new Notice(t("tasks.group.createFailed", { name: group.name.trim() }));
       return;
     }
-    // 'UNGROUPED'는 노트 직렬화에 사용되는 예약어이다.
-    if(name.startsWith("UNGROUPED")){
-      new Notice(`Group name cannot be, or start with, 'UNGROUPED'.`);
-      return;
-    }
-    await groupRepository.persist(group);
-    await mergeNotes();
+    // 병합은 큐에서 모든 미래 노트를 돌므로 기다리지 않는다. (다른 모달과 같은 방식)
+    void mergeNotes();
     modal.close();
-    new Notice(`Group '${group.name}' created.`);
+    new Notice(t("tasks.group.created", { name }));
   }, [group, mergeNotes, modal]);
 
   return (
-    <Modal header="Create group" className={bem()} modal={modal}>
+    <Modal header={t("tasks.group.createTitle")} className={bem()} modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}
@@ -54,17 +66,18 @@ export const useCreateGroupModal = createModal(({ modal }: CreateGroupModalProps
         focus
         value={group.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
-        placeholder="New Group"
+        placeholder={t("tasks.group.newPlaceholder")}
       />
       <Modal.Separator />
 
       {/* save */}
       <Modal.SaveBtn
         disabled={group.name.trim() === ""}
-        onSaveBtnClick={() => { void onSaveBtnClick(); }}
+        onSaveBtnClick={onSaveBtnClick}
       />
     </Modal>
   )
 }, {
-  sidebarLayout: true,
+  // 입력 항목이 적어 화면을 덮는 큰 모달 대신 작은 모달로 띄운다.
+  sidebarLayout: false,
 });

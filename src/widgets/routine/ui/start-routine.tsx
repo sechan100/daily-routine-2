@@ -1,24 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import { RoutineEntity, routineRepository } from "@entities/routine";
-import { RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
+import { useRoutineNote } from "@features/note";
+import { getActiveCriteriaError, RoutineOption, routineReducer, RoutineReducer } from "@features/routine";
 import { createModal, ModalApi } from "@shared/components/modal/create-modal";
 import { Modal } from "@shared/components/modal/styled";
 import { dr } from "@shared/utils/daily-routine-bem";
 import { Notice } from "obsidian";
 import { useCallback, useReducer, useState } from "react";
 import { createNewRoutine } from "../create-routine";
+import { routineNameErrorMessage, routineTagsErrorMessage, validateRoutineName } from "../validate-routine-name";
+import { t } from "@shared/i18n";
 import { useRoutineMutationMerge } from "@features/merge-note";
 
 
 const bem = dr("start-new-routine");
-
-const nameErrorMessage = (error: string, name: string): string => {
-  switch(error){
-    case "duplicated": return `Routine '${name}' already exists.`;
-    case "contains-invalid-characters": return "Routine name cannot contain : / \\ # [ ] | ^";
-    default: return "Invalid routine name.";
-  }
-}
 
 
 interface StartRoutineModalProps {
@@ -26,42 +21,58 @@ interface StartRoutineModalProps {
 }
 export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalProps) => {
   const { mergeNotes } = useRoutineMutationMerge();
+  const { note } = useRoutineNote();
   const [routine, dispatch] = useReducer<RoutineReducer>(routineReducer, createNewRoutine());
   const [tagsText, setTagsText] = useState("");
+  const activeCriteriaError = getActiveCriteriaError(routine.properties);
 
   const onSaveBtnClick = useCallback(async () => {
-    const existingNames = (await routineRepository.loadAll()).map(r => r.name);
-    const validation = RoutineEntity.validateName({ name: routine.name, existingNames });
-    if(validation.isErr()){
-      new Notice(nameErrorMessage(validation.error, routine.name));
+    if(activeCriteriaError){
+      new Notice(activeCriteriaError);
       return;
     }
+    let existingNames: string[];
+    try {
+      existingNames = (await routineRepository.loadAll()).map(r => r.name);
+    } catch(e) {
+      console.error("Failed to load routines.", e);
+      new Notice(t("tasks.routine.loadFailed"));
+      return;
+    }
+    const validation = validateRoutineName(routine.name, existingNames, note);
+    if(validation.isErr()){
+      new Notice(routineNameErrorMessage(validation.error, routine.name.trim()));
+      return;
+    }
+    const name = validation.value;
     const tagsValidation = RoutineEntity.validateTags(tagsText.split(/[\s,]+/).filter(t => t !== ""));
     if(tagsValidation.isErr()){
-      new Notice(`Invalid tags: ${tagsValidation.error}`);
+      new Notice(routineTagsErrorMessage(tagsValidation.error));
       return;
     }
     const newRoutine = {
       ...routine,
+      name,
       properties: { ...routine.properties, tags: tagsValidation.value }
     };
     try {
       const created = await routineRepository.create(newRoutine);
       if(!created){
-        new Notice(nameErrorMessage("duplicated", routine.name));
+        new Notice(routineNameErrorMessage("duplicated", name));
         return;
       }
-    } catch {
-      new Notice(`Failed to create routine '${routine.name}'.`);
+    } catch(e) {
+      console.error("Failed to create routine.", e);
+      new Notice(t("tasks.routine.createFailed", { name }));
       return;
     }
     void mergeNotes();
     modal.close();
-    new Notice(`Routine '${routine.name}' started! 🎉`);
-  }, [mergeNotes, modal, routine, tagsText]);
+    new Notice(t("tasks.routine.started", { name }));
+  }, [activeCriteriaError, mergeNotes, modal, note, routine, tagsText]);
 
   return (
-    <Modal header="Start new Routine" className={bem()} modal={modal}>
+    <Modal header={t("tasks.routine.startTitle")} className={bem()} modal={modal}>
       <Modal.Separator edgeWithtransparent />
 
       {/* name */}
@@ -69,7 +80,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
         focus
         value={routine.name}
         onChange={name => dispatch({ type: "SET_NAME", payload: name })}
-        placeholder="New routine"
+        placeholder={t("tasks.routine.newPlaceholder")}
       />
       <Modal.Separator />
 
@@ -82,7 +93,7 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
 
       {/* show on calendar */}
       <Modal.ToggleSection
-        name="Show on calendar"
+        name={t("common.showOnCalendar")}
         value={routine.properties.showOnCalendar}
         onChange={(showOnCalendar) => dispatch({ type: "SET_PROPERTIES", payload: { showOnCalendar } })}
       />
@@ -90,17 +101,17 @@ export const useStartRoutineModal = createModal(({ modal }: StartRoutineModalPro
 
       {/* tags */}
       <Modal.NameSection
-        name="Tags"
+        name={t("common.tags")}
         value={tagsText}
         onChange={setTagsText}
-        placeholder="tag1, tag2"
+        placeholder={t("tasks.routine.tagsPlaceholder")}
       />
       <Modal.Separator edgeWithtransparent />
 
       {/* save */}
       <Modal.SaveBtn
-        disabled={routine.name.trim() === ""}
-        onSaveBtnClick={() => { void onSaveBtnClick(); }}
+        disabled={routine.name.trim() === "" || activeCriteriaError !== null}
+        onSaveBtnClick={onSaveBtnClick}
       />
     </Modal>
   )

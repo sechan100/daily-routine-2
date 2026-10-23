@@ -1,30 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import { groupRepository, RoutineGroup, RoutineGroupEntity } from '@entities/routine';
+import { groupRepository, RoutineGroup } from '@entities/routine';
 import { groupReducer, GroupReducer } from '@features/group';
 import { useRoutineMutationMerge } from '@features/merge-note';
 import { createModal, ModalApi } from '@shared/components/modal/create-modal';
 import { Modal } from '@shared/components/modal/styled';
-import { err, ok, Result } from 'neverthrow';
 import { Notice } from 'obsidian';
 import { useCallback, useMemo, useReducer } from "react";
 import { changeGroupName } from '../change-group-name';
-
-
-const validateGroupName = (name: string, existingNames: string[]): Result<string, string> => {
-  return RoutineGroupEntity.validateName(name, existingNames)
-  .andThen(n => n.startsWith(RoutineGroupEntity.UNGROUPED_NAME) ? err('invalid-name') : ok(n))
-  // 괄호로 감싸진 이름은 노트 포맷을 깨트린다.
-  .andThen(n => /^\(.*\)$/.test(n) ? err('invalid-name') : ok(n));
-}
-
-const nameErrorMessage = (error: string, name: string): string => {
-  switch(error){
-    case "duplicated": return `Group '${name}' already exists.`;
-    case "contains-invalid-characters": return "Group name cannot contain : / \\ # [ ] | ^";
-    case "invalid-name": return `'${name}' cannot be used as a group name.`;
-    default: return "Invalid group name.";
-  }
-}
+import { groupNameErrorMessage, validateGroupName } from '../validate-group-name';
+import { t } from '@shared/i18n';
 
 
 interface Props {
@@ -37,17 +21,19 @@ export const useGroupOptionModal = createModal(({ modal, group: originalGroup}: 
   const originalName = useMemo(() => originalGroup.name, [originalGroup.name]);
 
   const onSaveBtnClick = useCallback(async () => {
-    if(originalName !== group.name){
-      const existingNames = (await groupRepository.loadAll()).map(g => g.name);
-      const validation = validateGroupName(group.name, existingNames);
-      if(validation.isErr()){
-        new Notice(nameErrorMessage(validation.error, group.name));
-        return;
-      }
+    const newName = group.name.trim();
+    if(originalName !== newName){
       try {
-        await changeGroupName(originalName, group.name);
-      } catch {
-        new Notice(`Failed to rename group '${originalName}'.`);
+        const existingNames = (await groupRepository.loadAll()).map(g => g.name);
+        const validation = validateGroupName(newName, existingNames);
+        if(validation.isErr()){
+          new Notice(groupNameErrorMessage(validation.error, newName));
+          return;
+        }
+        await changeGroupName(originalName, validation.value);
+      } catch(e) {
+        console.error("Failed to rename group.", e);
+        new Notice(t("tasks.group.renameFailed", { name: originalName }));
         return;
       }
     }
@@ -58,7 +44,7 @@ export const useGroupOptionModal = createModal(({ modal, group: originalGroup}: 
 
 
   return (
-    <Modal header='Group option' modal={modal}>
+    <Modal header={t("tasks.group.editTitle")} modal={modal}>
       <Modal.Separator edgeWithtransparent />
       
       {/* name */}
@@ -71,11 +57,12 @@ export const useGroupOptionModal = createModal(({ modal, group: originalGroup}: 
       {/* save */}
       <Modal.SaveBtn
         disabled={group.name.trim() === ""}
-        onSaveBtnClick={() => { void onSaveBtnClick(); }}
+        onSaveBtnClick={onSaveBtnClick}
       />
 
     </Modal>
   )
 }, {
-  sidebarLayout: true,
+  // 입력 항목이 적어 화면을 덮는 큰 모달 대신 작은 모달로 띄운다.
+  sidebarLayout: false,
 });

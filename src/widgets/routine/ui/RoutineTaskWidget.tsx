@@ -1,4 +1,4 @@
-import { noteRepository, RoutineTask, TaskEntity, TaskGroup } from "@entities/note";
+import { NoteEntity, RoutineTask, TaskEntity, TaskGroup } from "@entities/note";
 import { BaseTaskFeature } from "@features/task-el";
 import React, { useCallback } from "react";
 import { useRoutineOptionModal } from "./routine-option";
@@ -7,8 +7,10 @@ import { Menu, Notice } from "obsidian";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { doConfirm } from "@shared/components/modal/confirm-modal";
 import { changeTaskState } from "@features/task-el/model/change-task-state";
+import { updateNote } from "@features/task-el/model/update-note";
 import { useRoutineNote } from "@features/note";
 import { ResultAsync } from "neverthrow";
+import { t } from "@shared/i18n";
 
 interface RoutineTaskProps {
   task: RoutineTask;
@@ -23,31 +25,44 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
 
   const removeRoutineFromNoteOnly = useCallback(async () => {
     const removeConfirm = await doConfirm({
-      title: "Remove routine from this note",
-      confirmText: "Remove",
-      description: `Are you sure you want to remove '${task.name}'? This will only remove 'routine task' in this note not the 'routine' itself.`,
+      title: t("tasks.routine.removeFromNoteTitle"),
+      confirmText: t("common.remove"),
+      description: t("tasks.routine.removeFromNoteConfirm", { name: task.name }),
       confirmBtnVariant: "destructive"
     })
     if(!removeConfirm) return;
 
-    const newNote = TaskEntity.removeTask(note, task.name);
-    noteStore.setNote(newNote);
-    await noteRepository.save(newNote);
+    try {
+      // 확인창을 기다리는 동안 파일이 바뀌었을 수 있으므로, 파일의 최신 내용에서 이 task만 제거한다.
+      const newNote = await updateNote(note, current => {
+        return NoteEntity.findTask(current, task.name) ? TaskEntity.removeTask(current, task.name) : current;
+      });
+      noteStore.setNote(newNote);
+    } catch(e) {
+      console.error("Failed to remove routine task from note.", e);
+      new Notice(t("tasks.routine.removeFromNoteFailed", { name: task.name }));
+    }
   }, [note, noteStore, task.name])
 
 
   const deleteRoutine = useCallback(async () => {
     const deleteConfirm = await doConfirm({
-      title: "Delete routine",
-      confirmText: "Delete",
-      description: `Are you sure you want to delete the routine ${task.name}?`,
+      title: t("tasks.routine.deleteTitle"),
+      confirmText: t("common.delete"),
+      description: t("tasks.routine.deleteConfirm", { name: task.name }),
       confirmBtnVariant: "destructive"
     })
     if(!deleteConfirm) return;
 
-    await routineRepository.delete(task.name);
+    try {
+      await routineRepository.delete(task.name);
+    } catch(e) {
+      console.error("Failed to delete routine.", e);
+      new Notice(t("tasks.routine.deleteFailed", { name: task.name }));
+      return;
+    }
     void mergeNotes();
-    new Notice(`Routine '${task.name}' deleted.`);
+    new Notice(t("tasks.routine.deleted", { name: task.name }));
   }, [mergeNotes, task.name])
 
 
@@ -64,41 +79,46 @@ export const RoutineTaskWidget = React.memo(({ task, parent }: RoutineTaskProps)
      * ROUTINE INFO
      */
     m.addItem(i => {
-      i.setTitle(`${!isRoutineExist ? "(deleted) " : ""}Routine: ${task.name}`);
+      i.setTitle(t(isRoutineExist ? "tasks.menu.routineInfo" : "tasks.menu.routineInfoDeleted", { name: task.name }));
       i.setIcon("info");
       i.setDisabled(!isRoutineExist);
     })
     m.addSeparator();
 
     isRoutineExist && m.addItem(i => {
-      i.setTitle("Edit");
+      i.setTitle(t("common.edit"));
       i.setIcon("pencil");
       i.onClick(async () => {
         RoutineOptionModal.open({ routine });
       })
     })
 
-    m.addItem(i => {
-      i.setTitle("Check task as failed");
+    task.state !== "failed" && m.addItem(i => {
+      i.setTitle(t("tasks.menu.checkAsFailed"));
       i.setIcon("cross");
       i.onClick(async () => {
-        const newNote = await changeTaskState(note, task.name, "failed");
-        noteStore.setNote(newNote);
+        try {
+          const newNote = await changeTaskState(note, task.name, "failed");
+          noteStore.setNote(newNote);
+        } catch(e) {
+          console.error("Failed to check task as failed.", e);
+          new Notice(t("tasks.task.updateFailed", { name: task.name }));
+        }
       });
     })
 
     m.addItem(i => {
-      i.setTitle("Remove from this note only");
+      i.setTitle(t("tasks.menu.removeFromNoteOnly"));
       i.setIcon("list-x");
       i.onClick(removeRoutineFromNoteOnly);
     })
 
     isRoutineExist && m.addItem(i => {
-      i.setTitle("Delete");
+      i.setTitle(t("common.delete"));
       i.setIcon("trash");
       i.onClick(deleteRoutine);
     })
-  }, [RoutineOptionModal, deleteRoutine, note, noteStore, removeRoutineFromNoteOnly, task.name])
+  }, [RoutineOptionModal, deleteRoutine, note, noteStore, removeRoutineFromNoteOnly, task.name, task.state])
   
 
   return (

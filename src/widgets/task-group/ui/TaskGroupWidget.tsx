@@ -1,5 +1,6 @@
-import { noteRepository, RoutineNote, TaskGroup, TaskGroupEntity } from "@entities/note"
+import { RoutineNote, TaskGroup, TaskGroupEntity } from "@entities/note"
 import { BaseTaskGroupFeature } from "@features/task-el/ui/BaseTaskGroupFeature"
+import { updateNote } from "@features/task-el/model/update-note";
 import { useGroupOptionModal } from "./group-option";
 import { useRoutineNote } from "@features/note";
 import { useCallback } from "react";
@@ -9,6 +10,7 @@ import { groupRepository } from "@entities/routine";
 import { deleteGroup } from "../delete-group";
 import { useRoutineMutationMerge } from "@features/merge-note";
 import { ResultAsync } from "neverthrow";
+import { t } from "@shared/i18n";
 
 
 
@@ -29,38 +31,51 @@ export const TaskGroupWidget = ({
 
   const doDeleteGroup = useCallback(async () => {
     const deleteConfirm = await doFlagConfirm({
-      title: "Delete group",
-      confirmText: "Delete",
-      description: `Are you sure you want to delete '${group.name}'?`,
+      title: t("tasks.group.deleteTitle"),
+      confirmText: t("common.delete"),
+      description: t("tasks.group.deleteConfirm", { name: group.name }),
       confirmBtnVariant: "destructive",
       flagOption: {
         defaultValue: false,
-        text: "Delete all tasks in this group",
+        text: t("tasks.group.deleteAllTasks"),
       }
     })
     if(!deleteConfirm.confirm) return;
 
-    await deleteGroup(note, group.name, deleteConfirm.flag);
+    try {
+      await deleteGroup(group.name, deleteConfirm.flag);
+    } catch(e) {
+      console.error("Failed to delete group.", e);
+      new Notice(t("tasks.group.deleteFailed", { name: group.name }));
+      // 일부만 삭제됐을 수 있으므로, 실패해도 저장소의 실제 상태를 노트에 반영한다.
+      void mergeNotes();
+      return;
+    }
     void mergeNotes();
-    new Notice(`Group ${group.name} deleted.`);
-  }, [group.name, note, mergeNotes])
+    new Notice(t("tasks.group.deleted", { name: group.name }));
+  }, [group.name, mergeNotes])
 
   const removeRoutineFromNoteOnly = useCallback(async () => {
     const removeConfirm = await doFlagConfirm({
-      title: "Remove group from this note",
-      confirmText: "Remove",
-      description: `Are you sure you want to remove '${group.name}'? This will only remove 'group task' in this note not the 'group' itself.`,
+      title: t("tasks.group.removeFromNoteTitle"),
+      confirmText: t("common.remove"),
+      description: t("tasks.group.removeFromNoteConfirm", { name: group.name }),
       confirmBtnVariant: "destructive",
       flagOption: {
         defaultValue: false,
-        text: "Remove all tasks in this group from this note only",
+        text: t("tasks.group.removeAllTasks"),
       }
     })
     if(!removeConfirm.confirm) return;
 
-    const newNote = TaskGroupEntity.deleteTaskGroup(note, group.name, removeConfirm.flag);
-    setNote(newNote);
-    await noteRepository.save(newNote);
+    try {
+      // 확인창을 기다리는 동안 파일이 바뀌었을 수 있으므로, 파일의 최신 내용에서 이 그룹만 제거한다.
+      const newNote = await updateNote(note, current => TaskGroupEntity.deleteTaskGroup(current, group.name, removeConfirm.flag));
+      setNote(newNote);
+    } catch(e) {
+      console.error("Failed to remove group from note.", e);
+      new Notice(t("tasks.group.removeFromNoteFailed", { name: group.name }));
+    }
   }, [group.name, note, setNote])
 
   
@@ -77,14 +92,14 @@ export const TaskGroupWidget = ({
      * ROUTINE GROUP INFO
      */
     m.addItem(i => {
-      i.setTitle(`${!isGroupExist ? "(deleted) " : ""}Group: ${group.name}`);
+      i.setTitle(t(isGroupExist ? "tasks.menu.groupInfo" : "tasks.menu.groupInfoDeleted", { name: group.name }));
       i.setIcon("info");
       i.setDisabled(!isGroupExist);
     })
     m.addSeparator();
 
     isGroupExist && m.addItem(i => {
-      i.setTitle("Edit");
+      i.setTitle(t("common.edit"));
       i.setIcon("pencil");
       i.onClick(async () => {
         if(!loadedGroup) throw new Error("Group is not exist.");
@@ -93,13 +108,13 @@ export const TaskGroupWidget = ({
     })
 
     m.addItem(i => {
-      i.setTitle("Remove from this note only");
+      i.setTitle(t("tasks.menu.removeFromNoteOnly"));
       i.setIcon("list-x");
       i.onClick(removeRoutineFromNoteOnly);
     })
 
     isGroupExist && m.addItem(i => {
-      i.setTitle("Delete");
+      i.setTitle(t("common.delete"));
       i.setIcon("trash");
       i.onClick(doDeleteGroup);
     })
@@ -110,7 +125,7 @@ export const TaskGroupWidget = ({
   return (
     <>
       <BaseTaskGroupFeature
-        onOptionMenu={(m) => { void onOptionMenu(m); }}
+        onOptionMenu={onOptionMenu}
         group={group}
       />
       <GroupOptionModal />
